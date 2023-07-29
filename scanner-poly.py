@@ -109,7 +109,7 @@ async def new_pair(event):
         native = api.get_token_name(event["args"]["token1"], "poly")
         token_name = api.get_token_name(event["args"]["token0"], "poly")
         token_address = event["args"]["token0"]
-        weth = api.get_pool_liq_balance(event["args"]["pool"], weth_address, "poly")
+        weth = api.get_pool_liq_balance(event["args"]["pair"], weth_address, "poly")
         dollar = int(weth) * 2 * api.get_native_price("matic") / 10 ** 18
     verified_check = api.get_verified(token_address, "eth")
     if dollar == 0 or dollar == "" or not dollar:
