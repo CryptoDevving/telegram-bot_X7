@@ -3655,7 +3655,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f'X7DAO Info\n\n'
-            f'Holding 500k X7DAO tokens before tax will\n'
+            f'Holding 500k X7DAO tokens will\n'
             f'earn you the right to make proposals on\n'
             f'the X7 Finance Ecosystem\n\n'
             f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
@@ -3710,7 +3710,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7DAO Info\n\n"
-            f'{chain} X7DAO currently costs:\n\n'
+            f'{chain} X7DAO tokens currently costs:\n\n'
             f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
@@ -3724,7 +3724,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         im1.save(img_path)
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
-            caption=f'{chain} X7DAO currently costs:\n\n'
+            caption=f'{chain} X7DAO tokens currently costs:\n\n'
                     f'`ETH:`   ${"{:0,.0f}".format(eth_amount)}\n'
                     f'`ARB:`   ${"{:0,.0f}".format(arb_amount)}\n'
                     f'`BSC:`   ${"{:0,.0f}".format(bsc_amount)}\n'
