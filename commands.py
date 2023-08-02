@@ -1985,8 +1985,16 @@ async def pair(update: Update, context: CallbackContext):
                 f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
                 f"{api.get_quote()}",
         parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="Xchange pairs Dashboard", url="https://www.x7finance.org/dashboard"
+                    )
+                ],
+            ]
+        ),
     )
-
 
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     pioneer_id = " ".join(context.args)
