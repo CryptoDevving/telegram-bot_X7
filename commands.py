@@ -3413,7 +3413,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     im1.save(img_path)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
-        caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [chain-name] [wallet_address]` for other chains\n\n"
+        caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
                 f'`{wallet}`\n\n'
                 f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
                 f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
