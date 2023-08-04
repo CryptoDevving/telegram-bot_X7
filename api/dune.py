@@ -18,27 +18,18 @@ def execute_query(query_id, engine="small"):
     response = post(
         make_api_url("query", "execute", query_id),
         headers=HEADER,
-        params={"performance": engine}
+        params={"performance": engine},
     )
     return response.json()["execution_id"]
 
 
 def get_query_status(execution_id):
-    return get(
-        make_api_url("execution", "status", execution_id),
-        headers=HEADER
-    )
+    return get(make_api_url("execution", "status", execution_id), headers=HEADER)
 
 
 def get_query_results(execution_id):
-    return get(
-        make_api_url("execution", "results", execution_id),
-        headers=HEADER
-    )
+    return get(make_api_url("execution", "results", execution_id), headers=HEADER)
 
 
 def cancel_query_execution(execution_id):
-    return get(
-        make_api_url("execution", "cancel", execution_id),
-        headers=HEADER
-    )
+    return get(make_api_url("execution", "cancel", execution_id), headers=HEADER)

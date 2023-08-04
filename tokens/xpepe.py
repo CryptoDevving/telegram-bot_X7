@@ -6,5 +6,5 @@ info = TokensInfo(
     pair="0x24d10e222fbd113d72b9cf78d118f53ff9e1737d",
     decimals=18,
     chain="eth",
-    logo=""
+    logo="",
 )

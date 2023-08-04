@@ -15,10 +15,7 @@ from data import url, text, times
 
 load_dotenv()
 
-sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN"),
-    traces_sample_rate=1.0
-)
+sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -61,22 +58,38 @@ async def error(update: Update, context: CallbackContext):
             return
         if isinstance(context.error, AttributeError):
             return
-        if isinstance(context.error, ValueError) or isinstance(context.error, Exception):
+        if isinstance(context.error, ValueError) or isinstance(
+            context.error, Exception
+        ):
             await update.message.reply_text("Error while loading data please try again")
         else:
             message: Message = update.message
             if message is not None and message.text is not None:
-                await update.message.reply_text("Error while loading data, please try again")
-                sentry_sdk.capture_exception(Exception(f"{message.text} caused error: {context.error}"))
+                await update.message.reply_text(
+                    "Error while loading data, please try again"
+                )
+                sentry_sdk.capture_exception(
+                    Exception(f"{message.text} caused error: {context.error}")
+                )
             else:
-                sentry_sdk.capture_exception(Exception(f"Error occurred without a valid message: {context.error}"))
+                sentry_sdk.capture_exception(
+                    Exception(
+                        f"Error occurred without a valid message: {context.error}"
+                    )
+                )
 
     except Exception as e:
         sentry_sdk.capture_exception(e)
 
 
 def scanner_start():
-    scripts = ["scanner-bsc.py", "scanner-eth.py", "scanner-arb.py", "scanner-poly.py", "scanner-opti.py"]
+    scripts = [
+        "scanner-bsc.py",
+        "scanner-eth.py",
+        "scanner-arb.py",
+        "scanner-poly.py",
+        "scanner-opti.py",
+    ]
     python_executable = sys.executable
     processes = []
     for script in scripts:
@@ -120,11 +133,17 @@ async def send_referral_message(context: ContextTypes.DEFAULT_TYPE) -> None:
 if __name__ == "__main__":
     application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
     application.add_error_handler(error)
-    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
+    application.add_handler(
+        MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies)
+    )
     application.add_handler(CommandHandler("about", commands.about))
-    application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
+    application.add_handler(
+        CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin)
+    )
     application.add_handler(CommandHandler("alerts", commands.alerts))
-    application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
+    application.add_handler(
+        CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop)
+    )
     application.add_handler(CommandHandler("alumni", commands.alumni))
     application.add_handler(CommandHandler("announcements", commands.announcements))
     application.add_handler(CommandHandler("ath", commands.ath))
@@ -132,18 +151,40 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["bot", "start", "filters"], commands.bot))
     application.add_handler(CommandHandler("burn", commands.burn))
     application.add_handler(CommandHandler("buy", commands.buy))
-    application.add_handler(CommandHandler(["buybots", "bobby", "buybot"], commands.buy_bots))
-    application.add_handler(CommandHandler(["buyevenly", "quintsevenly"], commands.buy_evenly))
+    application.add_handler(
+        CommandHandler(["buybots", "bobby", "buybot"], commands.buy_bots)
+    )
+    application.add_handler(
+        CommandHandler(["buyevenly", "quintsevenly"], commands.buy_evenly)
+    )
     application.add_handler(CommandHandler("channels", commands.channels))
     application.add_handler(CommandHandler(["chart", "charts"], commands.chart))
-    application.add_handler(CommandHandler(["constellations", "constellation", "quints"], commands.constellations))
-    application.add_handler(CommandHandler(["ca", "contract", "contracts"], commands.contracts))
+    application.add_handler(
+        CommandHandler(
+            ["constellations", "constellation", "quints"], commands.constellations
+        )
+    )
+    application.add_handler(
+        CommandHandler(["ca", "contract", "contracts"], commands.contracts)
+    )
     application.add_handler(CommandHandler("compare", commands.compare))
     application.add_handler(CommandHandler("count", commands.count))
-    application.add_handler(CommandHandler([f"{times.countdown_command}"], commands.countdown))
+    application.add_handler(
+        CommandHandler([f"{times.countdown_command}"], commands.countdown)
+    )
     application.add_handler(CommandHandler(["deployer", "devs"], commands.deployer))
-    application.add_handler(CommandHandler(["discount", "dsc", "dac"], commands.discount))
-    application.add_handler(CommandHandler(["docs", "documents", ], commands.docs))
+    application.add_handler(
+        CommandHandler(["discount", "dsc", "dac"], commands.discount)
+    )
+    application.add_handler(
+        CommandHandler(
+            [
+                "docs",
+                "documents",
+            ],
+            commands.docs,
+        )
+    )
     application.add_handler(CommandHandler("draw", commands.draw))
     application.add_handler(CommandHandler(["ebb", "buybacks"], commands.ebb))
     application.add_handler(CommandHandler(["ecosystem", "tokens"], commands.ecosystem))
@@ -168,11 +209,15 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("media", commands.media_command))
     application.add_handler(CommandHandler("mods", commands.mods))
     application.add_handler(CommandHandler(["nft", "nfts"], commands.nft))
-    application.add_handler(CommandHandler(["on_chain", "onchain", "message"], commands.on_chain))
+    application.add_handler(
+        CommandHandler(["on_chain", "onchain", "message"], commands.on_chain)
+    )
     application.add_handler(CommandHandler(["pair", "pairs"], commands.pair))
     application.add_handler(CommandHandler("pioneer", commands.pioneer))
     application.add_handler(CommandHandler("proposal", commands.proposal))
-    application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
+    application.add_handler(
+        CommandHandler(["pool", "lpool", "lendingpool"], commands.pool)
+    )
     application.add_handler(CommandHandler(["price", "prices"], commands.price))
     application.add_handler(CommandHandler("quote", commands.quote))
     application.add_handler(CommandHandler("raid", commands.raid))
@@ -185,9 +230,13 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("smart", commands.smart))
     application.add_handler(CommandHandler("snapshot", commands.snapshot))
     application.add_handler(CommandHandler(["spaces", "space"], commands.spaces))
-    application.add_handler(CommandHandler(["split", "splitters", "splitter"], commands.splitters))
+    application.add_handler(
+        CommandHandler(["split", "splitters", "splitter"], commands.splitters)
+    )
     application.add_handler(CommandHandler("supply", commands.supply))
-    application.add_handler(CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap))
+    application.add_handler(
+        CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap)
+    )
     application.add_handler(CommandHandler(["tax", "slippage"], commands.tax_command))
     application.add_handler(CommandHandler("test", commands.test))
     application.add_handler(CommandHandler(["time", "clock"], commands.time))
@@ -208,7 +257,9 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("wei", commands.wei))
     application.add_handler(CommandHandler("wallet", commands.wallet))
     application.add_handler(CommandHandler(["website", "site"], commands.website))
-    application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
+    application.add_handler(
+        CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp)
+    )
 
     job_queue = application.job_queue
     application.job_queue.run_repeating(

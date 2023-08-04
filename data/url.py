@@ -47,7 +47,9 @@ dex_tools_arb = "https://www.dextools.io/app/arbitrum/pair-explorer/"
 dex_tools_opti = "https://www.dextools.io/app/optimism/pair-explorer/"
 
 # LINKS
-ca_directory = "https://medium.com/@mikemurpher/x7-finance-contracts-directory-fe3a9fee7b3c"
+ca_directory = (
+    "https://medium.com/@mikemurpher/x7-finance-contracts-directory-fe3a9fee7b3c"
+)
 dac = "http://shorturl.at/ehnr9"
 dashboard = "https://www.x7finance.org/"
 discord = "https://discord.gg/x7finance"
@@ -87,5 +89,5 @@ bsc = [
     "https://bsc-dataseed1.binance.org/",
     "https://bsc-dataseed2.binance.org/",
     "https://bsc-dataseed3.binance.org/",
-    "https://bsc-dataseed4.binance.org/"
+    "https://bsc-dataseed4.binance.org/",
 ]

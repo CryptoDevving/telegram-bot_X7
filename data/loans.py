@@ -23,20 +23,20 @@ ill003_name = "X7 Initial Liquidity Loan Term (003) - X7ILL003"
 
 class LoanTerm:
     def __init__(
-            self,
-            name,
-            min_loan,
-            max_loan,
-            leverage,
-            num_repayment_periods,
-            num_premium_periods,
-            min_loan_duration,
-            max_loan_duration,
-            loan_origination_fee,
-            loan_retention_premium_fee_schedule,
-            principal_repayment_condition,
-            liquidation_conditions,
-            liquidator_reward,
+        self,
+        name,
+        min_loan,
+        max_loan,
+        leverage,
+        num_repayment_periods,
+        num_premium_periods,
+        min_loan_duration,
+        max_loan_duration,
+        loan_origination_fee,
+        loan_retention_premium_fee_schedule,
+        principal_repayment_condition,
+        liquidation_conditions,
+        liquidator_reward,
     ):
         self.name = name
         self.min_loan = min_loan

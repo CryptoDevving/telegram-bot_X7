@@ -27,7 +27,10 @@ class ChainInfo:
 
 
 chains_info = {
-    "eth": ChainInfo("https://api.etherscan.io/api", ether,),
+    "eth": ChainInfo(
+        "https://api.etherscan.io/api",
+        ether,
+    ),
     "bsc": ChainInfo("https://api.bscscan.com/api", bsc),
     "arb": ChainInfo("https://api.arbiscan.io/api", arb),
     "opti": ChainInfo("https://api-optimistic.etherscan.io/api", opti),
@@ -36,6 +39,7 @@ chains_info = {
 
 
 # SCAN
+
 
 def get_abi(contract: str, chain: str) -> str:
     if chain not in chains_info:
@@ -51,7 +55,7 @@ def get_gas(chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=gastracker&action=gasoracle{chain_info.key}'
+    url = f"{chain_info.url}?module=gastracker&action=gasoracle{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
@@ -60,7 +64,7 @@ def get_native_balance(wallet, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=account&action=balancemulti&address={wallet}&tag=latest{chain_info.key}'
+    url = f"{chain_info.url}?module=account&action=balancemulti&address={wallet}&tag=latest{chain_info.key}"
     response = requests.get(url)
     data = response.json()
     amount_raw = float(data["result"][0]["balance"])
@@ -107,7 +111,7 @@ def get_supply(token, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=stats&action=tokensupply&contractaddress={token}{chain_info.key}'
+    url = f"{chain_info.url}?module=stats&action=tokensupply&contractaddress={token}{chain_info.key}"
     response = requests.get(url)
     data = response.json()
     return data["result"]
@@ -117,7 +121,7 @@ def get_token_balance(wallet, token, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}'
+    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
     response = requests.get(url)
     data = response.json()
     return int(data["result"][:-18])
@@ -127,7 +131,7 @@ def get_tx_from_hash(tx, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=proxy&action=eth_getTransactionByHash&txhash={tx}{chain_info.key}'
+    url = f"{chain_info.url}?module=proxy&action=eth_getTransactionByHash&txhash={tx}{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
@@ -136,7 +140,7 @@ def get_tx(address, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=account&action=txlist&sort=desc&address={address}{chain_info.key}'
+    url = f"{chain_info.url}?module=account&action=txlist&sort=desc&address={address}{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
@@ -145,7 +149,7 @@ def get_internal_tx(address, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=account&action=txlistinternal&sort=desc&address={address}{chain_info.key}'
+    url = f"{chain_info.url}?module=account&action=txlistinternal&sort=desc&address={address}{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
@@ -154,13 +158,14 @@ def get_verified(contract, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f'{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}'
+    url = f"{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
     response = requests.get(url)
     data = response.json()
     return "Yes" if "SourceCode" in data["result"][0] else "No"
 
 
 # CG
+
 
 def get_ath(token):
     url = (
@@ -170,7 +175,11 @@ def get_ath(token):
     response = requests.get(url)
     data = response.json()
     value = data["market_data"]
-    return value["ath"]["usd"], value["ath_change_percentage"]["usd"], value["ath_date"]["usd"]
+    return (
+        value["ath"]["usd"],
+        value["ath_change_percentage"]["usd"],
+        value["ath_date"]["usd"],
+    )
 
 
 def get_cg_price(token):
@@ -199,13 +208,14 @@ def get_mcap(token):
 
 # MORALIS
 
+
 def get_liquidity(pair, chain):
     chain_mappings = {
         "eth": "eth",
         "arb": "arbitrum",
         "poly": "polygon",
         "bsc": "bsc",
-        "opti": "optimism", 
+        "opti": "optimism",
     }
     if chain in chain_mappings:
         chain = chain_mappings[chain]
@@ -221,7 +231,7 @@ def get_nft_holder_list(nft, chain):
         "arb": "arbitrum",
         "poly": "polygon",
         "bsc": "bsc",
-        "opti": "optimism", 
+        "opti": "optimism",
     }
     if chain in chain_mappings:
         chain = chain_mappings[chain]
@@ -237,7 +247,7 @@ def get_price(token, chain):
         "arb": "arbitrum",
         "poly": "polygon",
         "bsc": "bsc",
-        "opti": "optimism", 
+        "opti": "optimism",
     }
     if chain in chain_mappings:
         chain = chain_mappings[chain]
@@ -255,7 +265,7 @@ def get_token_data(token: str, chain: str) -> dict:
         "arb": "arbitrum",
         "poly": "polygon",
         "bsc": "bsc",
-        "opti": "optimism", 
+        "opti": "optimism",
     }
     if chain in chain_mappings:
         chain = chain_mappings[chain]
@@ -272,7 +282,7 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
         "arb": "arbitrum",
         "poly": "polygon",
         "bsc": "bsc",
-        "opti": "optimism", 
+        "opti": "optimism",
     }
     if chain in chain_mappings:
         chain = chain_mappings[chain]
@@ -285,13 +295,14 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
 
 # BLOCKSPAN
 
+
 def get_nft_holder_count(nft, chain):
     chain_mappings = {
         "eth": "eth-main",
         "arb": "arbitrum-main",
         "poly": "poly-main",
         "bsc": "bsc-main",
-        "opti": "optimism-main", 
+        "opti": "optimism-main",
     }
     if chain in chain_mappings:
         chain = chain_mappings[chain]
@@ -313,7 +324,10 @@ def get_nft_floor(nft, chain):
         "arb": ("arbitrum-main", "ETH"),
         "poly": ("poly-main", "MATIC"),
         "bsc": ("bsc-main", "BNB"),
-        "opti": ("optimism-main", "ETH",) 
+        "opti": (
+            "optimism-main",
+            "ETH",
+        ),
     }
     if chain in chain_mappings:
         chain, chain_native = chain_mappings[chain]
@@ -338,7 +352,9 @@ def get_nft_floor(nft, chain):
     else:
         return "N/A"
 
+
 # OTHER
+
 
 def get_fact():
     response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random")
@@ -437,8 +453,8 @@ def get_snapshot():
     url = "https://hub.snapshot.org/graphql"
     query = {
         "query": 'query { proposals ( first: 1, skip: 0, where: { space_in: ["X7COMMUNITY.eth"]}, '
-                 'orderBy: "created", orderDirection: desc ) { id title start end snapshot state choices '
-                 "scores scores_total author }}"
+        'orderBy: "created", orderDirection: desc ) { id title start end snapshot state choices '
+        "scores scores_total author }}"
     }
     response = requests.get(url, query)
     return response.json()
@@ -473,7 +489,7 @@ def get_split(eth_value):
         "Founding X7 Devs Total": founding_dev_share,
         "Pioneer Reward Pool": pioneer_reward_pool_share,
         "Community Multi Sig": community_multisig_share,
-        "Developers Multi Sig": developers_multisig_share
+        "Developers Multi Sig": developers_multisig_share,
     }
 
 
@@ -485,12 +501,12 @@ def get_today():
 
 
 def read_csv_column(filename, column_index):
-    with open(filename, 'r') as file:
+    with open(filename, "r") as file:
         csv_reader = csv.reader(file)
         header = next(csv_reader)
         column_data = []
         for row in csv_reader:
-            if len(row) > column_index and row[column_index] != '':
+            if len(row) > column_index and row[column_index] != "":
                 column_data.append(row[column_index])
     return column_data
 

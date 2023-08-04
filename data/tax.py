@@ -11,7 +11,7 @@ info = {
         "eco_discount_x7r": 10,
         "eco_discount_x7dao": 10,
         "eco_discount_x7100": 25,
-        "magister_discount": 25
+        "magister_discount": 25,
     },
     "opti": {
         "x7r": 6,
@@ -23,7 +23,7 @@ info = {
         "eco_discount_x7r": 10,
         "eco_discount_x7dao": 10,
         "eco_discount_x7100": 25,
-        "magister_discount": 25
+        "magister_discount": 25,
     },
     "poly": {
         "x7r": 6,
@@ -35,7 +35,7 @@ info = {
         "eco_discount_x7r": 10,
         "eco_discount_x7dao": 10,
         "eco_discount_x7100": 25,
-        "magister_discount": 25
+        "magister_discount": 25,
     },
     "arb": {
         "x7r": 6,
@@ -47,7 +47,7 @@ info = {
         "eco_discount_x7r": 10,
         "eco_discount_x7dao": 10,
         "eco_discount_x7100": 25,
-        "magister_discount": 25
+        "magister_discount": 25,
     },
     "bsc": {
         "x7r": 6,
@@ -59,8 +59,8 @@ info = {
         "eco_discount_x7r": 10,
         "eco_discount_x7dao": 10,
         "eco_discount_x7100": 25,
-        "magister_discount": 25
-    }
+        "magister_discount": 25,
+    },
 }
 
 
