@@ -2594,7 +2594,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if token_info.chain == "eth":
                 holders = api.get_holders(token_info.ca)
                 token = "eth"
-                holders = "N/A"
             elif token_info.chain == "poly":
                 token = "matic"
                 holders = "N/A"
