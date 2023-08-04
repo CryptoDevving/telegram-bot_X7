@@ -229,44 +229,46 @@ async def new_pair(event):
         fill=(255, 255, 255),
     )
     im1.save(r"media/blackhole.png")
-    await application.bot.send_photo(
-        os.getenv("ALERTS_TELEGRAM_CHANNEL_ID"),
-        photo=open(r"media/blackhole.png", "rb"),
-        caption=f"*New Pair Created (OPTIMISM)*\n\n"
-                f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
-                f"Token Address:\n`{token_address}`\n\n"
-                f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
-                f"{pool_text}\n\n\n"
-        #                f"{liquidity_text}\n\n"
-                f"SCAN:\n" f"{status}\n",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
+    channel_chat_ids = [os.getenv("ALERTS_TELEGRAM_CHANNEL_ID"), os.getenv("MAIN_TELEGRAM_CHANNEL_ID")]
+    for chat_id in channel_chat_ids:
+        await application.bot.send_photo(
+            chat_id,
+            photo=open(r"media/blackhole.png", "rb"),
+            caption=f"*New Pair Created (OPTIMISM)*\n\n"
+                    f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
+                    f"Token Address:\n`{token_address}`\n\n"
+                    f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
+                    f"{pool_text}\n\n\n"
+            #                f"{liquidity_text}\n\n"
+                    f"SCAN:\n" f"{status}\n",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        text=f"Buy On Xchange",
-                        url=f"{url.xchange_buy_opti}{token_address}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Chart", url=f"{url.dex_tools_opti}{event['args']['pair']}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Token Contract", url=f"{url.opti_address}{token_address}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Deployer TX",
-                        url=f"{url.opti_tx}{event['transactionHash'].hex()}",
-                    )
-                ],
-            ]
-        ),
-    )
+                    [
+                        InlineKeyboardButton(
+                            text=f"Buy On Xchange",
+                            url=f"{url.xchange_buy_opti}{token_address}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Chart", url=f"{url.dex_tools_opti}{event['args']['pair']}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Token Contract", url=f"{url.opti_address}{token_address}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Deployer TX",
+                            url=f"{url.opti_tx}{event['transactionHash'].hex()}",
+                        )
+                    ],
+                ]
+            ),
+        )
 
 
 async def new_loan(event):
