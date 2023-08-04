@@ -2593,8 +2593,18 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             if token_info.chain == "eth":
                 holders = api.get_holders(token_info.ca)
+                token = "eth"
+                holders = "N/A"
+            elif token_info.chain == "poly":
+                token = "matic"
+                holders = "N/A"
+            elif token_info.chain == "bsc":
+                token = "bnb"
+                holders = "N/A"
             else:
                 holders = "N/A"
+                token = "eth"
+
             scan = chains[token_info.chain].scan
             dext = chains[token_info.chain].dext
             w3 = chains[token_info.chain].w3
@@ -2615,14 +2625,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             elif is_reserve_token1:
                 eth = contract.functions.getReserves().call()[0]
                 token_res = contract.functions.getReserves().call()[1]
+
             decimals = contract.functions.decimals().call()
-            liq = int(eth) * api.get_native_price(token_info.chain) * 2
+            eth_in_wei = int(eth)
+            token_res_in_wei = int(token_res)
+            liq = api.get_native_price(token) * eth_in_wei * 2
             formatted_liq = "${:,.2f}".format(liq / (10**decimals))
-            if token_info.decimals < 18:
-                token_price = liq / supply / (10**decimals)
-            else:
-                token_price = liq / supply
-            formatted_token_price = "${:.8f}".format(token_price)
+            token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
             mcap = token_price * supply
             formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
             im1 = Image.open((random.choice(media.blackhole)))
@@ -2651,8 +2660,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Xchange Pair Info\n\n{search.upper()}\n\n"
                 f"Liquidity: {formatted_liq}\n"
                 f"Market Cap: {formatted_mcap}\n"
-                f"Token Price: {formatted_token_price}\n"
-                f"Holders: {holders}\n\n\n\n\n\n"
+                f"Holders: {holders}\n\n\n\n\n\n\n"
                 f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                 font=myfont,
                 fill=(255, 255, 255),
@@ -2665,7 +2673,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"`{token_info.ca}`\n\n"
                 f"Liquidity: {formatted_liq}\n"
                 f"Market Cap: {formatted_mcap}\n"
-                f"Token Price: {formatted_token_price}\n"
                 f"Holders: {holders}\n\n"
                 f"{api.get_quote()}",
                 parse_mode="Markdown",
