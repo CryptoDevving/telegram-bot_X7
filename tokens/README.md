@@ -47,7 +47,6 @@ info = TokensInfo(
     name="token-name",
     ca="token-contract-address",
     pair="pair-address",
-    decimals=token-decimals,
     chain="deployed-chain",
     logo="logo-url"
 )

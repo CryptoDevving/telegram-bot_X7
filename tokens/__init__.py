@@ -19,12 +19,11 @@ key_ether = os.getenv("ETHER")
 
 class TokensInfo:
     def __init__(
-        self, name: str, ca: str, pair: str, decimals: int, chain: str, logo: str = ""
+        self, name: str, ca: str, pair: str, chain: str, logo: str = ""
     ):
         self.name = name
         self.ca = ca
         self.pair = pair
-        self.decimals = decimals
         self.chain = chain
         self.logo = logo
 

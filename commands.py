@@ -34,10 +34,7 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    price = api.get_price(ca.x7r, "arb")
-    amount = 500000 * float(price)
-    print(amount)
-    print(price)
+    return
 
 
 # COMMANDS
@@ -2618,15 +2615,16 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             elif is_reserve_token1:
                 eth = contract.functions.getReserves().call()[0]
                 token_res = contract.functions.getReserves().call()[1]
+            decimals = contract.functions.decimals().call()
             liq = int(eth) * api.get_native_price(token_info.chain) * 2
-            formatted_liq = "${:,.2f}".format(liq / (10**18))
+            formatted_liq = "${:,.2f}".format(liq / (10**decimals))
             if token_info.decimals < 18:
-                token_price = liq / supply / (10**token_info.decimals)
+                token_price = liq / supply / (10**decimals)
             else:
                 token_price = liq / supply
             formatted_token_price = "${:.8f}".format(token_price)
             mcap = token_price * supply
-            formatted_mcap = "${:,.0f}".format(mcap / (10**token_info.decimals))
+            formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
             im1 = Image.open((random.choice(media.blackhole)))
             try:
                 img = Image.open(requests.get(token_info.logo, stream=True).raw)
