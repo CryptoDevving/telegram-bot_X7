@@ -2675,7 +2675,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Liquidity: {formatted_liq}\n"
                 f"Market Cap: {formatted_mcap}\n"
                 f"Holders: {holders}\n\n"
-                f"{price}\n\n"
+                f"{price_change}\n\n"
                 f"{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
