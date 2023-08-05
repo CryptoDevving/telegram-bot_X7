@@ -34,40 +34,7 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 # WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    url = "https://api.defined.fi"
-
-    headers = {
-    "content_type":"application/json",
-    "x-api-key": os.getenv("DEFINED_API_KEY")
-    }
-
-    filterExchanges = """query {
-  filterExchanges(
-    filters: { address: "0x7de800467aFcE442019884f51A4A1B9143a34fAc"}
-    rankings: { attribute: dailyActiveUsers, direction: DESC }
-    limit: 1
-  ) {
-    results {
-      exchange {
-        address
-        iconUrl
-        name
-        tradeUrl
-      }
-      dailyActiveUsers
-      monthlyActiveUsers
-      txnCount1
-      volumeNBT12
-      volumeUSD24
-    }
-  }
-}"""
-
-    response = requests.post(url, headers=headers, json={"query": filterExchanges})
-
-    print(response.text)
-###
-
+    return
 
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2665,9 +2632,11 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
             mcap = token_price * supply
             formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
+            price_change = api.get_price_change(token_info.ca)
             im1 = Image.open((random.choice(media.blackhole)))
             try:
                 img = Image.open(requests.get(token_info.logo, stream=True).raw)
+                img = img.resize((200, 200), Image.ANTIALIAS)
                 result = img.convert("RGBA")
                 result.save(r"media/tokenlogo.png")
                 im2 = Image.open(r"media/tokenlogo.png")
@@ -2691,7 +2660,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Xchange Pair Info\n\n{search.upper()}\n\n"
                 f"Liquidity: {formatted_liq}\n"
                 f"Market Cap: {formatted_mcap}\n"
-                f"Holders: {holders}\n\n\n\n\n\n\n"
+                f"Holders: {holders}\n\n"
+                f"{price_change}\n\n\n\n"
                 f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                 font=myfont,
                 fill=(255, 255, 255),
@@ -2705,6 +2675,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Liquidity: {formatted_liq}\n"
                 f"Market Cap: {formatted_mcap}\n"
                 f"Holders: {holders}\n\n"
+                f"{price}\n\n"
                 f"{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
@@ -2718,6 +2689,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             InlineKeyboardButton(
                                 text="Buy",
                                 url=f"{url.xchange}/#/swap?outputCurrency={token_info.ca}",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="List a token",
+                                url="https://github.com/x7finance/telegram-bot/blob/main/tokens/README.md",
                             )
                         ],
                     ]

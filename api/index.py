@@ -2,7 +2,7 @@ import os
 import csv
 import random
 from typing import Tuple
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import tweepy
 import requests
@@ -354,6 +354,62 @@ def get_nft_floor(nft, chain):
 
 
 # OTHER
+def get_price_change(address):
+    url = "https://api.defined.fi"
+
+    headers = {
+        "content_type": "application/json",
+        "x-api-key": os.getenv("DEFINED_API_KEY")
+    }
+
+    current_timestamp = int(datetime.now().timestamp()) - 300
+    one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
+    twenty_four_hours_ago_timestamp = int((datetime.now() - timedelta(hours=24)).timestamp())
+    seven_days_ago_timestamp = int((datetime.now() - timedelta(days=7)).timestamp())
+
+    pricechange = f"""query {{
+        getTokenPrices(
+            inputs: [
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {current_timestamp}
+                }}
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {one_hour_ago_timestamp}
+                }}
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {twenty_four_hours_ago_timestamp}
+                }}
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {seven_days_ago_timestamp}
+                }}
+            ]
+        ) {{
+            priceUsd
+        }}
+    }}"""
+
+    response = requests.post(url, headers=headers, json={"query": pricechange})
+    data = response.json()
+    current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
+    one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
+    twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
+    seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
+
+    one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
+    twenty_four_hours_change = round(((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
+    seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
+
+    result = f"1H Change: {one_hour_change}%\n24H Change {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
+
+    return result
 
 
 def get_fact():

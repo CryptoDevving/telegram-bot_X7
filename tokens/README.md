@@ -52,6 +52,15 @@ info = TokensInfo(
 )
 ```
 
+### Notes
+
+Chains Options:\
+Ethereum = ```"eth"```\
+Binance Smart Chain = ```"bsc"```\
+Polygon = ```"poly"```\
+Arbitrum = ```"arb"```\
+Optimism = ```"opti"```
+
 Please ensure the "" remain
 
 Token logo is optional, please make sure the file is no larger than 200x200px, if you do not submit a logo please use
