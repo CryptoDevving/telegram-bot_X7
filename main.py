@@ -252,7 +252,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["x7103", "103"], commands.x7103))
     application.add_handler(CommandHandler(["x7104", "104"], commands.x7104))
     application.add_handler(CommandHandler(["x7105", "105"], commands.x7105))
-    application.add_handler(CommandHandler("volume", commands.volume))
+    application.add_handler(CommandHandler(["volume", "dune"], commands.volume))
     application.add_handler(CommandHandler("voting", commands.voting))
     application.add_handler(CommandHandler("wei", commands.wei))
     application.add_handler(CommandHandler("wallet", commands.wallet))

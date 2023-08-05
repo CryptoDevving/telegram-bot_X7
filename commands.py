@@ -32,9 +32,41 @@ load_dotenv()
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
-
+# WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    return
+    url = "https://api.defined.fi"
+
+    headers = {
+    "content_type":"application/json",
+    "x-api-key": os.getenv("DEFINED_API_KEY")
+    }
+
+    filterExchanges = """query {
+  filterExchanges(
+    filters: { address: "0x7de800467aFcE442019884f51A4A1B9143a34fAc"}
+    rankings: { attribute: dailyActiveUsers, direction: DESC }
+    limit: 1
+  ) {
+    results {
+      exchange {
+        address
+        iconUrl
+        name
+        tradeUrl
+      }
+      dailyActiveUsers
+      monthlyActiveUsers
+      txnCount1
+      volumeNBT12
+      volumeUSD24
+    }
+  }
+}"""
+
+    response = requests.post(url, headers=headers, json={"query": filterExchanges})
+
+    print(response.text)
+###
 
 
 # COMMANDS
@@ -3516,25 +3548,52 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    execution_id = dune.execute_query("2637346", "medium")
-    t.sleep(10)
-    response = dune.get_query_results(execution_id)
-    data = response.json()
-    live_vol_value = data["result"]["rows"][0]["live_vol"]
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Total Volume*\n\n${"{:0,.0f}".format(live_vol_value)}\n\n{api.get_quote()}',
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
+    await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 20 seconds")
+    try:
+        execution_id_total = dune.execute_query("2637346", "medium")
+        execution_id_30d = dune.execute_query("2821939", "medium")
+        t.sleep(30)
+        response_total = dune.get_query_results(execution_id_total)
+        data_total = response_total.json()
+        total = data_total["result"]["rows"][0]["live_vol"]
+        response_30d = dune.get_query_results(execution_id_30d)
+        data_30d = response_30d.json()
+        total_30d = 0
+        for item in data_30d['result']['rows']:
+            total_30d += item['amount_usd']
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f'*Xchange Volume*\n\n'
+            f'Total Volume:${"{:0,.0f}".format(total)}\n'
+            f'30d Volume: ${"{:0,.0f}".format(total_30d)}\n\n{api.get_quote()}',
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        text="@Mike_X7F X7 Dune Dashboard ", url=f"{url.dune}"
-                    )
-                ],
-            ]
-        ),
-    )
+                    [
+                        InlineKeyboardButton(
+                            text="X7 Dune Dashboard ", url=f"{url.dune}"
+                        )
+                    ],
+                ]
+            ),
+        )
+    except Exception as e:
+        sentry_sdk.capture_exception(f"Dune Command Error: {e}")
+        await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f'*Xchange Volume*\n\n'
+                'Unable to load Dune data, please use the link below"\n\n{api.get_quote()}',
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="X7 Dune Dashboard ", url=f"{url.dune}"
+                        )
+                    ],
+                ]
+            ),
+        )
 
 
 async def voting(update: Update, context: ContextTypes.DEFAULT_TYPE):
