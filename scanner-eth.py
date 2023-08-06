@@ -367,73 +367,9 @@ async def new_loan(event):
         ),
     )
 
-async def new_swap(event):
-    try:
-        tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.eth_logo)
-        im1.paste(im2, (720, 20), im2)
-        myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
-        i1 = ImageDraw.Draw(im1)
-        i1.text(
-            (26, 30),
-            f"Buy Bot Test",
-            font=myfont,
-            fill=(255, 255, 255),
-        )
-        im1.save(r"media/blackhole.png")
-
-        await application.bot.send_photo(
-            os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
-            photo=open(r"media/blackhole.png", "rb"),
-            caption=f"Buy Bot Test\n\n"
-                    f"{tx}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text=f"Buy TX",
-                            url=f"{url.ether_tx}{event['transactionHash'].hex()}",
-                        )
-                    ],
-                ]
-            ),
-        )
-        global timer_task
-
-        if timer_task:
-            timer_task.cancel()
-
-        timer_task = asyncio.create_task(timer_callback())
-        
-    except Exception as e:
-        sentry_sdk.capture_exception(f"New Buy Error:{e}")
-
-async def timer_callback():
-    try:
-        await asyncio.sleep(20 * 60)
-        await send_contest_over_message()
-    except asyncio.CancelledError:
-        pass
-    except Exception as e:
-        sentry_sdk.capture_exception(f"Timer Error:{e}")
-
-
-async def send_contest_over_message():
-    try:
-        await application.bot.send_message(
-            os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
-            text="Contest over!",
-            parse_mode="Markdown"
-        )
-    except Exception as e:
-        sentry_sdk.capture_exception(f"Contest Over Error:{e}")
 
 async def log_loop(
-    pair_filter, ill001_filter, ill002_filter, ill003_filter, x7r_pair_filter, x7dao_pair_filter, 
-    x7101_pair_filter, x7102_pair_filter, x7103_pair_filter, x7104_pair_filter,x7105_pair_filter, 
-    poll_interval
+    pair_filter, ill001_filter, ill002_filter, ill003_filter, poll_interval
 ):
     while True:
         try:
@@ -457,41 +393,6 @@ async def log_loop(
 
             await asyncio.sleep(poll_interval)
 
-            for Swap in x7r_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
-            for Swap in x7dao_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
-            for Swap in x7101_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
-            for Swap in x7102_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
-            for Swap in x7103_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
-            for Swap in x7104_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
-            for Swap in x7105_pair_filter.get_new_entries():
-                await new_swap(Swap)
-
-            await asyncio.sleep(poll_interval)
-
         except Exception as e:
             sentry_sdk.capture_exception(f"ETH Loop Error:{e}")
             await restart_script()
@@ -501,9 +402,7 @@ async def main():
     while True:
         try:
             tasks = [
-                log_loop(pair_filter, ill001_filter, ill002_filter, ill003_filter, x7r_pair_filter,
-                          x7dao_pair_filter, x7101_pair_filter, x7102_pair_filter, x7103_pair_filter, 
-                          x7104_pair_filter,x7105_pair_filter, 2)
+                log_loop(pair_filter, ill001_filter, ill002_filter, ill003_filter, 2)
             ]
             await asyncio.gather(*tasks)
 
