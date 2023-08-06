@@ -375,7 +375,7 @@ async def new_swap(event):
         im1.save(r"media/blackhole.png")
 
         await application.bot.send_photo(
-            os.getenv("MAIN_TEST_CHANNEL_ID"),
+            os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"Buy Bot Test\n\n"
                     f"{tx}",
