@@ -29,36 +29,10 @@ ill001 = web3.eth.contract(address=ca.ill001, abi=api.get_abi(ca.ill001, "eth"))
 ill002 = web3.eth.contract(address=ca.ill002, abi=api.get_abi(ca.ill002, "eth"))
 ill003 = web3.eth.contract(address=ca.ill003, abi=api.get_abi(ca.ill003, "eth"))
 
-x7r_address = to_checksum_address(ca.x7r_pair_eth)
-x7dao_address = to_checksum_address(ca.x7dao_pair_eth)
-x7101_address = to_checksum_address(ca.x7101_pair_eth)
-x7102_address = to_checksum_address(ca.x7102_pair_eth)
-x7103_address = to_checksum_address(ca.x7103_pair_eth)
-x7104_address = to_checksum_address(ca.x7104_pair_eth)
-x7105_address = to_checksum_address(ca.x7105_pair_eth)
-
-x7r_pair = web3.eth.contract(address=x7r_address, abi=api.get_abi(x7r_address, "eth"))
-x7dao_pair = web3.eth.contract(address=x7dao_address, abi=api.get_abi(x7dao_address, "eth"))
-x7101_pair = web3.eth.contract(address=x7101_address, abi=api.get_abi(x7101_address, "eth"))
-x7102_pair = web3.eth.contract(address=x7102_address, abi=api.get_abi(x7102_address, "eth"))
-x7103_pair = web3.eth.contract(address=x7103_address, abi=api.get_abi(x7103_address, "eth"))
-x7104_pair = web3.eth.contract(address=x7104_address, abi=api.get_abi(x7104_address, "eth"))
-x7105_pair = web3.eth.contract(address=x7105_address, abi=api.get_abi(x7105_address, "eth"))
-
 pair_filter = factory.events.PairCreated.create_filter(fromBlock="latest")
 ill001_filter = ill001.events.LoanOriginated.create_filter(fromBlock="latest")
 ill002_filter = ill002.events.LoanOriginated.create_filter(fromBlock="latest")
 ill003_filter = ill003.events.LoanOriginated.create_filter(fromBlock="latest")
-
-x7r_pair_filter = x7r_pair.events.Swap.create_filter(fromBlock="latest")
-x7dao_pair_filter = x7dao_pair.events.Swap.create_filter(fromBlock="latest")
-x7101_pair_filter = x7101_pair.events.Swap.create_filter(fromBlock="latest")
-x7102_pair_filter = x7102_pair.events.Swap.create_filter(fromBlock="latest")
-x7103_pair_filter = x7103_pair.events.Swap.create_filter(fromBlock="latest")
-x7104_pair_filter = x7104_pair.events.Swap.create_filter(fromBlock="latest")
-x7105_pair_filter = x7105_pair.events.Swap.create_filter(fromBlock="latest")
-
-timer_task = None
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
