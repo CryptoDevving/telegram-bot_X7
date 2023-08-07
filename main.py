@@ -1,4 +1,5 @@
 import os
+import csv
 import sys
 import random
 import subprocess
@@ -16,6 +17,14 @@ from data import url, text, times
 load_dotenv()
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
+
+current_button_data = None
+users_clicked_current_button = set()
+clicked_buttons = set()
+first_user_clicked = False
+first_user_info = ""
+click_counts = {}
+random_message_job = None
 
 
 async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -82,6 +91,83 @@ async def error(update: Update, context: CallbackContext):
         sentry_sdk.capture_exception(e)
 
 
+async def clicks(update, context):
+    global current_button_data, users_clicked_current_button, clicked_buttons, first_user_clicked, first_user_info, click_counts
+    if context.user_data is None:
+        context.user_data = {}
+
+    current_button_data = context.bot_data.get("current_button_data")
+    if not current_button_data:
+        return
+
+    button_data = update.callback_query.data
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+
+    if button_data in clicked_buttons:
+        return
+
+    clicked_buttons.add(button_data)
+
+    if user_info not in click_counts:
+        click_counts[user_info] = 0
+
+    if button_data == current_button_data:
+        click_counts[user_info] = click_counts.get(user_info, 0) + 1
+        clicks_save(click_counts.copy())
+
+        users_clicked_current_button.add(user_info)
+
+        if not first_user_clicked:
+            first_user_info = user_info
+            first_user_clicked = True
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id, text=
+                f"{user_info} was the fastest Pioneer!\n\n"
+                "use `/leaderboard` to see the fastest Pioneers!",
+                parse_mode="Markdown",
+            )
+
+        context.user_data["current_button_data"] = None
+
+        application.job_queue.run_once(
+            send_click_message,
+            random.randint(1, 20),
+            chat_id=os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
+            name="Click Message",
+            data=random.randint(1, 20),
+        )
+
+
+def clicks_get():
+    click_counts = {}
+    with open("data/clicks.csv", mode="r") as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if len(row) == 1:
+                user_info, count = row[0].split(": ")
+                click_counts[user_info] = int(count)
+    return click_counts
+
+
+def clicks_save(click_counts):
+    with open("data/clicks.csv", mode="w", newline="") as file:
+        writer = csv.writer(file)
+        for user_info, count in click_counts.items():
+            writer.writerow([f"{user_info}: {count}"])
+
+
+async def clicks_leaderboard(update: Update, context: CallbackContext):
+    click_counts = clicks_get()
+    sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
+    formatted_click_counts = "\n".join(
+        f"{user}: {count}" for user, count in sorted_click_counts
+    )
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id, text=formatted_click_counts
+    )
+
+
 def scanner_start():
     scripts = [
         "scanner-bsc.py",
@@ -96,6 +182,25 @@ def scanner_start():
         command = [python_executable, script]
         process = subprocess.Popen(command)
         processes.append(process)
+
+
+async def send_click_message(context: CallbackContext):
+    global current_button_data, first_user_clicked
+    first_user_clicked = False
+    if context.bot_data is None:
+        context.bot_data = {}
+    current_button_data = str(random.randint(1, 100000000))
+    context.bot_data["current_button_data"] = current_button_data
+
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Click Me!", callback_data=current_button_data)]]
+    )
+    await context.bot.send_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        chat_id=os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
+        reply_markup=keyboard,
+    )
+    users_clicked_current_button.clear()
 
 
 async def send_endorsement_message(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -132,6 +237,7 @@ async def send_referral_message(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 if __name__ == "__main__":
     application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+    application.add_handler(CallbackQueryHandler(clicks))
     application.add_error_handler(error)
     application.add_handler(
         MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies)
@@ -199,6 +305,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("image", commands.image))
     application.add_handler(CommandHandler("joke", commands.joke))
     application.add_handler(CommandHandler("launch", commands.launch))
+    application.add_handler(CommandHandler("leaderboard", clicks_leaderboard))
     application.add_handler(CommandHandler(["links", "socials"], commands.links))
     application.add_handler(CommandHandler("liquidate", commands.liquidate))
     application.add_handler(CommandHandler("liquidity", commands.liquidity))
@@ -277,5 +384,14 @@ if __name__ == "__main__":
         name="Referral Message",
         data=times.referral_time * 60 * 60,
     )
+
+    application.job_queue.run_once(
+        send_click_message,
+        random.randint(1, 20),  #86400
+        chat_id=os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
+        name="Random Message",
+        data=random.randint(1, 20),  #86400
+    )
     scanner_start()
+
     application.run_polling()
