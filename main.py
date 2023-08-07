@@ -114,8 +114,14 @@ async def clicks(update, context):
 
     if button_data == current_button_data:
         click_counts[user_info] = click_counts.get(user_info, 0) + 1
-        clicks_save(click_counts.copy())
+        if click_counts[user_info] % 10 == 0:  # Check if clicks are a multiple of 10
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id, text=
+                f"🎉🎉 *{user_info} has been the fastest Pioneer {click_counts[user_info]} times!* 🎉🎉",
+                parse_mode="Markdown"
+            )
 
+        clicks_save(click_counts.copy())
         users_clicked_current_button.add(user_info)
 
         if not first_user_clicked:
@@ -132,10 +138,10 @@ async def clicks(update, context):
 
         application.job_queue.run_once(
             send_click_message,
-            random.randint(1, 20),
-            chat_id=os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
+            random.randint(1, 86400),
+            chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Message",
-            data=random.randint(1, 20),
+            data=random.randint(1, 86400),
         )
 
 
@@ -164,7 +170,10 @@ async def clicks_leaderboard(update: Update, context: CallbackContext):
         f"{user}: {count}" for user, count in sorted_click_counts
     )
     await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=formatted_click_counts
+        chat_id=update.effective_chat.id, 
+        text=f"Fastest Pioneer Leaderboard\n\n"
+             f"{formatted_click_counts}",
+        parse_mode="Markdown"
     )
 
 
@@ -387,10 +396,10 @@ if __name__ == "__main__":
 
     application.job_queue.run_once(
         send_click_message,
-        random.randint(1, 20),  #86400
-        chat_id=os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
-        name="Random Message",
-        data=random.randint(1, 20),  #86400
+        random.randint(1, 86400),
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        name="Click Message",
+        data=random.randint(1, 86400),
     )
     scanner_start()
 
