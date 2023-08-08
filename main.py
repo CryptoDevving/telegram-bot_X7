@@ -2,6 +2,8 @@ import os
 import csv
 import sys
 import random
+import base64
+import requests
 import subprocess
 
 import sentry_sdk
@@ -114,7 +116,7 @@ async def clicks(update, context):
 
     if button_data == current_button_data:
         click_counts[user_info] = click_counts.get(user_info, 0) + 1
-        if click_counts[user_info] % 10 == 0:  # Check if clicks are a multiple of 10
+        if click_counts[user_info] % 10 == 0:
             await context.bot.send_message(
                 chat_id=update.effective_chat.id, text=
                 f"🎉🎉 *{user_info} has been the fastest Pioneer {click_counts[user_info]} times!* 🎉🎉",
@@ -138,10 +140,10 @@ async def clicks(update, context):
 
         application.job_queue.run_once(
             send_click_message,
-            random.randint(1, 86400),
+            random.randint(1, 21600), 
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Message",
-            data=random.randint(1, 86400),
+            data=random.randint(1, 21600), 
         )
 
 
@@ -162,6 +164,36 @@ def clicks_save(click_counts):
         for user_info, count in click_counts.items():
             writer.writerow([f"{user_info}: {count}"])
 
+    headers = {
+        'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
+    }
+
+    response = requests.get(
+        'https://api.github.com/repos/x7finance/telegram-bot/contents/data/clicks.csv',
+        headers=headers
+    )
+
+    if response.status_code == 200:
+        content = response.json()
+        sha = content['sha']
+
+        with open("data/clicks.csv", 'rb') as file:
+            file_content = file.read()
+        encoded_content = base64.b64encode(file_content).decode('utf-8')
+
+        try:
+            response = requests.put(
+                'https://api.github.com/repos/x7finance/telegram-bot/contents/data/clicks.csv',
+                headers=headers,
+                json={
+                    'message': 'auto:Update clicks log',
+                    'content': encoded_content,
+                    'sha': sha
+                }
+            )
+        except Exception as e:
+            sentry_sdk.capture_exception(f"GitHub Push error: {e}")
+            
 
 async def clicks_leaderboard(update: Update, context: CallbackContext):
     click_counts = clicks_get()
@@ -171,7 +203,7 @@ async def clicks_leaderboard(update: Update, context: CallbackContext):
     )
     await context.bot.send_message(
         chat_id=update.effective_chat.id, 
-        text=f"Fastest Pioneer Leaderboard\n\n"
+        text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
              f"{formatted_click_counts}",
         parse_mode="Markdown"
     )
@@ -206,7 +238,7 @@ async def send_click_message(context: CallbackContext):
     )
     await context.bot.send_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        chat_id=os.getenv("TEST_TELEGRAM_CHANNEL_ID"),
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         reply_markup=keyboard,
     )
     users_clicked_current_button.clear()
@@ -396,10 +428,10 @@ if __name__ == "__main__":
 
     application.job_queue.run_once(
         send_click_message,
-        random.randint(1, 86400),
+        random.randint(1, 21600),
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
-        data=random.randint(1, 86400),
+        data=random.randint(1, 21600),
     )
     scanner_start()
 
