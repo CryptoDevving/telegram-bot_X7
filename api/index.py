@@ -297,146 +297,69 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
 
 
 def get_nft_holder_count(nft, chain):
-    chain_mappings = {
-        "eth": "eth-main",
-        "arb": "arbitrum-main",
-        "poly": "poly-main",
-        "bsc": "bsc-main",
-        "opti": "optimism-main",
-    }
-    if chain in chain_mappings:
-        chain = chain_mappings[chain]
-    url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
-    response = requests.get(
-        url,
-        headers={
-            "accept": "application/json",
-            "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
-        },
-    )
-    data = response.json()
-    return data.get("total_tokens", "0")
+    try:
+        chain_mappings = {
+            "eth": "eth-main",
+            "arb": "arbitrum-main",
+            "poly": "poly-main",
+            "bsc": "bsc-main",
+            "opti": "optimism-main",
+        }
+        if chain in chain_mappings:
+            chain = chain_mappings[chain]
+        url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
+        response = requests.get(
+            url,
+            headers={
+                "accept": "application/json",
+                "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
+            },
+        )
+        data = response.json()
+        return data.get("total_tokens", "0")
+    except Exception as e:
+        return "N/A"
 
 
 def get_nft_floor(nft, chain):
-    chain_mappings = {
-        "eth": ("eth-main", "ETH"),
-        "arb": ("arbitrum-main", "ETH"),
-        "poly": ("poly-main", "MATIC"),
-        "bsc": ("bsc-main", "BNB"),
-        "opti": (
-            "optimism-main",
-            "ETH",
-        ),
-    }
-    if chain in chain_mappings:
-        chain, chain_native = chain_mappings[chain]
-    url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
-    response = requests.get(
-        url,
-        headers={
-            "accept": "application/json",
-            "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
-        },
-    )
-    data = response.json()
-    exchange_data = data.get("exchange_data")
-    if exchange_data is not None:
-        for item in exchange_data:
-            stats = item.get("stats")
-            if stats is not None:
-                floor_price = stats.get("floor_price")
-                if floor_price is not None:
-                    return floor_price
-        return "N/A"
-    else:
+    try:
+        chain_mappings = {
+            "eth": ("eth-main", "ETH"),
+            "arb": ("arbitrum-main", "ETH"),
+            "poly": ("poly-main", "MATIC"),
+            "bsc": ("bsc-main", "BNB"),
+            "opti": (
+                "optimism-main",
+                "ETH",
+            ),
+        }
+        if chain in chain_mappings:
+            chain, chain_native = chain_mappings[chain]
+        url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
+        response = requests.get(
+            url,
+            headers={
+                "accept": "application/json",
+                "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
+            },
+        )
+        data = response.json()
+        exchange_data = data.get("exchange_data")
+        if exchange_data is not None:
+            for item in exchange_data:
+                stats = item.get("stats")
+                if stats is not None:
+                    floor_price = stats.get("floor_price")
+                    if floor_price is not None:
+                        return floor_price
+            return "N/A"
+        else:
+            return "N/A"
+    except Exception as e:
         return "N/A"
 
 
 # OTHER
-def get_news(topic):
-    url = "https://api.newscatcherapi.com/v2/search"
-    querystring = {
-    "q": f'"{topic}"',
-    "lang": "en",
-    "sort_by": "relevancy",
-    "page": "1"
-}
-    headers = {
-        "x-api-key": os.getenv("NEWS_API")
-    }
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    data = response.json()
-
-    if "articles" in data and len(data["articles"]) > 0:
-        first_article = data["articles"][0]
-        title = first_article.get("title", "N/A")
-        link = first_article.get("link", "N/A")
-        summary = first_article.get("summary", "N/A")
-        published_date = first_article.get("published_date", "N/A")
-
-        result = f"*{title}*\n{published_date}\n{summary}\n\n{link}"
-        return result
-    else:
-        return "No articles found."
-
-
-def get_price_change(address):
-    url = "https://api.defined.fi"
-
-    headers = {
-        "content_type": "application/json",
-        "x-api-key": os.getenv("DEFINED_API_KEY")
-    }
-
-    current_timestamp = int(datetime.now().timestamp()) - 300
-    one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
-    twenty_four_hours_ago_timestamp = int((datetime.now() - timedelta(hours=24)).timestamp())
-    seven_days_ago_timestamp = int((datetime.now() - timedelta(days=7)).timestamp())
-
-    pricechange = f"""query {{
-        getTokenPrices(
-            inputs: [
-                {{ 
-                    address: "{address}"
-                    networkId: 1
-                    timestamp: {current_timestamp}
-                }}
-                {{ 
-                    address: "{address}"
-                    networkId: 1
-                    timestamp: {one_hour_ago_timestamp}
-                }}
-                {{ 
-                    address: "{address}"
-                    networkId: 1
-                    timestamp: {twenty_four_hours_ago_timestamp}
-                }}
-                {{ 
-                    address: "{address}"
-                    networkId: 1
-                    timestamp: {seven_days_ago_timestamp}
-                }}
-            ]
-        ) {{
-            priceUsd
-        }}
-    }}"""
-
-    response = requests.post(url, headers=headers, json={"query": pricechange})
-    data = response.json()
-    current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
-    one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
-    twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
-    seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
-
-    one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
-    twenty_four_hours_change = round(((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
-    seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
-
-    result = f"1H Change: {one_hour_change}%\n24H Change {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
-
-    return result
 
 
 def get_fact():
@@ -500,6 +423,64 @@ def get_os_nft(slug):
     return response.json()
 
 
+def get_price_change(address):
+    url = "https://api.defined.fi"
+
+    headers = {
+        "content_type": "application/json",
+        "x-api-key": os.getenv("DEFINED_API_KEY")
+    }
+
+    current_timestamp = int(datetime.now().timestamp()) - 300
+    one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
+    twenty_four_hours_ago_timestamp = int((datetime.now() - timedelta(hours=24)).timestamp())
+    seven_days_ago_timestamp = int((datetime.now() - timedelta(days=7)).timestamp())
+
+    pricechange = f"""query {{
+        getTokenPrices(
+            inputs: [
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {current_timestamp}
+                }}
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {one_hour_ago_timestamp}
+                }}
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {twenty_four_hours_ago_timestamp}
+                }}
+                {{ 
+                    address: "{address}"
+                    networkId: 1
+                    timestamp: {seven_days_ago_timestamp}
+                }}
+            ]
+        ) {{
+            priceUsd
+        }}
+    }}"""
+
+    response = requests.post(url, headers=headers, json={"query": pricechange})
+    data = response.json()
+    current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
+    one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
+    twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
+    seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
+
+    one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
+    twenty_four_hours_change = round(((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
+    seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
+
+    result = f"1H Change: {one_hour_change}%\n24H Change {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
+
+    return result
+
+
 def get_quote():
     response = requests.get("https://type.fit/api/quotes")
     data = response.json()
@@ -514,6 +495,17 @@ def get_quote():
 
 def get_random_pioneer_number():
     return f"{random.randint(1, 4480)}".zfill(4)
+
+
+def read_csv_column(filename, column_index):
+    with open(filename, "r") as file:
+        csv_reader = csv.reader(file)
+        header = next(csv_reader)
+        column_data = []
+        for row in csv_reader:
+            if len(row) > column_index and row[column_index] != "":
+                column_data.append(row[column_index])
+    return column_data
 
 
 def get_scan(token: str, chain: str) -> dict:
@@ -583,18 +575,9 @@ def get_today():
     return response.json()
 
 
-def read_csv_column(filename, column_index):
-    with open(filename, "r") as file:
-        csv_reader = csv.reader(file)
-        header = next(csv_reader)
-        column_data = []
-        for row in csv_reader:
-            if len(row) > column_index and row[column_index] != "":
-                column_data.append(row[column_index])
-    return column_data
-
-
 # TWITTER
+
+
 auth = tweepy.OAuthHandler(os.getenv("TWITTER_API"), os.getenv("TWITTER_API_SECRET"))
 auth.set_access_token(os.getenv("TWITTER_ACCESS"), os.getenv("TWITTER_ACCESS_SECRET"))
 twitter = tweepy.API(auth)

@@ -32,9 +32,11 @@ load_dotenv()
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
+
 # WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return
+
 
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1934,9 +1936,10 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     }
     if chain in chain_mappings:
         chain_name, chain_os, chain_native = chain_mappings[chain]
-    chain_prices = nfts.prices.get(chain)
-    chain_counts = nfts.counts.get(chain)
-    chain_floors = nfts.floors.get(chain)
+    chain_prices = nfts.nft_prices()
+    chain_counts = nfts.nft_counts()
+    chain_floors = nfts.nft_floors()
+    chain_discount = nfts.nft_discount()
 
     eco_price = chain_prices.get("eco")
     liq_price = chain_prices.get("liq")
@@ -1956,11 +1959,11 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     borrow_count = chain_counts.get("borrow", 0)
     magister_count = chain_counts.get("magister", 0)
 
-    eco_discount = nfts.discount.get("eco", {})
-    liq_discount = nfts.discount.get("liq", {})
-    dex_discount = nfts.discount.get("dex", {})
-    borrow_discount = nfts.discount.get("borrow", {})
-    magister_discount = nfts.discount.get("magister", {})
+    eco_discount = chain_discount.get("eco", {})
+    liq_discount = chain_discount.get("liq", {})
+    dex_discount = chain_discount.get("dex", {})
+    borrow_discount = chain_discount.get("borrow", {})
+    magister_discount = chain_discount.get("magister", {})
 
     eco_discount_text = "\n".join(
         [
