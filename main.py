@@ -26,7 +26,6 @@ clicked_buttons = set()
 first_user_clicked = False
 first_user_info = ""
 click_counts = {}
-random_message_job = None
 
 
 async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -140,10 +139,10 @@ async def clicks(update, context):
 
         application.job_queue.run_once(
             send_click_message,
-            random.randint(1, 21600), 
+            times.button_time, 
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Message",
-            data=random.randint(1, 21600), 
+            data=times.button_time, 
         )
 
 
@@ -194,20 +193,6 @@ def clicks_save(click_counts):
         except Exception as e:
             sentry_sdk.capture_exception(f"GitHub Push error: {e}")
             
-
-async def clicks_leaderboard(update: Update, context: CallbackContext):
-    click_counts = clicks_get()
-    sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
-    formatted_click_counts = "\n".join(
-        f"{user}: {count}" for user, count in sorted_click_counts
-    )
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, 
-        text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
-             f"{formatted_click_counts}",
-        parse_mode="Markdown"
-    )
-
 
 def scanner_start():
     scripts = [
@@ -315,6 +300,7 @@ if __name__ == "__main__":
         CommandHandler(["ca", "contract", "contracts"], commands.contracts)
     )
     application.add_handler(CommandHandler("compare", commands.compare))
+
     application.add_handler(CommandHandler("count", commands.count))
     application.add_handler(
         CommandHandler([f"{times.countdown_command}"], commands.countdown)
@@ -346,7 +332,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("image", commands.image))
     application.add_handler(CommandHandler("joke", commands.joke))
     application.add_handler(CommandHandler("launch", commands.launch))
-    application.add_handler(CommandHandler("leaderboard", clicks_leaderboard))
+    application.add_handler(CommandHandler("leaderboard", commands.leaderboard))
     application.add_handler(CommandHandler(["links", "socials"], commands.links))
     application.add_handler(CommandHandler("liquidate", commands.liquidate))
     application.add_handler(CommandHandler("liquidity", commands.liquidity))
@@ -412,26 +398,27 @@ if __name__ == "__main__":
     job_queue = application.job_queue
     application.job_queue.run_repeating(
         send_endorsement_message,
-        times.endorse_time * 60 * 60,
+        times.endorse_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Endorsement Message",
-        data=times.endorse_time * 60 * 60,
+        data=times.endorse_time
     )
+    
     application.job_queue.run_repeating(
         send_referral_message,
-        times.referral_time * 60 * 60,
+        times.referral_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         first=10800,
         name="Referral Message",
-        data=times.referral_time * 60 * 60,
+        data=times.referral_time,
     )
 
     application.job_queue.run_once(
         send_click_message,
-        random.randint(1, 21600),
+        times.button_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
-        data=random.randint(1, 21600),
+        data=times.button_time,
     )
     scanner_start()
 

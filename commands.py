@@ -21,7 +21,7 @@ from eth_utils import to_checksum_address
 from web3.exceptions import Web3Exception
 from PIL import Image, ImageDraw, ImageFont
 
-
+import main
 from api import dune
 from api import index as api
 from media import index as media
@@ -1162,6 +1162,19 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
             ]
         ),
+    )
+
+
+async def leaderboard(update: Update, context: CallbackContext):
+    click_counts = main.clicks_get()
+    sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
+    formatted_click_counts = "\n".join(
+        f"{user}: {count}" for user, count in sorted_click_counts
+    )
+    await update.message.reply_text(
+        text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
+             f"{formatted_click_counts}",
+        parse_mode="Markdown"
     )
 
 
