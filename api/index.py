@@ -354,6 +354,33 @@ def get_nft_floor(nft, chain):
 
 
 # OTHER
+def get_news(topic):
+    url = "https://api.newscatcherapi.com/v2/search"
+    querystring = {
+    "q": f'"{topic}"',
+    "lang": "en",
+    "sort_by": "relevancy",
+    "page": "1"
+}
+    headers = {
+        "x-api-key": os.getenv("NEWS_API")
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    data = response.json()
+
+    if "articles" in data and len(data["articles"]) > 0:
+        first_article = data["articles"][0]
+        title = first_article.get("title", "N/A")
+        link = first_article.get("link", "N/A")
+        summary = first_article.get("summary", "N/A")
+        published_date = first_article.get("published_date", "N/A")
+
+        result = f"*{title}*\n{published_date}\n{summary}\n\n{link}"
+        return result
+    else:
+        return "No articles found."
+
+
 def get_price_change(address):
     url = "https://api.defined.fi"
 
