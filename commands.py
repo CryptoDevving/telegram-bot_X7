@@ -3685,6 +3685,8 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         + x7104_price
         + x7105_price
     )
+    pioneers = api.get_pioneer_holdings(wallet)
+    maxis = api.get_maxi_holdings(wallet)
     im1 = Image.open((random.choice(media.blackhole)))
     im2 = Image.open(chain_logo)
     im1.paste(im2, (720, 20), im2)
@@ -3701,7 +3703,9 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
         f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
         f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
-        f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n\n"
+        f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
+        f"{pioneers} Pioneer NFTs\n"
+        f"{maxis} Maxi NFTs\n\n"
         f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
         f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
         font=myfont,
@@ -3722,7 +3726,9 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
         f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
         f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
-        f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n\n"
+        f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
+        f"{pioneers} Pioneer NFTs\n"
+        f"{maxis} Maxi NFTs\n\n"
         f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",

@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 import tweepy
 import requests
+from data import ca
 from moralis import evm_api
 from dotenv import load_dotenv
 from pycoingecko import CoinGeckoAPI
@@ -240,6 +241,22 @@ def get_nft_holder_list(nft, chain):
         params={"chain": chain, "format": "decimal", "address": nft},
     )
 
+def get_pioneer_holdings(wallet):
+    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+    total_count = response_data.get("totalCount")
+    return total_count
+
+
+def get_maxi_holdings(wallet):
+    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+    total_count = response_data.get("totalCount")
+    return total_count
 
 def get_price(token, chain):
     chain_mappings = {
