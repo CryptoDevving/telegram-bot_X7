@@ -43,6 +43,7 @@ def nft_prices():
         },
     }
 
+
 def nft_floors():
     return {
         "eth": {
@@ -82,6 +83,7 @@ def nft_floors():
         },
     }
 
+
 def nft_counts():
     return {
         "eth": {
@@ -120,6 +122,7 @@ def nft_counts():
             "magister": int(api.get_nft_holder_count(ca.magister, "bsc")) or 0,
         },
     }
+
 
 def nft_discount():
     return {

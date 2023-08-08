@@ -1924,124 +1924,126 @@ async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chain = " ".join(context.args).lower()
-    if chain == "":
-        chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", "", "ETH"),
-        "bsc": ("(BSC)", "-binance", "BNB"),
-        "poly": ("(POLYGON)", "-polygon", "MATIC"),
-        "opti": ("(OPTIMISM)", "-optimism", "ETH"),
-        "arb": ("(ARB)", "-arbitrum", "ETH"),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_os, chain_native = chain_mappings[chain]
-    chain_prices = nfts.nft_prices()
-    chain_counts = nfts.nft_counts()
-    chain_floors = nfts.nft_floors()
-    chain_discount = nfts.nft_discount()
+    try:
+        chain = " ".join(context.args).lower()
+        if chain == "":
+            chain = "eth"
+        chain_mappings = {
+            "eth": ("(ETH)", "", "ETH"),
+            "bsc": ("(BSC)", "-binance", "BNB"),
+            "poly": ("(POLYGON)", "-polygon", "MATIC"),
+            "opti": ("(OPTIMISM)", "-optimism", "ETH"),
+            "arb": ("(ARB)", "-arbitrum", "ETH"),
+        }
+        if chain in chain_mappings:
+            chain_name, chain_os, chain_native = chain_mappings[chain]
+        chain_prices = nfts.nft_prices()
+        chain_counts = nfts.nft_counts()
+        chain_floors = nfts.nft_floors()
+        chain_discount = nfts.nft_discount()
 
-    eco_price = chain_prices.get("eco")
-    liq_price = chain_prices.get("liq")
-    dex_price = chain_prices.get("dex")
-    borrow_price = chain_prices.get("borrow")
-    magister_price = chain_prices.get("magister")
+        eco_price = chain_prices.get(chain, {}).get("eco")
+        liq_price = chain_prices.get(chain, {}).get("liq")
+        dex_price = chain_prices.get(chain, {}).get("dex")
+        borrow_price = chain_prices.get(chain, {}).get("borrow")
+        magister_price = chain_prices.get(chain, {}).get("magister")
 
-    eco_floor = chain_floors.get("eco", 0)
-    liq_floor = chain_floors.get("liq", 0)
-    dex_floor = chain_floors.get("dex", 0)
-    borrow_floor = chain_floors.get("borrow", 0)
-    magister_floor = chain_floors.get("magister", 0)
+        eco_floor = chain_floors.get("eco", "N/A")
+        liq_floor = chain_floors.get("liq", "N/A")
+        dex_floor = chain_floors.get("dex", "N/A")
+        borrow_floor = chain_floors.get("borrow", "N/A")
+        magister_floor = chain_floors.get("magister", "N/A")
 
-    eco_count = chain_counts.get("eco", 0)
-    liq_count = chain_counts.get("liq", 0)
-    dex_count = chain_counts.get("dex", 0)
-    borrow_count = chain_counts.get("borrow", 0)
-    magister_count = chain_counts.get("magister", 0)
+        eco_count = chain_counts.get("eco", 0)
+        liq_count = chain_counts.get("liq", 0)
+        dex_count = chain_counts.get("dex", 0)
+        borrow_count = chain_counts.get("borrow", 0)
+        magister_count = chain_counts.get("magister", 0)
 
-    eco_discount = chain_discount.get("eco", {})
-    liq_discount = chain_discount.get("liq", {})
-    dex_discount = chain_discount.get("dex", {})
-    borrow_discount = chain_discount.get("borrow", {})
-    magister_discount = chain_discount.get("magister", {})
+        eco_discount = chain_discount.get("eco", {})
+        liq_discount = chain_discount.get("liq", {})
+        dex_discount = chain_discount.get("dex", {})
+        borrow_discount = chain_discount.get("borrow", {})
+        magister_discount = chain_discount.get("magister", {})
 
-    eco_discount_text = "\n".join(
-        [
-            f"> {discount}% discount on {token}"
-            for token, discount in eco_discount.items()
-        ]
-    )
-    liq_discount_text = "\n".join(
-        [
-            f"> {discount}% discount on {token}"
-            for token, discount in liq_discount.items()
-        ]
-    )
-    dex_discount_text = "\n".join([f"> {discount}" for discount in dex_discount])
-    borrow_discount_text = "\n".join([f"> {discount}" for discount in borrow_discount])
-    magister_discount_text = "\n".join(
-        [
-            f"> {discount}% discount on {token}"
-            for token, discount in magister_discount.items()
-        ]
-    )
-
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*NFT Info {chain_name}*\nUse `/nft [chain-name]` for other chains\n\n"
-        f"*Ecosystem Maxi*\n{eco_price}\n"
-        f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native}\n"
-        f"{eco_discount_text}\n\n"
-        f"*Liquidity Maxi*\n{liq_price}\n"
-        f"Available - {250 - liq_count}\nFloor price - {liq_floor} {chain_native}\n"
-        f"{liq_discount_text}\n\n"
-        f"*Dex Maxi*\n{dex_price}\n"
-        f"Available - {150 - dex_count}\nFloor price - {dex_floor} {chain_native}\n"
-        f"{dex_discount_text}\n\n"
-        f"*Borrow Maxi*\n{borrow_price}\n"
-        f"Available - {100 - borrow_count}\nFloor price - {borrow_floor} {chain_native}\n"
-        f"{borrow_discount_text}\n\n"
-        f"*Magister*\n{magister_price}\n"
-        f"Available - {49 - magister_count}\nFloor price - {magister_floor} {chain_native}\n"
-        f"{magister_discount_text}\n",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
+        eco_discount_text = "\n".join(
             [
-                [
-                    InlineKeyboardButton(
-                        text="Mint Here",
-                        url=f"https://x7.finance/x/nft/mint",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="OS - Ecosystem Maxi", url=f"{url.os_eco}{chain_os}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="OS - Liquidity Maxi", url=f"{url.os_liq}{chain_os}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="OS - DEX Maxi", url=f"{url.os_dex}{chain_os}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="OS - Borrowing Maxi", url=f"{url.os_borrow}{chain_os}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="OS - Magister", url=f"{url.os_magister}{chain_os}"
-                    )
-                ],
+                f"> {discount}% discount on {token}"
+                for token, discount in eco_discount.items()
             ]
-        ),
-    )
+        )
+        liq_discount_text = "\n".join(
+            [
+                f"> {discount}% discount on {token}"
+                for token, discount in liq_discount.items()
+            ]
+        )
+        dex_discount_text = "\n".join([f"> {discount}" for discount in dex_discount])
+        borrow_discount_text = "\n".join([f"> {discount}" for discount in borrow_discount])
+        magister_discount_text = "\n".join(
+            [
+                f"> {discount}% discount on {token}"
+                for token, discount in magister_discount.items()
+            ]
+        )
 
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*NFT Info {chain_name}*\nUse `/nft [chain-name]` for other chains\n\n"
+            f"*Ecosystem Maxi*\n{eco_price}\n"
+            f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native}\n"
+            f"{eco_discount_text}\n\n"
+            f"*Liquidity Maxi*\n{liq_price}\n"
+            f"Available - {250 - liq_count}\nFloor price - {liq_floor} {chain_native}\n"
+            f"{liq_discount_text}\n\n"
+            f"*Dex Maxi*\n{dex_price}\n"
+            f"Available - {150 - dex_count}\nFloor price - {dex_floor} {chain_native}\n"
+            f"{dex_discount_text}\n\n"
+            f"*Borrow Maxi*\n{borrow_price}\n"
+            f"Available - {100 - borrow_count}\nFloor price - {borrow_floor} {chain_native}\n"
+            f"{borrow_discount_text}\n\n"
+            f"*Magister*\n{magister_price}\n"
+            f"Available - {49 - magister_count}\nFloor price - {magister_floor} {chain_native}\n"
+            f"{magister_discount_text}\n",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Mint Here",
+                            url=f"https://x7.finance/x/nft/mint",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="OS - Ecosystem Maxi", url=f"{url.os_eco}{chain_os}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="OS - Liquidity Maxi", url=f"{url.os_liq}{chain_os}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="OS - DEX Maxi", url=f"{url.os_dex}{chain_os}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="OS - Borrowing Maxi", url=f"{url.os_borrow}{chain_os}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="OS - Magister", url=f"{url.os_magister}{chain_os}"
+                        )
+                    ],
+                ]
+            ),
+        )
+    except Exception as e:
+        print(e)
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     now = datetime.utcnow()

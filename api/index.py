@@ -318,7 +318,7 @@ def get_nft_holder_count(nft, chain):
         data = response.json()
         return data.get("total_tokens", "0")
     except Exception as e:
-        return "N/A"
+        return 0
 
 
 def get_nft_floor(nft, chain):
@@ -374,47 +374,6 @@ def get_holders(token):
     response = requests.get(url)
     data = response.json()
     return data.get("holdersCount")
-
-
-def get_nft_prices(nft):
-    nft_prices = {
-        "eth": [
-            nft.eco_price_eth,
-            nft.liq_price_eth,
-            nft.borrow_price_eth,
-            nft.dex_price_eth,
-            nft.magister_price_eth,
-        ],
-        "bsc": [
-            nft.eco_price_bsc,
-            nft.liq_price_bsc,
-            nft.borrow_price_bsc,
-            nft.dex_price_bsc,
-            nft.magister_price_bsc,
-        ],
-        "poly": [
-            nft.eco_price_poly,
-            nft.liq_price_poly,
-            nft.borrow_price_poly,
-            nft.dex_price_poly,
-            nft.magister_price_poly,
-        ],
-        "opti": [
-            nft.eco_price_opti,
-            nft.liq_price_opti,
-            nft.borrow_price_opti,
-            nft.dex_price_opti,
-            nft.magister_price_opti,
-        ],
-        "arb": [
-            nft.eco_price_arb,
-            nft.liq_price_arb,
-            nft.borrow_price_arb,
-            nft.dex_price_arb,
-            nft.magister_price_arb,
-        ],
-    }
-    return nft_prices
 
 
 def get_os_nft(slug):
