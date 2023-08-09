@@ -11,4 +11,3 @@ referral_time = 21600
 countdown = datetime(2023, 9, 7, 12, 00, 00)
 countdown_title = "X7 Finance launch"
 countdown_desc = "https://app.x7.finance"
-countdown_command = "countdown"
