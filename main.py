@@ -148,15 +148,25 @@ async def clicks(update, context):
 
 
 def clicks_get():
-    click_counts = {}
     with open("data/clicks.csv", mode="r") as file:
+        if os.path.getsize("data/clicks.csv") == 0:
+            return {}
         click_counts = json.load(file)
     return click_counts
 
 
 def clicks_save(click_counts):
+    existing_clicks = clicks_get()
+
+    for user, clicks in click_counts.items():
+        if user in existing_clicks:
+            existing_clicks[user] += clicks
+        else:
+            existing_clicks[user] = clicks
+
     with open("data/clicks.csv", mode="w", newline="") as file:
-        json.dump(click_counts, file)
+        json.dump(existing_clicks, file)
+
 
     headers = {
         'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
