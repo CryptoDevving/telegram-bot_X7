@@ -2131,8 +2131,12 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     pioneer_id = " ".join(context.args)
     data = api.get_os_nft("/x7-pioneer")
     floor = api.get_nft_floor(ca.pioneer, "eth")
-    floor_round = round(floor, 2)
-    floor_dollar = floor * float(api.get_native_price("eth")) / 1**18
+    if floor != "N/A":
+        floor_round = round(floor, 2)
+        floor_dollar = floor * float(api.get_native_price("eth")) / 1**18
+    else:
+        floor_round = "N/A"
+        floor_dollar = 0 
     traits = data["collection"]["traits"]["Transfer Lock Status"]["unlocked"]
     sales = data["collection"]["stats"]["total_sales"]
     owners = data["collection"]["stats"]["num_owners"]
