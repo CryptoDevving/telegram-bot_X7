@@ -2,7 +2,7 @@ import random
 from datetime import datetime
 
 # AUTO TIMES SECONDS
-button_time = random.randint(1, 3600)
+button_time = random.randint(300, 10800)
 endorse_time = 21600
 referral_time = 21600
 

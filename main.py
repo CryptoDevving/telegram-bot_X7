@@ -1,6 +1,7 @@
 import os
 import csv
 import sys
+import json
 import random
 import base64
 import requests
@@ -149,19 +150,13 @@ async def clicks(update, context):
 def clicks_get():
     click_counts = {}
     with open("data/clicks.csv", mode="r") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if len(row) == 1:
-                user_info, count = row[0].split(": ")
-                click_counts[user_info] = int(count)
+        click_counts = json.load(file)
     return click_counts
 
 
 def clicks_save(click_counts):
     with open("data/clicks.csv", mode="w", newline="") as file:
-        writer = csv.writer(file)
-        for user_info, count in click_counts.items():
-            writer.writerow([f"{user_info}: {count}"])
+        json.dump(click_counts, file)
 
     headers = {
         'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
@@ -185,7 +180,7 @@ def clicks_save(click_counts):
                 'https://api.github.com/repos/x7finance/telegram-bot/contents/data/clicks.csv',
                 headers=headers,
                 json={
-                    'message': 'auto:Update clicks log',
+                    'message': 'auto: update clicks log',
                     'content': encoded_content,
                     'sha': sha
                 }
