@@ -148,16 +148,21 @@ async def clicks(update, context):
 
 
 def clicks_get():
-    with open("data/clicks.csv", mode="r") as file:
-        if os.path.getsize("data/clicks.csv") == 0:
-            return {}
-        click_counts = json.load(file)
+    click_counts = {}
+    try:
+        with open("data/clicks.csv", mode="r") as file:
+            csv_reader = csv.reader(file)
+            header = next(csv_reader)  # Read and discard the header
+            for row in csv_reader:
+                user, clicks = row
+                click_counts[user] = int(clicks)
+    except FileNotFoundError:
+        pass  # Return an empty dictionary if the file doesn't exist
     return click_counts
 
 
 def clicks_save(click_counts):
     existing_clicks = clicks_get()
-
     for user, clicks in click_counts.items():
         if user in existing_clicks:
             existing_clicks[user] += clicks
@@ -165,13 +170,14 @@ def clicks_save(click_counts):
             existing_clicks[user] = clicks
 
     with open("data/clicks.csv", mode="w", newline="") as file:
-        json.dump(existing_clicks, file)
-
+        csv_writer = csv.writer(file)
+        csv_writer.writerow(["User", "Clicks"])  # Writing header
+        for user, clicks in existing_clicks.items():
+            csv_writer.writerow([user, clicks])
 
     headers = {
         'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
     }
-
     response = requests.get(
         'https://api.github.com/repos/x7finance/telegram-bot/contents/data/clicks.csv',
         headers=headers
