@@ -288,7 +288,10 @@ async def buy_bots(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         text="Arbitrum", url="https://t.me/x7arbbuybots"
                     )
                 ],
-                [InlineKeyboardButton(text="BSC", url="https://t.me/x7bscbuybots")],
+                [   InlineKeyboardButton(
+                        text="BSC", url="https://t.me/x7bscbuybots"
+                    )
+                ],
                 [
                     InlineKeyboardButton(
                         text="Optimism", url="https://t.me/x7optibuybots"
@@ -351,10 +354,14 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
                 [
                     InlineKeyboardButton(
-                        text="Xchange Alerts", url="https://t.me/x7_alerts)"
+                        text="Xchange Alerts", url="https://t.me/x7_alerts"
                     )
                 ],
-                [InlineKeyboardButton(text="Media", url="https://t.me/X7MediaChannel")],
+                [
+                    InlineKeyboardButton(
+                        text="Media", url="https://t.me/X7MediaChannel"
+                    )   
+                ],
                 [
                     InlineKeyboardButton(
                         text="Research Notes", url="https://t.me/X7m105_Research"
@@ -764,7 +771,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         hub = api.get_internal_tx(hub_address, chain)
         hub_filter = [d for d in hub["result"] if d["from"] in f"{hub_address}".lower()]
         value_raw = int(hub_filter[0]["value"]) / 10**18
-        value = f"{value_raw}"
+        value = round(value_raw, 3) 
         dollar = float(value) * float(api.get_native_price(chain_native)) / 1**18
         time = datetime.utcfromtimestamp(int(hub_filter[0]["timeStamp"]))
         duration = now - time
@@ -801,11 +808,11 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Liquidity Hubs {chain_name}*\nUse `/ebb [chain-name]` for other chains\n\n"
-        f'Last X7R Buy Back: {x7r_time}\n{x7r_value[:5]} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n'
+        f'Last X7R Buy Back: {x7r_time}\n{x7r_value} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n'
         f"{x7r_days} days, {x7r_hours} hours and {x7r_minutes} minutes ago\n\n"
-        f'Last X7DAO Buy Back: {x7dao_time}\n{x7dao_value[:5]} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_dollar)})\n'
+        f'Last X7DAO Buy Back: {x7dao_time}\n{x7dao_value} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_dollar)})\n'
         f"{x7dao_days} days, {x7dao_hours} hours and {x7dao_minutes} minutes ago\n\n"
-        f'Last X7100 Buy Back: {x7100_time}\n{x7100_value[:5]} {chain_native.upper()} (${"{:0,.0f}".format(x7100_dollar)})\n'
+        f'Last X7100 Buy Back: {x7100_time}\n{x7100_value} {chain_native.upper()} (${"{:0,.0f}".format(x7100_dollar)})\n'
         f"{x7100_days} days, {x7100_hours} hours and {x7100_minutes} minutes ago\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -1256,7 +1263,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
             url.ether_address,
             Web3(
                 Web3.HTTPProvider(
-                    f"https://mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}",
+                    f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
                 )
             ),
         ),
@@ -1318,7 +1325,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     output = "\n".join([liquidatable_loans_text] + results)
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance Loan Liquidations({chain_name}*\nfor other chains use `/liquidate [chain-name]`\n\n{output}\n\n{api.get_quote()}",
+        caption=f"*X7 Finance Loan Liquidations {chain_name}*\nfor other chains use `/liquidate [chain-name]`\n\n{output}\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -1973,126 +1980,124 @@ async def mods(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        chain = " ".join(context.args).lower()
-        if chain == "":
-            chain = "eth"
-        chain_mappings = {
-            "eth": ("(ETH)", "", "ETH"),
-            "bsc": ("(BSC)", "-binance", "BNB"),
-            "poly": ("(POLYGON)", "-polygon", "MATIC"),
-            "opti": ("(OPTIMISM)", "-optimism", "ETH"),
-            "arb": ("(ARB)", "-arbitrum", "ETH"),
-        }
-        if chain in chain_mappings:
-            chain_name, chain_os, chain_native = chain_mappings[chain]
-        chain_prices = nfts.nft_prices()
-        chain_counts = nfts.nft_counts()
-        chain_floors = nfts.nft_floors()
-        chain_discount = nfts.nft_discount()
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
+    chain_mappings = {
+        "eth": ("(ETH)", "", "ETH"),
+        "bsc": ("(BSC)", "-binance", "BNB"),
+        "poly": ("(POLYGON)", "-polygon", "MATIC"),
+        "opti": ("(OPTIMISM)", "-optimism", "ETH"),
+        "arb": ("(ARB)", "-arbitrum", "ETH"),
+    }
+    if chain in chain_mappings:
+        chain_name, chain_os, chain_native = chain_mappings[chain]
+    chain_prices = nfts.nft_prices()
+    chain_counts = nfts.nft_counts()
+    chain_floors = nfts.nft_floors()
+    chain_discount = nfts.nft_discount()
 
-        eco_price = chain_prices.get(chain, {}).get("eco")
-        liq_price = chain_prices.get(chain, {}).get("liq")
-        dex_price = chain_prices.get(chain, {}).get("dex")
-        borrow_price = chain_prices.get(chain, {}).get("borrow")
-        magister_price = chain_prices.get(chain, {}).get("magister")
+    eco_price = chain_prices.get(chain, {}).get("eco")
+    liq_price = chain_prices.get(chain, {}).get("liq")
+    dex_price = chain_prices.get(chain, {}).get("dex")
+    borrow_price = chain_prices.get(chain, {}).get("borrow")
+    magister_price = chain_prices.get(chain, {}).get("magister")
 
-        eco_floor = chain_floors.get("eco", "N/A")
-        liq_floor = chain_floors.get("liq", "N/A")
-        dex_floor = chain_floors.get("dex", "N/A")
-        borrow_floor = chain_floors.get("borrow", "N/A")
-        magister_floor = chain_floors.get("magister", "N/A")
+    eco_floor = chain_floors.get("eco", "N/A")
+    liq_floor = chain_floors.get("liq", "N/A")
+    dex_floor = chain_floors.get("dex", "N/A")
+    borrow_floor = chain_floors.get("borrow", "N/A")
+    magister_floor = chain_floors.get("magister", "N/A")
 
-        eco_count = chain_counts.get("eco", 0)
-        liq_count = chain_counts.get("liq", 0)
-        dex_count = chain_counts.get("dex", 0)
-        borrow_count = chain_counts.get("borrow", 0)
-        magister_count = chain_counts.get("magister", 0)
+    eco_count = chain_counts.get("eco", 0)
+    liq_count = chain_counts.get("liq", 0)
+    dex_count = chain_counts.get("dex", 0)
+    borrow_count = chain_counts.get("borrow", 0)
+    magister_count = chain_counts.get("magister", 0)
 
-        eco_discount = chain_discount.get("eco", {})
-        liq_discount = chain_discount.get("liq", {})
-        dex_discount = chain_discount.get("dex", {})
-        borrow_discount = chain_discount.get("borrow", {})
-        magister_discount = chain_discount.get("magister", {})
+    eco_discount = chain_discount.get("eco", {})
+    liq_discount = chain_discount.get("liq", {})
+    dex_discount = chain_discount.get("dex", {})
+    borrow_discount = chain_discount.get("borrow", {})
+    magister_discount = chain_discount.get("magister", {})
 
-        eco_discount_text = "\n".join(
+    eco_discount_text = "\n".join(
+        [
+            f"> {discount}% discount on {token}"
+            for token, discount in eco_discount.items()
+        ]
+    )
+    liq_discount_text = "\n".join(
+        [
+            f"> {discount}% discount on {token}"
+            for token, discount in liq_discount.items()
+        ]
+    )
+    dex_discount_text = "\n".join([f"> {discount}" for discount in dex_discount])
+    borrow_discount_text = "\n".join([f"> {discount}" for discount in borrow_discount])
+    magister_discount_text = "\n".join(
+        [
+            f"> {discount}% discount on {token}"
+            for token, discount in magister_discount.items()
+        ]
+    )
+
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*NFT Info {chain_name}*\nUse `/nft [chain-name]` for other chains\n\n"
+        f"*Ecosystem Maxi*\n{eco_price}\n"
+        f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native}\n"
+        f"{eco_discount_text}\n\n"
+        f"*Liquidity Maxi*\n{liq_price}\n"
+        f"Available - {250 - liq_count}\nFloor price - {liq_floor} {chain_native}\n"
+        f"{liq_discount_text}\n\n"
+        f"*Dex Maxi*\n{dex_price}\n"
+        f"Available - {150 - dex_count}\nFloor price - {dex_floor} {chain_native}\n"
+        f"{dex_discount_text}\n\n"
+        f"*Borrow Maxi*\n{borrow_price}\n"
+        f"Available - {100 - borrow_count}\nFloor price - {borrow_floor} {chain_native}\n"
+        f"{borrow_discount_text}\n\n"
+        f"*Magister*\n{magister_price}\n"
+        f"Available - {49 - magister_count}\nFloor price - {magister_floor} {chain_native}\n"
+        f"{magister_discount_text}\n",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
             [
-                f"> {discount}% discount on {token}"
-                for token, discount in eco_discount.items()
-            ]
-        )
-        liq_discount_text = "\n".join(
-            [
-                f"> {discount}% discount on {token}"
-                for token, discount in liq_discount.items()
-            ]
-        )
-        dex_discount_text = "\n".join([f"> {discount}" for discount in dex_discount])
-        borrow_discount_text = "\n".join([f"> {discount}" for discount in borrow_discount])
-        magister_discount_text = "\n".join(
-            [
-                f"> {discount}% discount on {token}"
-                for token, discount in magister_discount.items()
-            ]
-        )
-
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*NFT Info {chain_name}*\nUse `/nft [chain-name]` for other chains\n\n"
-            f"*Ecosystem Maxi*\n{eco_price}\n"
-            f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native}\n"
-            f"{eco_discount_text}\n\n"
-            f"*Liquidity Maxi*\n{liq_price}\n"
-            f"Available - {250 - liq_count}\nFloor price - {liq_floor} {chain_native}\n"
-            f"{liq_discount_text}\n\n"
-            f"*Dex Maxi*\n{dex_price}\n"
-            f"Available - {150 - dex_count}\nFloor price - {dex_floor} {chain_native}\n"
-            f"{dex_discount_text}\n\n"
-            f"*Borrow Maxi*\n{borrow_price}\n"
-            f"Available - {100 - borrow_count}\nFloor price - {borrow_floor} {chain_native}\n"
-            f"{borrow_discount_text}\n\n"
-            f"*Magister*\n{magister_price}\n"
-            f"Available - {49 - magister_count}\nFloor price - {magister_floor} {chain_native}\n"
-            f"{magister_discount_text}\n",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
                 [
-                    [
-                        InlineKeyboardButton(
-                            text="Mint Here",
-                            url=f"https://x7.finance/x/nft/mint",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="OS - Ecosystem Maxi", url=f"{url.os_eco}{chain_os}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="OS - Liquidity Maxi", url=f"{url.os_liq}{chain_os}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="OS - DEX Maxi", url=f"{url.os_dex}{chain_os}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="OS - Borrowing Maxi", url=f"{url.os_borrow}{chain_os}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="OS - Magister", url=f"{url.os_magister}{chain_os}"
-                        )
-                    ],
-                ]
-            ),
-        )
-    except Exception as e:
-        print(e)
+                    InlineKeyboardButton(
+                        text="Mint Here",
+                        url=f"https://x7.finance/x/nft/mint",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="OS - Ecosystem Maxi", url=f"{url.os_eco}{chain_os}"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="OS - Liquidity Maxi", url=f"{url.os_liq}{chain_os}"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="OS - DEX Maxi", url=f"{url.os_dex}{chain_os}"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="OS - Borrowing Maxi", url=f"{url.os_borrow}{chain_os}"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="OS - Magister", url=f"{url.os_magister}{chain_os}"
+                    )
+                ],
+            ]
+        ),
+    )
+
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     now = datetime.utcnow()
@@ -2284,6 +2289,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         eth_pool = round(float(eth_lpool_reserve) + float(eth_lpool), 2)
         eth_dollar = eth_lpool_reserve_dollar + eth_lpool_dollar
+
         bsc_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "bsc")
         bsc_lpool_reserve_dollar = (
             float(bsc_lpool_reserve) * float(api.get_native_price("bnb")) / 1**18
@@ -2294,6 +2300,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         bsc_pool = round(float(bsc_lpool_reserve) + float(bsc_lpool), 2)
         bsc_dollar = bsc_lpool_reserve_dollar + bsc_lpool_dollar
+
         poly_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "poly")
         poly_lpool_reserve_dollar = (
             float(poly_lpool_reserve) * float(api.get_native_price("matic")) / 1**18
@@ -2304,6 +2311,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         poly_pool = round(float(poly_lpool_reserve) + float(poly_lpool), 2)
         poly_dollar = poly_lpool_reserve_dollar + poly_lpool_dollar
+
         arb_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "arb")
         arb_lpool_reserve_dollar = (
             float(arb_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
@@ -2314,6 +2322,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         arb_pool = round(float(arb_lpool_reserve) + float(arb_lpool), 2)
         arb_dollar = arb_lpool_reserve_dollar + arb_lpool_dollar
+
         opti_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "opti")
         opti_lpool_reserve_dollar = (
             float(opti_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
@@ -2328,7 +2337,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         total_lpool_reserve_dollar = (
             eth_lpool_reserve_dollar
             + arb_lpool_reserve_dollar
-            + +poly_lpool_reserve_dollar
+            + poly_lpool_reserve_dollar
             + bsc_lpool_reserve_dollar
             + opti_lpool_reserve_dollar
         )
@@ -3077,7 +3086,6 @@ async def snapshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if duration < timedelta(0):
         countdown = "Vote Closed"
         caption = "View"
-        print(days, hours, minutes)
     else:
         countdown = f"Vote Closing in: {int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes"
         caption = "Vote"
@@ -3156,16 +3164,18 @@ async def splitters(update: Update, context):
         chain = context.args[0].lower()
         if chain in chain_mappings:
             chain_name, chain_url, chain_native = chain_mappings[chain]
-            treasury_eth = api.get_native_balance(ca.treasury_splitter, chain)
-            eco_eth = api.get_native_balance(ca.eco_splitter, chain)
+            treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
+            eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
+            treasury_eth = round(float(treasury_eth_raw), 2)
+            eco_eth = round(float(eco_eth_raw), 2)
             native_price = api.get_native_price(chain_native)
             eco_dollar = float(eco_eth) * float(native_price)
             treasury_dollar = float(treasury_eth) * float(native_price)
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
-                f"Ecosystem Splitter: {eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-                f"Treasury Splitter: {treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+                f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
                 f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
@@ -3194,16 +3204,18 @@ async def splitters(update: Update, context):
         chain = "eth"
         if chain in chain_mappings:
             chain_name, chain_url, chain_native = chain_mappings[chain]
-            treasury_eth = api.get_native_balance(ca.treasury_splitter, chain)
-            eco_eth = api.get_native_balance(ca.eco_splitter, chain)
+            treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
+            eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
+            treasury_eth = round(float(treasury_eth_raw), 2)
+            eco_eth = round(float(eco_eth_raw), 2)
             native_price = api.get_native_price(chain_native)
             eco_dollar = float(eco_eth) * float(native_price)
             treasury_dollar = float(treasury_eth) * float(native_price)
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
-                f"Ecosystem Splitter: {eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-                f"Treasury Splitter: {treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+                f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
                 f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
@@ -3284,18 +3296,11 @@ async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     tax_info = tax.generate_info(chain)
-
     if not chain:
         chain = "eth"
         tax_info = tax.generate_info(chain)
-
     if tax_info:
         caption = f"{tax_info}"
-    else:
-        await update.message.reply_text(
-            "Invalid or missing chain. Please provide a valid chain (eth, arb, poly, bsc, opti)."
-        )
-        return
     caption = f"{chain.upper()}:\n{caption}\n\n{api.get_quote()}"
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -3449,8 +3454,10 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = chain_mappings[chain]
     native_price = api.get_native_price(chain_native)
-    dev_eth = api.get_native_balance(chain_dev_multi, chain)
-    com_eth = api.get_native_balance(chain_com_multi, chain)
+    dev_eth_raw = api.get_native_balance(chain_dev_multi, chain)
+    com_eth_raw = api.get_native_balance(chain_com_multi, chain)
+    dev_eth = round(float(dev_eth_raw), 2)
+    com_eth = round(float(com_eth_raw), 2)
     dev_dollar = float(dev_eth) * float(native_price)
     com_dollar = float(com_eth) * float(native_price)
     treasury_eth = api.get_native_balance(ca.treasury_splitter, chain)
@@ -3484,8 +3491,8 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     i1.text(
         (28, 36),
         f"X7 Finance Treasury {chain_name}\n\n"
-        f"Developer Wallet:\n{dev_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dev_dollar)})\n\n"
-        f"Community Wallet:\n{com_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(com_dollar)})\n"
+        f"Developer Wallet:\n{dev_eth} {chain_native.upper()} (${'{:0,.0f}'.format(dev_dollar)})\n\n"
+        f"Community Wallet:\n{com_eth} {chain_native.upper()} (${'{:0,.0f}'.format(com_dollar)})\n"
         f"{com_x7d_balance} X7D (${'{:0,.0f}'.format(com_x7d_price)})\n"
         f"{com_x7r_balance} X7R (${'{:0,.0f}'.format(com_x7r_price)})\n"
         f"{com_x7dao_balance} X7DAO (${'{:0,.0f}'.format(com_x7dao_price)})\n"
@@ -3502,8 +3509,8 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=f"*X7 Finance Treasury {chain_name}*\nUse `/treasury [chain-name]` for other chains\n\n"
-        f'Developer Wallet:\n{dev_eth[:6]} {chain_native.upper()} (${"{:0,.0f}".format(dev_dollar)})\n\n'
-        f'Community Wallet:\n{com_eth[:6]} {chain_native.upper()} (${"{:0,.0f}".format(com_dollar)})\n'
+        f'Developer Wallet:\n{dev_eth} {chain_native.upper()} (${"{:0,.0f}".format(dev_dollar)})\n\n'
+        f'Community Wallet:\n{com_eth} {chain_native.upper()} (${"{:0,.0f}".format(com_dollar)})\n'
         f'{com_x7d_balance} X7D (${"{:0,.0f}".format(com_x7d_price)})\n'
         f'{"{:0,.0f}".format(com_x7r_balance)} X7R (${"{:0,.0f}".format(com_x7r_price)})\n'
         f'{"{:0,.0f}".format(com_x7dao_balance)} X7DAO (${"{:0,.0f}".format(com_x7dao_price)})\n'
@@ -3710,7 +3717,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Volume*\n\n'
-            f'Total Volume:${"{:0,.0f}".format(total)}\n'
+            f'Total Volume: ${"{:0,.0f}".format(total)}\n'
             f'30d Volume: ${"{:0,.0f}".format(total_30d)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -3761,142 +3768,139 @@ async def voting(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) >= 2:
+        chain = context.args[1].lower()
+        wallet = context.args[0]
+    if chain == "":
+        chain = "eth"
+    chain_mappings = {
+        "eth": ("(ETH)", url.ether_address, media.eth_logo, "eth"),
+        "arb": ("(ARB)", url.arb_address, media.bsc_logo, "eth"),
+        "poly": ("(POLYGON)", url.poly_address, media.poly_logo, "matic"),
+        "bsc": ("(BSC)", url.bsc_address, media.bsc_logo, "bnb"),
+        "opti": ("(OP)", url.opti_address, media.opti_logo, "eth"),
+    }
+    if chain in chain_mappings:
+        chain_name, chain_url, chain_logo, chain_native = chain_mappings[chain]
+    native_price = api.get_native_price(chain_native)
+    eth = api.get_native_balance(wallet, chain)
+    dollar = float(eth) * float(native_price)
     try:
-        if len(context.args) >= 2:
-            chain = context.args[1].lower()
-            wallet = context.args[0]
-        if chain == "":
-            chain = "eth"
-        chain_mappings = {
-            "eth": ("(ETH)", url.ether_address, media.eth_logo, "eth"),
-            "arb": ("(ARB)", url.arb_address, media.bsc_logo, "eth"),
-            "poly": ("(POLYGON)", url.poly_address, media.poly_logo, "matic"),
-            "bsc": ("(BSC)", url.bsc_address, media.bsc_logo, "bnb"),
-            "opti": ("(OP)", url.opti_address, media.opti_logo, "eth"),
-        }
-        if chain in chain_mappings:
-            chain_name, chain_url, chain_logo, chain_native = chain_mappings[chain]
-        native_price = api.get_native_price(chain_native)
-        eth = api.get_native_balance(wallet, chain)
-        dollar = float(eth) * float(native_price)
-        try:
-            x7r_balance = api.get_token_balance(wallet, ca.x7r, chain)
-            x7r_price = x7r_balance * api.get_price(ca.x7r, chain)
-        except Exception:
-            x7r_balance = 0
-            x7r_price = 0
-        try:
-            x7dao_balance = api.get_token_balance(wallet, ca.x7dao, chain)
-            x7dao_price = x7dao_balance * api.get_price(ca.x7dao, chain)
-        except Exception:
-            x7dao_balance = 0
-            x7dao_price = 0
-        try:
-            x7101_balance = api.get_token_balance(wallet, ca.x7101, chain)
-            x7101_price = x7101_balance * api.get_price(ca.x7101, chain)
-        except Exception:
-            x7101_balance = 0
-            x7101_price = 0
-        try:
-            x7102_balance = api.get_token_balance(wallet, ca.x7102, chain)
-            x7102_price = x7102_balance * api.get_price(ca.x7102, chain)
-        except Exception:
-            x7102_balance = 0
-            x7102_price = 0
-        try:
-            x7103_balance = api.get_token_balance(wallet, ca.x7103, chain)
-            x7103_price = x7103_balance * api.get_price(ca.x7103, chain)
-        except Exception:
-            x7103_balance = 0
-            x7103_price = 0
-        try:
-            x7104_balance = api.get_token_balance(wallet, ca.x7104, chain)
-            x7104_price = x7104_balance * api.get_price(ca.x7104, chain)
-        except Exception:
-            x7104_balance = 0
-            x7104_price = 0
-        try:
-            x7105_balance = api.get_token_balance(wallet, ca.x7105, chain)
-            x7105_price = x7105_balance * api.get_price(ca.x7105, chain)
-        except Exception:
-            x7105_balance = 0
-            x7105_price = 0
-        try:
-            x7d_balance = api.get_token_balance(wallet, ca.x7d, chain)
-            x7d_price = x7d_balance * api.get_native_price(chain_native)
-        except Exception:
-            x7d_balance = 0
-            x7d_price = 0
-        total = (
-            x7d_price
-            + x7r_price
-            + x7dao_price
-            + x7101_price
-            + x7102_price
-            + x7103_price
-            + x7104_price
-            + x7105_price
-        )
-        pioneers = api.get_pioneer_holdings(wallet)
-        maxis = api.get_maxi_holdings(wallet)
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(chain_logo)
-        im1.paste(im2, (720, 20), im2)
-        myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
-        i1 = ImageDraw.Draw(im1)
-        i1.text(
-            (28, 36),
-            f"X7 Finance Wallet Info {chain_name}\n\n"
-            f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-            f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
-            f"{x7dao_balance} X7DAO (${'{:0,.0f}'.format(x7dao_price)})\n"
-            f"{x7101_balance} X7101 (${'{:0,.0f}'.format(x7101_price)})\n"
-            f"{x7102_balance} X7102 (${'{:0,.0f}'.format(x7102_price)})\n"
-            f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
-            f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
-            f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
-            f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-            f"{pioneers} Pioneer NFTs\n"
-            f"{maxis} Maxi NFTs\n\n"
-            f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
-            f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
-            font=myfont,
-            fill=(255, 255, 255),
-        )
+        x7r_balance = api.get_token_balance(wallet, ca.x7r, chain)
+        x7r_price = x7r_balance * api.get_price(ca.x7r, chain)
+    except Exception:
+        x7r_balance = 0
+        x7r_price = 0
+    try:
+        x7dao_balance = api.get_token_balance(wallet, ca.x7dao, chain)
+        x7dao_price = x7dao_balance * api.get_price(ca.x7dao, chain)
+    except Exception:
+        x7dao_balance = 0
+        x7dao_price = 0
+    try:
+        x7101_balance = api.get_token_balance(wallet, ca.x7101, chain)
+        x7101_price = x7101_balance * api.get_price(ca.x7101, chain)
+    except Exception:
+        x7101_balance = 0
+        x7101_price = 0
+    try:
+        x7102_balance = api.get_token_balance(wallet, ca.x7102, chain)
+        x7102_price = x7102_balance * api.get_price(ca.x7102, chain)
+    except Exception:
+        x7102_balance = 0
+        x7102_price = 0
+    try:
+        x7103_balance = api.get_token_balance(wallet, ca.x7103, chain)
+        x7103_price = x7103_balance * api.get_price(ca.x7103, chain)
+    except Exception:
+        x7103_balance = 0
+        x7103_price = 0
+    try:
+        x7104_balance = api.get_token_balance(wallet, ca.x7104, chain)
+        x7104_price = x7104_balance * api.get_price(ca.x7104, chain)
+    except Exception:
+        x7104_balance = 0
+        x7104_price = 0
+    try:
+        x7105_balance = api.get_token_balance(wallet, ca.x7105, chain)
+        x7105_price = x7105_balance * api.get_price(ca.x7105, chain)
+    except Exception:
+        x7105_balance = 0
+        x7105_price = 0
+    try:
+        x7d_balance = api.get_token_balance(wallet, ca.x7d, chain)
+        x7d_price = x7d_balance * api.get_native_price(chain_native)
+    except Exception:
+        x7d_balance = 0
+        x7d_price = 0
+    total = (
+        x7d_price
+        + x7r_price
+        + x7dao_price
+        + x7101_price
+        + x7102_price
+        + x7103_price
+        + x7104_price
+        + x7105_price
+    )
+    pioneers = api.get_pioneer_holdings(wallet)
+    maxis = api.get_maxi_holdings(wallet)
+    im1 = Image.open((random.choice(media.blackhole)))
+    im2 = Image.open(chain_logo)
+    im1.paste(im2, (720, 20), im2)
+    myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
+    i1 = ImageDraw.Draw(im1)
+    i1.text(
+        (28, 36),
+        f"X7 Finance Wallet Info {chain_name}\n\n"
+        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
+        f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
+        f"{x7dao_balance} X7DAO (${'{:0,.0f}'.format(x7dao_price)})\n"
+        f"{x7101_balance} X7101 (${'{:0,.0f}'.format(x7101_price)})\n"
+        f"{x7102_balance} X7102 (${'{:0,.0f}'.format(x7102_price)})\n"
+        f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
+        f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
+        f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
+        f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
+        f"{pioneers} Pioneer NFTs\n"
+        f"{maxis} Maxi NFTs\n\n"
+        f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
+        f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
+        font=myfont,
+        fill=(255, 255, 255),
+    )
 
-        img_path = os.path.join("media", "blackhole.png")
-        im1.save(img_path)
-        await update.message.reply_photo(
-            photo=open(r"media/blackhole.png", "rb"),
-            caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
-            f"`{wallet}`\n\n"
-            f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-            f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
-            f"{x7dao_balance} X7DAO (${'{:0,.0f}'.format(x7dao_price)})\n"
-            f"{x7101_balance} X7101 (${'{:0,.0f}'.format(x7101_price)})\n"
-            f"{x7102_balance} X7102 (${'{:0,.0f}'.format(x7102_price)})\n"
-            f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
-            f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
-            f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
-            f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-            f"{pioneers} Pioneer NFTs\n"
-            f"{maxis} Maxi NFTs\n\n"
-            f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
-            f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
+    img_path = os.path.join("media", "blackhole.png")
+    im1.save(img_path)
+    await update.message.reply_photo(
+        photo=open(r"media/blackhole.png", "rb"),
+        caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
+        f"`{wallet}`\n\n"
+        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
+        f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
+        f"{x7dao_balance} X7DAO (${'{:0,.0f}'.format(x7dao_price)})\n"
+        f"{x7101_balance} X7101 (${'{:0,.0f}'.format(x7101_price)})\n"
+        f"{x7102_balance} X7102 (${'{:0,.0f}'.format(x7102_price)})\n"
+        f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
+        f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
+        f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
+        f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
+        f"{pioneers} Pioneer NFTs\n"
+        f"{maxis} Maxi NFTs\n\n"
+        f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
+        f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton(
-                            text="Wallet Link",
-                            url=f"{chain_url}{wallet}",
-                        )
-                    ],
-                ]
-            ),
-        )
-    except Exception as e:
-        print(e)
+                    InlineKeyboardButton(
+                        text="Wallet Link",
+                        url=f"{chain_url}{wallet}",
+                    )
+                ],
+            ]
+        ),
+    )
 
 
 async def website(update: Update, context: ContextTypes.DEFAULT_TYPE):

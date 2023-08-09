@@ -155,7 +155,6 @@ async def new_pair(event):
             else:
                 renounced = "⚠️ Contract Not Renounced"
         except (Exception, TimeoutError, ValueError, StopAsyncIteration):
-            print("Owner Error")
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"

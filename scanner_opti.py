@@ -124,7 +124,6 @@ async def new_pair(event):
             else:
                 renounced = "⚠️ Contract Not Renounced"
         except (Exception, TimeoutError, ValueError, StopAsyncIteration):
-            print("Owner Error")
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
@@ -138,7 +137,6 @@ async def new_pair(event):
                 else:
                     tax_warning = ""
                 if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
-                    print("Skip - Honey Pot")
                     return
             except Exception as e:
                 tax_warning = ""
@@ -197,7 +195,6 @@ async def new_pair(event):
             tax = f"⚠️ Tax: Unavailable {tax_warning}"
         status = f"{verified}\n{tax}\n{renounced}\n{lock}"
     except (Exception, TimeoutError, ValueError, StopAsyncIteration) as e:
-        print(f"Scan Error: {e}")
         status = "⚠️ Scan Unavailable"
     pool = int(tx["result"]["value"], 0) / 10**18
     if pool == 0 or pool == "" or not pool:
