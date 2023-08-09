@@ -5816,7 +5816,7 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     rt_names = "\n".join(f"{p}" for p in response.data)
     await update.message.reply_sticker(sticker=media.twitter_sticker)
     await update.message.reply_text(
-        f"Retweeted {retweet_count} times, by the following members:\n\n{rt_names}"
+        f"Reposted {retweet_count} times, by the following members:\n\n{rt_names}"
     )
 
 
@@ -5835,7 +5835,7 @@ async def draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"{retweet_count} Entries:\n\n{rt_names}")
         await update.message.reply_text(
             f"The Winner is....\n\n{random.choice(response.data)}\n\n"
-            f"Congratulations, Please DM @X7_Finance to verify your account"
+            f"Congratulations, Please DM @X7_Finance on X to verify your account"
         )
     else:
         await update.message.reply_text(f"{text.mods_only}")
@@ -5915,14 +5915,14 @@ async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             await update.message.reply_sticker(sticker=media.twitter_sticker)
             await update.message.reply_text(
-                f"Latest X7 Finance Tweet\n\n{tweet[0].text}\n\n"
+                f"Latest X7 Finance X Post\n\n{tweet[0].text}\n\n"
                 f"{url.twitter}status/{tweet[0].id}\n\n"
                 f"{random.choice(text.x_replies)}"
             )
         except Exception as e:
             await update.message.reply_sticker(sticker=media.twitter_sticker)
             await update.message.reply_text(
-                f"*X7 Finance x*\n\n" f"{random.choice(text.x_replies)}",
+                f"*X7 Finance X*\n\n" f"{random.choice(text.x_replies)}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [
