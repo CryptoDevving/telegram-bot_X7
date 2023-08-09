@@ -8,17 +8,14 @@ import pytz
 import pyttsx3
 import requests
 import textwrap
-import traceback
 import sentry_sdk
 import wikipediaapi
 from web3 import Web3
 from telegram import *
 from telegram.ext import *
 from dateutil import parser
-from dotenv import load_dotenv
 from translate import Translator
 from eth_utils import to_checksum_address
-from web3.exceptions import Web3Exception
 from PIL import Image, ImageDraw, ImageFont
 
 import main
@@ -28,7 +25,6 @@ from media import index as media
 from data import ca, loans, nfts, tax, text, times, giveaway, url
 from tokens import chains, pairs, all_tokens_info
 
-load_dotenv()
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 

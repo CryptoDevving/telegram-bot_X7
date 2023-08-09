@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import sentry_sdk
 from telegram import *
 from telegram.ext import *
 
@@ -9,13 +10,105 @@ import commands
 from data import times
 
 
-def scanner_start():
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    try:
+        global current_button_data, users_clicked_current_button, clicked_buttons, first_user_clicked, first_user_info, click_counts
+        if context.user_data is None:
+            context.user_data = {}
+
+        current_button_data = context.bot_data.get("current_button_data")
+        if not current_button_data:
+            return
+
+        button_data = update.callback_query.data
+        user = update.effective_user
+        user_info = user.username or f"{user.first_name} {user.last_name}"
+
+        if button_data in auto.clicked_buttons:
+            return
+
+        auto.clicked_buttons.add(button_data)
+
+        if user_info not in auto.click_counts:
+            auto.click_counts[user_info] = 0
+
+        if button_data == current_button_data:
+            auto.click_counts[user_info] = auto.click_counts.get(user_info, 0) + 1
+            if auto.click_counts[user_info] % 10 == 0:
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id, text=
+                    f"🎉🎉 *{user_info} has been the fastest Pioneer {auto.click_counts[user_info]} times!* 🎉🎉",
+                    parse_mode="Markdown"
+                )
+
+            auto.clicks_save(auto.click_counts.copy())
+            auto.users_clicked_current_button.add(user_info)
+
+            if not auto.first_user_clicked:
+                first_user_info = user_info
+                first_user_clicked = True
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id, text=
+                    f"{user_info} was the fastest Pioneer!\n\n"
+                    "use `/leaderboard` to see the fastest Pioneers!",
+                    parse_mode="Markdown",
+                )
+
+            context.user_data["current_button_data"] = None
+        try:
+            job_queue.run_once(
+                auto.send_click_message,
+                times.button_time,
+                chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+                name="Click Message",
+            )
+            print(times.button_time)
+
+        except Exception as e:
+            print("Error scheduling job:", e)
+    except Exception as e:
+        print(e)
+
+
+async def error(update: Update, context: CallbackContext):
+    try:
+        if update is None:
+            return
+        if update.edited_message is not None:
+            return
+        if isinstance(context.error, AttributeError):
+            return
+        if isinstance(context.error, ValueError) or isinstance(
+            context.error, Exception
+        ):
+            await update.message.reply_text("Error while loading data please try again")
+        else:
+            message: Message = update.message
+            if message is not None and message.text is not None:
+                await update.message.reply_text(
+                    "Error while loading data, please try again"
+                )
+                sentry_sdk.capture_exception(
+                    Exception(f"{message.text} caused error: {context.error}")
+                )
+            else:
+                sentry_sdk.capture_exception(
+                    Exception(
+                        f"Error occurred without a valid message: {context.error}"
+                    )
+                )
+
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+
+
+def scanner():
     scripts = [
-        "scanner-bsc.py",
-        "scanner-eth.py",
-        "scanner-arb.py",
-        "scanner-poly.py",
-        "scanner-opti.py",
+        "scanner/bsc.py",
+        "scanner/eth.py",
+        "scanner/arb.py",
+        "scanner/poly.py",
+        "scanner/opti.py",
     ]
     python_executable = sys.executable
     processes = []
@@ -25,12 +118,13 @@ def scanner_start():
         processes.append(process)
 
 
+application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+job_queue = application.job_queue
+
+
 if __name__ == "__main__":
-    application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
-    application.add_handler(CallbackQueryHandler(auto.clicks))
     application.add_error_handler(error)
-    
-    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
+    application.add_handler(CallbackQueryHandler(button))
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
     application.add_handler(CommandHandler("alerts", commands.alerts))
@@ -121,32 +215,29 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["website", "site"], commands.website))
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
-    job_queue = application.job_queue
-    application.job_queue.run_repeating(
-        auto.send_endorsement_message,
+    job_queue.run_repeating(
+        auto.auto_message_endorsement,
         times.endorse_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Endorsement Message",
-        data=times.endorse_time
     )
     
-    application.job_queue.run_repeating(
-        auto.send_referral_message,
+    job_queue.run_repeating(
+        auto.auto_message_referral,
         times.referral_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         first=10800,
         name="Referral Message",
-        data=times.referral_time,
     )
 
-    application.job_queue.run_once(
-        auto.send_click_message,
+    job_queue.run_once(
+        auto.auto_message_click,
         times.button_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
-        data=times.button_time,
     )
 
-    scanner_start()
+    scanner()
     application.run_polling()
