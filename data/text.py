@@ -19,7 +19,7 @@ about = (
     "a percentage of this volume will flow back into the ecosystem into our native X7 tokens.\n\n"
     "• X7 Finance has a novel DAO governance structure + IPFS website, that ensures complete decentralization "
     "and censorship-resistance.\n\n"
-    "Our Telegram network and Twitter are community-run, in the spirit of decentralization.\n\n"
+    "Our Telegram network and X are community-run, in the spirit of decentralization.\n\n"
     "• First target - Capturing 1% of the $100b daily trading volume on the Ethereum network.\n\n"
     '`"X7’s founding team believes that capital should be available to those with great ideas and that the '
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
@@ -63,7 +63,7 @@ commands = (
     "/ecosystem - Token Overview\n"
     "/links - Official Links\n"
     "/dashboard - X7 Finance community dashboard\n"
-    "/twitter - Latest X7 Finance tweet\n"
+    "/twitter - Latest X7 Finance X\n"
     "/swap - Xchange DEX Info\n"
     "/roadmap - Whats coming next\n"
     "/website - Official Website\n"
@@ -106,7 +106,7 @@ commands = (
     "/community  - X7 Community Info\n"
     "/withdraw  - How to withdraw X7D\n"
     "/giveaway - Giveaway Details\n"
-    "/spaces  - Twitter Space Info\n"
+    "/spaces  - X Space Info\n"
     "/gas - Gas Info\n"
     "/wei - amount convert to ETH\n"
     "/fg - Market fg Info\n"
@@ -228,7 +228,7 @@ proposals = (
     "its extensive network and connections in the market to independently select and collaborate with "
     "relevant parties.\n\n"
     "If, despite this information, you still find it necessary to get in touch, you can always send a "
-    "DM to our Twitter account. Please be aware that responses to such DMs are not guaranteed."
+    "DM to our X account. Please be aware that responses to such DMs are not guaranteed."
 )
 
 refer = (
@@ -615,12 +615,12 @@ quotes = [
     "initial liquidity loans\n",
 ]
 
-twitter_replies = [
+x_replies = [
     "Raid!",
     "LFG",
     "Send it!",
-    "Twitter raid!",
-    "Like and Retweet!",
+    "X raid!",
+    "Like and repost!",
     "GO GO GO!",
     "X7 Force!",
     "Raid it Fam!",
@@ -638,82 +638,79 @@ twitter_replies = [
     "Insert inspirational raid quote here!",
     "Let them know!",
     "RAIIIIIIIIIID",
-    "Tweet Twoooo",
     "For the Culture",
     "WAGMI",
-    "Elon says RT",
-    "Have you reached your twitter cap?",
+    "Elon says repost",
+    "Have you reached your X cap?",
     "For the win!",
     "Xcellent",
-    "Twitter fingers on fire!",
-    "Tweet like no tomorrow!",
-    "Unleash the tweetstorm!",
-    "Make waves on Twitter!",
-    "Ignite the retweets!",
-    "Shout it from the Twitter rooftops!",
-    "Leave no tweet unliked!",
-    "Conquer the Twitterverse!",
+    "X fingers on fire!",
+    "X like no tomorrow!",
+    "Make waves on X!",
+    "Ignite the reposts!",
+    "Shout it from the X rooftops!",
+    "Leave no X unliked!",
+    "Conquer the Xverse!",
     "Go viral or go home!",
-    "Engage the Twitterati!",
-    "A tweet a day keeps the boredom away!",
-    "Tweet like nobody's watching!",
-    "Unleash the tweetstorm!",
-    "Twitter is calling, answer with a roar!",
-    "Fuel the Twitter hype train!",
-    "Tweet with the strength of a thousand hashtags!",
-    "Let your tweets be the talk of the town!",
-    "One tweet to rule them all!",
-    "Tweet, retweet, conquer!",
-    "Be the hero Twitter needs!",
-    "Tweet your way to the top!",
-    "Tweet like a champion!",
-    "Unleash your Twitter prowess!",
-    "Craft tweets that mesmerize!",
-    "Elevate your tweets to new heights!",
-    "Tweet your way to stardom!",
-    "Join the Twitter elite!",
-    "Master the art of the tweetstorm!",
-    "Tweet with unyielding passion!",
-    "Become a force to be reckoned with on Twitter!",
-    "Ignite the Twitterverse with your words!",
-    "Spread tweet magic across the timeline!",
-    "Tweet with a purpose and leave an impact!",
-    "Unleash your inner Twitter influencer!",
-    "Make your tweets the talk of the town!",
-    "Unlock the secrets of tweet success!",
-    "Tweet fearlessly and embrace the retweets!",
-    "Craft tweets that capture hearts and minds!",
-    "Infuse your tweets with boundless creativity!",
+    "Engage the X!",
+    "A X a day keeps the boredom away!",
+    "X like nobody's watching!",
+    "Unleash the Xstorm!",
+    "X is calling, answer with a roar!",
+    "Fuel the X hype train!",
+    "X with the strength of a thousand hashtags!",
+    "Let your X be the talk of the town!",
+    "One X to rule them all!",
+    "X, repost, conquer!",
+    "Be the hero X needs!",
+    "X your way to the top!",
+    "X like a champion!",
+    "Unleash your X prowess!",
+    "Craft X that mesmerize!",
+    "Elevate your X to new heights!",
+    "X your way to stardom!",
+    "Join the X elite!",
+    "Master the art of the X!",
+    "X with unyielding passion!",
+    "Become a force to be reckoned with on X!",
+    "Ignite the Xverse with your words!",
+    "Spread X magic across the timeline!",
+    "X with a purpose and leave an impact!",
+    "Unleash your inner X influencer!",
+    "Make your X the talk of the town!",
+    "Unlock the secrets of X success!",
+    "X fearlessly and embrace the reposts!",
+    "Craft X that capture hearts and minds!",
+    "Infuse your X with boundless creativity!",
     "Harness the power of the hashtag!",
-    "Tweet like a superstar and soar high!",
-    "Make your tweets resonate with the masses!",
-    "Become the Twitter trendsetter you were meant to be!",
-    "Tweet with style, substance, and a touch of pizzazz!",
-    "Tweet like there's no tomorrow!",
-    "Unleash your Twitter superpowers!",
-    "Level up your tweets!",
-    "Join the Twitter revolution!",
-    "ReTweet with unstoppable passion!",
-    "Make your retweets legendary!",
-    "Master the art of the tweet!",
-    "Become a Twitter sensation!",
-    "Dare to retweet the impossible!",
-    "Conquer the Twitterverse with your words!",
-    "ReTweet your dreams into reality!",
-    "Unlock the true potential of this tweet!",
-    "Spread Twitter joy with every tweet!",
-    "Re Tweet your way to greatness!",
-    "Ignite the Twitter fire within!",
-    "Unleash the power of your tweets!",
-    "Make this tweet go viral!",
-    "Rule the Twitter feed with an iron thumb!",
-    "Tweet boldly and fearlessly!",
-    "RT to make make heads turn!",
-    "Amplify your message with every tweet!",
-    "RT to resonate with the world!",
-    "Craft retweets that leave a lasting impact!",
+    "X like a superstar and soar high!",
+    "Make your X resonate with the masses!",
+    "Become the X trendsetter you were meant to be!",
+    "X with style, substance, and a touch of pizzazz!",
+    "X like there's no tomorrow!",
+    "Unleash your X superpowers!",
+    "Level up your X!",
+    "Join the X revolution!",
+    "Repost with unstoppable passion!",
+    "Make your reposts legendary!",
+    "Master the art of the X!",
+    "Become a X sensation!",
+    "Dare to repost the impossible!",
+    "Conquer the Xverse with your words!",
+    "Repost your dreams into reality!",
+    "Unlock the true potential of this X!",
+    "Spread X joy with every X!",
+    "Repost your way to greatness!",
+    "Ignite the X fire within!",
+    "Unleash the power of your X!",
+    "Make this X go viral!",
+    "Rule the X feed with an iron thumb!",
+    "X boldly and fearlessly!",
+    "Repost to make make heads turn!",
+    "Amplify your message with every X!",
+    "Repost to resonate with the world!",
+    "Craft reposts that leave a lasting impact!",
 ]
-
 usernamelist = (
     "davidgokhshtein",
     "cz_binance",

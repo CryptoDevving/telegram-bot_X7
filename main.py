@@ -37,7 +37,11 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "delay": {"text": text.delay, "mode": "Markdown"},
         "patience": {"text": text.patience, "mode": "Markdown"},
         "https://twitter": {
-            "text": random.choice(text.twitter_replies),
+            "text": random.choice(text.x_replies),
+            "mode": None,
+        },
+        "https://x.com": {
+            "text": random.choice(text.x_replies),
             "mode": None,
         },
         "gm": {"sticker": media.gm},
@@ -387,7 +391,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["time", "clock"], commands.time))
     application.add_handler(CommandHandler("today", commands.today))
     application.add_handler(CommandHandler("treasury", commands.treasury))
-    application.add_handler(CommandHandler("twitter", commands.twitter))
+    application.add_handler(CommandHandler(["twitter", "x"], commands.twitter))
     application.add_handler(CommandHandler("website", commands.website))
     application.add_handler(CommandHandler("x7r", commands.x7r))
     application.add_handler(CommandHandler("x7d", commands.x7d))
