@@ -1192,7 +1192,7 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
                 [InlineKeyboardButton(text="Website", url=f"{url.dashboard}")],
                 [InlineKeyboardButton(text="Snapshot", url=f"{url.snapshot}")],
-                [InlineKeyboardButton(text="Twitter", url=f"{url.twitter}")],
+                [InlineKeyboardButton(text="X", url=f"{url.twitter}")],
                 [InlineKeyboardButton(text="Discord", url=f"{url.discord}")],
                 [InlineKeyboardButton(text="Reddit", url=f"{url.reddit}")],
                 [InlineKeyboardButton(text="Youtube", url=f"{url.youtube}")],
@@ -2887,7 +2887,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"{(page_py.summary[0:800])}"
             f"....[continue reading on wiki]({page_py.fullurl})\n\n"
             f"[Google](https://www.google.com/search?q={keyword})\n"
-            f"[Twitter](https://twitter.com/search?q={keyword}&src=typed_query)\n"
+            f"[X](https://twitter.com/search?q={keyword}&src=typed_query)\n"
             f"[Etherscan](https://etherscan.io/search?f=0&q={keyword})\n\n"
             f"{api.get_quote()}",
             parse_mode="markdown",
@@ -2897,7 +2897,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f"Your search: {keyword}\n\nNo description available\n\n"
             f"[Google](https://www.google.com/search?q={keyword})\n"
-            f"[Twitter](https://twitter.com/search?q={keyword}&src=typed_query)\n"
+            f"[X](https://twitter.com/search?q={keyword}&src=typed_query)\n"
             f"[Etherscan](https://etherscan.io/search?f=0&q={keyword})\n\n"
             f"{api.get_quote()}",
             parse_mode="markdown",
@@ -5853,7 +5853,7 @@ async def raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚨🚨 Raid {username} 🚨🚨\n\n"
             f"{tweet[0].text}\n\n"
             f"https://twitter.com/intent/tweet?text=@X7_Finance&hashtags=LongLiveDefi&in_reply_to={tweet[0].id}\n\n"
-            f"{random.choice(text.twitter_replies)}",
+            f"{random.choice(text.x_replies)}",
             disable_web_page_preview=True,
         )
     else:
@@ -5865,7 +5865,7 @@ async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if response[0] is None:
         await update.message.reply_photo(
             photo=open((random.choice(media.logos)), "rb"),
-            caption=f"X7 Finance Twitter space\n\nPlease check back for more details"
+            caption=f"X7 Finance X space\n\nPlease check back for more details"
             f"\n\n{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5895,7 +5895,7 @@ async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
         minutes = divmod(hours[1], 60)
         await update.message.reply_sticker(sticker=media.twitter_sticker)
         await update.message.reply_text(
-            text=f"Next X7 Finance Twitter space:\n\n"
+            text=f"Next X7 Finance X space:\n\n"
             f'{space["title"]}\n\n'
             f'{then.strftime("%A %B %d %Y %I:%M %p")} (UTC)\n\n'
             f"{int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes\n\n"
@@ -5917,18 +5917,18 @@ async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(
                 f"Latest X7 Finance Tweet\n\n{tweet[0].text}\n\n"
                 f"{url.twitter}status/{tweet[0].id}\n\n"
-                f"{random.choice(text.twitter_replies)}"
+                f"{random.choice(text.x_replies)}"
             )
         except Exception as e:
             await update.message.reply_sticker(sticker=media.twitter_sticker)
             await update.message.reply_text(
-                f"*X7 Finance Twitter*\n\n" f"{random.choice(text.twitter_replies)}",
+                f"*X7 Finance x*\n\n" f"{random.choice(text.x_replies)}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [
                             InlineKeyboardButton(
-                                text="X7 Finance Twitter",
+                                text="X7 Finance X",
                                 url=f"{url.twitter}",
                             )
                         ],
