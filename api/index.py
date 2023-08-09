@@ -207,6 +207,27 @@ def get_mcap(token):
     return data[token]["usd_market_cap"]
 
 
+# ALCHEMY
+
+
+def get_maxi_holdings(wallet):
+    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+    total_count = response_data.get("totalCount")
+    return total_count
+
+
+def get_pioneer_holdings(wallet):
+    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+    total_count = response_data.get("totalCount")
+    return total_count
+
+
 # MORALIS
 
 
@@ -241,22 +262,6 @@ def get_nft_holder_list(nft, chain):
         params={"chain": chain, "format": "decimal", "address": nft},
     )
 
-def get_pioneer_holdings(wallet):
-    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
-    headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
-    response_data = response.json()
-    total_count = response_data.get("totalCount")
-    return total_count
-
-
-def get_maxi_holdings(wallet):
-    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
-    headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
-    response_data = response.json()
-    total_count = response_data.get("totalCount")
-    return total_count
 
 def get_price(token, chain):
     chain_mappings = {
@@ -549,6 +554,29 @@ def get_today():
     url = f"http://history.muffinlabs.com/date/{now.month}/{now.day}"
     response = requests.get(url)
     return response.json()
+
+
+def get_word(word):
+    url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+    response = requests.get(url)
+    data = response.json()
+    definition = None
+
+    if data and isinstance(data, list):
+        meanings = data[0].get("meanings", [])
+        if meanings:
+            for meaning in meanings:
+                definitions = meaning.get("definitions", [])
+                if definitions:
+                    definition = definitions[0].get("definition")
+                    break
+
+        phonetics = data[0].get("phonetics", [])
+        if phonetics:
+            first_phonetic = phonetics[0]
+            audio_url = first_phonetic.get("audio")
+
+    return definition, audio_url
 
 
 # TWITTER

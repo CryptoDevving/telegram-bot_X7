@@ -3781,6 +3781,33 @@ async def wei(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        word = " ".join(context.args).lower()
+        if word == "":
+            await update.message.reply_text(
+                f"Please use /word followed by the word you want to search")
+            return
+        
+        definition, audio_url = api.get_word(word)
+        caption = f"*X7 Finance Dictionary*\n\n{word}:\n\n{definition}\n\n{api.get_quote()}"
+        keyboard_markup = None
+        
+        if audio_url:
+            keyboard_markup = InlineKeyboardMarkup(
+                [[InlineKeyboardButton(text="Pronunciation", url=f"{audio_url}")]]
+            )
+        
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=caption,
+            parse_mode="Markdown",
+            reply_markup=keyboard_markup,
+        )
+    except Exception as e:
+        await update.message.reply_text("Word not found")
+
+
 async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         text=f"*X7 Finance Whitepaper Quote*\n\n{random.choice(text.quotes)}",
