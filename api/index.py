@@ -381,6 +381,26 @@ def get_nft_floor(nft, chain):
         return "N/A"
 
 
+# OPENSEA
+
+def get_os_nft_collection(slug):
+    url = f"https://api.opensea.io/api/v1/collection/{slug}"
+    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
+    data =  response.json()
+    return data
+
+
+def get_os_nft_id(nft, id):
+    url = f"https://api.opensea.io/v2/chain/ethereum/contract/{nft}/nfts/{id}"
+    headers = {
+        "accept": "application/json",
+        "X-API-KEY": "9d8f7cd3f655454592eddd28a63f960e"
+    }
+    response = requests.get(url, headers=headers)
+    data =  response.json()
+    return data
+
+
 # OTHER
 
 
@@ -396,12 +416,6 @@ def get_holders(token):
     response = requests.get(url)
     data = response.json()
     return data.get("holdersCount")
-
-
-def get_os_nft(slug):
-    url = f"https://api.opensea.io/api/v1/collection/{slug}"
-    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
-    return response.json()
 
 
 def get_price_change(address):

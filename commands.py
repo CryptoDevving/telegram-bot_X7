@@ -35,8 +35,10 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 # WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    return
-
+    try:
+        return
+    except Exception as e:
+        print(e)
 
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2129,7 +2131,7 @@ async def pair(update: Update, context: CallbackContext):
 
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     pioneer_id = " ".join(context.args)
-    data = api.get_os_nft("/x7-pioneer")
+    data = api.get_os_nft_collection("/x7-pioneer")
     floor = api.get_nft_floor(ca.pioneer, "eth")
     if floor != "N/A":
         floor_round = round(floor, 2)
@@ -2194,17 +2196,13 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             ),
         )
     else:
-        base_url = "https://api.opensea.io/api/v1/asset/"
-        slug = ca.pioneer + "/"
-        headers = {"X-API-KEY": os.getenv("OPENSEA_API_KEY")}
-        single_url = base_url + slug + pioneer_id + "/"
-        single_response = requests.get(single_url, headers=headers)
-        single_data = single_response.json()
-        status = single_data["traits"][0]["value"]
-        await update.message.reply_text(
-            f"*X7 Pioneer {pioneer_id} NFT Info*\n\n"
+        data = api.get_os_nft_id(ca.pioneer, pioneer_id)
+        status = data["nft"]["traits"][0]["value"]
+        image_url = data["nft"]["image_url"]
+        await update.message.reply_photo(
+        photo=image_url,
+        caption=f"*X7 Pioneer {pioneer_id} NFT Info*\n\n"
             f"Transfer Lock Status: {status}\n\n"
-            f"https://looksrare.org/collections/{ca.pioneer}/{pioneer_id}\n\n"
             f"{api.get_quote()}",
             parse_mode="markdown",
             reply_markup=InlineKeyboardMarkup(
