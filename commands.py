@@ -600,10 +600,8 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    then = times.countdown.astimezone(pytz.utc)
-    now = datetime.now(timezone.utc)
-    duration = then - now
-
+    duration = times.countdown_time - datetime.utcnow()
+    days, hours, minutes = api.get_duration_days(duration)
     if duration < timedelta(0):
         await update.message.reply_photo(
             photo=open(random.choice(media.logos), "rb"),
@@ -611,38 +609,29 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
         return
-
-    duration_in_s = duration.total_seconds()
-    days, remainder = divmod(duration_in_s, 86400)
-    hours, remainder = divmod(remainder, 3600)
-    minutes, _ = divmod(remainder, 60)
-
     await update.message.reply_text(
         text=f"*X7 Finance Countdown:*\n\n"
-        f'{times.countdown_title}\n\n{then.strftime("%A %B %d %Y %I:%M %p")} (UTC)\n\n'
-        f"{int(days)} days, {int(hours)} hours and {int(minutes)} minutes\n\n"
+        f'{times.countdown_title}\n\n{times.countdown_time.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
+        f"{days} days, {hours} hours and {minutes} minutes\n\n"
         f"{times.countdown_desc}\n\n{api.get_quote()}",
         parse_mode="Markdown",
     )
 
 
+
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tx = api.get_tx(ca.deployer, "eth")
     time = datetime.utcfromtimestamp(int(tx["result"][0]["timeStamp"]))
-    now = datetime.utcnow()
-    duration = now - time
-    duration_in_s = duration.total_seconds()
-    days = divmod(duration_in_s, 86400)
-    hours = divmod(days[1], 3600)
-    minutes = divmod(hours[1], 60)
+    duration = datetime.utcnow() - time
+    days, hours, minutes = api.get_duration_days(duration)
     if (
         f'{tx["result"][0]["to"]}'.lower()
         == "0x000000000000000000000000000000000000dead"
     ):
         message = bytes.fromhex(tx["result"][0]["input"][2:]).decode("utf-8")
         await update.message.reply_text(
-            f"*Last On Chain Message:*\n\n{time} (UTC)\n"
-            f"{int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes ago:\n\n"
+            f"*Last On Chain Message:*\n\n{time} UTC\n"
+            f"{days} days, {hours} hours and {minutes} minutes ago:\n\n"
             f"`{message}`\n",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -668,7 +657,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
             name = f'Transfer to:\n{tx["result"][0]["to"]}'
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*Deployer Wallet last TX*\n\n{time} (UTC)\n"
+            caption=f"*Deployer Wallet last TX*\n\n{time} UTC\n"
             f"{int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes ago:\n\n"
             f"`{name}`\n\n"
             f"This command will pull last TX on the X7 Finance deployer wallet."
@@ -775,11 +764,10 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         dollar = float(value) * float(api.get_native_price(chain_native)) / 1**18
         time = datetime.utcfromtimestamp(int(hub_filter[0]["timeStamp"]))
         duration = now - time
-        duration_in_s = duration.total_seconds()
-        days = divmod(duration_in_s, 86400)
-        hours = divmod(days[1], 3600)
-        minutes = divmod(hours[1], 60)
-        return value, dollar, time, int(days[0]), int(hours[0]), int(minutes[0])
+        days = duration.days
+        hours, remainder = divmod(duration.seconds, 3600)
+        minutes = (remainder % 3600) // 60
+        return value, dollar, time, days, hours, minutes
 
     (
         x7r_value,
@@ -808,11 +796,11 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Liquidity Hubs {chain_name}*\nUse `/ebb [chain-name]` for other chains\n\n"
-        f'Last X7R Buy Back: {x7r_time}\n{x7r_value} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n'
+        f'Last X7R Buy Back: {x7r_time} UTC\n{x7r_value} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n'
         f"{x7r_days} days, {x7r_hours} hours and {x7r_minutes} minutes ago\n\n"
-        f'Last X7DAO Buy Back: {x7dao_time}\n{x7dao_value} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_dollar)})\n'
+        f'Last X7DAO Buy Back: {x7dao_time} UTC\n{x7dao_value} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_dollar)})\n'
         f"{x7dao_days} days, {x7dao_hours} hours and {x7dao_minutes} minutes ago\n\n"
-        f'Last X7100 Buy Back: {x7100_time}\n{x7100_value} {chain_native.upper()} (${"{:0,.0f}".format(x7100_dollar)})\n'
+        f'Last X7100 Buy Back: {x7100_time} UTC\n{x7100_value} {chain_native.upper()} (${"{:0,.0f}".format(x7100_dollar)})\n'
         f"{x7100_days} days, {x7100_hours} hours and {x7100_minutes} minutes ago\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -1065,15 +1053,8 @@ async def gas(update, context):
 
 async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = " ".join(context.args)
-    giveaway_time = giveaway.time
-
-    def calculate_duration(giveaway_time):
-        now = datetime.now(timezone.utc)
-        duration = giveaway_time - now
-        return duration
-
-    giveaway_time = giveaway.time
-    duration = calculate_duration(giveaway_time)
+    duration = giveaway.time - datetime.utcnow()
+    days, hours, minutes = api.get_duration_days(duration)
     if duration < timedelta(0):
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -1085,22 +1066,35 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if ext == "":
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*{giveaway.header}*\n\n{giveaway.text}\n\n{giveaway.countdown()}\n\n{api.get_quote()}",
+                caption=f"*{giveaway.name}*\n\n{giveaway.text}\n\n"
+                f"Ends:\n\n{giveaway.time.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
+                f"{days} days, {hours} hours and {minutes} minutes\n\n"
+                f"{api.get_quote()}",
                 parse_mode="Markdown",
             )
+
         if ext == "entries":
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*{giveaway.header}*\n\n{giveaway.entries()}\n\n"
+                caption=f"*{giveaway.name}*\n\n"
+                f"Entries for the {giveaway.name} are: (last 5 digits only):\n\n{api.get_giveaway_entries()}\n\n"
+                f"Last updated at:\n"
+                f"{giveaway.update.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
                 f"{api.get_quote()}",
                 parse_mode="Markdown",
             )
         if ext == "run":
             chat_admins = await update.effective_chat.get_administrators()
             if update.effective_user in (admin.user for admin in chat_admins):
+                winner_entries = list(api.get_giveaway_entries())
+                winner = random.choice(winner_entries)
                 await update.message.reply_photo(
                     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                    caption=f"*{giveaway.header}*\n\n{giveaway.run()}\n\n{api.get_quote()}",
+                    caption=f"*{giveaway.name}*\n\n"
+                    f"The winner of the {giveaway.name} is: (last 5 digits only)\n\n"
+                    f"{winner}\n\n"
+                    f"Trust no one, trust code. Long live Defi!\n\n"
+                    f"{api.get_quote()}",
                     parse_mode="Markdown",
                 )
             else:
@@ -1171,52 +1165,46 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caption=f'`{joke["setup"]}\n\n{joke["delivery"]}`',
             parse_mode="Markdown",
         )
-
+datetime.utcnow()
 
 async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    def calculate_duration(duration):
-        years = duration.days // 365
-        months = (duration.days % 365) // 30
-        weeks = ((duration.days % 365) % 30) // 7
-        days = ((duration.days % 365) % 30) % 7
-        return years, months, weeks, days
-    
-    now = datetime.now()
-    x7m105_duration = now - times.x7m105
-    x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = calculate_duration(x7m105_duration)
-    migration_duration = now - times.migration
-    migration_years, migration_months, migration_weeks, migration_days = calculate_duration(migration_duration)
-    xchange_duration = times.xchange - now
-    xchange_years, xchange_months, xchange_weeks, xchange_days = calculate_duration(xchange_duration)
-    reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")}\n'
-    reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days ago\n\n"
-    reply_message += f'V2 Migration\n{times.migration.strftime("%A %B %d %Y %I:%M %p")}\n'
-    reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
-    reply_message += f'Xchange Launch\n{times.xchange.strftime("%A %B %d %Y %I:%M %p")}\n'
-    reply_message += f"{xchange_years} years, {xchange_months} months, {xchange_weeks} weeks, and {xchange_days} days to go\n\n"
-    reply_message += api.get_quote()
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=reply_message,
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
+    try:
+        x7m105_duration = datetime.utcnow() - times.x7m105
+        x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = api.get_duration_years(x7m105_duration)
+        migration_duration = datetime.utcnow() - times.migration
+        migration_years, migration_months, migration_weeks, migration_days = api.get_duration_years(migration_duration)
+        xchange_duration = times.xchange - datetime.utcnow()
+        xchange_years, xchange_months, xchange_weeks, xchange_days = api.get_duration_years(xchange_duration)
+        reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
+        reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days ago\n\n"
+        reply_message += f'V2 Migration\n{times.migration.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
+        reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
+        reply_message += f'Xchange Launch\n{times.xchange.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
+        reply_message += f"{xchange_years} years, {xchange_months} months, {xchange_weeks} weeks, and {xchange_days} days to go\n\n"
+        reply_message += api.get_quote()
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=reply_message,
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        text="X7M105 Launch TX",
-                        url=f"{url.ether_tx}0x11ff5b6a860170eaac5b33930680bf79dbf0656292cac039805dbcf34e8abdbf",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Migration Go Live TX",
-                        url=f"{url.ether_tx}0x13e8ed59bcf97c5948837c8069f1d61e3b0f817d6912015427e468a77056fe41",
-                    )
-                ],
-            ]
-        ),
-    )
+                    [
+                        InlineKeyboardButton(
+                            text="X7M105 Launch TX",
+                            url=f"{url.ether_tx}0x11ff5b6a860170eaac5b33930680bf79dbf0656292cac039805dbcf34e8abdbf",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Migration Go Live TX",
+                            url=f"{url.ether_tx}0x13e8ed59bcf97c5948837c8069f1d61e3b0f817d6912015427e468a77056fe41",
+                        )
+                    ],
+                ]
+            ),
+        )
+    except Exception as e:
+        print(e)
 
 
 async def leaderboard(update: Update, context: CallbackContext):
@@ -1680,7 +1668,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Initial Liquidity Loan - {loan_id} {chain_name}*\n\n"
-        f"Payment Schedule (UTC):\n{schedule_str}\n\n"
+        f"Payment Schedule UTC:\n{schedule_str}\n\n"
         f"{remaining}"
         f"{liquidation_status}\n\n{api.get_quote()}",
         parse_mode="Markdown",
@@ -2101,19 +2089,15 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    now = datetime.utcnow()
     tx = api.get_tx(ca.deployer, "eth")
     tx_filter = [d for d in tx["result"] if d["to"] in f"{ca.dead}".lower()]
     message = bytes.fromhex(tx_filter[0]["input"][2:]).decode("utf-8")
     time = datetime.utcfromtimestamp(int(tx_filter[0]["timeStamp"]))
-    duration = now - time
-    duration_in_s = duration.total_seconds()
-    days = divmod(duration_in_s, 86400)
-    hours = divmod(days[1], 3600)
-    minutes = divmod(hours[1], 60)
+    duration = datetime.utcnow() - time
+    days, hours, minutes = api.get_duration_days(duration)
     await update.message.reply_text(
-        f"*Last On Chain Message:*\n\n{time} (UTC)\n"
-        f"{int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes ago\n\n"
+        f"*Last On Chain Message:*\n\n{time} UTC\n"
+        f"{days} days, {hours} hours and {minutes} minutes ago\n\n"
         f"`{message}`",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -3078,17 +3062,13 @@ async def snapshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
         snapshot["data"]["proposals"][0]["start"]
     ).strftime("%Y-%m-%d %H:%M:%S")
     then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-    now = datetime.utcnow()
-    duration = then - now
-    duration_in_s = duration.total_seconds()
-    days = divmod(duration_in_s, 86400)
-    hours = divmod(days[1], 3600)
-    minutes = divmod(hours[1], 60)
+    duration = then - datetime.utcnow()
+    days, hours, minutes = api.get_duration_days(duration)
     if duration < timedelta(0):
         countdown = "Vote Closed"
         caption = "View"
     else:
-        countdown = f"Vote Closing in: {int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes"
+        countdown = f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes"
         caption = "Vote"
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -3683,18 +3663,14 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         space = get_space()
         then = parser.parse(space["scheduled_start"]).astimezone(pytz.utc)
-        now = datetime.now(timezone.utc)
-        duration = then - now
-        duration_in_s = duration.total_seconds()
-        days = divmod(duration_in_s, 86400)
-        hours = divmod(days[1], 3600)
-        minutes = divmod(hours[1], 60)
+        duration = then - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
         await update.message.reply_sticker(sticker=media.twitter_sticker)
         await update.message.reply_text(
             text=f"Next X7 Finance X space:\n\n"
             f'{space["title"]}\n\n'
-            f'{then.strftime("%A %B %d %Y %I:%M %p")} (UTC)\n\n'
-            f"{int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes\n\n"
+            f'{then.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
+            f"{days} days, {hours} hours and {minutes} minutes\n\n"
             f"[Click here](https://twitter.com/i/spaces/{space_id}) to set a reminder!"
             f"\n\n{api.get_quote()}",
             parse_mode="Markdown",

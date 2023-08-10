@@ -413,12 +413,37 @@ def get_os_nft_id(nft, id):
 
 
 # OTHER
+def get_duration_years(duration):
+    years = duration.days // 365
+    months = (duration.days % 365) // 30
+    weeks = ((duration.days % 365) % 30) // 7
+    days = ((duration.days % 365) % 30) % 7
+    return years, months, weeks, days
+
+
+def get_duration_days(duration):
+    days = duration.days
+    hours, remainder = divmod(duration.seconds, 3600)
+    minutes = (remainder % 3600) // 60
+    return days, hours, minutes
 
 
 def get_fact():
     response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random")
     quote = response.json()
     return quote["text"]
+
+
+def get_giveaway_entries():
+    with open("data/list.csv", "r") as file:
+        csv_reader = csv.reader(file)
+        header = next(csv_reader)
+        column_data = []
+        for row in csv_reader:
+            if len(row) > 0 and row[0] != "":
+                column_data.append(row[0])
+    return [entry[-5:] for entry in column_data]
+
 
 
 def get_holders(token):
@@ -503,15 +528,7 @@ def get_random_pioneer_number():
     return f"{random.randint(1, 4480)}".zfill(4)
 
 
-def read_csv_column(filename, column_index):
-    with open(filename, "r") as file:
-        csv_reader = csv.reader(file)
-        header = next(csv_reader)
-        column_data = []
-        for row in csv_reader:
-            if len(row) > column_index and row[column_index] != "":
-                column_data.append(row[column_index])
-    return column_data
+
 
 
 def get_scan(token: str, chain: str) -> dict:
