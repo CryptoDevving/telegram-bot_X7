@@ -33,10 +33,19 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if button_data == current_button_data:
         auto.click_counts[user_info] = auto.click_counts.get(user_info, 0) + 1
+        total_clicks = sum(auto.click_counts.values())
+
+        if total_clicks % 50 == 0:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=f"🚀🚀 The button has been clicked a total of *{total_clicks}* times! 🚀🚀",
+                parse_mode="Markdown"
+            )
+
         if auto.click_counts[user_info] % 10 == 0:
             await context.bot.send_message(
                 chat_id=update.effective_chat.id, text=
-                f"🎉🎉 *{user_info} has been the fastest Pioneer {auto.click_counts[user_info]} times!* 🎉🎉",
+                f"🎉🎉 {user_info} has been the fastest Pioneer *{auto.click_counts[user_info]}* times! 🎉🎉",
                 parse_mode="Markdown"
             )
 
@@ -64,17 +73,10 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def error(update: Update, context: CallbackContext):
-    try:
         if update is None:
             return
         if update.edited_message is not None:
             return
-        if isinstance(context.error, AttributeError):
-            return
-        if isinstance(context.error, ValueError) or isinstance(
-            context.error, Exception
-        ):
-            await update.message.reply_text("Error while loading data please try again")
         else:
             message: Message = update.message
             if message is not None and message.text is not None:
@@ -90,9 +92,6 @@ async def error(update: Update, context: CallbackContext):
                         f"Error occurred without a valid message: {context.error}"
                     )
                 )
-
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
 
 
 def scanner():
