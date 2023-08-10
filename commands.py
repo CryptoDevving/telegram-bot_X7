@@ -1174,7 +1174,6 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    from datetime import datetime
 
     def calculate_duration(duration):
         years = duration.days // 365
@@ -1191,7 +1190,7 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     xchange_duration = times.xchange - now
     xchange_years, xchange_months, xchange_weeks, xchange_days = calculate_duration(xchange_duration)
     reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")}\n'
-    reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days to go\n\n"
+    reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days ago\n\n"
     reply_message += f'V2 Migration\n{times.migration.strftime("%A %B %d %Y %I:%M %p")}\n'
     reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
     reply_message += f'Xchange Launch\n{times.xchange.strftime("%A %B %d %Y %I:%M %p")}\n'
