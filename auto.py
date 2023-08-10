@@ -100,10 +100,10 @@ def clicks_save(click_counts):
         csv_writer.writerow(["User", "Clicks"])
         for user, clicks in existing_clicks.items():
             csv_writer.writerow([user, clicks])
-#    try:
-#        api.push_github("data/clicks.csv", "auto: update clicks log")
-#    except Exception as e:
-#        sentry_sdk.capture_exception(f"GitHub Push error: {e}")
+    try:
+        api.push_github("data/clicks.csv", "auto: update clicks log")
+    except Exception as e:
+        sentry_sdk.capture_exception(f"GitHub Push error: {e}")
             
 
 async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):

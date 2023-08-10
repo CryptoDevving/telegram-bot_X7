@@ -1222,15 +1222,16 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def leaderboard(update: Update, context: CallbackContext):
     click_counts = auto.clicks_get()
     sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
+    top_click_counts = sorted_click_counts[:20]
     formatted_click_counts = "\n".join(
-        f"{user}: {count}" for user, count in sorted_click_counts
+        f"{user}: {count}" for user, count in top_click_counts
     )
     await update.message.reply_text(
-        text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
+        text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)*\n\n"
              f"{formatted_click_counts}",
         parse_mode="Markdown"
     )
-
+    
 
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
