@@ -18,7 +18,7 @@ from translate import Translator
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
-import main
+import auto
 from api import dune
 from api import index as api
 from media import index as media
@@ -1220,7 +1220,7 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def leaderboard(update: Update, context: CallbackContext):
-    click_counts = main.clicks_get()
+    click_counts = auto.clicks_get()
     sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
     formatted_click_counts = "\n".join(
         f"{user}: {count}" for user, count in sorted_click_counts

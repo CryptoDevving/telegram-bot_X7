@@ -5,6 +5,7 @@ from typing import Tuple
 from datetime import datetime, timedelta
 
 import tweepy
+import base64
 import requests
 from data import ca
 from moralis import evm_api
@@ -591,6 +592,34 @@ def get_word(word):
             audio_url = first_phonetic.get("audio")
 
     return definition, audio_url
+
+
+def push_github(location, message):
+    headers = {
+        'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
+    }
+    response = requests.get(
+        f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
+        headers=headers
+    )
+
+    if response.status_code == 200:
+        content = response.json()
+        sha = content['sha']
+
+        with open("data/clicks.csv", 'rb') as file:
+            file_content = file.read()
+        encoded_content = base64.b64encode(file_content).decode('utf-8')
+
+        response = requests.put(
+            f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
+            headers=headers,
+            json={
+                'message': message,
+                'content': encoded_content,
+                'sha': sha
+            }
+        )
 
 
 # TWITTER

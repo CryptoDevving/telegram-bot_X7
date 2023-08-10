@@ -1,8 +1,6 @@
 import os
 import csv
 import random
-import base64
-import requests
 
 import sentry_sdk
 from telegram import *
@@ -102,35 +100,10 @@ def clicks_save(click_counts):
         csv_writer.writerow(["User", "Clicks"])
         for user, clicks in existing_clicks.items():
             csv_writer.writerow([user, clicks])
-
-    headers = {
-        'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
-    }
-    response = requests.get(
-        'https://api.github.com/repos/x7finance/telegram-bot/contents/data/clicks.csv',
-        headers=headers
-    )
-
-    if response.status_code == 200:
-        content = response.json()
-        sha = content['sha']
-
-        with open("data/clicks.csv", 'rb') as file:
-            file_content = file.read()
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
-
-        try:
-            response = requests.put(
-                'https://api.github.com/repos/x7finance/telegram-bot/contents/data/clicks.csv',
-                headers=headers,
-                json={
-                    'message': 'auto: update clicks log',
-                    'content': encoded_content,
-                    'sha': sha
-                }
-            )
-        except Exception as e:
-            sentry_sdk.capture_exception(f"GitHub Push error: {e}")
+#    try:
+#        api.push_github("data/clicks.csv", "auto: update clicks log")
+#    except Exception as e:
+#        sentry_sdk.capture_exception(f"GitHub Push error: {e}")
             
 
 async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
