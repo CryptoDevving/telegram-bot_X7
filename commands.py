@@ -135,7 +135,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     i1.text(
         (28, 36),
         f"X7 Finance ATH Info (ETH)\n\n"
-        f'X7R   - ${x7r_ath} (${"{:0,.0f}".format(x7r_ath * ca.supply)}) {x7r_ath_change}%\n'
+        f'X7R   - ${x7r_ath} (${"{:0,.0f}".format(x7r_ath * api.get_x7r_supply("eth"))}) {x7r_ath_change}%\n'
         f"{x7r_readable_date}\n\n"
         f'X7DAO - ${x7dao_ath} (${"{:0,.0f}".format(x7dao_ath * ca.supply)}) {x7dao_ath_change}%\n'
         f"{x7dao_readable_date}"
@@ -147,7 +147,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     img.save(r"media/blackhole.png")
     caption = (
         f"*X7 Finance ATH Info*\n\n"
-        f'X7R - ${x7r_ath} (${"{:0,.0f}".format(x7r_ath * ca.supply)}) {x7r_ath_change}%\n'
+        f'X7R - ${x7r_ath} (${"{:0,.0f}".format(x7r_ath * api.get_x7r_supply("eth"))}) {x7r_ath_change}%\n'
         f"{x7r_readable_date}\n\n"
         f'X7DAO - ${x7dao_ath} (${"{:0,.0f}".format(x7dao_ath * ca.supply)}) {x7dao_ath_change}%\n'
         f"{x7dao_readable_date}\n\n"
@@ -444,7 +444,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="Markdown",
             )
         if x7token == ca.x7r:
-            x7_supply = ca.supply - api.get_token_balance(ca.dead, ca.x7r, "eth")
+            x7_supply = api.get_x7r_supply("eth")
         else:
             x7_supply = ca.supply
         x7_market_cap = x7_price * x7_supply
@@ -1869,7 +1869,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         token_name = token_names.get(token, "Unknown Token")
         price[token] = api.get_price(token, chain)
 
-    x7r_supply = ca.supply - api.get_token_balance(ca.dead, ca.x7r, chain)
+    x7r_supply = api.get_x7r_supply(chain)
 
     caps = {}
     for token in ca.tokens:
@@ -3843,6 +3843,9 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         + x7104_price
         + x7105_price
     )
+    percentages = [round(balance / ca.supply * 100, 2) for balance in [x7dao_balance, x7101_balance, x7102_balance, x7103_balance, x7104_balance, x7105_balance]]
+    x7r_percent = round(x7r_balance / api.get_x7r_supply(chain) * 100, 2)
+
     pioneers = api.get_pioneer_holdings(wallet)
     maxis = api.get_maxi_holdings(wallet)
     im1 = Image.open((random.choice(media.blackhole)))
@@ -3854,13 +3857,13 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         (28, 36),
         f"X7 Finance Wallet Info {chain_name}\n\n"
         f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-        f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
-        f"{x7dao_balance} X7DAO (${'{:0,.0f}'.format(x7dao_price)})\n"
-        f"{x7101_balance} X7101 (${'{:0,.0f}'.format(x7101_price)})\n"
-        f"{x7102_balance} X7102 (${'{:0,.0f}'.format(x7102_price)})\n"
-        f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
-        f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
-        f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
+        f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
+        f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
+        f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
+        f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
+        f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
+        f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
+        f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
         f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
         f"{pioneers} Pioneer NFTs\n"
         f"{maxis} Maxi NFTs\n\n"
@@ -3877,13 +3880,13 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
         f"`{wallet}`\n\n"
         f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-        f"{x7r_balance} X7R (${'{:0,.0f}'.format(x7r_price)})\n"
-        f"{x7dao_balance} X7DAO (${'{:0,.0f}'.format(x7dao_price)})\n"
-        f"{x7101_balance} X7101 (${'{:0,.0f}'.format(x7101_price)})\n"
-        f"{x7102_balance} X7102 (${'{:0,.0f}'.format(x7102_price)})\n"
-        f"{x7103_balance} X7103 (${'{:0,.0f}'.format(x7103_price)})\n"
-        f"{x7104_balance} X7104 (${'{:0,.0f}'.format(x7104_price)})\n"
-        f"{x7105_balance} X7105 (${'{:0,.0f}'.format(x7105_price)})\n"
+        f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
+        f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
+        f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
+        f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
+        f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
+        f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
+        f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
         f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
         f"{pioneers} Pioneer NFTs\n"
         f"{maxis} Maxi NFTs\n\n"
@@ -4556,10 +4559,10 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * api.get_x7r_supply(chain))}'
         ath_change = f'{api.get_ath("x7r")[1]}'
         ath_value = api.get_ath("x7r")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
     else:
         volume = "N/A"
         change = "N/A"
@@ -4614,7 +4617,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7R Info {chain_name}\n\n"
         f"X7R Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  {market_cap}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"

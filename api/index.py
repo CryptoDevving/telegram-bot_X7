@@ -166,6 +166,16 @@ def get_verified(contract, chain):
     return "Yes" if "SourceCode" in data["result"][0] else "No"
 
 
+def get_x7r_supply(chain):
+    if chain not in chains_info:
+        raise ValueError(f"Invalid chain: {chain}")
+    chain_info = chains_info[chain]
+    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={ca.x7r}&address={ca.dead}&tag=latest{chain_info.key}"
+    response = requests.get(url)
+    data = response.json()
+    supply = ca.supply - int(data["result"][:-18])
+    return supply
+
 # CG
 
 
