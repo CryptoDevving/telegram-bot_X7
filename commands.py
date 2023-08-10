@@ -1102,26 +1102,64 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    x7dao_holders = api.get_holders(ca.x7dao)
-    x7r_holders = api.get_holders(ca.x7r)
-    img = Image.open((random.choice(media.blackhole)))
-    i1 = ImageDraw.Draw(img)
-    myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
+    chain_mappings = {
+        "eth": ("(ETH)", media.eth_logo),
+        "arb": ("(ARB)", media.arb_logo),
+        "opti": ("(OPTIMISM)", media.opti_logo),
+        "bsc": ("(BSC)", media.bsc_logo),
+        "poly": ("(POLYGON)", media.poly_logo),
+    }
+    if chain in chain_mappings:
+        chain_name, chain_logo = chain_mappings[chain]
+        im2 = Image.open(chain_logo)
+    ### REVISIT AT MIGRATION
+    x7dao_holders = x7r_holders = x7101_holders = x7102_holders = x7103_holders = x7104_holders = x7105_holders = x7d_holders = 0
+
+    if chain == "eth":
+        x7dao_holders = api.get_holders(ca.x7dao)
+        x7r_holders = api.get_holders(ca.x7r)
+        x7101_holders = api.get_holders(ca.x7101)
+        x7102_holders = api.get_holders(ca.x7102)
+        x7103_holders = api.get_holders(ca.x7103)
+        x7104_holders = api.get_holders(ca.x7104)
+        x7105_holders = api.get_holders(ca.x7105)
+        x7d_holders = api.get_holders(ca.x7d)
+    
+    im1 = Image.open(random.choice(media.blackhole))
+    im1.paste(im2, (720, 20), im2)
+    myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
+    i1 = ImageDraw.Draw(im1)
     i1.text(
         (28, 36),
-        f"X7 Finance Token Holders (ETH)\n\n"
-        f"X7R Holders: {x7r_holders}\n"
-        f"X7DAO Holders: {x7dao_holders}\n\n\n\n\n\n\n\n\n"
+        f"X7 Finance Token Holders {chain_name}\n\n"
+        f"X7R:   {x7r_holders}\n"
+        f"X7DAO: {x7dao_holders}\n"
+        f"X7101: {x7101_holders}\n"
+        f"X7102: {x7102_holders}\n"
+        f"X7103: {x7103_holders}\n"
+        f"X7104: {x7104_holders}\n"
+        f"X7105: {x7105_holders}\n"
+        f"X7D:   {x7d_holders}\n\n\n\n"
         f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font=myfont,
         fill=(255, 255, 255),
     )
-    img.save(r"media/blackhole.png")
+    im1.save(r"media/blackhole.png")
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
-        caption=f"*X7 Finance Token Holders (ETH)*\n\n"
-        f"X7R Holders: {x7r_holders}\n"
-        f"X7DAO Holders: {x7dao_holders}\n\n"
+        caption=f"*X7 Finance Token Holders {chain_name}*\n"
+        f"For other chains use `/holders [chain-name]`\n\n"
+        f"X7R:        {x7r_holders}\n"
+        f"X7DAO:  {x7dao_holders}\n"
+        f"X7101:    {x7101_holders}\n"
+        f"X7102:    {x7102_holders}\n"
+        f"X7103:    {x7103_holders}\n"
+        f"X7104:    {x7104_holders}\n"
+        f"X7105:    {x7105_holders}\n"
+        f"X7D:        {x7d_holders}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
     )
