@@ -1174,28 +1174,29 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    launch_raw = datetime(2022, 8, 13, 14, 10, 17)
-    migration_raw = datetime(2022, 9, 25, 5, 0, 11)
+    from datetime import datetime
+
+    def calculate_duration(duration):
+        years = duration.days // 365
+        months = (duration.days % 365) // 30
+        weeks = ((duration.days % 365) % 30) // 7
+        days = ((duration.days % 365) % 30) % 7
+        return years, months, weeks, days
+    
     now = datetime.now()
-
-    launch_duration = now - launch_raw
-    launch_years = launch_duration.days // 365
-    launch_months = (launch_duration.days % 365) // 30
-    launch_weeks = ((launch_duration.days % 365) % 30) // 7
-    launch_days = ((launch_duration.days % 365) % 30) % 7
-
-    migration_duration = now - migration_raw
-    migration_years = migration_duration.days // 365
-    migration_months = (migration_duration.days % 365) // 30
-    migration_weeks = ((migration_duration.days % 365) % 30) // 7
-    migration_days = ((migration_duration.days % 365) % 30) % 7
-
-    reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{launch_raw.strftime("%A %B %d %Y %I:%M %p")}\n'
-    reply_message += f"{launch_years} years, {launch_months} months, {launch_weeks} weeks, and {launch_days} days ago\n\n"
-    reply_message += f'V2 Migration\n{migration_raw.strftime("%A %B %d %Y %I:%M %p")}\n'
+    x7m105_duration = now - times.x7m105
+    x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = calculate_duration(x7m105_duration)
+    migration_duration = now - times.migration
+    migration_years, migration_months, migration_weeks, migration_days = calculate_duration(migration_duration)
+    xchange_duration = times.xchange - now
+    xchange_years, xchange_months, xchange_weeks, xchange_days = calculate_duration(xchange_duration)
+    reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")}\n'
+    reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days to go\n\n"
+    reply_message += f'V2 Migration\n{times.migration.strftime("%A %B %d %Y %I:%M %p")}\n'
     reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
+    reply_message += f'Xchange Launch\n{times.xchange.strftime("%A %B %d %Y %I:%M %p")}\n'
+    reply_message += f"{xchange_years} years, {xchange_months} months, {xchange_weeks} weeks, and {xchange_days} days to go\n\n"
     reply_message += api.get_quote()
-
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=reply_message,
