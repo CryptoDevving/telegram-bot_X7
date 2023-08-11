@@ -2636,6 +2636,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 price_change = token_price[token_id]["usd_24h_change"]
                 if price_change is None:
                     price_change = 0
+                market_cap = token_price[token_id]["usd_market_cap"]
+                if market_cap is None or market_cap == 0:
+                    market_cap = " N/A"
                 img = Image.open(requests.get(thumb, stream=True).raw)
                 result = img.convert("RGBA")
                 result.save(r"media/cgtokenlogo.png")
@@ -2649,7 +2652,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{symbol} price\n\n"
                     f'Price: ${"{:.8f}".format(token_price[token_id]["usd"])}\n'
                     f"24 Hour Change: {round(price_change, 1)}%\n"
-                    f'Market Cap: ${"{:0,.0f}".format(token_price[token_id]["usd_market_cap"])}\n\n\n\n\n\n\n\n'
+                    f'Market Cap: ${market_cap}\n\n\n\n\n\n\n\n'
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
                     fill=(255, 255, 255),
@@ -2660,7 +2663,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"*{symbol} price*\n\n"
                     f'Price: ${"{:.8f}".format(token_price[token_id]["usd"])}\n'
                     f'24 Hour Change: {round(token_price[token_id]["usd_24h_change"], 1)}%\n'
-                    f'Market Cap: ${"{:0,.0f}".format(token_price[token_id]["usd_market_cap"])}\n\n'
+                    f'Market Cap: ${market_cap}\n\n'
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
                     reply_markup=InlineKeyboardMarkup(
