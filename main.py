@@ -65,7 +65,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         context.user_data["current_button_data"] = None
     
         job_queue.run_once(
-            auto.send_click_message,
+            auto.auto_message_click,
             times.button_time,
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Message",
