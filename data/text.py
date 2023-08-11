@@ -34,6 +34,10 @@ admin_commands = (
     "/antiflood - (Dis)Enable anti-flood mode\n"
     "/lock all - mutes chat\n"
     "/unlock all - unmute chat\n"
+    "/shield - Start shield raid\n"
+    "BuyBotTech - X7R\n"
+    "BobbyBuyBot - X7DAO, X7101, X7102\n"
+    "BubbleBuyBot - X7103, X7104, X7105\n"
 )
 
 airdrop = (
