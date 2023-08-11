@@ -2554,6 +2554,92 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ),
                 )
                 return
+
+            token_mappings = {
+                "x7r": ("X7R", api.get_x7r_supply("eth"), media.x7r_logo, ca.x7r, ca.x7r_pair_eth),
+                "x7dao": ("X7DAO", ca.supply, media.x7dao_logo, ca.x7dao, ca.x7dao_pair_eth),
+                "x7101": ("X7101", ca.supply, media.x7101_logo, ca.x7101, ca.x7101_pair_eth),
+                "x7102": ("X7102", ca.supply, media.x7102_logo, ca.x7102, ca.x7102_pair_eth),
+                "x7103": ("X7103", ca.supply, media.x7103_logo, ca.x7103, ca.x7103_pair_eth),
+                "x7104": ("X7104", ca.supply, media.x7104_logo, ca.x7104, ca.x7104_pair_eth),
+                "x7105": ("X7105", ca.supply, media.x7105_logo, ca.x7105, ca.x7105_pair_eth),
+            }
+            if search in token_mappings:
+                token_name, token_supply, token_logo, token_ca, token_pair = token_mappings[search]
+                price = api.get_price(token_ca, "eth")
+                cg = api.get_cg_price(search)
+                volume = round(cg[search]["usd_24h_vol"], 6)
+                change = round(cg[search]["usd_24h_change"],2)
+                holders = api.get_holders(ca.x7105)
+                if change is None:
+                    change = 0
+                else:
+                    f"24 Hour Change: {round(change), 1}%\n"
+                if volume is None:
+                    volume = 0
+                else:
+                    volume = f'${"{:0,.0f}".format(volume)}'
+                market_cap = f'${"{:0,.0f}".format(price * token_supply)}'
+                ath_change = f'{api.get_ath(search)[1]}'
+                ath_value = api.get_ath(search)[0]
+                ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * token_supply)}) {ath_change[:3]}%'
+
+                x7 = api.get_liquidity(token_pair, "eth")
+                x7_token = float(x7["reserve0"]) / 10**18
+                x7_weth = float(x7["reserve1"]) / 10**18
+                x7_token_dollar = float(price) * float(x7_token)
+                x7_weth_dollar = float(x7_weth) * float(
+                    api.get_native_price("eth")
+                )
+
+                liquidity = (
+                    f'{"{:0,.0f}".format(x7_token)[:4]}M {token_name} (${"{:0,.0f}".format(x7_token_dollar)})\n'
+                    f'{x7_weth:.0f} {token_name} (${"{:0,.0f}".format(x7_weth_dollar)})\n'
+                    f"Total Liquidity ${float(x7_weth_dollar + x7_token_dollar):,.0f}"
+                )
+                im1 = Image.open((random.choice(media.blackhole)))
+                im2 = Image.open(token_logo)
+                im1.paste(im2, (720, 20), im2)
+                myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
+                i1 = ImageDraw.Draw(im1)
+                i1.text(
+                    (28, 36),
+                    f"{token_name} Info\n\n"
+                    f"Price: ${round(price, 8)}\n"
+                    f"24 Hour Change: {change}%\n"
+                    f"Market Cap: {market_cap}\n"
+                    f"24 Hour Volume: {volume}\n"
+                    f"ATH: {ath}\n"
+                    f"Holders: {holders}\n\n"
+                    f"Liquidity:\n"
+                    f"{liquidity}\n\n"
+                    f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+                    font=myfont,
+                    fill=(255, 255, 255),
+                )
+                img_path = os.path.join("media", "blackhole.png")
+                im1.save(img_path)
+                await update.message.reply_photo(
+                    photo=open(r"media/blackhole.png", "rb"),
+                    caption=f"{token_name} Info\n\n"
+                    f"Price: ${round(price, 8)}\n"
+                    f"24 Hour Change: {change}%\n"
+                    f'Market Cap:  ${market_cap}\n'
+                    f"24 Hour Volume: {volume}\n"
+                    f"ATH: {ath}\n"
+                    f"Holders: {holders}\n\n"
+                    f"Liquidity:\n"
+                    f"{liquidity}\n\n"
+                    f"Contract Address:\n`{ca.x7105}`\n\n{api.get_quote()}",
+                    parse_mode="Markdown",
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [InlineKeyboardButton(text="Chart", url=f"{url.dex_tools_eth}{token_pair}")],
+                            [InlineKeyboardButton(text="Buy", url=f"{url.xchange_buy_eth}{token_ca}")],
+                        ]
+                    ),
+                )
+            return
             if (
                 search == "eth"
                 or search == "bnb"
@@ -4334,7 +4420,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7dao_token)[:4]}M X7DAO (${"{:0,.0f}".format(x7dao_token_dollar)})\n'
-            f"{x7dao_weth:.0f} {chain_native.upper()} (${x7dao_weth_dollar:.0f})\n"
+            f'{x7dao_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_weth_dollar)})\n'
             f"Total Liquidity ${float(x7dao_weth_dollar + x7dao_token_dollar):,.0f}"
         )
 
@@ -4601,7 +4687,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7r_token)[:4]}M X7R (${"{:0,.0f}".format(x7r_token_dollar)})\n'
-            f"{x7r_weth:.0f} {chain_native.upper()} (${x7r_weth_dollar:.0f})\n"
+            f'{x7r_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7r_weth_dollar)})\n'
             f"Total Liquidity ${float(x7r_weth_dollar + x7r_token_dollar):,.0f}"
         )
     ### REMOVE AT MIGRATION ###
@@ -4834,7 +4920,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "eth":
         cg = api.get_cg_price("x7101")
         volume = round(cg["x7101"]["usd_24h_vol"], 6)
-        change = cg["x7101"]["usd_24h_change"]
+        change = round(cg["x7101"]["usd_24h_change"], 2)
         holders = api.get_holders(ca.x7101)
         if change is None:
             change = 0
@@ -4866,7 +4952,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7101_token)[:4]}M X7101 (${"{:0,.0f}".format(x7101_token_dollar)})\n'
-            f"{x7101_weth:.0f} {chain_native.upper()} (${x7101_weth_dollar:.0f})\n"
+            f'{x7101_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7101_weth_dollar)})\n'
             f"Total Liquidity ${float(x7101_weth_dollar + x7101_token_dollar):,.0f}"
         )
     ### REMOVE AT MIGRATION ###
@@ -5099,7 +5185,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "eth":
         cg = api.get_cg_price("x7102")
         volume = round(cg["x7102"]["usd_24h_vol"], 6)
-        change = cg["x7102"]["usd_24h_change"]
+        change = round(cg["x7102"]["usd_24h_change"], 2)
         holders = api.get_holders(ca.x7102)
         if change is None:
             change = 0
@@ -5131,7 +5217,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7102_token)[:4]}M X7102 (${"{:0,.0f}".format(x7102_token_dollar)})\n'
-            f"{x7102_weth:.0f} {chain_native.upper()} (${x7102_weth_dollar:.0f})\n"
+            f'{x7102_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7102_weth_dollar)})\n'
             f"Total Liquidity ${float(x7102_weth_dollar + x7102_token_dollar):,.0f}"
         )
     ### REMOVE AT MIGRATION ###
@@ -5364,7 +5450,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "eth":
         cg = api.get_cg_price("x7103")
         volume = round(cg["x7103"]["usd_24h_vol"], 6)
-        change = cg["x7103"]["usd_24h_change"]
+        change = round(cg["x7103"]["usd_24h_change"], 2)
         holders = api.get_holders(ca.x7103)
         if change is None:
             change = 0
@@ -5396,7 +5482,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7103_token)[:4]}M X7103 (${"{:0,.0f}".format(x7103_token_dollar)})\n'
-            f"{x7103_weth:.0f} {chain_native.upper()} (${x7103_weth_dollar:.0f})\n"
+            f'{x7103_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7103_weth_dollar)})\n'
             f"Total Liquidity ${float(x7103_weth_dollar + x7103_token_dollar):,.0f}"
         )
     ### REMOVE AT MIGRATION ###
@@ -5629,7 +5715,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "eth":
         cg = api.get_cg_price("x7104")
         volume = round(cg["x7104"]["usd_24h_vol"], 6)
-        change = cg["x7104"]["usd_24h_change"]
+        change = round(cg["x7104"]["usd_24h_change"], 2)
         holders = api.get_holders(ca.x7104)
         if change is None:
             change = 0
@@ -5661,7 +5747,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7104_token)[:4]}M X7104 (${"{:0,.0f}".format(x7104_token_dollar)})\n'
-            f"{x7104_weth:.0f} {chain_native.upper()} (${x7104_weth_dollar:.0f})\n"
+            f'{x7104_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7104_weth_dollar)})\n'
             f"Total Liquidity ${float(x7104_weth_dollar + x7104_token_dollar):,.0f}"
         )
     ### REMOVE AT MIGRATION ###
@@ -5894,7 +5980,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "eth":
         cg = api.get_cg_price("x7105")
         volume = round(cg["x7105"]["usd_24h_vol"], 6)
-        change = cg["x7105"]["usd_24h_change"]
+        change = round(cg["x7105"]["usd_24h_change"], 2)
         holders = api.get_holders(ca.x7105)
         if change is None:
             change = 0
@@ -5926,7 +6012,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         liquidity = (
             f'{"{:0,.0f}".format(x7105_token)[:4]}M X7105 (${"{:0,.0f}".format(x7105_token_dollar)})\n'
-            f"{x7105_weth:.0f} {chain_native.upper()} (${x7105_weth_dollar:.0f})\n"
+            f'{x7105_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7105_weth_dollar)})\n'
             f"Total Liquidity ${float(x7105_weth_dollar + x7105_token_dollar):,.0f}"
         )
     ### REMOVE AT MIGRATION ###

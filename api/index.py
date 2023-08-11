@@ -528,9 +528,6 @@ def get_random_pioneer_number():
     return f"{random.randint(1, 4480)}".zfill(4)
 
 
-
-
-
 def get_scan(token: str, chain: str) -> dict:
     chains = {"eth": 1, "bsc": 56, "arb": 42161, "opti": 10, "poly": 137}
     chain_number = chains.get(chain)
