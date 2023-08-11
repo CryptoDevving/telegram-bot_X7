@@ -1468,15 +1468,15 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         constellations_weth_dollar = sum(weth_dollars[2:])
         constellations_token_dollar = sum(token_dollars[2:])
 
-        x7r_token_liq = token_liquidity[0]
-        x7r_weth_liq = weth_liquidity[0]
-        x7r_token_dollar = token_dollars[0]
-        x7r_weth_dollar = weth_dollars[0]
+        x7r_token_liq = token_liquidity[1]
+        x7r_weth_liq = weth_liquidity[1]
+        x7r_token_dollar = token_dollars[1]
+        x7r_weth_dollar = weth_dollars[1]
 
-        x7dao_token_liq = token_liquidity[1]
-        x7dao_weth_liq = weth_liquidity[1]
-        x7dao_token_dollar = token_dollars[1]
-        x7dao_weth_dollar = weth_dollars[1]
+        x7dao_token_liq = token_liquidity[0]
+        x7dao_weth_liq = weth_liquidity[0]
+        x7dao_token_dollar = token_dollars[0]
+        x7dao_weth_dollar = weth_dollars[0]
 
         im1 = Image.open((random.choice(media.blackhole)))
         im1.paste(im2, (720, 20), im2)
