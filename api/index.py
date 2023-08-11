@@ -53,6 +53,16 @@ def get_abi(contract: str, chain: str) -> str:
     return data["result"][0]["ABI"]
 
 
+def get_block(chain:str, time: "int") -> str:
+    if chain not in chains_info:
+        raise ValueError(f"Invalid chain: {chain}")
+    chain_info = chains_info[chain]
+    url = f"{chain_info.url}?module=block&action=getblocknobytime&timestamp={time}&closest=before{chain_info.key}"
+    response = requests.get(url)
+    data = response.json()
+    return data["result"]
+
+
 def get_gas(chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
@@ -413,6 +423,16 @@ def get_os_nft_id(nft, id):
 
 
 # OTHER
+
+
+def datetime_to_timestamp(datetime_str):
+    try:
+        datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+        timestamp = datetime_obj.timestamp()
+        return timestamp
+    except ValueError:
+        return "Invalid datetime format. Please use YYYY-MM-DD HH:MM."
+
 
 def escape_markdown(text):
     characters_to_escape = ['*', '_', '`']

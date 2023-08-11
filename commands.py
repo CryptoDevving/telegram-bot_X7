@@ -158,6 +158,21 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    time = round(t.time())
+    block_types = ["eth", "arb", "bsc", "poly", "opti"]
+    blocks = {block_type: api.get_block(block_type, time) for block_type in block_types}
+    blocks_text = "\n".join([f"{block_type.upper()}: {block}" for block_type, block in blocks.items()])
+    quote = api.get_quote()
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=
+        f"*Latest Blocks*\n\n"
+        f"{blocks_text}\n\n"
+        f"{quote}",
+        parse_mode="Markdown"
+    )
+
 async def blog(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
