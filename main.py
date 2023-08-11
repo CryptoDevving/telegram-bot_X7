@@ -5,6 +5,7 @@ import sentry_sdk
 from telegram import *
 from telegram.ext import *
 
+import api
 import auto
 import commands
 from data import times
@@ -45,7 +46,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if auto.click_counts[user_info] % 10 == 0:
             await context.bot.send_message(
                 chat_id=update.effective_chat.id, text=
-                f"🎉🎉 {user_info} has been the fastest Pioneer *{auto.click_counts[user_info]}* times! 🎉🎉",
+                f"🎉🎉 {api.escape_markdown(user_info)} has been the fastest Pioneer *{auto.click_counts[user_info]}* times! 🎉🎉",
                 parse_mode="Markdown"
             )
 
@@ -57,7 +58,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             first_user_clicked = True
             await context.bot.send_message(
                 chat_id=update.effective_chat.id, text=
-                f"{user_info} was the fastest Pioneer!\n\n"
+                f"{api.escape_markdown(user_info)} was the fastest Pioneer!\n\n"
                 "use `/leaderboard` to see the fastest Pioneers!",
                 parse_mode="Markdown",
             )
