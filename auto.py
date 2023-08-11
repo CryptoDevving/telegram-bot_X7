@@ -76,7 +76,7 @@ async def auto_message_referral(context: ContextTypes.DEFAULT_TYPE) -> None:
 def clicks_get():
     click_counts = {}
     try:
-        with open("data/clicks.csv", mode="r") as file:
+        with open("logs/clicks.csv", mode="r") as file:
             csv_reader = csv.reader(file)
             header = next(csv_reader)
             for row in csv_reader:
@@ -95,13 +95,13 @@ def clicks_save(click_counts):
         else:
             existing_clicks[user] = clicks
 
-    with open("data/clicks.csv", mode="w", newline="") as file:
+    with open("logs/clicks.csv", mode="w", newline="") as file:
         csv_writer = csv.writer(file)
         csv_writer.writerow(["User", "Clicks"])
         for user, clicks in existing_clicks.items():
             csv_writer.writerow([user, clicks])
     try:
-        api.push_github("data/clicks.csv", "auto: update clicks log")
+        api.push_github("logs/clicks.csv", "auto: update clicks log")
     except Exception as e:
         sentry_sdk.capture_exception(f"GitHub Push error: {e}")
             

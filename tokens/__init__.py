@@ -2,9 +2,7 @@ import os
 import importlib
 
 from web3 import Web3
-from dotenv import load_dotenv
 
-load_dotenv()
 
 alchemy_eth = os.getenv("ALCHEMY_ETH")
 alchemy_arb = os.getenv("ALCHEMY_ARB")

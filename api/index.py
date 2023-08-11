@@ -484,7 +484,7 @@ def get_fact():
 
 
 def get_giveaway_entries():
-    with open("data/list.csv", "r") as file:
+    with open("logs/entries.csv", "r") as file:
         csv_reader = csv.reader(file)
         header = next(csv_reader)
         column_data = []
@@ -680,7 +680,7 @@ def push_github(location, message):
         content = response.json()
         sha = content['sha']
 
-        with open("data/clicks.csv", 'rb') as file:
+        with open("logs/clicks.csv", 'rb') as file:
             file_content = file.read()
         encoded_content = base64.b64encode(file_content).decode('utf-8')
 
