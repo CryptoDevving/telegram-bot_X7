@@ -5,10 +5,10 @@ import sentry_sdk
 from telegram import *
 from telegram.ext import *
 
-import api
 import auto
 import commands
 from data import times
+from api import index as api
 
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
