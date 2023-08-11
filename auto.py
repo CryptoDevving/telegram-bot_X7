@@ -72,7 +72,7 @@ async def auto_message_referral(context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_markup=keyboard_markup,
     )
 
-    
+
 def clicks_get():
     click_counts = {}
     try:
