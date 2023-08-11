@@ -23,6 +23,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     button_data = update.callback_query.data
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
+    user_click_count = auto.click_counts[user_info]
 
     if button_data in auto.clicked_buttons:
         return
@@ -56,10 +57,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not auto.first_user_clicked:
             first_user_info = user_info
             first_user_clicked = True
+            if user_click_count == 1:
+                message = (
+                    f"That is {api.escape_markdown(user_info)}'s first time as Fastest Pioneer!\n\n"
+                    "Use `/leaderboard` to see the fastest Pioneers!"
+                )
+            else:
+                message = (
+                    f"{api.escape_markdown(user_info)} was the fastest Pioneer.\n"
+                    f"{api.escape_markdown(user_info)} has been the fastest Pioneer *{user_click_count}* times!\n\n"
+                    "Use `/leaderboard` to see the fastest Pioneers!"
+                )
+
             await context.bot.send_message(
-                chat_id=update.effective_chat.id, text=
-                f"{api.escape_markdown(user_info)} was the fastest Pioneer!\n\n"
-                "use `/leaderboard` to see the fastest Pioneers!",
+                chat_id=update.effective_chat.id,
+                text=message,
                 parse_mode="Markdown",
             )
 
