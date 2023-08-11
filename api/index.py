@@ -1,12 +1,14 @@
 import os
 import csv
 import random
+import time as t
 from typing import Tuple
 from datetime import datetime, timedelta
 
 import tweepy
 import base64
 import requests
+
 from data import ca
 from moralis import evm_api
 from dotenv import load_dotenv
@@ -61,6 +63,25 @@ def get_block(chain:str, time: "int") -> str:
     response = requests.get(url)
     data = response.json()
     return data["result"]
+
+
+def get_daily_tx_count(contract: str, chain: str,) -> str:
+    if chain not in chains_info:
+        raise ValueError(f"Invalid chain: {chain}")
+    chain_info = chains_info[chain]
+    yesterday = int(t.time()) - 86400
+    block = get_block(chain, yesterday)
+    tx_url = f"{chain_info.url}?module=account&action=txlist&address={contract}&startblock={block}&endblock=99999999&page=1&offset=10&sort=asc{chain_info.key}"
+    tx_response = requests.get(tx_url)
+    tx_data = tx_response.json()
+    tx_entry_count = len(tx_data['result']) if 'result' in tx_data else 0
+
+    internal_tx_url = f"{chain_info.url}?module=account&action=internaltxlist&address={contract}&startblock={block}&endblock=99999999&page=1&offset=10&sort=asc{chain_info.key}"
+    internal_tx_response = requests.get(internal_tx_url)
+    internal_tx_data = internal_tx_response.json()
+    internal_tx_entry_count = len(internal_tx_data['result']) if 'result' in internal_tx_data else 0
+    entry_count = tx_entry_count + internal_tx_entry_count 
+    return entry_count
 
 
 def get_gas(chain):
