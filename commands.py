@@ -4472,7 +4472,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7R Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'ETH:   {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:   {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:   {"{:0,.0f}".format(bsc_amount)}\n'
@@ -4487,7 +4487,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7R Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will cureently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -4498,7 +4498,9 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain.isdigit():
         eth_price = api.get_price(ca.x7r, "eth")
-        eth_amount = float(chain) / eth_price
+        print(eth_price)
+        eth_amount = float(chain) * float(eth_price)
+        print(eth_amount)
         try:
             bsc_price = api.get_price(ca.x7r, "bsc")
             arb_price = api.get_price(ca.x7r, "arb")
@@ -4526,11 +4528,11 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             (26, 30),
             f"X7R Info\n\n"
             f"{chain} X7R token currently costs:\n\n"
-            f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:`  ${"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY: ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n'
+            f'ETH:   ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:   ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:   ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:  ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:  ${"{:,.2f}".format(opti_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -4540,11 +4542,11 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"{chain} X7R tokens currently costs:\n\n"
-            f'ETH:   {"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   {"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:   {"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY: {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  {"{:0,.0f}".format(opti_amount)}\n\n'
+            f'ETH:   ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:   ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:   ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY: ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:  ${"{:,.2f}".format(opti_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -4736,7 +4738,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7101 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy::\n\n"
             f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
@@ -4751,7 +4753,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7101 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -4789,11 +4791,11 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             (26, 30),
             f"X7101 Info\n\n"
             f"{chain} X7101 tokens currently costs:\n\n"
-            f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'ETH:    ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -4803,11 +4805,11 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"{chain} X7101 tokens currently costs:\n\n"
-            f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n'
+            f'ETH:     ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5001,7 +5003,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7102 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5016,7 +5018,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7102 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5054,11 +5056,11 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             (26, 30),
             f"X7102 Info\n\n"
             f"{chain} X7102 tokens currently costs:\n\n"
-            f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'ETH:    ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5068,11 +5070,11 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"{chain} X7102 tokens currently costs:\n\n"
-            f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n'
+            f'ETH:     ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5266,7 +5268,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7103 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5281,7 +5283,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7103 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5319,11 +5321,11 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             (26, 30),
             f"X7103 Info\n\n"
             f"{chain} X7103 tokens currently costs:\n\n"
-            f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'ETH:    ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5333,11 +5335,11 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"{chain} X7103 tokens currently costs:\n\n"
-            f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n'
+            f'ETH:     ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5531,7 +5533,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7104 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will cureently buy:\n\n"
             f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5546,7 +5548,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7104 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5584,11 +5586,11 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             (26, 30),
             f"X7104 Info\n\n"
             f"{chain} X7104 tokens currently costs:\n\n"
-            f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'ETH:    ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5598,11 +5600,11 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"{chain} X7104 tokens currently costs:\n\n"
-            f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n'
+            f'ETH:     ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5796,7 +5798,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7105 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5811,7 +5813,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7105 Info\n\n"
-            f"{chain} before tax is currently worth:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5849,11 +5851,11 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             (26, 30),
             f"X7105 Info\n\n"
             f"{chain} X7105 tokens currently costs:\n\n"
-            f'ETH:   ${"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'ETH:    ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5863,11 +5865,11 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"{chain} X7105 tokens currently costs:\n\n"
-            f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
-            f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
-            f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
-            f'POLY:  {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n'
+            f'ETH:     ${"{:,.2f}".format(eth_amount)}\n'
+            f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
+            f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
+            f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
