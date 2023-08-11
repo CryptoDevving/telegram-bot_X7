@@ -1246,8 +1246,8 @@ async def leaderboard(update: Update, context: CallbackContext):
     click_counts = auto.clicks_get()
     sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
     top_click_counts = sorted_click_counts[:20]
-    formatted_click_counts = "\n".join(
-        f"{user}: {count}" for user, count in top_click_counts
+    formatted_click_counts = api.escape_markdown("\n".join(
+        f"{user}: {count}" for user, count in top_click_counts)
     )
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)*\n\n"
@@ -4584,9 +4584,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain.isdigit():
         eth_price = api.get_price(ca.x7r, "eth")
-        print(eth_price)
         eth_amount = float(chain) * float(eth_price)
-        print(eth_amount)
         try:
             bsc_price = api.get_price(ca.x7r, "bsc")
             arb_price = api.get_price(ca.x7r, "arb")

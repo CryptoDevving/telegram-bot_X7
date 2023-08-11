@@ -413,6 +413,14 @@ def get_os_nft_id(nft, id):
 
 
 # OTHER
+
+def escape_markdown(text):
+    characters_to_escape = ['*', '_', '`']
+    for char in characters_to_escape:
+        text = text.replace(char, '\\' + char)
+    return text
+
+    
 def get_duration_years(duration):
     years = duration.days // 365
     months = (duration.days % 365) // 30
