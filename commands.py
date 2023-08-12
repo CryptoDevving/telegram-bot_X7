@@ -22,7 +22,7 @@ import auto
 from api import dune
 from api import index as api
 from media import index as media
-from data import ca, loans, nfts, tax, text, times, giveaway, url
+from data import ca, loans, nfts, tax, text, times, giveaway, url, dao
 from tokens import chains, pairs, all_tokens_info
 
 
@@ -35,6 +35,7 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     except Exception as e:
         print(e)
+
 
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -632,6 +633,34 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
     )
 
+
+async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    contract = " ".join(context.args)
+
+    if contract in dao.contract_mappings:
+        contract_text, contract_ca = dao.contract_mappings[contract]
+        await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*X7 Finance DAO Functions*\n"
+                f"{contract}\n\n"
+                f"The following functions can be called on the {contract} contract:\n\n"
+                f"{contract_text}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Contract", url=f"{url.ether_address}{contract_ca}")],
+            ]
+        ),
+    )
+    else:
+        contract_names = list(dao.contract_mappings.keys())
+        formatted_contract_names = '\n'.join(contract_names)
+        await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*X7 Finance DAO Functions*\n\n"
+                f"Please use `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                f"*Contract Names:*\n\n{formatted_contract_names}",
+        parse_mode="Markdown")
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
