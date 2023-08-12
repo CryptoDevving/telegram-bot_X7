@@ -2641,7 +2641,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"{token_name} Info\n\n"
                     f"Price: ${round(price, 8)}\n"
                     f"24 Hour Change: {change}%\n"
-                    f'Market Cap:  ${market_cap}\n'
+                    f'Market Cap:  {market_cap}\n'
                     f"24 Hour Volume: {volume}\n"
                     f"ATH: {ath}\n"
                     f"Holders: {holders}\n\n"
