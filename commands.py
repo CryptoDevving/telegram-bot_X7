@@ -1259,14 +1259,16 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def leaderboard(update: Update, context: CallbackContext):
     click_counts = auto.clicks_get()
+    click_counts_total = auto.clicks_get_total()
     sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
     top_click_counts = sorted_click_counts[:20]
     formatted_click_counts = api.escape_markdown("\n".join(
-        f"{user}: {count}" for user, count in top_click_counts)
+        f"{i + 1}. {user}: {count}" for i, (user, count) in enumerate(top_click_counts))
     )
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)*\n\n"
-             f"{formatted_click_counts}",
+             f"{formatted_click_counts}\n\n"
+             f"Total clicks: *{click_counts_total}*\n",
         parse_mode="Markdown"
     )
     

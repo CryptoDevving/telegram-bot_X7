@@ -87,6 +87,25 @@ def clicks_get():
     return click_counts
 
 
+def clicks_get_total():
+    total_count = 0
+    try:
+        with open("logs/clicks.csv", mode="r") as file:
+            csv_reader = csv.reader(file)
+            header = next(csv_reader)
+            for row in csv_reader:
+                user, clicks = row
+                total_count += int(clicks)
+    except FileNotFoundError:
+        pass
+    return total_count
+
+
+def get_user_click_total(username):
+    click_counts = clicks_get()
+    return click_counts.get(username, 0)
+
+
 def clicks_save(click_counts):
     existing_clicks = clicks_get()
     for user, clicks in click_counts.items():
