@@ -50,7 +50,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
         job_queue.run_once(
             auto.auto_message_click,
-            times.button_time,
+            times.button_time(),
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Message",
         )
@@ -211,7 +211,7 @@ if __name__ == "__main__":
 
     job_queue.run_once(
         auto.auto_message_click,
-        times.button_time,
+        times.button_time(),
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
     )
