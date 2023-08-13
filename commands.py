@@ -3593,7 +3593,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             url.ether_address,
             media.eth_logo,
             ca.com_multi_eth,
-            ca.dev_multi_eth,
             "eth",
         ),
         "arb": (
@@ -3601,7 +3600,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             url.arb_address,
             media.bsc_logo,
             ca.com_multi_arb,
-            ca.dev_multi_arb,
             "eth",
         ),
         "poly": (
@@ -3609,7 +3607,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             url.poly_address,
             media.poly_logo,
             ca.com_multi_poly,
-            ca.dev_multi_poly,
             "matic",
         ),
         "bsc": (
@@ -3617,7 +3614,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             url.bsc_address,
             media.bsc_logo,
             ca.com_multi_bsc,
-            ca.dev_multi_bsc,
             "bnb",
         ),
         "opti": (
@@ -3625,7 +3621,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             url.opti_address,
             media.opti_logo,
             ca.com_multi_opti,
-            ca.dev_multi_opti,
             "eth",
         ),
     }
@@ -3635,15 +3630,11 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_url,
             chain_logo,
             chain_com_multi,
-            chain_dev_multi,
             chain_native,
         ) = chain_mappings[chain]
     native_price = api.get_native_price(chain_native)
-    dev_eth_raw = api.get_native_balance(chain_dev_multi, chain)
     com_eth_raw = api.get_native_balance(chain_com_multi, chain)
-    dev_eth = round(float(dev_eth_raw), 2)
     com_eth = round(float(com_eth_raw), 2)
-    dev_dollar = float(dev_eth) * float(native_price)
     com_dollar = float(com_eth) * float(native_price)
     treasury_eth = api.get_native_balance(ca.treasury_splitter, chain)
     eco_eth = api.get_native_balance(ca.eco_splitter, chain)
@@ -3684,15 +3675,14 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     i1.text(
         (28, 10),
         f"X7 Finance Treasury {chain_name}\n\n"
-        f"Developer Wallet:\n{dev_eth} {chain_native.upper()} (${'{:0,.0f}'.format(dev_dollar)})\n\n"
         f"Community Wallet:\n{com_eth} {chain_native.upper()} (${'{:0,.0f}'.format(com_dollar)})\n"
         f"{com_x7d_balance} X7D (${'{:0,.0f}'.format(com_x7d_price)})\n"
         f"{com_x7r_balance} X7R (${'{:0,.0f}'.format(com_x7r_price)})\n"
         f"{com_x7dao_balance} X7DAO (${'{:0,.0f}'.format(com_x7dao_price)})\n"
         f"${'{:0,.0f}'.format(stables)} USDT/C\n"
         f"Total: (${'{:0,.0f}'.format(com_total)})\n\n"
-        f"Ecosystem Splitter: {eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-        f"Treasury Splitter: {treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+        f"Ecosystem Splitter:\n{eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n\n"
+        f"Treasury Splitter:\n{treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
         f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
         font=myfont,
         fill=(255, 255, 255),
@@ -3703,7 +3693,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=f"*X7 Finance Treasury {chain_name}*\nUse `/treasury [chain-name]` for other chains\n\n"
-        f'Developer Wallet:\n{dev_eth} {chain_native.upper()} (${"{:0,.0f}".format(dev_dollar)})\n\n'
         f'Community Wallet:\n{com_eth} {chain_native.upper()} (${"{:0,.0f}".format(com_dollar)})\n'
         f'{com_x7d_balance} X7D (${"{:0,.0f}".format(com_x7d_price)})\n'
         f'{"{:0,.0f}".format(com_x7r_balance)} X7R (${"{:0,.0f}".format(com_x7r_price)})\n'
@@ -3716,12 +3705,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [
-                    InlineKeyboardButton(
-                        text="Developer Multi-sig Wallet",
-                        url=f"{chain_url}{chain_dev_multi}",
-                    )
-                ],
                 [
                     InlineKeyboardButton(
                         text="Community Multi-sig Wallet",
