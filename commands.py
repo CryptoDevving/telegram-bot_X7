@@ -74,7 +74,8 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(sticker=media.chains)
     await update.message.reply_text(
-        f"{text.airdrop}\n\n" f"{api.get_quote()}",
+        f"{text.airdrop}\n\n"
+        f"{api.get_quote()}",
         parse_mode="Markdown",
     )
 
@@ -430,6 +431,23 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     )
 
 
+async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    first = context.args[0]
+    second = context.args[1]
+    if first == second:
+        reply = "✅ Both inputs match"
+    else:
+        reply = "❌ Inputs do not match"
+    await update.message.reply_photo(
+        photo = f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption = f"*X7 Finance Input Checker*\n\n"
+        f"First:\n{first}\n\n"
+        f"Second:\n{second}\n\n"
+        f"{reply}\n\n"
+        f"{api.get_quote()}",
+        parse_mode="Markdown")
+
+
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
     token_names = {
         "x7r": {"contract": ca.x7r, "image": media.x7r_logo},
@@ -658,7 +676,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance DAO Functions*\n\n"
-                f"Please use `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                f"Use `/dao [contract-name]` for a list of DAO callable functions\n\n"
                 f"*Contract Names:*\n\n{formatted_contract_names}",
         parse_mode="Markdown")
 
@@ -4018,8 +4036,8 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
         f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
         f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-        f"{pioneers} Pioneer NFTs\n"
-        f"{maxis} Maxi NFTs\n"
+        f"{pioneers} Pioneer NFT\n"
+        f"{maxis} Maxi NFT\n"
         f"{txs} tx's in the last 24 hours\n"
         f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
         f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
@@ -4042,8 +4060,8 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
         f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
         f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-        f"{pioneers} Pioneer NFTs\n"
-        f"{maxis} Maxi NFTs\n\n"
+        f"{pioneers} Pioneer NFT\n"
+        f"{maxis} Maxi NFT\n\n"
         f"{txs} tx's in the last 24 hours\n\n"
         f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
         f"{api.get_quote()}",

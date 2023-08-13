@@ -138,6 +138,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["buyevenly", "quintsevenly"], commands.buy_evenly))
     application.add_handler(CommandHandler("channels", commands.channels))
     application.add_handler(CommandHandler(["chart", "charts"], commands.chart))
+    application.add_handler(CommandHandler("check", commands.check))
     application.add_handler(CommandHandler(["constellations", "constellation", "quints"], commands.constellations))
     application.add_handler(CommandHandler(["ca", "contract", "contracts"], commands.contracts))
     application.add_handler(CommandHandler("compare", commands.compare))
