@@ -37,6 +37,7 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(e)
 
 
+        
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -537,6 +538,21 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"ie. `/compare x7r uni`\n\n{api.get_quote()}",
             parse_mode="Markdown",
         )
+
+
+async def click(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_admins = await update.effective_chat.get_administrators()
+    if update.effective_user in (admin.user for admin in chat_admins):
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton(text="Click Me!", url=f"https://www.youtube.com/watch?v=Yb6dZ1IFlKc&ab_channel=ZincGameplays")],
+                ]
+            ),
+        )
+    else:
+            await update.message.reply_text(f"{text.mods_only}")
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
