@@ -3,7 +3,7 @@ from datetime import datetime
 
 # AUTO TIMES SECONDS
 def button_time(): 
-    time = random.randint(300, 14400)
+    time = random.randint(300, 21600)
     return time
 
 endorse_time = 21600
