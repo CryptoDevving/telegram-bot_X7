@@ -3634,6 +3634,14 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     eco_dollar = float(eco_eth) * float(native_price)
     treasury_dollar = float(treasury_eth) * float(native_price)
     try:
+        com_usdt_balance = api.get_stables_balance(chain_com_multi, ca.usdt, chain)
+        com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.usdc, chain)
+        stables = com_usdt_balance + com_usdc_balance
+    except Exception as e:
+        com_usdt_balance = 0
+        com_usdc_balance = 0
+        stables = 0
+    try:
         com_x7r_balance = api.get_token_balance(chain_com_multi, ca.x7r, chain)
         com_x7r_price = com_x7r_balance * api.get_price(ca.x7r, chain)
     except Exception:
@@ -3651,20 +3659,21 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         com_x7d_balance = 0
         com_x7d_price = 0
-    com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price
+    com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price + stables
     im2 = Image.open(chain_logo)
     im1 = Image.open((random.choice(media.blackhole)))
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
     i1 = ImageDraw.Draw(im1)
     i1.text(
-        (28, 36),
+        (28, 10),
         f"X7 Finance Treasury {chain_name}\n\n"
         f"Developer Wallet:\n{dev_eth} {chain_native.upper()} (${'{:0,.0f}'.format(dev_dollar)})\n\n"
         f"Community Wallet:\n{com_eth} {chain_native.upper()} (${'{:0,.0f}'.format(com_dollar)})\n"
         f"{com_x7d_balance} X7D (${'{:0,.0f}'.format(com_x7d_price)})\n"
         f"{com_x7r_balance} X7R (${'{:0,.0f}'.format(com_x7r_price)})\n"
         f"{com_x7dao_balance} X7DAO (${'{:0,.0f}'.format(com_x7dao_price)})\n"
+        f"${'{:0,.0f}'.format(stables)} USDT/C\n"
         f"Total: (${'{:0,.0f}'.format(com_total)})\n\n"
         f"Ecosystem Splitter: {eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
         f"Treasury Splitter: {treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
@@ -3683,6 +3692,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f'{com_x7d_balance} X7D (${"{:0,.0f}".format(com_x7d_price)})\n'
         f'{"{:0,.0f}".format(com_x7r_balance)} X7R (${"{:0,.0f}".format(com_x7r_price)})\n'
         f'{"{:0,.0f}".format(com_x7dao_balance)} X7DAO (${"{:0,.0f}".format(com_x7dao_price)})\n'
+        f"${'{:0,.0f}'.format(stables)} USDT/C\n"
         f'Total: (${"{:0,.0f}".format(com_total)})\n\n'
         f"Ecosystem Splitter: {eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
         f"Treasury Splitter: {treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"

@@ -140,6 +140,16 @@ def get_pool_liq_balance(wallet, token, chain):
     return int(data["result"] or 0)
 
 
+def get_stables_balance(wallet, token, chain):
+    if chain not in chains_info:
+        raise ValueError(f"Invalid chain: {chain}")
+    chain_info = chains_info[chain]
+    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
+    response = requests.get(url)
+    data = response.json()
+    return int(data["result"][:-6])
+
+
 def get_supply(token, chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
