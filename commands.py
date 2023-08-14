@@ -2010,7 +2010,9 @@ async def me(update: Update, context: CallbackContext):
     click_counts = auto.clicks_get()
     click_count = click_counts.get(str(user_info), 0)
     await update.message.reply_text(
-        text=f"{user_info}, You have been the Fastest Pioneer *{click_count}* times\n",
+        text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
+        f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{click_count}* times\n\n"
+        f"{api.get_quote()}",
         parse_mode="Markdown"
     )
 
