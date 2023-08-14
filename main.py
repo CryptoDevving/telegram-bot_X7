@@ -1,5 +1,6 @@
 import os
 import sys
+import time as t
 import subprocess
 import sentry_sdk
 from telegram import *
@@ -17,6 +18,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         context.user_data = {}
 
     current_button_data = context.bot_data.get("current_button_data")
+    button_generation_timestamp = context.bot_data.get("button_generation_timestamp")
     if not current_button_data:
         return
 
@@ -33,6 +35,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         auto.click_counts[user_info] = 0
 
     if button_data == current_button_data:
+        button_click_timestamp = t.time()
+        time_taken = button_click_timestamp - button_generation_timestamp
         auto.click_counts[user_info] = auto.click_counts.get(user_info, 0) + 1
         auto.clicks_save(auto.click_counts.copy())
         auto.users_clicked_current_button.add(user_info)
@@ -49,7 +53,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 click_message = f"They have been the fastest Pioneer {user_clicks} times!"
             
             message_text = (
-                f"{api.escape_markdown(user_info)} was the fastest Pioneer!\n\n"
+                f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.2f} seconds!\n\n"
                 f"{click_message}\n\n"
                 f"use `/leaderboard` to see the fastest Pioneers!\n\n"
             )

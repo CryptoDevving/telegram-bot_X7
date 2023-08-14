@@ -1,6 +1,7 @@
 import os
 import csv
 import random
+import time as t
 
 import sentry_sdk
 from telegram import *
@@ -8,7 +9,7 @@ from telegram.ext import *
 
 from api import index as api
 from media import index as media
-from data import url, text, times
+from data import url, text
 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
@@ -29,7 +30,7 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
         context.bot_data = {}
     current_button_data = str(random.randint(1, 100000000))
     context.bot_data["current_button_data"] = current_button_data
-
+    
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Click Me!", callback_data=current_button_data)]]
     )
@@ -39,6 +40,8 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_markup=keyboard,
     )
     users_clicked_current_button.clear()
+    button_generation_timestamp = t.time()
+    context.bot_data["button_generation_timestamp"] = button_generation_timestamp
 
 
 async def auto_message_endorsement(context: ContextTypes.DEFAULT_TYPE) -> None:
