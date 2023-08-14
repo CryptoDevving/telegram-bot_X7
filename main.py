@@ -77,6 +77,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         name="Click Message",
     )
 
+
 async def error(update: Update, context: CallbackContext):
         if update is None:
             return
@@ -121,6 +122,7 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
+
     application.add_handler(CallbackQueryHandler(button))
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
@@ -139,7 +141,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("channels", commands.channels))
     application.add_handler(CommandHandler(["chart", "charts"], commands.chart))
     application.add_handler(CommandHandler("check", commands.check))
-    application.add_handler(CommandHandler("click", commands.click))
     application.add_handler(CommandHandler(["constellations", "constellation", "quints"], commands.constellations))
     application.add_handler(CommandHandler(["ca", "contract", "contracts"], commands.contracts))
     application.add_handler(CommandHandler("compare", commands.compare))
@@ -166,6 +167,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("liquidity", commands.liquidity))
     application.add_handler(CommandHandler("loan", commands.loan))
     application.add_handler(CommandHandler(["loans", "borrow"], commands.loans_command))
+    application.add_handler(CommandHandler("me", commands.me))
     application.add_handler(CommandHandler("magisters", commands.magisters))
     application.add_handler(CommandHandler(["mcap", "marketcap", "cap"], commands.mcap))
     application.add_handler(CommandHandler("media", commands.media_command))

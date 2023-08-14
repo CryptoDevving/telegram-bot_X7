@@ -36,7 +36,6 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         print(e)
 
-
         
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -538,21 +537,6 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"ie. `/compare x7r uni`\n\n{api.get_quote()}",
             parse_mode="Markdown",
         )
-
-
-async def click(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [InlineKeyboardButton(text="Click Me!", url=f"https://www.youtube.com/watch?v=Yb6dZ1IFlKc&ab_channel=ZincGameplays")],
-                ]
-            ),
-        )
-    else:
-            await update.message.reply_text(f"{text.mods_only}")
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2017,6 +2001,17 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f'${"{:0,.0f}".format(total_cap)}'
         f"\n\n{api.get_quote()}",
         parse_mode="Markdown",
+    )
+
+
+async def me(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    click_counts = auto.clicks_get()
+    click_count = click_counts.get(str(user_info), 0)
+    await update.message.reply_text(
+        text=f"{user_info}, You have been the Fastest Pioneer *{click_count}* times\n",
+        parse_mode="Markdown"
     )
 
 
