@@ -2632,7 +2632,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 return
 
-            token_mappings = {
+            x7_token_mappings = {
                 "x7r": ("X7R", api.get_x7r_supply("eth"), media.x7r_logo, ca.x7r, ca.x7r_pair_eth),
                 "x7dao": ("X7DAO", ca.supply, media.x7dao_logo, ca.x7dao, ca.x7dao_pair_eth),
                 "x7101": ("X7101", ca.supply, media.x7101_logo, ca.x7101, ca.x7101_pair_eth),
@@ -2641,13 +2641,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "x7104": ("X7104", ca.supply, media.x7104_logo, ca.x7104, ca.x7104_pair_eth),
                 "x7105": ("X7105", ca.supply, media.x7105_logo, ca.x7105, ca.x7105_pair_eth),
             }
-            if search in token_mappings:
-                token_name, token_supply, token_logo, token_ca, token_pair = token_mappings[search]
+            if search in x7_token_mappings:
+                token_name, token_supply, token_logo, token_ca, token_pair = x7_token_mappings[search]
                 price = api.get_price(token_ca, "eth")
                 cg = api.get_cg_price(search)
                 volume = round(cg[search]["usd_24h_vol"], 6)
                 change = round(cg[search]["usd_24h_change"],2)
-                holders = api.get_holders(ca.x7105)
+                holders = api.get_holders(token_ca)
                 if change is None:
                     change = 0
                 else:
@@ -2716,29 +2716,17 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         ]
                     ),
                 )
-            return
-            if (
-                search == "eth"
-                or search == "bnb"
-                or search == "matic"
-                or search == "poly"
-                or search == "polygon"
-            ):
-                if search == "eth":
-                    cg_name = "ethereum"
-                    price = api.get_cg_price("ethereum")
-                    gas_data = api.get_gas("eth")
-                    im2 = Image.open(requests.get(thumb, stream=True).raw)
-                if search == "bnb":
-                    cg_name = "binancecoin"
-                    price = api.get_cg_price("binancecoin")
-                    gas_data = api.get_gas("bsc")
-                    im2 = Image.open(requests.get(thumb, stream=True).raw)
-                if search == "matic" or search == "poly" or search == "polygon":
-                    cg_name = "matic-network"
-                    price = api.get_cg_price("matic-network")
-                    gas_data = api.get_gas("poly")
-                    im2 = Image.open(requests.get(thumb, stream=True).raw)
+                return
+            gas_token_mappings = {
+                "eth": ("ETH", "ethereum", "eth"),
+                "bnb": ("BNB", "binancecoin", "bnb"),
+                "matic": ("MATIC", "matic-network", "poly"),
+            }
+            if search in gas_token_mappings:
+                token_name, cg_name, gas_data, chain = gas_token_mappings[search]
+                gas_data = api.get_gas(chain)
+                im2 = Image.open(requests.get(thumb, stream=True).raw)
+                price = api.get_cg_price(cg_name)
                 price_change = token_price[cg_name]["usd_24h_change"]
                 if price_change is None:
                     price_change = 0
