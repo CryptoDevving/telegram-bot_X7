@@ -2655,7 +2655,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 cg = api.get_cg_price(search)
                 volume = cg[search]["usd_24h_vol"]
                 change = cg[search]["usd_24h_change"]
-                print(change)
                 holders = api.get_holders(token_ca)
                 if change == None or 0:
                     change = 0
@@ -2724,17 +2723,23 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             [InlineKeyboardButton(text="Chart", url=f"{url.dex_tools_eth}{token_pair}")],
                             [InlineKeyboardButton(text="Buy", url=f"{url.xchange_buy_eth}{token_ca}")],
+                            [
+                                InlineKeyboardButton(
+                                    text="List a token", url=f"{url.list_token}"
+                                )
+                            ],
                         ]
                     ),
                 )
                 return
+
             gas_token_mappings = {
                 "eth": ("ETH", "ethereum", "eth"),
                 "bnb": ("BNB", "binancecoin", "bnb"),
                 "matic": ("MATIC", "matic-network", "poly"),
             }
             if search in gas_token_mappings:
-                token_name, cg_name, gas_data, chain = gas_token_mappings[search]
+                token_name, cg_name, chain = gas_token_mappings[search]
                 gas_data = api.get_gas(chain)
                 im2 = Image.open(requests.get(thumb, stream=True).raw)
                 price = api.get_cg_price(cg_name)
