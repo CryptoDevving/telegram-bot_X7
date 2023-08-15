@@ -2283,6 +2283,20 @@ async def pair(update: Update, context: CallbackContext):
     )
 
 
+async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = " ".join(context.args)
+    if text == "":
+        await update.message.reply_text("Please follow the command with desired name")
+    else:
+        img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True).raw)
+        i1 = ImageDraw.Draw(img)
+        myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
+        i1.text((360, 987.7), text, font=myfont, fill=(255, 255, 255))
+        img.save(r"media/pfp.png")
+        await update.message.reply_photo(
+            photo=open(r"media/pfp.png", "rb"))
+
+
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     try:
         pioneer_id = " ".join(context.args)
