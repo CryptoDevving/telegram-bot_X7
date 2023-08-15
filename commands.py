@@ -449,94 +449,99 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    token_names = {
-        "x7r": {"contract": ca.x7r, "image": media.x7r_logo},
-        "x7dao": {"contract": ca.x7dao, "image": media.x7dao_logo},
-        "x7101": {"contract": ca.x7101, "image": media.x7101_logo},
-        "x7102": {"contract": ca.x7102, "image": media.x7102_logo},
-        "x7103": {"symbol": ca.x7103, "image": media.x7103_logo},
-        "x7104": {"contract": ca.x7104, "image": media.x7104_logo},
-        "x7105": {"contract": ca.x7105, "image": media.x7105_logo},
-    }
+    try:
+        token_names = {
+            "x7r": {"contract": ca.x7r, "image": media.x7r_logo},
+            "x7dao": {"contract": ca.x7dao, "image": media.x7dao_logo},
+            "x7101": {"contract": ca.x7101, "image": media.x7101_logo},
+            "x7102": {"contract": ca.x7102, "image": media.x7102_logo},
+            "x7103": {"symbol": ca.x7103, "image": media.x7103_logo},
+            "x7104": {"contract": ca.x7104, "image": media.x7104_logo},
+            "x7105": {"contract": ca.x7105, "image": media.x7105_logo},
+        }
 
-    x7token = context.args[0].lower()
-    token2 = context.args[1].lower()
-    search = api.get_cg_search(token2)
-    token_id = search["coins"][0]["api_symbol"]
-    thumb = search["coins"][0]["large"]
+        x7token = context.args[0].lower()
+        token2 = context.args[1].lower()
+        search = api.get_cg_search(token2)
+        token_id = search["coins"][0]["api_symbol"]
+        thumb = search["coins"][0]["large"]
 
-    if x7token in token_names:
-        token_info = token_names[x7token]
-        x7_price = api.get_price(token_info["contract"], "eth")
-        image = token_info["image"]
-        token_market_cap = api.get_mcap(token_id)
-        if token_market_cap == 0:
+        if x7token in token_names:
+            token_info = token_names[x7token]
+            x7_price = api.get_price(token_info["contract"], "eth")
+            image = token_info["image"]
+            token_market_cap = api.get_mcap(token_id)
+            if token_market_cap == 0:
+                await update.message.reply_photo(
+                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    caption=f"*X7 Finance Market Cap Comparison*\n\n"
+                    f"No Market Cap data found for {token2.upper()}\n\n{api.get_quote()}",
+                    parse_mode="Markdown",
+                )
+            if x7token == ca.x7r:
+                x7_supply = api.get_x7r_supply("eth")
+            else:
+                x7_supply = ca.supply
+            x7_market_cap = x7_price * x7_supply
+            percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
+            x = (token_market_cap - x7_market_cap) / x7_market_cap
+            token_value = token_market_cap / x7_supply
+            img = Image.open(requests.get(thumb, stream=True).raw)
+            result = img.convert("RGBA")
+            result.save(r"media/cgtokenlogo.png")
+            im1 = Image.open((random.choice(media.blackhole)))
+            im2 = Image.open(r"media/cgtokenlogo.png")
+            im2_resized = im2.resize((200, 200))
+            im3 = Image.open(image)
+            im1.paste(im2_resized, (680, 20), im2_resized)
+            im1.paste(im3, (680, 200), im3)
+            myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
+            i1 = ImageDraw.Draw(im1)
+            i1.text(
+                (28, 36),
+                f"X7 Finance Market Cap Comparison\n\n"
+                f"Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n"
+                f'(${"{:,.2f}".format(token_market_cap)})\n\n'
+                f'${"{:,.2f}".format(token_value)}\n'
+                f'{"{:,.0f}%".format(percent)}\n'
+                f'{"{:,.0f}x".format(x)}\n\n\n\n\n\n'
+                f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+                font=myfont,
+                fill=(255, 255, 255),
+            )
+            im1.save(r"media/blackhole.png", quality=95)
+            await update.message.reply_photo(
+                photo=open(r"media/blackhole.png", "rb"),
+                caption=f"*X7 Finance Market Cap Comparison*\n\n"
+                f"Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap\n"
+                f'(${"{:,.2f}".format(token_market_cap)})\n\n'
+                f'${"{:,.2f}".format(token_value)}\n'
+                f'{"{:,.0f}%".format(percent)}\n'
+                f'{"{:,.0f}x".format(x)}\n\n{api.get_quote()}',
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text=f"{context.args[1].upper()} Chart",
+                                url=f"https://www.coingecko.com/en/coins/{token_id}",
+                            )
+                        ],
+                    ]
+                ),
+            )
+        else:
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Market Cap Comparison*\n\n"
-                f"No Market Cap data found for {token2.upper()}\n\n{api.get_quote()}",
+                f"Please enter X7 token first followed by token to compare\n\n"
+                f"ie. `/compare x7r uni`\n\n{api.get_quote()}",
                 parse_mode="Markdown",
             )
-        if x7token == ca.x7r:
-            x7_supply = api.get_x7r_supply("eth")
-        else:
-            x7_supply = ca.supply
-        x7_market_cap = x7_price * x7_supply
-        percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
-        x = (token_market_cap - x7_market_cap) / x7_market_cap
-        token_value = token_market_cap / x7_supply
-        img = Image.open(requests.get(thumb, stream=True).raw)
-        result = img.convert("RGBA")
-        result.save(r"media/cgtokenlogo.png")
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(r"media/cgtokenlogo.png")
-        im2_resized = im2.resize((200, 200))
-        im3 = Image.open(image)
-        im1.paste(im2_resized, (680, 20), im2_resized)
-        im1.paste(im3, (680, 200), im3)
-        myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
-        i1 = ImageDraw.Draw(im1)
-        i1.text(
-            (28, 36),
-            f"X7 Finance Market Cap Comparison\n\n"
-            f"Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n"
-            f'(${"{:,.2f}".format(token_market_cap)})\n\n'
-            f'${"{:,.2f}".format(token_value)}\n'
-            f'{"{:,.0f}%".format(percent)}\n'
-            f'{"{:,.0f}x".format(x)}\n\n\n\n\n\n'
-            f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-            font=myfont,
-            fill=(255, 255, 255),
-        )
-        im1.save(r"media/blackhole.png", quality=95)
-        await update.message.reply_photo(
-            photo=open(r"media/blackhole.png", "rb"),
-            caption=f"*X7 Finance Market Cap Comparison*\n\n"
-            f"Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap\n"
-            f'(${"{:,.2f}".format(token_market_cap)})\n\n'
-            f'${"{:,.2f}".format(token_value)}\n'
-            f'{"{:,.0f}%".format(percent)}\n'
-            f'{"{:,.0f}x".format(x)}\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text=f"{context.args[1].upper()} Chart",
-                            url=f"https://www.coingecko.com/en/coins/{token_id}",
-                        )
-                    ],
-                ]
-            ),
-        )
-    else:
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*X7 Finance Market Cap Comparison*\n\n"
-            f"Please enter X7 token first followed by token to compare\n\n"
-            f"ie. `/compare x7r uni`\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-        )
+    except IndexError:
+        await update.message.reply_text("Comparison not avaliable, please try again.")
+
+
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2279,98 +2284,101 @@ async def pair(update: Update, context: CallbackContext):
 
 
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
-    pioneer_id = " ".join(context.args)
-    data = api.get_os_nft_collection("/x7-pioneer")
-    floor = api.get_nft_floor(ca.pioneer, "eth")
-    if floor != "N/A":
-        floor_round = round(floor, 2)
-        floor_dollar = floor * float(api.get_native_price("eth")) / 1**18
-    else:
-        floor_round = "N/A"
-        floor_dollar = 0 
-    traits = data["collection"]["traits"]["Transfer Lock Status"]["unlocked"]
-    sales = data["collection"]["stats"]["total_sales"]
-    owners = data["collection"]["stats"]["num_owners"]
-    price = round(data["collection"]["stats"]["average_price"], 2)
-    price_dollar = price * float(api.get_native_price("eth")) / 1**18
-    volume = round(data["collection"]["stats"]["total_volume"], 2)
-    volume_dollar = volume * float(api.get_native_price("eth")) / 1**18
-    pioneer_pool = api.get_native_balance(ca.pioneer, "eth")
-    total_dollar = float(pioneer_pool) * float(api.get_native_price("eth")) / 1**18
-    if pioneer_id == "":
-        img = Image.open(random.choice(media.blackhole))
-        i1 = ImageDraw.Draw(img)
-        myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
-        i1.text(
-            (28, 36),
-            f"X7 Pioneer NFT Info\n\n"
-            f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
-            f"Average Price: {price} ETH (${'{:0,.0f}'.format(price_dollar)})\n"
-            f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
-            f"Total Sales: {sales}\n"
-            f"Number of Owners: {owners}\n"
-            f"Pioneers Unlocked: {traits}\n\n\n"
-            f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n\n"
-            f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
-            font=myfont,
-            fill=(255, 255, 255),
-        )
-        img.save(r"media/blackhole.png")
-        await update.message.reply_photo(
-            photo=open(r"media/blackhole.png", "rb"),
-            caption=f"*X7 Pioneer NFT Info*\n\n"
-            f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
-            f"Average Price: {price} ETH (${'{:0,.0f}'.format(price_dollar)})\n"
-            f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
-            f"Number of Owners: {owners}\n"
-            f"Pioneers Unlocked: {traits}\n\n"
-            f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n\n"
-            f"{api.get_quote()}",
-            parse_mode="markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
+    try:
+        pioneer_id = " ".join(context.args)
+        data = api.get_os_nft_collection("/x7-pioneer")
+        floor = api.get_nft_floor(ca.pioneer, "eth")
+        if floor != "N/A":
+            floor_round = round(floor, 2)
+            floor_dollar = floor * float(api.get_native_price("eth")) / 1**18
+        else:
+            floor_round = "N/A"
+            floor_dollar = 0 
+        traits = data["collection"]["traits"]["Transfer Lock Status"]["unlocked"]
+        sales = data["collection"]["stats"]["total_sales"]
+        owners = data["collection"]["stats"]["num_owners"]
+        price = round(data["collection"]["stats"]["average_price"], 2)
+        price_dollar = price * float(api.get_native_price("eth")) / 1**18
+        volume = round(data["collection"]["stats"]["total_volume"], 2)
+        volume_dollar = volume * float(api.get_native_price("eth")) / 1**18
+        pioneer_pool = api.get_native_balance(ca.pioneer, "eth")
+        total_dollar = float(pioneer_pool) * float(api.get_native_price("eth")) / 1**18
+        if pioneer_id == "":
+            img = Image.open(random.choice(media.blackhole))
+            i1 = ImageDraw.Draw(img)
+            myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
+            i1.text(
+                (28, 36),
+                f"X7 Pioneer NFT Info\n\n"
+                f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
+                f"Average Price: {price} ETH (${'{:0,.0f}'.format(price_dollar)})\n"
+                f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
+                f"Total Sales: {sales}\n"
+                f"Number of Owners: {owners}\n"
+                f"Pioneers Unlocked: {traits}\n\n\n"
+                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n\n"
+                f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
+                font=myfont,
+                fill=(255, 255, 255),
+            )
+            img.save(r"media/blackhole.png")
+            await update.message.reply_photo(
+                photo=open(r"media/blackhole.png", "rb"),
+                caption=f"*X7 Pioneer NFT Info*\n\n"
+                f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
+                f"Average Price: {price} ETH (${'{:0,.0f}'.format(price_dollar)})\n"
+                f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
+                f"Number of Owners: {owners}\n"
+                f"Pioneers Unlocked: {traits}\n\n"
+                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n\n"
+                f"{api.get_quote()}",
+                parse_mode="markdown",
+                reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="X7 Pioneer Dashboard",
-                            url="https://x7.finance/x/nft/pioneer",
-                        )
-                    ],
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Pioneer Dashboard",
+                                url="https://x7.finance/x/nft/pioneer",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="Opensea",
+                                url=f"{url.os_pioneer}",
+                            )
+                        ],
+                    ]
+                ),
+            )
+        else:
+            data = api.get_os_nft_id(ca.pioneer, pioneer_id)
+            status = data["nft"]["traits"][0]["value"]
+            image_url = data["nft"]["image_url"]
+            await update.message.reply_photo(
+            photo=image_url,
+            caption=f"*X7 Pioneer {pioneer_id} NFT Info*\n\n"
+                f"Transfer Lock Status: {status}\n\n"
+                f"{api.get_quote()}",
+                parse_mode="markdown",
+                reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="Opensea",
-                            url=f"{url.os_pioneer}",
-                        )
-                    ],
-                ]
-            ),
-        )
-    else:
-        data = api.get_os_nft_id(ca.pioneer, pioneer_id)
-        status = data["nft"]["traits"][0]["value"]
-        image_url = data["nft"]["image_url"]
-        await update.message.reply_photo(
-        photo=image_url,
-        caption=f"*X7 Pioneer {pioneer_id} NFT Info*\n\n"
-            f"Transfer Lock Status: {status}\n\n"
-            f"{api.get_quote()}",
-            parse_mode="markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Pioneer Dashboard",
-                            url="https://x7.finance/x/nft/pioneer",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="Opensea",
-                            url=f"https://pro.opensea.io/nft/{ca.pioneer}/{pioneer_id}",
-                        )
-                    ],
-                ]
-            ),
-        )
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Pioneer Dashboard",
+                                url="https://x7.finance/x/nft/pioneer",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="Opensea",
+                                url=f"https://pro.opensea.io/nft/{ca.pioneer}/{pioneer_id}",
+                            )
+                        ],
+                    ]
+                ),
+            )
+    except Exception:
+        await update.message.reply_text(f"Pioneer {pioneer_id} not found")
 
 
 async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2645,14 +2653,17 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 token_name, token_supply, token_logo, token_ca, token_pair = x7_token_mappings[search]
                 price = api.get_price(token_ca, "eth")
                 cg = api.get_cg_price(search)
-                volume = round(cg[search]["usd_24h_vol"], 6)
-                change = round(cg[search]["usd_24h_change"],2)
+                volume = cg[search]["usd_24h_vol"]
+                change = cg[search]["usd_24h_change"]
+                print(change)
                 holders = api.get_holders(token_ca)
-                if change is None:
+                if change == None or 0:
                     change = 0
+                
                 else:
                     f"24 Hour Change: {round(change), 1}%\n"
-                if volume is None:
+
+                if volume == None or 0:
                     volume = 0
                 else:
                     volume = f'${"{:0,.0f}".format(volume)}'
@@ -4448,14 +4459,14 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7dao")
-        volume = round(cg["x7dao"]["usd_24h_vol"], 6)
-        change = round(cg["x7dao"]["usd_24h_change"], 2)
+        volume = cg["x7dao"]["usd_24h_vol"]
+        change = cg["x7dao"]["usd_24h_change"]
         holders = api.get_holders(ca.x7dao)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
@@ -4715,14 +4726,14 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7r")
-        volume = round(cg["x7r"]["usd_24h_vol"], 6)
-        change = round(cg["x7r"]["usd_24h_change"], 2)
+        volume = cg["x7r"]["usd_24h_vol"]
+        change = cg["x7r"]["usd_24h_change"]
         holders = api.get_holders(ca.x7r)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
@@ -4978,14 +4989,14 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7101")
-        volume = round(cg["x7101"]["usd_24h_vol"], 6)
-        change = round(cg["x7101"]["usd_24h_change"], 2)
+        volume = cg["x7101"]["usd_24h_vol"]
+        change = cg["x7101"]["usd_24h_change"]
         holders = api.get_holders(ca.x7101)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
@@ -5243,14 +5254,14 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7102")
-        volume = round(cg["x7102"]["usd_24h_vol"], 6)
-        change = round(cg["x7102"]["usd_24h_change"], 2)
+        volume = cg["x7102"]["usd_24h_vol"]
+        change = cg["x7102"]["usd_24h_change"]
         holders = api.get_holders(ca.x7102)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
@@ -5508,14 +5519,14 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7103")
-        volume = round(cg["x7103"]["usd_24h_vol"], 6)
-        change = round(cg["x7103"]["usd_24h_change"], 2)
+        volume = cg["x7103"]["usd_24h_vol"]
+        change = cg["x7103"]["usd_24h_change"]
         holders = api.get_holders(ca.x7103)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
@@ -5773,14 +5784,14 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7104")
-        volume = round(cg["x7104"]["usd_24h_vol"], 6)
-        change = round(cg["x7104"]["usd_24h_change"], 2)
+        volume = cg["x7104"]["usd_24h_vol"]
+        change = cg["x7104"]["usd_24h_change"]
         holders = api.get_holders(ca.x7104)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
@@ -6038,14 +6049,14 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7105")
-        volume = round(cg["x7105"]["usd_24h_vol"], 6)
-        change = round(cg["x7105"]["usd_24h_change"], 2)
+        volume = cg["x7105"]["usd_24h_vol"]
+        change = cg["x7105"]["usd_24h_change"]
         holders = api.get_holders(ca.x7105)
-        if change is None:
+        if change == None or 0:
             change = 0
         else:
             f"24 Hour Change: {round(change), 1}%\n"
-        if volume is None:
+        if volume == None or 0:
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'

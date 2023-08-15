@@ -446,7 +446,7 @@ def get_os_nft_id(nft, id):
     url = f"https://api.opensea.io/v2/chain/ethereum/contract/{nft}/nfts/{id}"
     headers = {
         "accept": "application/json",
-        "X-API-KEY": "9d8f7cd3f655454592eddd28a63f960e"
+        "X-API-KEY": os.getenv("OPENSEA_API_KEY")
     }
     response = requests.get(url, headers=headers)
     data =  response.json()
