@@ -74,7 +74,7 @@ contract_mappings = {
         "function setBaseURI()\n"
         "function setMintPrice()"
         ), ca.eco),
-        "liquiidity maxi": (("function setMintFeeDestination()\n"
+        "liquidity maxi": (("function setMintFeeDestination()\n"
         "function setBaseURI()\n"
         "function setMintPrice()"
         ), ca.liq),
