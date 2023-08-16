@@ -116,7 +116,8 @@ contract_mappings = {
         "function extendTokenUnlockTimestamp()\n"
         "function setTokenOwner()"
         ), ca.time_lock),
-        "token burner": (("function setRouter()"
+        "token burner": (("function setRouter()\n"
+        "function setTargetToken()"
         ), ca.burner),
         "x7100 discount authority": (("function setEcosystemMaxiNFT()\n"
         "function setLiquidityMaxiNFT()\n"
