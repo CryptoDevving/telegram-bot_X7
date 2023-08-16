@@ -4181,6 +4181,9 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
+        holders = api.get_holders(ca.x7d)
+    else:
+        holders = "N/A"
     chain_mappings = {
         "eth": ("(ETH)", url.ether_address, "eth"),
         "arb": ("(ARB)", url.arb_address, "eth"),
@@ -4202,7 +4205,6 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
-        holders = api.get_holders(ca.x7d)
     im1 = Image.open((random.choice(media.blackhole)))
     im2 = Image.open(media.x7d_logo)
     im1.paste(im2, (720, 20), im2)
@@ -4226,8 +4228,8 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"*X7D {chain_name} Info*\n"
         f"For other chains use `/x7d [chain-name]`\n\n"
         f"Holders: {holders}\n\n"
-        f'System Owned:\n{lpool_rounded} (${"{:0,.0f}".format(lpool_dollar)})\n\n'
-        f'External Deposits:\n{lpool_reserve_rounded} (${"{:0,.0f}".format(lpool_reserve_dollar)})\n\n'
+        f'System Owned:\n{lpool_rounded} X7D (${"{:0,.0f}".format(lpool_dollar)})\n\n'
+        f'External Deposits:\n{lpool_reserve_rounded} X7D (${"{:0,.0f}".format(lpool_reserve_dollar)})\n\n'
         f'Total Supply:\n{supply} X7D (${"{:0,.0f}".format(dollar)})\n\n'
         f"{api.get_quote()}",
         parse_mode="Markdown",
