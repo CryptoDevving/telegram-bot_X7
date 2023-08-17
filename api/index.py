@@ -55,7 +55,7 @@ def get_abi(contract: str, chain: str) -> str:
     return data["result"][0]["ABI"]
 
 
-def get_block(chain:str, time: "int") -> str:
+def get_block(chain: str, time: "int") -> str:
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
@@ -438,7 +438,7 @@ def get_nft_floor(nft, chain):
 def get_os_nft_collection(slug):
     url = f"https://api.opensea.io/api/v1/collection/{slug}"
     response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
-    data =  response.json()
+    data = response.json()
     return data
 
 
@@ -449,7 +449,7 @@ def get_os_nft_id(nft, id):
         "X-API-KEY": os.getenv("OPENSEA_API_KEY")
     }
     response = requests.get(url, headers=headers)
-    data =  response.json()
+    data = response.json()
     return data
 
 
@@ -502,7 +502,6 @@ def get_giveaway_entries():
             if len(row) > 0 and row[0] != "":
                 column_data.append(row[0])
     return [entry[-5:] for entry in column_data]
-
 
 
 def get_holders(token):
