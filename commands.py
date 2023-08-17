@@ -2870,6 +2870,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 return
             else:
+                if "e-" in str(token_price[token_id]["usd"]):
+                    price = "{:.8f}".format(token_price[token_id]["usd"])
+                else:
+                    price = "{:.2f}".format(token_price[token_id]["usd"])
+
+
                 price_change = token_price[token_id]["usd_24h_change"]
                 if price_change is None:
                     price_change = 0
@@ -2887,9 +2893,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 i1.text(
                     (28, 36),
                     f"{symbol} price\n\n"
-                    f'Price: ${"{:.8f}".format(token_price[token_id]["usd"])}\n'
+                    f'Price: ${price}\n'
                     f"24 Hour Change: {round(price_change, 1)}%\n"
-                    f'Market Cap: ${market_cap}\n\n\n\n\n\n\n\n'
+                    f'Market Cap: ${"{:0,.0f}".format(market_cap)}\n\n\n\n\n\n\n\n'
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
                     fill=(255, 255, 255),
@@ -2898,9 +2904,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=f"*{symbol} price*\n\n"
-                    f'Price: ${"{:.8f}".format(token_price[token_id]["usd"])}\n'
+                    f'Price: ${price}\n'
                     f'24 Hour Change: {round(token_price[token_id]["usd_24h_change"], 1)}%\n'
-                    f'Market Cap: ${market_cap}\n\n'
+                    f'Market Cap: ${"{:0,.0f}".format(market_cap)}\n\n'
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
                     reply_markup=InlineKeyboardMarkup(
