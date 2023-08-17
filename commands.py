@@ -2635,7 +2635,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
+    try:    
         search = " ".join(context.args).lower()
         token_info = None
         for token_instance in all_tokens_info:
@@ -2968,7 +2968,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
             mcap = token_price * supply
             formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-            price_change = api.get_price_change(token_info.ca)
+            try:
+                price_change = api.get_price_change(token_info.ca)
+            except Exception:
+                price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
             im1 = Image.open((random.choice(media.blackhole)))
             try:
                 img = Image.open(requests.get(token_info.logo, stream=True).raw)
@@ -2997,7 +3000,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Liquidity: {formatted_liq}\n"
                 f"Market Cap: {formatted_mcap}\n"
                 f"Holders: {holders}\n\n"
-                f"{price_change}\n\n\n\n"
+                f"{price_change}\n\n\n"
                 f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                 font=myfont,
                 fill=(255, 255, 255),
@@ -3050,6 +3053,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             ),
         )
+
 
 
 async def proposal(update: Update, context: ContextTypes.DEFAULT_TYPE):

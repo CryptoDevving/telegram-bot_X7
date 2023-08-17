@@ -566,7 +566,7 @@ def get_price_change(address):
     twenty_four_hours_change = round(((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
     seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
 
-    result = f"1H Change: {one_hour_change}%\n24H Change {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
+    result = f"1H Change: {one_hour_change}%\n24H Change: {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
 
     return result
 
