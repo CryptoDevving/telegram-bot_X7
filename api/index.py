@@ -65,7 +65,7 @@ def get_block(chain: str, time: "int") -> str:
     return data["result"]
 
 
-def get_daily_tx_count(contract: str, chain: str,) -> str:
+def get_daily_tx_count(contract: str, chain: str,) -> int:
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
