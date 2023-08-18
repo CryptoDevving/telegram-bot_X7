@@ -2385,6 +2385,8 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         volume = round(data["collection"]["stats"]["total_volume"], 2)
         volume_dollar = volume * float(api.get_native_price("eth")) / 1**18
         pioneer_pool = api.get_native_balance(ca.pioneer, "eth")
+        each = float(pioneer_pool) / 639
+        each_dollar = float(each) * float(api.get_native_price("eth")) / 1**18
         total_dollar = float(pioneer_pool) * float(api.get_native_price("eth")) / 1**18
         if pioneer_id == "":
             img = Image.open(random.choice(media.blackhole))
@@ -2399,7 +2401,8 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 f"Total Sales: {sales}\n"
                 f"Number of Owners: {owners}\n"
                 f"Pioneers Unlocked: {traits}\n\n\n"
-                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n\n"
+                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
+                f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
                 f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
                 font=myfont,
                 fill=(255, 255, 255),
@@ -2413,7 +2416,8 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
                 f"Number of Owners: {owners}\n"
                 f"Pioneers Unlocked: {traits}\n\n"
-                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n\n"
+                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
+                f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
                 f"{api.get_quote()}",
                 parse_mode="markdown",
                 reply_markup=InlineKeyboardMarkup(
