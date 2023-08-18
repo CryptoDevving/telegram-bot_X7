@@ -4044,6 +4044,11 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Please use `/wallet [wallet_address] [chain-name]`",
         parse_mode="Markdown")
         return
+    if not wallet.startswith("0x"):
+        await update.message.reply_text(
+        f"Please use `/wallet [wallet_address] [chain-name]`",
+        parse_mode="Markdown")
+        return
     if chain == "":
         chain = "eth"
     chain_mappings = {
@@ -4106,6 +4111,15 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         x7d_balance = 0
         x7d_price = 0
+    try:
+        usdc_balance = api.get_stables_balance(wallet, ca.usdc, chain)
+    except Exception as e:
+        usdc_balance = 0
+    try:
+        usdt_balance = api.get_stables_balance(wallet, ca.usdt, chain)
+    except Exception as e:
+        usdt_balance = 0
+    stables = usdt_balance + usdc_balance
     total = (
         x7d_price
         + x7r_price
@@ -4131,6 +4145,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         (28, 10),
         f"X7 Finance Wallet Info {chain_name}\n\n"
         f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n"
+        f"${'{:0,.0f}'.format(stables)} USDT/C\n"
         f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
         f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
         f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
@@ -4139,9 +4154,9 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
         f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
         f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-        f"{pioneers} Pioneer NFT\n"
-        f"{maxis} Maxi NFT\n"
-        f"{txs} tx's in the last 24 hours\n"
+        f"{pioneers} Pioneer NFTs\n"
+        f"{maxis} Maxi NFTs\n"
+        f"{txs} tx's in the last 24 hours\n\n"
         f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
         f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
         font=myfont,
@@ -4154,7 +4169,8 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=open(r"media/blackhole.png", "rb"),
         caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
         f"`{wallet}`\n\n"
-        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
+        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n"
+        f"${'{:0,.0f}'.format(stables)} USDT/C\n\n"
         f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
         f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
         f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
@@ -4163,8 +4179,8 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
         f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
         f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-        f"{pioneers} Pioneer NFT\n"
-        f"{maxis} Maxi NFT\n\n"
+        f"{pioneers} Pioneer NFTs\n"
+        f"{maxis} Maxi NFTs\n\n"
         f"{txs} tx's in the last 24 hours\n\n"
         f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
         f"{api.get_quote()}",
