@@ -5,7 +5,7 @@
 <br />
 <div align="center"><strong>X7 Finance</strong></div>
 <div align="center">Trust No One. Trust Code. Long Live DeFi</div>
-<div align="center">X7 is a completely decentralized exchange - complete with it's innovative lending protocols.</div>
+<div align="center">X7 is a completely decentralized exchange - complete with its innovative lending protocols.</div>
 <br />
 <div align="center">
 <a href="https://www.x7finance.org/">Website</a> 
@@ -37,7 +37,7 @@ Create a new file in the 'tokens' directory
 yourtokenname.py
 ```
 
-with the folllowing lines:
+with the following lines:
 
 ```bash
 from tokens import TokensInfo
