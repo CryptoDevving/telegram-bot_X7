@@ -714,9 +714,22 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    contract = " ".join(context.args)
-
-    if contract in dao.contract_mappings:
+    input_contract = " ".join(context.args).lower()
+    if not input_contract:
+        contract_names = list(dao.contract_mappings.keys())
+        formatted_contract_names = '\n'.join(contract_names)
+        await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*X7 Finance DAO Functions*\n\n"
+                f"Use `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                f"*Contract Names:*\n\n{formatted_contract_names}",
+        parse_mode="Markdown")
+    matching_contract = None
+    for contract in dao.contract_mappings:
+        if contract.lower() == input_contract:
+            matching_contract = contract
+            break
+    if matching_contract:
         contract_text, contract_ca = dao.contract_mappings[contract]
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -737,7 +750,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance DAO Functions*\n\n"
-                f"Use `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                f"'{input_contract}' not found\nPlease choose from the following\n\n"
                 f"*Contract Names:*\n\n{formatted_contract_names}",
         parse_mode="Markdown")
 
