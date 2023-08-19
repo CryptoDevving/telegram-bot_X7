@@ -41,6 +41,13 @@ def nft_prices():
             "borrow": "2600 MATIC - 100 Supply",
             "magister": "45000 MATIC - 49 Supply",
         },
+        "base": {
+            "eco": "0.3 ETH - 500 Supply",
+            "liq": "0.75 ETH - 250 Supply",
+            "dex": "1.5 ETH - 150 Supply",
+            "borrow": "2 ETH - 100 Supply",
+            "magister": "50 ETH - 49 Supply",
+        },
     }
 
 
@@ -80,6 +87,13 @@ def nft_floors():
             "dex": api.get_nft_floor(ca.dex, "bsc") or 0,
             "liq": api.get_nft_floor(ca.liq, "bsc") or 0,
             "magister": api.get_nft_floor(ca.magister, "bsc") or 0,
+        },
+        "base": {
+            "eco": api.get_nft_floor(ca.eco, "base") or 0,
+            "liq": api.get_nft_floor(ca.liq, "base") or 0,
+            "dex": api.get_nft_floor(ca.dex, "base") or 0,
+            "borrow": api.get_nft_floor(ca.borrow, "base") or 0,
+            "magister": api.get_nft_floor(ca.magister, "base") or 0,
         },
     }
 

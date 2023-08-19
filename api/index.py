@@ -21,6 +21,7 @@ ether = os.getenv("ETHER")
 poly = os.getenv("POLY")
 opti = os.getenv("OPTI")
 arb = os.getenv("ARB")
+base = os.getenv("BASE")
 COINGECKO_URL = "https://api.coingecko.com/api/v3"
 
 
@@ -39,6 +40,7 @@ chains_info = {
     "arb": ChainInfo("https://api.arbiscan.io/api", arb),
     "opti": ChainInfo("https://api-optimistic.etherscan.io/api", opti),
     "poly": ChainInfo("https://api.polygonscan.com/api", poly),
+    "base": ChainInfo("https://api.basescan.org/api", base),
 }
 
 

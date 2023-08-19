@@ -17,6 +17,7 @@ arb_logo = os.path.join("media", "Arbitrum.png")
 poly_logo = os.path.join("media", "polygon.png")
 eth_logo = os.path.join("media", "ethereum.png")
 opti_logo = os.path.join("media", "optimism.png")
+base_logo = os.path.join("media", "base.png")
 raffle_logo = os.path.join("media", "raffle.jpg")
 pioneer_logo = os.path.join("media", "pioneer.png")
 

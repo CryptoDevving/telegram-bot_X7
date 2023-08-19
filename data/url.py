@@ -7,6 +7,7 @@ xchange_buy_bsc = "https://app.x7.finance/#/swap?outputCurrency="
 xchange_buy_poly = "https://app.x7.finance/#/swap?outputCurrency="
 xchange_buy_arb = "https://app.x7.finance/#/swap?outputCurrency="
 xchange_buy_opti = "https://app.x7.finance/#/swap?outputCurrency="
+xchange_buy_base = "https://app.x7.finance/#/swap?outputCurrency="
 xchange_fund = "https://app.x7.finance/#/fund"
 
 # TG
@@ -39,12 +40,18 @@ opti_token = "https://optimistic.etherscan.io/token/"
 opti_address = "https://optimistic.etherscan.io/address/"
 opti_tx = "https://optimistic.etherscan.io/tx/"
 
+# BASESCAN
+base_token = "https://basescan.org/token/"
+base_address = "https://basescan.org/address/"
+base_tx = "https://basescan.org/tx/"
+
 # DEXTOOLS
 dex_tools_eth = "https://www.dextools.io/app/ether/pair-explorer/"
 dex_tools_bsc = "https://www.dextools.io/app/bnb/pair-explorer/"
 dex_tools_poly = "https://www.dextools.io/app/polygon/pair-explorer/"
 dex_tools_arb = "https://www.dextools.io/app/arbitrum/pair-explorer/"
 dex_tools_opti = "https://www.dextools.io/app/optimism/pair-explorer/"
+dex_tools_base = "https://www.dextools.io/app/base/pair-explorer/"
 
 # LINKS
 ca_directory = (
