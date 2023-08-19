@@ -2224,23 +2224,18 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             float(opti_lpool) * float(api.get_native_price("eth")) / 1**18
         )
         opti_pool = round(float(opti_lpool_reserve) + float(opti_lpool), 2)
-
         opti_dollar = opti_lpool_reserve_dollar + opti_lpool_dollar
 
-#        base_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "eth")
-#        base_lpool_reserve_dollar = (
-#            float(base_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
-#        )
-#        base_lpool = api.get_native_balance(ca.lpool, "eth")
-#        base_lpool_dollar = (
-#            float(base_lpool) * float(api.get_native_price("eth")) / 1**18
-#        )
-#       base_pool = round(float(base_lpool_reserve) + float(base_lpool), 2)
-
-#        base_dollar = base_lpool_reserve_dollar + base_lpool_dollar
-
-
-
+        base_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "base")
+        base_lpool_reserve_dollar = (
+            float(base_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
+        )
+        base_lpool = api.get_native_balance(ca.lpool, "base")
+        base_lpool_dollar = (
+            float(base_lpool) * float(api.get_native_price("eth")) / 1**18
+        )
+        base_pool = round(float(base_lpool_reserve) + float(base_lpool), 2)
+        base_dollar = base_lpool_reserve_dollar + base_lpool_dollar
 
         total_lpool_reserve_dollar = (
             eth_lpool_reserve_dollar
@@ -2248,7 +2243,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             + poly_lpool_reserve_dollar
             + bsc_lpool_reserve_dollar
             + opti_lpool_reserve_dollar
-#            + base_lpool_reserve_dollar
+            + base_lpool_reserve_dollar
         )
         total_lpool_dollar = (
             eth_lpool_dollar
@@ -2256,9 +2251,9 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             + poly_lpool_dollar
             + bsc_lpool_dollar
             + opti_lpool_dollar
-#            + base_lpool_dollar
+            + base_lpool_dollar
         )
-        total_dollar = poly_dollar + bsc_dollar + opti_dollar + arb_dollar + eth_dollar # + base_dollar
+        total_dollar = poly_dollar + bsc_dollar + opti_dollar + arb_dollar + eth_dollar  + base_dollar
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7d_logo)
         im1.paste(im2, (720, 20), im2)
@@ -2271,11 +2266,11 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:   {arb_pool} ETH (${"{:0,.0f}".format(arb_dollar)})\n'
             f'OPTI:  {opti_pool} ETH (${"{:0,.0f}".format(opti_dollar)})\n'
             f'BSC:   {bsc_pool} BNB (${"{:0,.0f}".format(bsc_dollar)})\n'
-            f'POLY:  {poly_pool} MATIC (${"{:0,.0f}".format(poly_dollar)})\n\n'
-#            f'BASE:  {base_pool} ETH (${"{:0,.0f}".format(base_dollar)})\n\n'
+            f'POLY:  {poly_pool} MATIC (${"{:0,.0f}".format(poly_dollar)})\n'
+            f'BASE:  {base_pool} ETH (${"{:0,.0f}".format(base_dollar)})\n\n'
             f'System Owned: ${"{:0,.0f}".format(total_lpool_dollar)}\n'
             f'External Deposits: ${"{:0,.0f}".format(total_lpool_reserve_dollar)}\n'
-            f'Total: ${"{:0,.0f}".format(total_dollar)}\n\n\n'
+            f'Total: ${"{:0,.0f}".format(total_dollar)}\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -2289,8 +2284,8 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`   {arb_pool} ETH (${"{:0,.0f}".format(arb_dollar)})\n'
             f'`OPTI:` {opti_pool} ETH (${"{:0,.0f}".format(opti_dollar)})\n'
             f'`BSC:`   {bsc_pool} BNB (${"{:0,.0f}".format(bsc_dollar)})\n'
-            f'`POLY:`  {poly_pool} MATIC (${"{:0,.0f}".format(poly_dollar)})\n\n'
-#            f'`BASE:`  {base_pool} ETH (${"{:0,.0f}".format(base_dollar)})\n\n'
+            f'`POLY:`  {poly_pool} MATIC (${"{:0,.0f}".format(poly_dollar)})\n'
+            f'`BASE:`  {base_pool} ETH (${"{:0,.0f}".format(base_dollar)})\n\n'
             f'System Owned: ${"{:0,.0f}".format(total_lpool_dollar)}\n'
             f'External Deposits: ${"{:0,.0f}".format(total_lpool_reserve_dollar)}\n'
             f'Total: ${"{:0,.0f}".format(total_dollar)}\n\n'
@@ -4385,6 +4380,11 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             InlineKeyboardButton(
                                 text=f"Optimism", url=f"{url.opti_address}{loan_ca}"
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text=f"Basescan", url=f"{url.base_address}{loan_ca}"
                             )
                         ],
                     ]
