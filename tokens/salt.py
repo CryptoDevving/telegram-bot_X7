@@ -2,7 +2,7 @@ from tokens import TokensInfo
 
 
 info = TokensInfo(
-    name="snorkelz",
+    name="salt",
     ca="0xb010f0a8eE6AFA6E04377d209277a9527a963Dd5",
     pair="0x8013C2e185bEFAeFA6761093Bd6E123EfE98Db31",
     chain="eth",
