@@ -66,10 +66,10 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
             if total_click_count % 50 == 0:
                 await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=f"🎉🎉 The button has been clicked a total of {total_click_count} times by all Pioneers! 🎉🎉",
-                parse_mode="Markdown",
-            )
+                    chat_id=update.effective_chat.id,
+                    text=f"🎉🎉 The button has been clicked a total of {total_click_count} times by all Pioneers! 🎉🎉",
+                    parse_mode="Markdown",
+                )
                 
     context.user_data["current_button_data"] = None
     auto.click_counts.clear()
@@ -83,25 +83,25 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def error(update: Update, context: CallbackContext):
-        if update is None:
-            return
-        if update.edited_message is not None:
-            return
+    if update is None:
+        return
+    if update.edited_message is not None:
+        return
+    else:
+        message: Message = update.message
+        if message is not None and message.text is not None:
+            await update.message.reply_text(
+                "Error while loading data, please try again"
+            )
+            sentry_sdk.capture_exception(
+                Exception(f"{message.text} caused error: {context.error}")
+            )
         else:
-            message: Message = update.message
-            if message is not None and message.text is not None:
-                await update.message.reply_text(
-                    "Error while loading data, please try again"
+            sentry_sdk.capture_exception(
+                Exception(
+                    f"Error occurred without a valid message: {context.error}"
                 )
-                sentry_sdk.capture_exception(
-                    Exception(f"{message.text} caused error: {context.error}")
-                )
-            else:
-                sentry_sdk.capture_exception(
-                    Exception(
-                        f"Error occurred without a valid message: {context.error}"
-                    )
-                )
+            )
 
 
 def scanner():
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("dao", commands.dao_command))
     application.add_handler(CommandHandler(["deployer", "devs"], commands.deployer))
     application.add_handler(CommandHandler(["discount", "dsc", "dac"], commands.discount))
-    application.add_handler(CommandHandler(["docs","documents",],commands.docs,))
+    application.add_handler(CommandHandler(["docs", "documents"], commands.docs,))
     application.add_handler(CommandHandler(["ebb", "buybacks"], commands.ebb))
     application.add_handler(CommandHandler(["ecosystem", "tokens"], commands.ecosystem))
     application.add_handler(CommandHandler("fact", commands.fact))
