@@ -3,8 +3,6 @@ import os
 # MEDIA
 blackhole = [os.path.abspath(f"media/blackhole{i}.jpg") for i in range(1, 8)]
 
-logos = [os.path.join("media", f"logo{i}.png") for i in range(1, 12)]
-
 x7r_logo = os.path.join("media", "X7R_LOGO_black_back_200_x_200_px.png")
 x7d_logo = os.path.join("media", "X7D_LOGO_black_back_200_x_200_px.png")
 x7101_logo = os.path.join("media", "X7101_LOGO_black_back_200_x_200_px.png")
@@ -15,15 +13,12 @@ x7105_logo = os.path.join("media", "X7105_LOGO_black_back_200_x_200_px.png")
 x7dao_logo = os.path.join("media", "X7_DAO_LOGO_black_back_200_x_200_px.png")
 
 bsc_logo = os.path.join("media", "bsc.png")
-nft_logo = os.path.join("media", "NFTvid.mp4")
 arb_logo = os.path.join("media", "Arbitrum.png")
 poly_logo = os.path.join("media", "polygon.png")
 eth_logo = os.path.join("media", "ethereum.png")
 opti_logo = os.path.join("media", "optimism.png")
 raffle_logo = os.path.join("media", "raffle.jpg")
 pioneer_logo = os.path.join("media", "pioneer.png")
-opensea_logo = os.path.join("media", "Logomark-Blue.png")
-constellations_logo = os.path.join("media", "constellation.mp4")
 
 # STICKERS
 gm = "CAACAgQAAxkBAAEGsh9jjfZUfCKtJjaLGZbNFuzVgb9VOQAC6g4AAsII4FH2AAFleY-pPhorBA"
