@@ -3973,7 +3973,18 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 20 seconds")
+    await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 20 seconds",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="X7 Dune Dashboard ", url=f"{url.dune}"
+                        )
+                    ],
+                ]
+            ),
+        )
     try:
         execution_id_total = dune.execute_query("2637346", "medium")
         execution_id_30d = dune.execute_query("2821939", "medium")
