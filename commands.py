@@ -2,7 +2,7 @@ import os
 import re
 import random
 import time as t
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 
 import pytz
 import pyttsx3
@@ -32,7 +32,31 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 # WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        return
+        execution_id_total = dune.execute_query("2821939", "medium")
+
+        t.sleep(30)
+        response_total = dune.get_query_results(execution_id_total)
+        data = response_total.json()
+        result_data = data['result']['rows']
+
+        # Get the current datetime
+        current_datetime = datetime.utcnow()
+
+        # Calculate the datetime 24 hours ago
+        twenty_four_hours_ago = current_datetime - timedelta(hours=24)
+
+        total_amount_usd = 0
+
+        # Loop through the rows and calculate the total amount_usd for rows within the last 24 hours
+        for row in result_data:
+            block_date = row['block_date']
+            block_time = datetime.strptime(row['block_time'], '%Y-%m-%d %H:%M:%S.%f %Z')
+            amount_usd = row['amount_usd']
+            
+            if block_time >= twenty_four_hours_ago:
+                total_amount_usd += amount_usd
+
+        print(f"Total amount_usd within the last 24 hours: {total_amount_usd}")
     except Exception as e:
         print(e)
 
@@ -4075,22 +4099,44 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ),
         )
     try:
+        current_datetime = datetime.utcnow()
+        twenty_four_hours_ago = current_datetime - timedelta(hours=24)
+        seven_days_ago = current_datetime - timedelta(days=7)
+        daily_amount_usd = 0
+        total_30d = 0
+        total_7d = 0
         execution_id_total = dune.execute_query("2637346", "medium")
         execution_id_30d = dune.execute_query("2821939", "medium")
         t.sleep(30)
+
+        response_30d = dune.get_query_results(execution_id_30d)
+        data_30d = response_30d.json()
+        result_data_30d = data_30d['result']['rows']
+
+        for row in result_data_30d:
+            block_date = row['block_date']
+            block_time = datetime.strptime(row['block_time'], '%Y-%m-%d %H:%M:%S.%f %Z')
+            amount_usd = row['amount_usd']
+            
+            if block_time >= twenty_four_hours_ago:
+                daily_amount_usd += amount_usd
+            if block_time >= seven_days_ago:
+                total_7d += amount_usd
+
+        for item in data_30d['result']['rows']:
+            total_30d += item['amount_usd']
+
         response_total = dune.get_query_results(execution_id_total)
         data_total = response_total.json()
         total = data_total["result"]["rows"][0]["live_vol"]
-        response_30d = dune.get_query_results(execution_id_30d)
-        data_30d = response_30d.json()
-        total_30d = 0
-        for item in data_30d['result']['rows']:
-            total_30d += item['amount_usd']
+
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Volume*\n\n'
             f'Total Volume: ${"{:0,.0f}".format(total)}\n'
-            f'30d Volume: ${"{:0,.0f}".format(total_30d)}\n\n{api.get_quote()}',
+            f'30 Day Volume: ${"{:0,.0f}".format(total_30d)}\n'
+            f'7 Day Volume: ${"{:0,.0f}".format(total_7d)}\n'
+            f'24 Hour Volume: ${"{:0,.0f}".format(daily_amount_usd)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
