@@ -1501,7 +1501,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(BASE)",
             url.base_token,
             "eth",
-            media._logo,
+            media.base_logo,
             ca.x7dao_pair_base,
             ca.x7r_pair_base,
             ca.x7101_pair_base,
