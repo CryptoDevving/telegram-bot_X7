@@ -333,7 +333,7 @@ def get_price(token, chain):
         params={"address": token, "chain": chain},
     )
     return result["usdPrice"]
-
+    
 
 def get_token_data(token: str, chain: str) -> dict:
     chain_mappings = {
@@ -380,6 +380,7 @@ def get_nft_holder_count(nft, chain):
             "poly": "poly-main",
             "bsc": "bsc-main",
             "opti": "optimism-main",
+            "base": "base-main",
         }
         if chain in chain_mappings:
             chain = chain_mappings[chain]
@@ -408,6 +409,7 @@ def get_nft_floor(nft, chain):
                 "optimism-main",
                 "ETH",
             ),
+            "base": ("base-main"),
         }
         if chain in chain_mappings:
             chain, chain_native = chain_mappings[chain]
