@@ -457,63 +457,7 @@ def get_os_nft_id(nft, id):
     return data
 
 
-# OTHER
-
-
-def datetime_to_timestamp(datetime_str):
-    try:
-        datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
-        timestamp = datetime_obj.timestamp()
-        return timestamp
-    except ValueError:
-        return "Invalid datetime format. Please use YYYY-MM-DD HH:MM."
-
-
-def escape_markdown(text):
-    characters_to_escape = ['*', '_', '`']
-    for char in characters_to_escape:
-        text = text.replace(char, '\\' + char)
-    return text
-
-    
-def get_duration_years(duration):
-    years = duration.days // 365
-    months = (duration.days % 365) // 30
-    weeks = ((duration.days % 365) % 30) // 7
-    days = ((duration.days % 365) % 30) % 7
-    return years, months, weeks, days
-
-
-def get_duration_days(duration):
-    days = duration.days
-    hours, remainder = divmod(duration.seconds, 3600)
-    minutes = (remainder % 3600) // 60
-    return days, hours, minutes
-
-
-def get_fact():
-    response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random")
-    quote = response.json()
-    return quote["text"]
-
-
-def get_giveaway_entries():
-    with open("logs/entries.csv", "r") as file:
-        csv_reader = csv.reader(file)
-        header = next(csv_reader)
-        column_data = []
-        for row in csv_reader:
-            if len(row) > 0 and row[0] != "":
-                column_data.append(row[0])
-    return [entry[-5:] for entry in column_data]
-
-
-def get_holders(token):
-    base_url = "https://api.ethplorer.io/getTokenInfo"
-    url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
-    response = requests.get(url)
-    data = response.json()
-    return data.get("holdersCount")
+## DEFINED
 
 
 def get_price_change(address):
@@ -572,6 +516,98 @@ def get_price_change(address):
     result = f"1H Change: {one_hour_change}%\n24H Change: {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
 
     return result
+
+
+def get_volume(pair):
+    url = "https://api.defined.fi"
+
+    headers = {
+        "content_type": "application/json",
+        "x-api-key": os.getenv("DEFINED_API_KEY")
+    }
+
+    volume = f'''
+        query {{
+        getDetailedPairStats(pairAddress: "{pair}", networkId: 1, bucketCount: 1, tokenOfInterest: token1) {{
+            stats_day1 {{
+            statsUsd {{
+                volume {{
+                currentValue
+                }}
+            }}
+            }}
+        }}
+        }}
+        '''
+
+    response = requests.post(url, headers=headers, json={"query": volume})
+    data = response.json()
+
+    current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
+    return current_value
+
+
+
+
+
+# OTHER
+
+
+def datetime_to_timestamp(datetime_str):
+    try:
+        datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+        timestamp = datetime_obj.timestamp()
+        return timestamp
+    except ValueError:
+        return "Invalid datetime format. Please use YYYY-MM-DD HH:MM."
+
+
+def escape_markdown(text):
+    characters_to_escape = ['*', '_', '`']
+    for char in characters_to_escape:
+        text = text.replace(char, '\\' + char)
+    return text
+
+    
+def get_duration_years(duration):
+    years = duration.days // 365
+    months = (duration.days % 365) // 30
+    weeks = ((duration.days % 365) % 30) // 7
+    days = ((duration.days % 365) % 30) % 7
+    return years, months, weeks, days
+
+
+def get_duration_days(duration):
+    days = duration.days
+    hours, remainder = divmod(duration.seconds, 3600)
+    minutes = (remainder % 3600) // 60
+    return days, hours, minutes
+
+
+def get_fact():
+    response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random")
+    quote = response.json()
+    return quote["text"]
+
+
+def get_giveaway_entries():
+    with open("logs/entries.csv", "r") as file:
+        csv_reader = csv.reader(file)
+        header = next(csv_reader)
+        column_data = []
+        for row in csv_reader:
+            if len(row) > 0 and row[0] != "":
+                column_data.append(row[0])
+    return [entry[-5:] for entry in column_data]
+
+
+def get_holders(token):
+    base_url = "https://api.ethplorer.io/getTokenInfo"
+    url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
+    response = requests.get(url)
+    data = response.json()
+    return data.get("holdersCount")
+
 
 
 def get_quote():

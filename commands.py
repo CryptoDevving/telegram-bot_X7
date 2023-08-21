@@ -32,31 +32,7 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 # WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        execution_id_total = dune.execute_query("2821939", "medium")
-
-        t.sleep(30)
-        response_total = dune.get_query_results(execution_id_total)
-        data = response_total.json()
-        result_data = data['result']['rows']
-
-        # Get the current datetime
-        current_datetime = datetime.utcnow()
-
-        # Calculate the datetime 24 hours ago
-        twenty_four_hours_ago = current_datetime - timedelta(hours=24)
-
-        total_amount_usd = 0
-
-        # Loop through the rows and calculate the total amount_usd for rows within the last 24 hours
-        for row in result_data:
-            block_date = row['block_date']
-            block_time = datetime.strptime(row['block_time'], '%Y-%m-%d %H:%M:%S.%f %Z')
-            amount_usd = row['amount_usd']
-            
-            if block_time >= twenty_four_hours_ago:
-                total_amount_usd += amount_usd
-
-        print(f"Total amount_usd within the last 24 hours: {total_amount_usd}")
+        return
     except Exception as e:
         print(e)
 
@@ -2792,6 +2768,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
                 mcap = token_price * supply
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
+                volume = "${:,.0f}".format(float(api.get_volume(token_info.pair)))
                 try:
                     price_change = api.get_price_change(token_info.ca)
                 except Exception:
@@ -2823,8 +2800,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"Xchange Pair Info\n\n{search.upper()}\n\n"
                     f"Liquidity: {formatted_liq}\n"
                     f"Market Cap: {formatted_mcap}\n"
+                    f"24 Hour Volume: {volume}\n"
                     f"Holders: {holders}\n\n"
-                    f"{price_change}\n\n\n"
+                    f"{price_change}\n\n"
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
                     fill=(255, 255, 255),
@@ -2837,6 +2815,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"`{token_info.ca}`\n\n"
                     f"Liquidity: {formatted_liq}\n"
                     f"Market Cap: {formatted_mcap}\n"
+                    f"24 Hour Volume: {volume}\n"
                     f"Holders: {holders}\n\n"
                     f"{price_change}\n\n"
                     f"{api.get_quote()}",
