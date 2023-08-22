@@ -4,6 +4,7 @@ import random
 import time as t
 from datetime import datetime, timedelta, timezone, date
 
+import csv
 import pytz
 import pyttsx3
 import requests
@@ -22,14 +23,12 @@ import auto
 from api import dune
 from api import index as api
 from media import index as media
-from data import ca, loans, nfts, tax, text, times, giveaway, url, dao
-from tokens import chains, pairs, all_tokens_info
+from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, chains, pairs
 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
-# WIP
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         return
@@ -49,6 +48,50 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         ),
     )
+
+
+async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    params = context.args
+    if len(params) != 5:
+        await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*List an Xchange pair on* {api.escape_markdown('@x7finance_bot')}\n\n"
+                "Usage: `/add ticker pair_address contract_address chain image_url`\n\n"
+                "Image is optional, please use N/A if not desired.",
+                parse_mode="Markdown",
+    )
+        return
+    ticker = params[0]
+    pair = params[1]
+    ca = params[2]
+    chain = params[3]
+    image_url = params[4]
+
+    if not (len(pair) == 42 and pair.startswith('0x')):
+        await update.message.reply_text("Pair address not recognised")
+        return
+
+    if not (len(ca) == 42 and ca.startswith('0x')):
+        await update.message.reply_text("Contract address not recognised")
+        return
+
+    if chain not in ["eth", "arb", "poly"]:
+        await update.message.reply_text("Chain not recognised, please use:\n\n"
+                                        "eth\n"
+                                        "arb\n"
+                                        "poly\n")
+        return
+
+    if  not image_url.startswith('http') and image_url != "N/A":
+        await update.message.reply_text("Image link not recognised, link you should start with 'http' or N/A")
+        return
+
+    with open("logs/tokens.csv", 'a', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(params)
+
+    await update.message.reply_text("Pair added successfully. Pushing to github...")
+    api.push_github("logs/tokens.csv", "auto: add pair")
 
 
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2722,35 +2765,34 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:    
         search = " ".join(context.args).lower()
-        token_info = None
-        for token_instance in all_tokens_info:
-            if token_instance.name.lower() == search:
-                token_info = token_instance
-                if token_info.chain == "eth":
-                    holders = api.get_holders(token_info.ca)
+        token_info = api.get_pair_entries(search)
+        for token_instance in token_info:
+            if token_instance['ticker'] == search:
+                if token_instance['chain'] == "eth":
+                    holders = api.get_holders(token_instance['ca'])
                     token = "eth"
-                elif token_info.chain == "poly":
+                elif token_instance['chain'] == "poly":
                     token = "matic"
                     holders = "N/A"
-                elif token_info.chain == "bsc":
+                elif token_instance['chain'] == "bsc":
                     token = "bnb"
                     holders = "N/A"
                 else:
                     holders = "N/A"
                     token = "eth"
 
-                scan = chains[token_info.chain].scan
-                dext = chains[token_info.chain].dext
-                w3 = chains[token_info.chain].w3
+                scan = chains[token_instance['chain']].scan
+                dext = chains[token_instance['chain']].dext
+                w3 = chains[token_instance['chain']].w3
                 contract = w3.eth.contract(
-                    address=Web3.to_checksum_address(token_info.pair), abi=pairs
+                    address=Web3.to_checksum_address(token_instance['pair']), abi=pairs
                 )
                 token0_address = contract.functions.token0().call()
                 token1_address = contract.functions.token1().call()
                 supply = contract.functions.totalSupply().call()
-                is_reserve_token0 = token_info.ca.lower() == token0_address.lower()
-                is_reserve_token1 = token_info.ca.lower() == token1_address.lower()
-                supply = int(api.get_supply(token_info.ca, token_info.chain))
+                is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
+                is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
+                supply = int(api.get_supply(token_instance['ca'], token_instance['chain']))
                 eth = ""
                 token_res = ""
                 if is_reserve_token0:
@@ -2768,28 +2810,28 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
                 mcap = token_price * supply
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-                volume = "${:,.0f}".format(float(api.get_volume(token_info.pair)))
+                volume = "${:,.0f}".format(float(api.get_volume(token_instance['pair'])))
                 try:
-                    price_change = api.get_price_change(token_info.ca)
+                    price_change = api.get_price_change(token_instance['ca'])
                 except Exception:
                     price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
                 im1 = Image.open((random.choice(media.blackhole)))
                 try:
-                    img = Image.open(requests.get(token_info.logo, stream=True).raw)
+                    img = Image.open(requests.get(token_instance['image_url'], stream=True).raw)
                     img = img.resize((200, 200), Image.ANTIALIAS)
                     result = img.convert("RGBA")
                     result.save(r"media/tokenlogo.png")
                     im2 = Image.open(r"media/tokenlogo.png")
                 except Exception:
-                    if token_info.chain == "eth":
+                    if token_instance['chain'] == "eth":
                         im2 = Image.open(media.eth_logo)
-                    if token_info.chain == "bsc":
+                    if token_instance['chain'] == "bsc":
                         im2 = Image.open(media.bsc_logo)
-                    if token_info.chain == "poly":
+                    if token_instance['chain'] == "poly":
                         im2 = Image.open(media.poly_logo)
-                    if token_info.chain == "arb":
+                    if token_instance['chain'] == "arb":
                         im2 = Image.open(media.arb_logo)
-                    if token_info.chain == "opti":
+                    if token_instance['chain'] == "opti":
                         im2 = Image.open(media.opti_logo)
 
                 im1.paste(im2, (720, 20), im2)
@@ -2812,7 +2854,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=f"*Xchange Pair Info\n\n{search.upper()}*\n\n"
-                    f"`{token_info.ca}`\n\n"
+                    f"`{token_instance['ca']}`\n\n"
                     f"Liquidity: {formatted_liq}\n"
                     f"Market Cap: {formatted_mcap}\n"
                     f"24 Hour Volume: {volume}\n"
@@ -2824,19 +2866,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             [
                                 InlineKeyboardButton(
-                                    text="Chart", url=f"{dext}{token_info.pair}"
+                                    text="Chart", url=f"{dext}{token_instance['pair']}"
                                 )
                             ],
                             [
                                 InlineKeyboardButton(
                                     text="Buy",
-                                    url=f"{url.xchange}/#/swap?outputCurrency={token_info.ca}",
-                                )
-                            ],
-                            [
-                                InlineKeyboardButton(
-                                    text="List a token",
-                                    url="https://github.com/x7finance/telegram-bot/blob/main/tokens/README.md",
+                                    url=f"{url.xchange}/#/swap?outputCurrency={token_instance['ca']}",
                                 )
                             ],
                         ]

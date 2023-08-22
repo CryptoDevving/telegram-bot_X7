@@ -126,8 +126,8 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
-
     application.add_handler(CallbackQueryHandler(button))
+    application.add_handler(CommandHandler("add", commands.add))
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
     application.add_handler(CommandHandler("alerts", commands.alerts))

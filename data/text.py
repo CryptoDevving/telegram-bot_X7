@@ -185,8 +185,7 @@ ecosystem = (
 endorse = (
     "The X7 Dev team or the community team will not endorse any particular token or launch on Xchange.\n\n"
     "Xchange is a permissionless swap protocol. We encourage DeFi participants to exercise the same level of "
-    "caution they always should when evaluating a swap opportunity.\n\nPlease refrain from sharing Telegram "
-    "groups, contract addresses etc. in the main chat, for new token alerts see XChange Alerts channel below"
+    "caution they always should when evaluating a swap opportunity.\n\nFor new token alerts see XChange Alerts channel below"
     "\n\n"
     "Trust No one, trust code. Long Live Defi"
 )

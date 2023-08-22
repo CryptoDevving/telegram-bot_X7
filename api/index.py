@@ -601,6 +601,27 @@ def get_giveaway_entries():
     return [entry[-5:] for entry in column_data]
 
 
+def get_pair_entries(ticker):
+    data = []
+    with open('logs/tokens.csv', 'r') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            data.append(row)
+    csv_data = data
+    matching_data = []
+    for row in csv_data:
+        if row[0] == ticker:
+            matching_data.append({
+                'ticker': row[0],
+                'pair': row[1],
+                'ca': row[2],
+                'chain': row[3],
+                'image_url': row[4]
+            })
+    
+    return  matching_data
+
+
 def get_holders(token):
     base_url = "https://api.ethplorer.io/getTokenInfo"
     url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
@@ -729,7 +750,7 @@ def push_github(location, message):
         content = response.json()
         sha = content['sha']
 
-        with open("logs/clicks.csv", 'rb') as file:
+        with open(location, 'rb') as file:
             file_content = file.read()
         encoded_content = base64.b64encode(file_content).decode('utf-8')
 
