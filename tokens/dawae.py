@@ -3,8 +3,8 @@ from tokens import TokensInfo
 
 info = TokensInfo(
     name="dawae",
-    ca="0x7DFF54CEcdfA2af69C95709AF2847A18D135fC3E",
-    pair="0xbc953fccbcc9e95dafb35d46992cee966aa972cd",
+    ca="0xbc953fccbcc9e95dafb35d46992cee966aa972cd",
+    pair="0x7dff54cecdfa2af69c95709af2847a18d135fc3e",
     chain="eth",
     logo=""
 )
