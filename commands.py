@@ -3032,11 +3032,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             [InlineKeyboardButton(text="Chart", url=f"{url.dex_tools_eth}{token_pair}")],
                             [InlineKeyboardButton(text="Buy", url=f"{url.xchange_buy_eth}{token_ca}")],
-                            [
-                                InlineKeyboardButton(
-                                    text="List a token", url=f"{url.list_token}"
-                                )
-                            ],
                         ]
                     ),
                 )
@@ -3098,11 +3093,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 InlineKeyboardButton(
                                     text="Buy",
                                     url=f"{url.xchange}/#/swap?outputCurrency={token_id}",
-                                )
-                            ],
-                            [
-                                InlineKeyboardButton(
-                                    text="List a token", url=f"{url.list_token}"
                                 )
                             ],
                         ]
@@ -3176,19 +3166,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
     except IndexError:
         await update.message.reply_text(
-            f"{search.upper()} Not found, please try again or use the link below",
+            f"{search.upper()} Not found, to add a token use `/add`",
             parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="List a token", url=f"{url.list_token}"
-                        )
-                    ],
-                ]
-            ),
         )
-
 
 
 async def proposal(update: Update, context: ContextTypes.DEFAULT_TYPE):
