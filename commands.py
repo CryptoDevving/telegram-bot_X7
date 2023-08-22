@@ -2863,7 +2863,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     x7dao_change = round(price["x7dao"]["usd_24h_change"], 2)
 
                 im1 = Image.open((random.choice(media.blackhole)))
-                im2 = Image.open(r"media/logo11.png")
+                im2 = Image.open(r"media/logo.png")
                 im1.paste(im2, (740, 20), im2)
                 i1 = ImageDraw.Draw(im1)
                 myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
