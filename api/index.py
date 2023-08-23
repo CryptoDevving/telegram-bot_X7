@@ -610,7 +610,7 @@ def get_pair_entries(ticker):
     csv_data = data
     matching_data = []
     for row in csv_data:
-        if row[0] == ticker:
+        if row[0].lower() == ticker.lower():
             matching_data.append({
                 'ticker': row[0],
                 'pair': row[1],
