@@ -284,17 +284,18 @@ def get_pioneer_holdings(wallet):
 
 # MORALIS
 
-
-def get_liquidity(pair, chain):
-    chain_mappings = {
+moralis_chain_mappings = {
         "eth": "eth",
         "arb": "arbitrum",
         "poly": "polygon",
         "bsc": "bsc",
         "opti": "optimism",
     }
-    if chain in chain_mappings:
-        chain = chain_mappings[chain]
+
+
+def get_liquidity(pair, chain):
+    if chain in moralis_chain_mappings:
+        chain = moralis_chain_mappings[chain]
     return evm_api.defi.get_pair_reserves(
         api_key=os.getenv("MORALIS_API_KEY"),
         params={"chain": chain, "pair_address": pair},
@@ -302,15 +303,8 @@ def get_liquidity(pair, chain):
 
 
 def get_nft_holder_list(nft, chain):
-    chain_mappings = {
-        "eth": "eth",
-        "arb": "arbitrum",
-        "poly": "polygon",
-        "bsc": "bsc",
-        "opti": "optimism",
-    }
-    if chain in chain_mappings:
-        chain = chain_mappings[chain]
+    if chain in moralis_chain_mappings:
+        chain = moralis_chain_mappings[chain]
     return evm_api.nft.get_nft_owners(
         api_key=os.getenv("MORALIS_API_KEY"),
         params={"chain": chain, "format": "decimal", "address": nft},
@@ -318,15 +312,8 @@ def get_nft_holder_list(nft, chain):
 
 
 def get_price(token, chain):
-    chain_mappings = {
-        "eth": "eth",
-        "arb": "arbitrum",
-        "poly": "polygon",
-        "bsc": "bsc",
-        "opti": "optimism",
-    }
-    if chain in chain_mappings:
-        chain = chain_mappings[chain]
+    if chain in moralis_chain_mappings:
+        chain = moralis_chain_mappings[chain]
     api_key = os.getenv("MORALIS_API_KEY")
     result = evm_api.token.get_token_price(
         api_key=api_key,
@@ -336,15 +323,8 @@ def get_price(token, chain):
     
 
 def get_token_data(token: str, chain: str) -> dict:
-    chain_mappings = {
-        "eth": "eth",
-        "arb": "arbitrum",
-        "poly": "polygon",
-        "bsc": "bsc",
-        "opti": "optimism",
-    }
-    if chain in chain_mappings:
-        chain = chain_mappings[chain]
+    if chain in moralis_chain_mappings:
+        chain = moralis_chain_mappings[chain]
     result = evm_api.token.get_token_metadata(
         api_key=os.getenv("MORALIS_API_KEY"),
         params={"addresses": [f"{token}"], "chain": chain},
@@ -353,15 +333,8 @@ def get_token_data(token: str, chain: str) -> dict:
 
 
 def get_token_name(token: str, chain: str) -> Tuple[str, str]:
-    chain_mappings = {
-        "eth": "eth",
-        "arb": "arbitrum",
-        "poly": "polygon",
-        "bsc": "bsc",
-        "opti": "optimism",
-    }
-    if chain in chain_mappings:
-        chain = chain_mappings[chain]
+    if chain in moralis_chain_mappings:
+        chain = moralis_chain_mappings[chain]
     result = evm_api.token.get_token_metadata(
         api_key=os.getenv("MORALIS_API_KEY"),
         params={"addresses": [f"{token}"], "chain": chain},
@@ -371,10 +344,7 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
 
 # BLOCKSPAN
 
-
-def get_nft_holder_count(nft, chain):
-    try:
-        chain_mappings = {
+blockspan_chain_mappings = {
             "eth": "eth-main",
             "arb": "arbitrum-main",
             "poly": "poly-main",
@@ -382,8 +352,12 @@ def get_nft_holder_count(nft, chain):
             "opti": "optimism-main",
             "base": "base-main",
         }
-        if chain in chain_mappings:
-            chain = chain_mappings[chain]
+
+
+def get_nft_holder_count(nft, chain):
+    try:
+        if chain in blockspan_chain_mappings:
+            chain = blockspan_chain_mappings[chain]
         url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
         response = requests.get(
             url,
@@ -400,19 +374,9 @@ def get_nft_holder_count(nft, chain):
 
 def get_nft_floor(nft, chain):
     try:
-        chain_mappings = {
-            "eth": ("eth-main", "ETH"),
-            "arb": ("arbitrum-main", "ETH"),
-            "poly": ("poly-main", "MATIC"),
-            "bsc": ("bsc-main", "BNB"),
-            "opti": (
-                "optimism-main",
-                "ETH",
-            ),
-            "base": ("base-main"),
-        }
-        if chain in chain_mappings:
-            chain, chain_native = chain_mappings[chain]
+        if chain in blockspan_chain_mappings:
+            chain = blockspan_chain_mappings[chain]
+
         url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
         response = requests.get(
             url,
@@ -459,8 +423,19 @@ def get_os_nft_id(nft, id):
 
 ## DEFINED
 
+defined_chain_mappings = {
+            "eth": "1",
+            "arb": "42161",
+            "poly": "137",
+            "bsc": "46",
+            "opti": "10",
+            "base": "8453",
+        }
 
-def get_price_change(address):
+def get_price_change(address, chain):
+    if chain in defined_chain_mappings:
+            chain = defined_chain_mappings[chain]
+
     url = "https://api.defined.fi"
 
     headers = {
@@ -478,22 +453,22 @@ def get_price_change(address):
             inputs: [
                 {{ 
                     address: "{address}"
-                    networkId: 1
+                    networkId: {chain}
                     timestamp: {current_timestamp}
                 }}
                 {{ 
                     address: "{address}"
-                    networkId: 1
+                    networkId: {chain}
                     timestamp: {one_hour_ago_timestamp}
                 }}
                 {{ 
                     address: "{address}"
-                    networkId: 1
+                    networkId: {chain}
                     timestamp: {twenty_four_hours_ago_timestamp}
                 }}
                 {{ 
                     address: "{address}"
-                    networkId: 1
+                    networkId: {chain}
                     timestamp: {seven_days_ago_timestamp}
                 }}
             ]
@@ -519,7 +494,10 @@ def get_price_change(address):
 
 
 
-def get_token_image(token):
+def get_token_image(token, chain):
+    if chain in defined_chain_mappings:
+            chain = defined_chain_mappings[chain]
+
     url = "https://api.defined.fi"
 
     headers = {
@@ -529,20 +507,22 @@ def get_token_image(token):
 
     image = f'''
         query {{
-            getTokenInfo(address:"{token}", networkId:1) {{
+            getTokenInfo(address:"{token}", networkId:{chain}) {{
                 imageLargeUrl
             }}
         }}
     '''
 
-    
     response = requests.post(url, headers=headers, json={"query": image})
     data = response.json()
     image_url = data['data']['getTokenInfo']['imageLargeUrl']
     return image_url
 
 
-def get_volume(pair):
+def get_volume(pair, chain):
+    if chain in defined_chain_mappings:
+            chain = defined_chain_mappings[chain]
+
     url = "https://api.defined.fi"
 
     headers = {
@@ -552,7 +532,7 @@ def get_volume(pair):
 
     volume = f'''
         query {{
-        getDetailedPairStats(pairAddress: "{pair}", networkId: 1, bucketCount: 1, tokenOfInterest: token1) {{
+        getDetailedPairStats(pairAddress: "{pair}", networkId: {chain}, bucketCount: 1, tokenOfInterest: token1) {{
             stats_day1 {{
             statsUsd {{
                 volume {{

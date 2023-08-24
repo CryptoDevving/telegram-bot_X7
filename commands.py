@@ -2766,9 +2766,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
                 mcap = token_price * supply
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-                volume = "${:,.0f}".format(float(api.get_volume(token_instance['pair'])))
+                volume = "${:,.0f}".format(float(api.get_volume(token_instance['pair'], token_instance['chain'])))
                 try:
-                    price_change = api.get_price_change(token_instance['ca'])
+                    price_change = api.get_price_change(token_instance['ca'], token_instance['chain'])
                 except Exception:
                     price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
                 im1 = Image.open((random.choice(media.blackhole)))
