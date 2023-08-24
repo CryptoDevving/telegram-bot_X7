@@ -4712,7 +4712,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
@@ -4979,7 +4979,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
@@ -5242,7 +5242,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
@@ -5507,7 +5507,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
@@ -5772,7 +5772,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
@@ -6037,7 +6037,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
@@ -6302,7 +6302,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if change == None or 0:
             change = 0
         else:
-            f"24 Hour Change: {round(change), 1}%\n"
+            change = round(change, 1)
         if volume == None or 0:
             volume = 0
         else:
