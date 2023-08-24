@@ -3138,7 +3138,7 @@ async def price_logo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     replaced = False
 
     for index, existing_token in enumerate(existing_tokens):
-        if params[0] == existing_token[0]:
+        if params[0].lower() == existing_token[0].lower():
             existing_token[4] = image_url
             existing_tokens[index] = existing_token
             with open("logs/tokens.csv", 'w', newline='') as csv_file:
