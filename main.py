@@ -234,11 +234,11 @@ if __name__ == "__main__":
     )
     
     job_queue.run_repeating(
-        auto.auto_message_referral,
-        times.referral_time,
+        auto.auto_message_volume,
+        times.volume_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         first=10800,
-        name="Referral Message",
+        name="Volume Message",
     )
 
     job_queue.run_once(

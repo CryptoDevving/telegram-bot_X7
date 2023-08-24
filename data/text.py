@@ -254,21 +254,14 @@ refer = (
     "exploit this program will not be eligible for a reward."
 )
 
-referral = (
-    "We want *YOUR* Referrals\n\n"
-    "Know someone who is launching a project? We want to reward you!\n"
-    "- Earn $250 for each project you refer to XChange, for the first 10 projects\n"
-    "- Earn $500 for each additional project you refer to XChange beyond the first 10 projects\n"
-    "- NO CAP on the amount of projects you can refer!\n\n"
-    "For more details or to apply, visit our application page below\n\n"
-    "We want *YOUR* projects.\n\n"
-    "Building on XChange offers multiple benefits\n"
-    "- Liquidity Loans - leverage up to x1000 the eth in your wallet to jump start your project\n"
-    "- Lower LP fees\n"
-    "- Large community of X7 Maxis\n"
-    "- Technical Support\n"
-    "- HUGE Incentives\n\n"
-    "DM `@gazuga` `@cryptod0c` `@robthebank44` to get started\n"
+volume = (
+    "Our focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
+    "*0.1% Back to the Ecosystem*\n\n"
+    "With every trade made on Xchange, 0.1% flows back to the ecosystem. That's the power of X7 Finance.\n\n"
+    "*Create Your Own Liquidity Pools*\n\n"
+    "Create liquidity pools now to further fuel the ecosystem. Best performers? Those with low fees and proven high volume.\n\n"
+    "*Achieve Volume with Just $1000*\n\n"
+    "Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!"
 )
 
 rob = "`Rob The Bank (an outstanding community member and marketer)`\n\n`-X7 DAO founders`"

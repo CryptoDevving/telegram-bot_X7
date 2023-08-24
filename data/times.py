@@ -7,7 +7,7 @@ def button_time():
     return time
 
 endorse_time = 21600
-referral_time = 21600
+volume_time = 21600
 
 # COUNTDOWN
 countdown_time = datetime(2023, 9, 7, 12, 00, 00)
