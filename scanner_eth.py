@@ -1,4 +1,5 @@
 import os
+import csv
 import sys
 import time
 import random
@@ -272,6 +273,24 @@ async def new_pair(event):
                 ]
             ),
         )
+        try:
+            params = [None] * 5 
+            params[0] = token_name[1]
+            params[1] = event["args"]["pair"]
+            params[2] = token_address
+            params[3] = "eth"
+            image_url = api.get_token_image(token_address)
+            params[4] = image_url if image_url is not None else "N/A"
+
+
+            with open("logs/tokens.csv", 'a', newline='') as csv_file:
+                csv_writer = csv.writer(csv_file)
+                csv_writer.writerow(params)
+            
+            api.push_github("logs/tokens.csv", "auto: add pair")
+        except Exception as e:
+            sentry_sdk.capture_exception(f"ETH Pair Price add error: {e}")
+            
 
 
 async def new_loan(event):

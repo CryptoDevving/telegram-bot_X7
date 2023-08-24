@@ -2773,7 +2773,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
                 im1 = Image.open((random.choice(media.blackhole)))
                 try:
-                    img = Image.open(requests.get(token_instance['image_url'], stream=True).raw)
+                    image = token_instance['image_url']
+                    img = Image.open(requests.get(image, stream=True).raw)
                     img = img.resize((200, 200), Image.ANTIALIAS)
                     result = img.convert("RGBA")
                     result.save(r"media/tokenlogo.png")
@@ -3117,103 +3118,15 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-async def price_add(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def price_logo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     params = context.args
-    if len(params) != 5:
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*List an Xchange pair on* {api.escape_markdown('@x7finance_bot')}\n\n"
-                "Usage: `/add ticker pair_address contract_address chain image_url`\n\n"
-                "Image is optional, please use N/A if not desired.",
-                parse_mode="Markdown",
-    )
-        return
+
     ticker = params[0]
-    pair = params[1]
-    ca = params[2]
-    chain = params[3]
-    image_url = params[4]
-
-    if not (len(pair) == 42 and pair.startswith('0x')):
-        await update.message.reply_text("Pair address not recognised")
-        return
-
-    if not (len(ca) == 42 and ca.startswith('0x')):
-        await update.message.reply_text("Contract address not recognised")
-        return
-
-    if chain not in ["eth", "arb", "poly"]:
-        await update.message.reply_text("Chain not recognised, please use:\n\n"
-                                        "eth\n"
-                                        "arb\n"
-                                        "poly\n")
-        return
-
-    if  not image_url.startswith('http') and image_url != "N/A":
-        await update.message.reply_text("Image link not recognised, link you should start with 'http' or N/A")
-        return
-    
-    existing_tokens = []
-    with open("logs/tokens.csv", 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader:
-            existing_tokens.append(row)
-
-    for existing_token in existing_tokens:
-        if params[0] == existing_token[0]:
-            await update.message.reply_text(
-                f"{ticker.upper()} already added.\n\n"
-                f"Use `/replace` if needed",
-                parse_mode="Markdown")
-            return
-
-    with open("logs/tokens.csv", 'a', newline='') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(params)
-
-    await update.message.reply_text(
-        f"{ticker.upper()} added successfully.\n\n"
-        f"Please allow a few minutes before calling `/price {ticker.upper()}`",
-        parse_mode="Markdown")
-    
-    api.push_github("logs/tokens.csv", "auto: add pair")
-
-
-async def price_replace(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    params = context.args
-    if len(params) != 5:
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*Replace an Xchange pair on* {api.escape_markdown('@x7finance_bot')}\n\n"
-                "Usage: `/replace ticker pair_address contract_address chain image_url`\n\n"
-                "Image is optional, please use N/A if not desired.",
-                parse_mode="Markdown",
-    )
-        return
-    
-    ticker = params[0]
-    pair = params[1]
-    ca = params[2]
-    chain = params[3]
-    image_url = params[4]
-
-    if not (len(pair) == 42 and pair.startswith('0x')):
-        await update.message.reply_text("Pair address not recognised")
-        return
-
-    if not (len(ca) == 42 and ca.startswith('0x')):
-        await update.message.reply_text("Contract address not recognised")
-        return
-
-    if chain not in ["eth", "arb", "poly"]:
-        await update.message.reply_text("Chain not recognised, please use:\n\n"
-                                        "eth\n"
-                                        "arb\n"
-                                        "poly\n")
-        return
+    image_url = params[1]
 
     if not image_url.startswith('http') and image_url != "N/A":
-        await update.message.reply_text("Image link not recognised, link should start with 'http' or be 'N/A'")
+        await update.message.reply_text("Image link not recognised, link should start with 'http'")
         return
 
     existing_tokens = []
@@ -3226,20 +3139,20 @@ async def price_replace(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     for index, existing_token in enumerate(existing_tokens):
         if params[0] == existing_token[0]:
-            existing_tokens[index] = params
+            existing_token[4] = image_url
+            existing_tokens[index] = existing_token
             with open("logs/tokens.csv", 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
                 csv_writer.writerows(existing_tokens)
             replaced = True
             await update.message.reply_text(
-                f"{ticker.upper()} updated successfully.\n\n"
-                f"Please allow a few minutes before calling `/price {ticker.upper()}`",
-            parse_mode="Markdown")
-            api.push_github("logs/tokens.csv", "auto: update pair")
+                f"{ticker.upper()} image updated successfully.",
+                parse_mode="Markdown")
+            api.push_github("logs/tokens.csv", "auto: update image")
             break
 
     if not replaced:
-        await update.message.reply_text(f"{ticker.upper()} has not beed added. Use `/add` to add a new pair.")
+        await update.message.reply_text(f"{ticker.upper()} has not been added. Use `/add` to add a new pair.")
 
 
 async def proposal(update: Update, context: ContextTypes.DEFAULT_TYPE):

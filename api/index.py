@@ -518,6 +518,30 @@ def get_price_change(address):
     return result
 
 
+
+def get_token_image(token):
+    url = "https://api.defined.fi"
+
+    headers = {
+        "content_type": "application/json",
+        "x-api-key": os.getenv("DEFINED_API_KEY")
+    }
+
+    image = f'''
+        query {{
+            getTokenInfo(address:"{token}", networkId:1) {{
+                imageLargeUrl
+            }}
+        }}
+    '''
+
+    
+    response = requests.post(url, headers=headers, json={"query": image})
+    data = response.json()
+    image_url = data['data']['getTokenInfo']['imageLargeUrl']
+    return image_url
+
+
 def get_volume(pair):
     url = "https://api.defined.fi"
 
@@ -545,9 +569,6 @@ def get_volume(pair):
 
     current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
     return current_value
-
-
-
 
 
 # OTHER
