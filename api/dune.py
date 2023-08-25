@@ -1,11 +1,12 @@
 import os
+import random
 
 from requests import get, post
 from dotenv import load_dotenv
 
-load_dotenv()
 
-API_KEY = os.getenv("DUNE_API_KEY")
+API_KEYS = [os.getenv("DUNE_API_KEY"),os.getenv("DUNE_API_KEY_2"),os.getenv("DUNE_API_KEY_3"),os.getenv("DUNE_API_KEY_4")]
+API_KEY = random.choice(API_KEYS)
 HEADER = {"x-dune-api-key": API_KEY}
 BASE_URL = "https://api.dune.com/api/v1/"
 
