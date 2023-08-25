@@ -144,7 +144,7 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "mode": None,
         },
         "gm": {"sticker": media.gm},
-        "new on chain message": {"sticker": media.chain},
+        "new on chain message": {"sticker": media.onchain},
         "lfg": {"sticker": media.lfg},
         "goat": {"sticker": media.goat},
         "smashed": {"sticker": media.smashed},
