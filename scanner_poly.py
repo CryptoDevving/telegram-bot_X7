@@ -208,7 +208,7 @@ async def new_pair(event):
                 else:
                     lock = ""
             except Exception as e:
-                sentry_sdk.capture_exception(f"POLY LP Error:{e}")
+                sentry_sdk.capture_exception(e)
         else:
             tax = f"⚠️ Tax: Unavailable {tax_warning}"
         status = f"{verified}\n{tax}\n{renounced}\n{lock}"
@@ -308,7 +308,7 @@ async def new_loan(event):
 
         schedule_str = await format_schedule(schedule1, schedule2)
     except Exception as e:
-        sentry_sdk.capture_exception(f"POLY Loan Error:{e}")
+        sentry_sdk.capture_exception(e)
         schedule_str = ""
         amount = ""
     cost = int(tx["result"]["value"], 0) / 10**18
@@ -378,7 +378,7 @@ async def log_loop(
             await asyncio.sleep(poll_interval)
 
         except Exception as e:
-            sentry_sdk.capture_exception(f"POLY Loop Error:{e}")
+            sentry_sdk.capture_exception(e)
             await restart_script()
 
 
@@ -391,7 +391,7 @@ async def main():
             await asyncio.gather(*tasks)
 
         except Exception as e:
-            sentry_sdk.capture_exception(f"POLY Main Error:{e}")
+            sentry_sdk.capture_exception(e)
             await restart_script()
 
 

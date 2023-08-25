@@ -4063,86 +4063,96 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
 
-
+dune_flag = False
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 20 seconds",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
+    global dune_flag
+    if dune_flag == False:
+        try:
+            execution_id_total = dune.execute_query("2637346", "medium")
+            execution_id_30d = dune.execute_query("2821939", "medium")
+            await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 20 seconds",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
-        )
-    try:
-        current_datetime = datetime.utcnow()
-        twenty_four_hours_ago = current_datetime - timedelta(hours=24)
-        seven_days_ago = current_datetime - timedelta(days=7)
-        daily_amount_usd = 0
-        total_30d = 0
-        total_7d = 0
-        execution_id_total = dune.execute_query("2637346", "medium")
-        execution_id_30d = dune.execute_query("2821939", "medium")
-        t.sleep(30)
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Dune Dashboard ", url=f"{url.dune}"
+                            )
+                        ],
+                    ]
+                ),
+            )
+            dune_flag = True
+            current_datetime = datetime.utcnow()
+            twenty_four_hours_ago = current_datetime - timedelta(hours=24)
+            seven_days_ago = current_datetime - timedelta(days=7)
+            daily_amount_usd = 0
+            total_30d = 0
+            total_7d = 0
 
-        response_30d = dune.get_query_results(execution_id_30d)
-        data_30d = response_30d.json()
-        result_data_30d = data_30d['result']['rows']
+            t.sleep(30)
 
-        for row in result_data_30d:
-            block_date = row['block_date']
-            block_time = datetime.strptime(row['block_time'], '%Y-%m-%d %H:%M:%S.%f %Z')
-            amount_usd = row['amount_usd']
-            
-            if block_time >= twenty_four_hours_ago:
-                daily_amount_usd += amount_usd
-            if block_time >= seven_days_ago:
-                total_7d += amount_usd
+            response_30d = dune.get_query_results(execution_id_30d)
+            data_30d = response_30d.json()
+            result_data_30d = data_30d['result']['rows']
 
-        for item in data_30d['result']['rows']:
-            total_30d += item['amount_usd']
+            for row in result_data_30d:
+                block_date = row['block_date']
+                block_time = datetime.strptime(row['block_time'], '%Y-%m-%d %H:%M:%S.%f %Z')
+                amount_usd = row['amount_usd']
+                
+                if block_time >= twenty_four_hours_ago:
+                    daily_amount_usd += amount_usd
+                if block_time >= seven_days_ago:
+                    total_7d += amount_usd
 
-        response_total = dune.get_query_results(execution_id_total)
-        data_total = response_total.json()
-        total = data_total["result"]["rows"][0]["live_vol"]
+            for item in data_30d['result']['rows']:
+                total_30d += item['amount_usd']
 
-        await update.message.reply_photo(
+            response_total = dune.get_query_results(execution_id_total)
+            data_total = response_total.json()
+            total = data_total["result"]["rows"][0]["live_vol"]
+
+            await update.message.reply_photo(
+                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                caption=f'*Xchange Volume*\n\n'
+                f'Total Volume: ${"{:0,.0f}".format(total)}\n'
+                f'30 Day Volume: ${"{:0,.0f}".format(total_30d)}\n'
+                f'7 Day Volume: ${"{:0,.0f}".format(total_7d)}\n'
+                f'24 Hour Volume: ${"{:0,.0f}".format(daily_amount_usd)}\n\n{api.get_quote()}',
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Dune Dashboard ", url=f"{url.dune}"
+                            )
+                        ],
+                    ]
+                ),
+            )
+            dune_flag = False
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Volume*\n\n'
-            f'Total Volume: ${"{:0,.0f}".format(total)}\n'
-            f'30 Day Volume: ${"{:0,.0f}".format(total_30d)}\n'
-            f'7 Day Volume: ${"{:0,.0f}".format(total_7d)}\n'
-            f'24 Hour Volume: ${"{:0,.0f}".format(daily_amount_usd)}\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
+                    f'Unable to refresh Dune data, please use the link below\n\n{api.get_quote()}',
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
-        )
-    except Exception as e:
-        sentry_sdk.capture_exception(f"Dune Command Error: {e}")
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Volume*\n\n'
-                'Unable to load Dune data, please use the link below"\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Dune Dashboard ", url=f"{url.dune}"
+                            )
+                        ],
+                    ]
+                ),
+            )
+            dune_flag = False
+    if dune_flag == True:
+        await update.message.reply_text("I told you to wait!",
+                parse_mode="Markdown",
         )
 
 

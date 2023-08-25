@@ -195,7 +195,7 @@ async def new_pair(event):
                 else:
                     lock = ""
             except Exception as e:
-                sentry_sdk.capture_exception(f"ETH LP Error:{e}")
+                sentry_sdk.capture_exception(e)
         else:
             tax = f"⚠️ Tax: Unavailable {tax_warning}"
         status = f"{verified}\n{tax}\n{renounced}\n{lock}"
@@ -306,7 +306,7 @@ async def new_pair(event):
                     csv_writer.writerow(params)
                 api.push_github("logs/tokens.csv", "auto: add pair")
         except Exception as e:
-            sentry_sdk.capture_exception(f"ETH Pair Price add error: {e}")
+            sentry_sdk.capture_exception(e)
                     
 
 
@@ -330,7 +330,7 @@ async def new_loan(event):
 
         schedule_str = await format_schedule(schedule1, schedule2)
     except Exception as e:
-        sentry_sdk.capture_exception(f"ETH Loan Error:{e}")
+        sentry_sdk.capture_exception(e)
         schedule_str = ""
         amount = ""
 
@@ -401,7 +401,7 @@ async def log_loop(
             await asyncio.sleep(poll_interval)
 
         except Exception as e:
-            sentry_sdk.capture_exception(f"ETH Loop Error:{e}")
+            sentry_sdk.capture_exception(e)
             await restart_script()
 
 
@@ -414,7 +414,7 @@ async def main():
             await asyncio.gather(*tasks)
 
         except Exception as e:
-            sentry_sdk.capture_exception(f"ETH Main Error:{e}")
+            sentry_sdk.capture_exception(e)
             await restart_script()
 
 
