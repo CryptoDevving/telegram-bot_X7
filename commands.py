@@ -4194,11 +4194,11 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Volume*\n\n'
-                f'Total Trading Volume:     ${"{:0,.0f}".format(lifetime_amt)}\n'
-                f'30 Day Trading Volume:   ${"{:0,.0f}".format(last_30d_amt)}\n'
-                f'7 Day Trading Volume:     ${"{:0,.0f}".format(last_7d_amt)}\n'
-                f'24 Hour Trading Volume: ${"{:0,.0f}".format(last_24hr_amt)}\n\n{api.get_quote()}',
+        caption=f'*Xchange Trading Volume*\n\n'
+                f'Total:       ${"{:0,.0f}".format(lifetime_amt)}\n'
+                f'30 Day:    ${"{:0,.0f}".format(last_30d_amt)}\n'
+                f'7 Day:      ${"{:0,.0f}".format(last_7d_amt)}\n'
+                f'24 Hour:  ${"{:0,.0f}".format(last_24hr_amt)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
