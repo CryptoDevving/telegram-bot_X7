@@ -801,6 +801,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tx = api.get_tx(ca.deployer, "eth")
     time = datetime.utcfromtimestamp(int(tx["result"][0]["timeStamp"]))
+    print(time)
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
     if (
@@ -837,7 +838,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f"*Deployer Wallet last TX*\n\n{time} UTC\n"
-            f"{int(days[0])} days, {int(hours[0])} hours and {int(minutes[0])} minutes ago:\n\n"
+            f"{days} days, {hours} hours and {minutes} minutes ago:\n\n"
             f"`{name}`\n\n"
             f"This command will pull last TX on the X7 Finance deployer wallet."
             f" To view last on chain use `/on_chain`\n\n"
