@@ -10,7 +10,7 @@ def API_KEY():
     return api_key 
 
 API_KEYS = [os.getenv("DUNE_API_KEY"),os.getenv("DUNE_API_KEY_2"),os.getenv("DUNE_API_KEY_3"),os.getenv("DUNE_API_KEY_4")]
-HEADER = {"x-dune-api-key": API_KEY}
+HEADER = {"x-dune-api-key": API_KEY()}
 BASE_URL = "https://api.dune.com/api/v1/"
 
 
