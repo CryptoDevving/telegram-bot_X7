@@ -3963,7 +3963,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        execution_id_24h = dune.execute_query("2970801", "medium")
+        execution_id = dune.execute_query("2970801", "medium")
         await update.message.reply_text("Getting Xchange trending pairs, this usually takes around 30 seconds",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -3973,13 +3973,18 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             text="X7 Dune Dashboard", url=f"{url.dune}"
                         )
                     ],
+                    [
+                        InlineKeyboardButton(
+                            text="Xchange", url=f"{url.xchange}"
+                        )
+                    ],
                 ]
             ),
         )
 
         t.sleep(30)
 
-        response = dune.get_query_results(execution_id_24h)
+        response = dune.get_query_results(execution_id)
         response_data = response.json()
         rows = response_data["result"]["rows"]
         rows = [row for row in rows if row["pair"] != "TOTAL"]
@@ -4000,7 +4005,12 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     [
                         InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
+                            text="X7 Dune Dashboard", url=f"{url.dune}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Xchange", url=f"{url.xchange}"
                         )
                     ],
                 ]
@@ -4009,7 +4019,7 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Volume*\n\n'
+        caption=f'*Xchange Trending Pairs*\n\n'
                 f'Unable to refresh Dune data, please use the link below\n\n{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -4181,9 +4191,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
         last_30d_amt = response_data['result']['rows'][0]['last_30d_amt']
         last_7d_amt = response_data['result']['rows'][0]['last_7d_amt']
         lifetime_amt = response_data['result']['rows'][0]['lifetime_amt']
-        response = dune.get_query_results(execution_id)
-        response_data = response.json()
-        print(response_data)
+
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f'*Xchange Volume*\n\n'
@@ -4196,12 +4204,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     [
                         InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="Xchange ", url=f"{url.xchange}"
+                            text="X7 Dune Dashboard", url=f"{url.dune}"
                         )
                     ],
                 ]
