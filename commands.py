@@ -4066,10 +4066,8 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        execution_id_30d = dune.execute_query("2821939", "medium")
         execution_id_24h = dune.execute_query("2970801", "medium")
-
-        await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 20 seconds",
+        await update.message.reply_text("Refreshing Dune data, please wait, this usually takes around 30 seconds",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -4081,48 +4079,29 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             ),
         )
-        current_datetime = datetime.utcnow()
-        twenty_four_hours_ago = current_datetime - timedelta(hours=24)
-        seven_days_ago = current_datetime - timedelta(days=7)
-        daily_amount_usd = 0
-        total_30d = 0
-        total_7d = 0
 
         t.sleep(30)
 
-        response_24h = dune.get_query_results(execution_id_24h)
-        data_24h = response_24h.json()
-        rows = data_24h['result']['rows']
+        response = dune.get_query_results(execution_id_24h)
+        response_data = response.json()
+        rows = response_data["result"]["rows"]
+        rows = [row for row in rows if row["pair"] != "TOTAL"]
+
+        total_24hr = sum(pair["last_24hr_amt"] for pair in rows)
+        total_30d = sum(pair["last_30d_amt"] for pair in rows)
+
         sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
         top_3_last_24hr_amt = sorted_rows[:3]
-        top_3 = "*Top 3 Pairs by 24 Hour Volume:*\n"
+        top_3 = "*Top 3 Pairs by 24 Hour Volume:*\n\n"
 
         for idx, item in enumerate(top_3_last_24hr_amt, start=1):
             top_3 += f'{idx}. {item["pair"]}: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n'
-
-        response_30d = dune.get_query_results(execution_id_30d)
-        data_30d = response_30d.json()
-        result_data_30d = data_30d['result']['rows']
-
-        for row in result_data_30d:
-            block_date = row['block_date']
-            block_time = datetime.strptime(row['block_time'], '%Y-%m-%d %H:%M:%S.%f %Z')
-            amount_usd = row['amount_usd']
-            
-            if block_time >= twenty_four_hours_ago:
-                daily_amount_usd += amount_usd
-            if block_time >= seven_days_ago:
-                total_7d += amount_usd
-
-        for item in data_30d['result']['rows']:
-            total_30d += item['amount_usd']
 
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Volume*\n\n'
             f'30 Day Volume: ${"{:0,.0f}".format(total_30d)}\n'
-            f'7 Day Volume: ${"{:0,.0f}".format(total_7d)}\n'
-            f'24 Hour Volume: ${"{:0,.0f}".format(daily_amount_usd)}\n\n'
+            f'24 Hour Volume: ${"{:0,.0f}".format(total_24hr)}\n\n'
             f'{top_3}\n{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
