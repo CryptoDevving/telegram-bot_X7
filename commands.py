@@ -801,7 +801,6 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tx = api.get_tx(ca.deployer, "eth")
     time = datetime.utcfromtimestamp(int(tx["result"][0]["timeStamp"]))
-    print(time)
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
     if (
@@ -3984,6 +3983,14 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         t.sleep(30)
+        chain_mappings = {
+        "eth": (url.dex_tools_eth,"eth"),
+        "bsc": (url.dex_tools_bsc, "bnb"),
+        "poly": (url.dex_tools_poly, "matic"),
+        "opti": (url.dex_tools_opti, "eth"),
+        "arb": (url.dex_tools_arb, "eth"),
+        "base": (url.dex_tools_base, "eth"),
+        }
 
         response = dune.get_query_results(execution_id)
         response_data = response.json()
@@ -3992,15 +3999,59 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
         top_3_last_24hr_amt = sorted_rows[:3]
-        top_3 = "*Trending Pairs by 24 Hour Volume:*\n\n"
+        top_3 = "*Xchange Trending Pairs*\n\n"
 
         for idx, item in enumerate(top_3_last_24hr_amt, start=1):
-            top_3 += f'{idx}. {item["pair"]}: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n'
+            
+            pair_name = item["pair"]
+            name = pair_name.split("-")[0].lower()
+            matching_pairs = api.get_pair_entries(name)
+            if matching_pairs:
+                pair_address = matching_pairs[0]['pair'] 
+                ca = matching_pairs[0]['ca']
+                chain = matching_pairs[0]['chain']
+                if chain in chain_mappings:
+                    dex_tools, token = chain_mappings[chain]
+                w3 = chains[chain].w3
+                contract = w3.eth.contract(
+                    address=Web3.to_checksum_address(pair_address), abi=pairs
+                )
+                token0_address = contract.functions.token0().call()
+                token1_address = contract.functions.token1().call()
+                supply = contract.functions.totalSupply().call()
+                is_reserve_token0 = ca.lower() == token0_address.lower()
+                is_reserve_token1 = ca.lower() == token1_address.lower()
+                supply = int(api.get_supply(ca, chain))
+                eth = ""
+                token_res = ""
+                if is_reserve_token0:
+                    eth = contract.functions.getReserves().call()[1]
+                    token_res = contract.functions.getReserves().call()[0]
+                elif is_reserve_token1:
+                    eth = contract.functions.getReserves().call()[0]
+                    token_res = contract.functions.getReserves().call()[1]
+
+                decimals = contract.functions.decimals().call()
+                eth_in_wei = int(eth)
+                token_res_in_wei = int(token_res)
+                liq = api.get_native_price(token) * eth_in_wei * 2
+                formatted_liq = "${:,.2f}".format(liq / (10**decimals))
+                token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
+                mcap = token_price * supply
+                formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
+
+                try:
+                    price_change = api.get_price_change(ca, chain)
+                except Exception:
+                    price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
+
+                top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\nLiquidity: {formatted_liq}\nMarket Cap: {formatted_mcap}\n{price_change}\n[Chart]({dex_tools}{pair_address}) - [Buy]({url.xchange_buy_eth}{ca})\n\n'
+            else:
+                top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
 
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f'*Xchange Trending Pairs*\n\n'
-            f'{top_3}\n{api.get_quote()}',
+            caption=f'{top_3}{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
