@@ -231,6 +231,7 @@ if __name__ == "__main__":
         auto.auto_message_endorsement,
         times.endorse_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        first=3600,
         name="Endorsement Message",
     )
     
@@ -245,7 +246,6 @@ if __name__ == "__main__":
         auto.auto_message_click,
         times.button_time(),
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        first=3600,
         name="Click Message",
     )
 
