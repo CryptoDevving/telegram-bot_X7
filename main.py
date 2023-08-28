@@ -182,7 +182,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("pfp", commands.pfp))
     application.add_handler(CommandHandler("pioneer", commands.pioneer))
     application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
-    application.add_handler(CommandHandler(["price", "prices"], commands.price))
+    application.add_handler(CommandHandler(["price", "prices", "x"], commands.price))
     application.add_handler(CommandHandler("logo", commands.price_logo))
     application.add_handler(CommandHandler("proposal", commands.proposal))
     application.add_handler(CommandHandler("quote", commands.quote))
