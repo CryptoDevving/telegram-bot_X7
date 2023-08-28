@@ -9,6 +9,7 @@ import pytz
 import pyttsx3
 import requests
 import textwrap
+import asyncio
 import sentry_sdk
 import wikipediaapi
 from web3 import Web3
@@ -3962,9 +3963,18 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chain_mappings = {
+        "eth": (url.dex_tools_eth,"eth", url.ether_token),
+        "bsc": (url.dex_tools_bsc, "bnb", url.bsc_token),
+        "poly": (url.dex_tools_poly, "matic", url.poly_token),
+        "opti": (url.dex_tools_opti, "eth", url.opti_token),
+        "arb": (url.dex_tools_arb, "eth", url.arb_token),
+        "base": (url.dex_tools_base, "eth", url.base_token),
+        }
     try:
         execution_id = dune.execute_query("2970801", "medium")
-        await update.message.reply_text("Getting Xchange trending pairs, this usually takes around 30 seconds",
+        await update.message.reply_text("Getting Xchange trending pairs, please wait. This usually takes around 30 seconds\n\n"
+                                        f"{api.escape_markdown(api.get_fact())}",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -3982,97 +3992,79 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ),
         )
 
-        t.sleep(30)
-        chain_mappings = {
-        "eth": (url.dex_tools_eth,"eth"),
-        "bsc": (url.dex_tools_bsc, "bnb"),
-        "poly": (url.dex_tools_poly, "matic"),
-        "opti": (url.dex_tools_opti, "eth"),
-        "arb": (url.dex_tools_arb, "eth"),
-        "base": (url.dex_tools_base, "eth"),
-        }
+        async def delayed_response():
+            await asyncio.sleep(30)
+            response = dune.get_query_results(execution_id)
 
-        response = dune.get_query_results(execution_id)
-        response_data = response.json()
-        rows = response_data["result"]["rows"]
-        rows = [row for row in rows if row["pair"] != "TOTAL"]
+            response_data = response.json()
+            rows = response_data["result"]["rows"]
+            rows = [row for row in rows if row["pair"] != "TOTAL"]
 
-        sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
-        top_3_last_24hr_amt = sorted_rows[:3]
-        top_3 = "*Xchange Trending Pairs*\n\n"
+            sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
+            top_3_last_24hr_amt = sorted_rows[:3]
+            top_3 = "*Xchange Trending Pairs*\n\n"
 
-        for idx, item in enumerate(top_3_last_24hr_amt, start=1):
-            
-            pair_name = item["pair"]
-            name = pair_name.split("-")[0].lower()
-            matching_pairs = api.get_pair_entries(name)
-            if matching_pairs:
-                pair_address = matching_pairs[0]['pair'] 
-                ca = matching_pairs[0]['ca']
-                chain = matching_pairs[0]['chain']
-                if chain in chain_mappings:
-                    dex_tools, token = chain_mappings[chain]
-                w3 = chains[chain].w3
-                contract = w3.eth.contract(
-                    address=Web3.to_checksum_address(pair_address), abi=pairs
-                )
-                token0_address = contract.functions.token0().call()
-                token1_address = contract.functions.token1().call()
-                supply = contract.functions.totalSupply().call()
-                is_reserve_token0 = ca.lower() == token0_address.lower()
-                is_reserve_token1 = ca.lower() == token1_address.lower()
-                supply = int(api.get_supply(ca, chain))
-                eth = ""
-                token_res = ""
-                if is_reserve_token0:
-                    eth = contract.functions.getReserves().call()[1]
-                    token_res = contract.functions.getReserves().call()[0]
-                elif is_reserve_token1:
-                    eth = contract.functions.getReserves().call()[0]
-                    token_res = contract.functions.getReserves().call()[1]
+            for idx, item in enumerate(top_3_last_24hr_amt, start=1):
+                
+                pair_name = item["pair"]
+                name = pair_name.split("-")[0].lower()
+                matching_pairs = api.get_pair_entries(name)
+                if matching_pairs:
+                    pair_address = matching_pairs[0]['pair'] 
+                    ca = matching_pairs[0]['ca']
+                    chain = matching_pairs[0]['chain']
+                    if chain in chain_mappings:
+                        dex_tools, token, scan = chain_mappings[chain]
+                    w3 = chains[chain].w3
+                    contract = w3.eth.contract(
+                        address=Web3.to_checksum_address(pair_address), abi=pairs
+                    )
+                    token0_address = contract.functions.token0().call()
+                    token1_address = contract.functions.token1().call()
+                    supply = contract.functions.totalSupply().call()
+                    is_reserve_token0 = ca.lower() == token0_address.lower()
+                    is_reserve_token1 = ca.lower() == token1_address.lower()
+                    supply = int(api.get_supply(ca, chain))
+                    eth = ""
+                    token_res = ""
+                    if is_reserve_token0:
+                        eth = contract.functions.getReserves().call()[1]
+                        token_res = contract.functions.getReserves().call()[0]
+                    elif is_reserve_token1:
+                        eth = contract.functions.getReserves().call()[0]
+                        token_res = contract.functions.getReserves().call()[1]
 
-                decimals = contract.functions.decimals().call()
-                eth_in_wei = int(eth)
-                token_res_in_wei = int(token_res)
-                liq = api.get_native_price(token) * eth_in_wei * 2
-                formatted_liq = "${:,.2f}".format(liq / (10**decimals))
-                token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
-                mcap = token_price * supply
-                formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
+                    decimals = contract.functions.decimals().call()
+                    eth_in_wei = int(eth)
+                    token_res_in_wei = int(token_res)
+                    liq = api.get_native_price(token) * eth_in_wei * 2
+                    formatted_liq = "${:,.2f}".format(liq / (10**decimals))
+                    token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
+                    mcap = token_price * supply
+                    formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
 
-                try:
-                    price_change = api.get_price_change(ca, chain)
-                except Exception:
-                    price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
+                    try:
+                        price_change = api.get_price_change(ca, chain)
+                    except Exception:
+                        price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
 
-                top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\nLiquidity: {formatted_liq}\nMarket Cap: {formatted_mcap}\n{price_change}\n[Chart]({dex_tools}{pair_address}) - [Buy]({url.xchange_buy_eth}{ca})\n\n'
-            else:
-                top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
+                    top_3 += (f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n'
+                              f'Liquidity: {formatted_liq}\nMarket Cap: {formatted_mcap}\n{price_change}\n'
+                              f'[Chart]({dex_tools}{pair_address}) - [Buy]({url.xchange_buy_eth}{ca}) - [Contract]({scan}{ca})\n\n')
+                else:
+                    top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
 
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f'{top_3}{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard", url=f"{url.dune}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="Xchange", url=f"{url.xchange}"
-                        )
-                    ],
-                ]
-            ),
-        )
+            await update.message.reply_photo(
+                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                caption=f'{top_3}{api.get_quote()}',
+                parse_mode="Markdown"
+            )
+        asyncio.create_task(delayed_response())
     except Exception as e:
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f'*Xchange Trending Pairs*\n\n'
-                f'Unable to refresh Dune data, please use the link below\n\n{api.get_quote()}',
+                f'Unable to refresh Dune data, please try again or use the link below\n\n{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
