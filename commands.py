@@ -3591,15 +3591,19 @@ async def splitters(update: Update, context):
                 chain_name, chain_url, chain_native = chain_mappings[chain]
                 treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
                 eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
+                profit_eth_raw = api.get_native_balance(ca.profit_sharing, chain)
                 treasury_eth = round(float(treasury_eth_raw), 2)
                 eco_eth = round(float(eco_eth_raw), 2)
+                profit_eth = round(float(profit_eth_raw), 2)
                 native_price = api.get_native_price(chain_native)
                 eco_dollar = float(eco_eth) * float(native_price)
+                profit_dollar = float(profit_eth) * float(native_price)
                 treasury_dollar = float(treasury_eth) * float(native_price)
                 await update.message.reply_photo(
                     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
                     caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
                     f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                    f"Profit Share Splitter: {profit_eth} {chain_native.upper()} (${'{:0,.0f}'.format(profit_dollar)})\n"
                     f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
                     f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
                     parse_mode="Markdown",
@@ -3612,17 +3616,17 @@ async def splitters(update: Update, context):
                                 )
                             ],
                             [
+                            InlineKeyboardButton(
+                                text="Profit Share Splitter",
+                                url=f"{chain_url}{ca.profit_sharing}",
+                            )
+                            ],
+                            [
                                 InlineKeyboardButton(
                                     text="Treasury Splitter",
                                     url=f"{chain_url}{ca.treasury_splitter}",
                                 )
                             ],
-                            [
-                            InlineKeyboardButton(
-                                text="Profit Share Splitter",
-                                url=f"{chain_url}{ca.profit_sharing}",
-                            )
-                        ],
                         ]
                     ),
                 )
@@ -3637,15 +3641,19 @@ async def splitters(update: Update, context):
                 chain_name, chain_url, chain_native = chain_mappings[chain]
                 treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
                 eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
+                profit_eth_raw = api.get_native_balance(ca.profit_sharing, chain)
                 treasury_eth = round(float(treasury_eth_raw), 2)
                 eco_eth = round(float(eco_eth_raw), 2)
+                profit_eth = round(float(profit_eth_raw), 2)
                 native_price = api.get_native_price(chain_native)
                 eco_dollar = float(eco_eth) * float(native_price)
+                profit_dollar = float(profit_eth) * float(native_price)
                 treasury_dollar = float(treasury_eth) * float(native_price)
                 await update.message.reply_photo(
                     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
                     caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
                     f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                    f"Profit Share Splitter: {profit_eth} {chain_native.upper()} (${'{:0,.0f}'.format(profit_dollar)})\n"
                     f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
                     f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
                     parse_mode="Markdown",
@@ -3658,17 +3666,17 @@ async def splitters(update: Update, context):
                                 )
                             ],
                             [
+                            InlineKeyboardButton(
+                                text="Profit Share Splitter",
+                                url=f"{chain_url}{ca.profit_sharing}",
+                            )
+                            ],
+                            [
                                 InlineKeyboardButton(
                                     text="Treasury Splitter",
                                     url=f"{chain_url}{ca.treasury_splitter}",
                                 )
                             ],
-                            [
-                            InlineKeyboardButton(
-                                text="Profit Share Splitter",
-                                url=f"{chain_url}{ca.profit_sharing}",
-                            )
-                        ],
                         ]
                     ),
                 )
