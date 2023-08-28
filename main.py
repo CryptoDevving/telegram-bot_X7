@@ -238,7 +238,6 @@ if __name__ == "__main__":
         auto.auto_message_volume,
         times.volume_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        first=10800,
         name="Volume Message",
     )
 
@@ -246,6 +245,7 @@ if __name__ == "__main__":
         auto.auto_message_click,
         times.button_time(),
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        first=3600,
         name="Click Message",
     )
 

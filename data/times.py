@@ -6,8 +6,8 @@ def button_time():
     time = random.randint(300, 21600)
     return time
 
-endorse_time = 21600
-volume_time = 21600
+endorse_time = 7200
+volume_time = 7200
 
 # COUNTDOWN
 countdown_time = datetime(2023, 9, 7, 12, 00, 00)
