@@ -676,7 +676,7 @@ def get_snapshot():
 
 
 def get_split(eth_value):
-    founding_dev_percentage = 0.07
+    profit_percentage = 0.49
     pioneer_reward_pool_percentage = 0.06
     community_multisig_percentage = 0.32
     developers_multisig_percentage = 0.13
@@ -686,7 +686,8 @@ def get_split(eth_value):
     lending_pool_percentage = 0.20
     treasury_percentage = 0.50
     treasury_share = eth_value * treasury_percentage
-    founding_dev_share = treasury_share * founding_dev_percentage * 7
+
+    profit_share = treasury_share * profit_percentage
     pioneer_reward_pool_share = treasury_share * pioneer_reward_pool_percentage
     community_multisig_share = treasury_share * community_multisig_percentage
     developers_multisig_share = treasury_share * developers_multisig_percentage
@@ -701,7 +702,7 @@ def get_split(eth_value):
         "X7 Constellations": x7_constellations_share,
         "Lending Pool": lending_pool_share,
         "Treasury": treasury_share,
-        "Founding X7 Devs Total": founding_dev_share,
+        "Profit Sharing Total": profit_share,
         "Pioneer Reward Pool": pioneer_reward_pool_share,
         "Community Multi Sig": community_multisig_share,
         "Developers Multi Sig": developers_multisig_share,

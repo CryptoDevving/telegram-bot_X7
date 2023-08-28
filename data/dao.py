@@ -54,8 +54,9 @@ contract_mappings = {
         "function freezeOutletChange()\n"
         "function setShares()\n"
         ), ca.eco_splitter),
-        "Treasury Splitter":(("function setOtherSlotRecipient()\n"
-        "function setOtherSlotShares()\n"
+        "Treasury Splitter":(("function freezeOutlet()\n"
+        "function setOutletRecipient()\n"
+        "function setSlotShares()"
         ), ca.treasury_splitter),
         "Factory": (("function setFeeTo()\n"
         "function setDiscountAuthority()\n"

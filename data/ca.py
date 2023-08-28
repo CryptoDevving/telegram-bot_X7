@@ -35,7 +35,8 @@ x7dao_discount = "0x7da05D75f51056f3B83b43F397668Cf6A5051cDa"
 discount_router = "0x7de802dfc36dac738ddf2681dbfb37b30bb80060"
 xchange_discount = "0x7de8ab0dd777561ce98b7ef413f6fd564e89c1da"
 lending_discount = "0x74001e463b3c7dc95d96a1fdbe621678c24d47da"
-treasury_splitter = "0x70006B785AA87821331a974C3d5af81CdE5BB999"
+treasury_splitter = "0x7000706E2727686eDF46cA0E42690F87b9de1999"
+profit_sharing = "0x700008707507005e5673b644ecb2387673941000"
 
 # LIQ LOCKS
 x7r_liq_lock = "0x7125c4105d728359Cd3073d567f366926f5cA10C"

@@ -3441,6 +3441,12 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 ],
                 [
                     InlineKeyboardButton(
+                        text="X7 Profit Share Splitter",
+                        url=f"{chain_url}{ca.profit_sharing}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
                         text="X7 Lending Pool Reserve",
                         url=f"{chain_url}{ca.lpool_reserve}",
                     )
@@ -3530,65 +3536,31 @@ async def snapshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def splitters(update: Update, context):
-    chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, "eth"),
-        "arb": ("(ARB)", url.arb_address, "eth"),
-        "poly": ("(POLYGON)", url.poly_address, "matic"),
-        "bsc": ("(BSC)", url.bsc_address, "bnb"),
-        "opti": ("(OPTI)", url.opti_address, "eth"),
-        "base": ("(BASE)", url.base_address, "eth"),
-    }
-    if len(context.args) > 1:
-        eth_value = float(context.args[1])
-        chain = context.args[0].lower()
-        if chain in chain_mappings:
-            chain_name, chain_url, chain_native = chain_mappings[chain]
-        distribution = api.get_split(eth_value)
-        message = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
-        for location, share in distribution.items():
-            if location == "Treasury":
-                message += f"\n{location}: {share:.2f} {chain_native.upper()}:\n"
-            else:
-                message += f"{location}: {share:.2f} {chain_native.upper()}\n"
+    try:
+        chain_mappings = {
+            "eth": ("(ETH)", url.ether_address, "eth"),
+            "arb": ("(ARB)", url.arb_address, "eth"),
+            "poly": ("(POLYGON)", url.poly_address, "matic"),
+            "bsc": ("(BSC)", url.bsc_address, "bnb"),
+            "opti": ("(OPTI)", url.opti_address, "eth"),
+            "base": ("(BASE)", url.base_address, "eth"),
+        }
+        if len(context.args) > 1:
+            eth_value = float(context.args[1])
+            chain = context.args[0].lower()
+            if chain in chain_mappings:
+                chain_name, chain_url, chain_native = chain_mappings[chain]
+            distribution = api.get_split(eth_value)
+            message = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
+            for location, share in distribution.items():
+                if location == "Treasury":
+                    message += f"\n{location}: {share:.2f} {chain_native.upper()}:\n"
+                else:
+                    message += f"{location}: {share:.2f} {chain_native.upper()}\n"
 
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"{message}\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="Ecosystem Splitter",
-                            url=f"{chain_url}{ca.eco_splitter}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="Treasury Splitter",
-                            url=f"{chain_url}{ca.treasury_splitter}",
-                        )
-                    ],
-                ]
-            ),
-        )
-    elif len(context.args) == 1:
-        chain = context.args[0].lower()
-        if chain in chain_mappings:
-            chain_name, chain_url, chain_native = chain_mappings[chain]
-            treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
-            eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
-            treasury_eth = round(float(treasury_eth_raw), 2)
-            eco_eth = round(float(eco_eth_raw), 2)
-            native_price = api.get_native_price(chain_native)
-            eco_dollar = float(eco_eth) * float(native_price)
-            treasury_dollar = float(treasury_eth) * float(native_price)
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
-                f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-                f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
-                f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
+                caption=f"{message}\n\n{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [
@@ -3604,49 +3576,107 @@ async def splitters(update: Update, context):
                                 url=f"{chain_url}{ca.treasury_splitter}",
                             )
                         ],
+                        [
+                            InlineKeyboardButton(
+                                text="Profit Share Splitter",
+                                url=f"{chain_url}{ca.profit_sharing}",
+                            )
+                        ],
                     ]
                 ),
             )
+        elif len(context.args) == 1:
+            chain = context.args[0].lower()
+            if chain in chain_mappings:
+                chain_name, chain_url, chain_native = chain_mappings[chain]
+                treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
+                eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
+                treasury_eth = round(float(treasury_eth_raw), 2)
+                eco_eth = round(float(eco_eth_raw), 2)
+                native_price = api.get_native_price(chain_native)
+                eco_dollar = float(eco_eth) * float(native_price)
+                treasury_dollar = float(treasury_eth) * float(native_price)
+                await update.message.reply_photo(
+                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
+                    f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                    f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+                    f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
+                    parse_mode="Markdown",
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton(
+                                    text="Ecosystem Splitter",
+                                    url=f"{chain_url}{ca.eco_splitter}",
+                                )
+                            ],
+                            [
+                                InlineKeyboardButton(
+                                    text="Treasury Splitter",
+                                    url=f"{chain_url}{ca.treasury_splitter}",
+                                )
+                            ],
+                            [
+                            InlineKeyboardButton(
+                                text="Profit Share Splitter",
+                                url=f"{chain_url}{ca.profit_sharing}",
+                            )
+                        ],
+                        ]
+                    ),
+                )
+            else:
+                await update.message.reply_text(
+                    f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`",
+                    parse_mode="Markdown",
+                )
         else:
-            await update.message.reply_text(
-                f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`",
-                parse_mode="Markdown",
-            )
-    else:
-        chain = "eth"
-        if chain in chain_mappings:
-            chain_name, chain_url, chain_native = chain_mappings[chain]
-            treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
-            eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
-            treasury_eth = round(float(treasury_eth_raw), 2)
-            eco_eth = round(float(eco_eth_raw), 2)
-            native_price = api.get_native_price(chain_native)
-            eco_dollar = float(eco_eth) * float(native_price)
-            treasury_dollar = float(treasury_eth) * float(native_price)
-            await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
-                f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-                f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
-                f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
+            chain = "eth"
+            if chain in chain_mappings:
+                chain_name, chain_url, chain_native = chain_mappings[chain]
+                treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
+                eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
+                treasury_eth = round(float(treasury_eth_raw), 2)
+                eco_eth = round(float(eco_eth_raw), 2)
+                native_price = api.get_native_price(chain_native)
+                eco_dollar = float(eco_eth) * float(native_price)
+                treasury_dollar = float(treasury_eth) * float(native_price)
+                await update.message.reply_photo(
+                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
+                    f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                    f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+                    f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`\n\n{api.get_quote()}",
+                    parse_mode="Markdown",
+                    reply_markup=InlineKeyboardMarkup(
                         [
+                            [
+                                InlineKeyboardButton(
+                                    text="Ecosystem Splitter",
+                                    url=f"{chain_url}{ca.eco_splitter}",
+                                )
+                            ],
+                            [
+                                InlineKeyboardButton(
+                                    text="Treasury Splitter",
+                                    url=f"{chain_url}{ca.treasury_splitter}",
+                                )
+                            ],
+                            [
                             InlineKeyboardButton(
-                                text="Ecosystem Splitter",
-                                url=f"{chain_url}{ca.eco_splitter}",
+                                text="Profit Share Splitter",
+                                url=f"{chain_url}{ca.profit_sharing}",
                             )
                         ],
-                        [
-                            InlineKeyboardButton(
-                                text="Treasury Splitter",
-                                url=f"{chain_url}{ca.treasury_splitter}",
-                            )
-                        ],
-                    ]
-                ),
-            )
+                        ]
+                    ),
+                )
+    except Exception:
+        await update.message.reply_text(
+                            f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`",
+                            parse_mode="Markdown",
+                        )
 
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
