@@ -3099,9 +3099,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 if "e-" in str(token_price[token_id]["usd"]):
                     price = "{:.8f}".format(token_price[token_id]["usd"])
+                elif token_price[token_id]["usd"] < 1:
+                    price = "{:.8f}".format(token_price[token_id]["usd"]) 
                 else:
                     price = "{:.2f}".format(token_price[token_id]["usd"])
-
 
                 price_change = token_price[token_id]["usd_24h_change"]
                 if price_change is None:
@@ -4050,7 +4051,7 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                     top_3 += (f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n'
                               f'Liquidity: {formatted_liq}\nMarket Cap: {formatted_mcap}\n{price_change}\n'
-                              f'[Chart]({dex_tools}{pair_address}) - [Buy]({url.xchange_buy_eth}{ca}) - [Contract]({scan}{ca})\n\n')
+                              f'📊 [Chart]({dex_tools}{pair_address}) - 💰 [Buy]({url.xchange_buy_eth}{ca}) - 📝 [Contract]({scan}{ca})\n\n')
                 else:
                     top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
 
