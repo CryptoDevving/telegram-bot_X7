@@ -384,47 +384,6 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def buy_bots(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance Bobby Buy Bot Channels*\n\n{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="Xchange Alerts", url="https://t.me/x7_alerts)"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Ethereum", url="https://t.me/X7constellation)"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Arbitrum", url="https://t.me/x7arbbuybots"
-                    )
-                ],
-                [   InlineKeyboardButton(
-                        text="BSC", url="https://t.me/x7bscbuybots"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Optimism", url="https://t.me/x7optibuybots"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Polygon", url="https://t.me/x7polygonbuybots"
-                    )
-                ],
-            ]
-        ),
-    )
-
-
 async def buy_evenly(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"{text.evenly}\n\n{api.get_quote()}",
@@ -477,18 +436,8 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
                 [
                     InlineKeyboardButton(
-                        text="Media", url="https://t.me/X7MediaChannel"
+                        text="LP Providers", url="https://t.me/x7financeLPs"
                     )   
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Research Notes", url="https://t.me/X7m105_Research"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Chinese Community", url="https://t.me/X7CNPortal"
-                    )
                 ],
             ]
         ),

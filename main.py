@@ -140,7 +140,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["bot", "start", "filters"], commands.bot))
     application.add_handler(CommandHandler("burn", commands.burn))
     application.add_handler(CommandHandler("buy", commands.buy))
-    application.add_handler(CommandHandler(["buybots", "bobby", "buybot"], commands.buy_bots))
     application.add_handler(CommandHandler(["buyevenly", "quintsevenly"], commands.buy_evenly))
     application.add_handler(CommandHandler("channels", commands.channels))
     application.add_handler(CommandHandler(["chart", "charts"], commands.chart))
