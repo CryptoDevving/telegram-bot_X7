@@ -63,7 +63,7 @@ async def auto_message_endorsement(context: ContextTypes.DEFAULT_TYPE) -> None:
 async def auto_message_volume(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
     photo_url = f"{url.pioneers}{api.get_random_pioneer_number()}.png"
-    caption_text = f"*Boosting Trading Volume on Xchange*\n\n{text.referral}"
+    caption_text = f"*Boosting Trading Volume on Xchange*\n\n{text.volume}"
     keyboard_markup = InlineKeyboardMarkup(
         [[InlineKeyboardButton(text="Add Liquiidty Now", url=f"https://app.x7.finance/#/pool/v2")]]
     )
