@@ -18,7 +18,7 @@ contract_mappings = {
         "function freezeBalanceThreshold()\n"
         "function freezeLiquidityBalanceThreshold()"
         ), ca.x7100_liq_hub),
-        "X7DAO Liquiidty Hub": (("function setShares()\n"
+        "X7DAO Liquidity Hub": (("function setShares()\n"
         "function setRouter()\n"
         "function setOffRampPair()\n"
         "function setBalanceThreshold()\n"
