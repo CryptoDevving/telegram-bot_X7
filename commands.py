@@ -32,52 +32,9 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        execution_id = dune.execute_query("2972368", "medium")
-        t.sleep(5)
-        response = dune.get_query_results(execution_id)
-        response_data = response.json()
-
-        last_24hr_amt = response_data['result']['rows'][0]['last_24hr_amt']
-        last_30d_amt = response_data['result']['rows'][0]['last_30d_amt']
-        last_7d_amt = response_data['result']['rows'][0]['last_7d_amt']
-        lifetime_amt = response_data['result']['rows'][0]['lifetime_amt']
-        response = dune.get_query_results(execution_id)
-        response_data = response.json()
-        print(response_data)
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Volume*\n\n'
-                f'Total Trading Volume:    ${"{:0,.0f}".format(lifetime_amt)}\n'
-                f'30 Day Trading Volume:  ${"{:0,.0f}".format(last_30d_amt)}\n'
-                f'7 Day Trading Volume:    ${"{:0,.0f}".format(last_7d_amt)}\n'
-                f'24 Hour Trading Volume: ${"{:0,.0f}".format(last_24hr_amt)}\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
-        )
+        return
     except Exception as e:
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Volume*\n\n'
-                f'Unable to refresh Dune data, please use the link below\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
-        )
+        print(e)
 
         
 # COMMANDS
@@ -2011,11 +1968,11 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_token, "?chain=eth-main"),
+        "eth": ("(ETH)", url.ether_token, "eth-main"),
         "bsc": ("(BSC)", url.bsc_token, ""),
-        "poly": ("(POLYGON)", url.poly_token, "?chain=poly-main"),
-        "opti": ("(OPTIMISM)", url.opti_token, "?chain=optimism-main"),
-        "arb": ("(ARB)", url.arb_token, "?chain=arbitrum-main"),
+        "poly": ("(POLYGON)", url.poly_token, "poly-main"),
+        "opti": ("(OPTIMISM)", url.opti_token, "optimism-main"),
+        "arb": ("(ARB)", url.arb_token, "arbitrum-main"),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_holders = chain_mappings[chain]
@@ -2219,17 +2176,17 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     borrow_price = chain_prices.get(chain, {}).get("borrow")
     magister_price = chain_prices.get(chain, {}).get("magister")
 
-    eco_floor = chain_floors.get("eco", "N/A")
-    liq_floor = chain_floors.get("liq", "N/A")
-    dex_floor = chain_floors.get("dex", "N/A")
-    borrow_floor = chain_floors.get("borrow", "N/A")
-    magister_floor = chain_floors.get("magister", "N/A")
+    eco_floor = chain_floors.get(chain, {}).get("eco")
+    liq_floor = chain_floors.get(chain, {}).get("liq")
+    dex_floor = chain_floors.get(chain, {}).get("dex")
+    borrow_floor = chain_floors.get(chain, {}).get("borrow")
+    magister_floor = chain_floors.get(chain, {}).get("magister")
 
-    eco_count = chain_counts.get("eco", 0)
-    liq_count = chain_counts.get("liq", 0)
-    dex_count = chain_counts.get("dex", 0)
-    borrow_count = chain_counts.get("borrow", 0)
-    magister_count = chain_counts.get("magister", 0)
+    eco_count = chain_counts.get(chain, {}).get("eco")
+    liq_count = chain_counts.get(chain, {}).get("liq")
+    dex_count = chain_counts.get(chain, {}).get("dex")
+    borrow_count = chain_counts.get(chain, {}).get("borrow")
+    magister_count = chain_counts.get(chain, {}).get("magister")
 
     eco_discount = chain_discount.get("eco", {})
     liq_discount = chain_discount.get("liq", {})
