@@ -65,7 +65,7 @@ async def auto_message_volume(context: ContextTypes.DEFAULT_TYPE) -> None:
     photo_url = f"{url.pioneers}{api.get_random_pioneer_number()}.png"
     caption_text = f"*Boosting Trading Volume on Xchange*\n\n{text.volume}"
     keyboard_markup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton(text="Add Liquiidty Now", url=f"https://app.x7.finance/#/pool/v2")]]
+        [[InlineKeyboardButton(text="Add Liquidity Now", url=f"https://app.x7.finance/#/pool/v2")]]
     )
     await context.bot.send_photo(
         chat_id=job.chat_id,
