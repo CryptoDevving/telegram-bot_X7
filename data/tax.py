@@ -5,6 +5,7 @@ info = {
         "x7r": 3,
         "x7dao": 3,
         "x7100": 2,
+        "x7dao_discount_x7100": 50,
         "liq_discount_x7r": 25,
         "liq_discount_x7dao": 15,
         "liq_discount_x7100": 50,
@@ -17,6 +18,7 @@ info = {
         "x7r": 6,
         "x7dao": 6,
         "x7100": 2,
+        "x7dao_discount_x7100": 50,
         "liq_discount_x7r": 25,
         "liq_discount_x7dao": 15,
         "liq_discount_x7100": 50,
@@ -29,6 +31,7 @@ info = {
         "x7r": 6,
         "x7dao": 6,
         "x7100": 2,
+        "x7dao_discount_x7100": 50,
         "liq_discount_x7r": 25,
         "liq_discount_x7dao": 15,
         "liq_discount_x7100": 50,
@@ -41,6 +44,7 @@ info = {
         "x7r": 6,
         "x7dao": 6,
         "x7100": 2,
+        "x7dao_discount_x7100": 50,
         "liq_discount_x7r": 25,
         "liq_discount_x7dao": 15,
         "liq_discount_x7100": 50,
@@ -53,6 +57,7 @@ info = {
         "x7r": 6,
         "x7dao": 6,
         "x7100": 2,
+        "x7dao_discount_x7100": 50,
         "liq_discount_x7r": 25,
         "liq_discount_x7dao": 15,
         "liq_discount_x7100": 50,
@@ -70,6 +75,7 @@ def generate_info(network):
         x7r = network_info["x7r"]
         x7dao = network_info["x7dao"]
         x7100 = network_info["x7100"]
+        x7dao_discount_x7100 = network_info["x7dao_discount_x7100"]
         liq_discount_x7r = network_info["liq_discount_x7r"]
         liq_discount_x7dao = network_info["liq_discount_x7dao"]
         liq_discount_x7100 = network_info["liq_discount_x7100"]
@@ -82,7 +88,11 @@ def generate_info(network):
             f"*X7 Finance Tax Info ({network.upper()})*\nUse `/tax [chain-name]` for other chains\n\n"
             f"X7R: {x7r}%\nX7DAO: {x7dao}%\n"
             f"X7101-X7105: {x7100}%\n\n"
-            "*Tax with NFTs*\n"
+            "*Tax Discounts*\n\n"
+            "50000 X7DAO:\n"
+            f"X7R: {x7r}%\n"
+            f"X7DAO: {x7dao}%\n"
+            f"X7101 - X7105: {x7100 - (x7100 * x7dao_discount_x7100 / 100)}%\n\n"
             "Ecosystem Maxi:\n"
             f"X7R: {x7r - (x7r * eco_discount_x7r / 100)}%\n"
             f"X7DAO: {x7dao - (x7dao * eco_discount_x7dao / 100)}%\n"
