@@ -305,6 +305,7 @@ async def new_pair(event):
                     csv_writer = csv.writer(csv_file)
                     csv_writer.writerow(params)
                 api.push_github("logs/tokens.csv", "auto: add pair")
+                break
         except Exception as e:
             sentry_sdk.capture_exception(e)
                     
