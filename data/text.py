@@ -171,7 +171,7 @@ ecosystem = (
     "This includes the establishment of committees and other foundational efforts off chain.\n\n"
     "• *X7100 Constellation (X7101 - X7105)*\n"
     "A novel - eventually price consistent collection of five tokens. These act as the backstop to the "
-    "Lending Pool. The X7100 series of tokens are burned on every transaction. While continually raising its "
+    "Lending Pool. While continually raising its "
     "floor price - it also provides further opportunities to mint new X7Deposit tokens.\n\n"
     "• *X7 NFTs*\nNFTs within the ecosystem will be used to provide opportunities for staking, lending, "
     "discounts, rewards, access to higher governance privileges & much more.\n\n"
