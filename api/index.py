@@ -67,7 +67,7 @@ def get_block(chain: str, time: "int") -> str:
     return data["result"]
 
 
-def get_daily_tx_count(contract: str, chain: str,) -> int:
+def get_daily_tx_count(contract: str, chain: str, ) -> int:
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
@@ -82,7 +82,7 @@ def get_daily_tx_count(contract: str, chain: str,) -> int:
     internal_tx_response = requests.get(internal_tx_url)
     internal_tx_data = internal_tx_response.json()
     internal_tx_entry_count = len(internal_tx_data['result']) if 'result' in internal_tx_data else 0
-    entry_count = tx_entry_count + internal_tx_entry_count 
+    entry_count = tx_entry_count + internal_tx_entry_count
     return entry_count
 
 
@@ -219,6 +219,7 @@ def get_x7r_supply(chain):
     supply = ca.supply - int(data["result"][:-18])
     return supply
 
+
 # CG
 
 
@@ -285,12 +286,12 @@ def get_pioneer_holdings(wallet):
 # MORALIS
 
 moralis_chain_mappings = {
-        "eth": "eth",
-        "arb": "arbitrum",
-        "poly": "polygon",
-        "bsc": "bsc",
-        "opti": "optimism",
-    }
+    "eth": "eth",
+    "arb": "arbitrum",
+    "poly": "polygon",
+    "bsc": "bsc",
+    "opti": "optimism",
+}
 
 
 def get_liquidity(pair, chain):
@@ -320,7 +321,7 @@ def get_price(token, chain):
         params={"address": token, "chain": chain},
     )
     return result["usdPrice"]
-    
+
 
 def get_token_data(token: str, chain: str) -> dict:
     if chain in moralis_chain_mappings:
@@ -345,13 +346,13 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
 # BLOCKSPAN
 
 blockspan_chain_mappings = {
-            "eth": "eth-main",
-            "arb": "arbitrum-main",
-            "poly": "poly-main",
-            "bsc": "bsc-main",
-            "opti": "optimism-main",
-            "base": "base-main",
-        }
+    "eth": "eth-main",
+    "arb": "arbitrum-main",
+    "poly": "poly-main",
+    "bsc": "bsc-main",
+    "opti": "optimism-main",
+    "base": "base-main",
+}
 
 
 def get_nft_holder_count(nft, chain):
@@ -368,7 +369,7 @@ def get_nft_holder_count(nft, chain):
         )
         data = response.json()
         return data.get("total_tokens", "0")
-    except Exception as e:
+    except Exception:
         return 0
 
 
@@ -397,7 +398,7 @@ def get_nft_floor(nft, chain):
             return "N/A"
         else:
             return "N/A"
-    except Exception as e:
+    except Exception:
         return "N/A"
 
 
@@ -410,8 +411,8 @@ def get_os_nft_collection(slug):
     return data
 
 
-def get_os_nft_id(nft, id):
-    url = f"https://api.opensea.io/v2/chain/ethereum/contract/{nft}/nfts/{id}"
+def get_os_nft_id(nft, identifier):
+    url = f"https://api.opensea.io/v2/chain/ethereum/contract/{nft}/nfts/{identifier}"
     headers = {
         "accept": "application/json",
         "X-API-KEY": os.getenv("OPENSEA_API_KEY")
@@ -421,20 +422,21 @@ def get_os_nft_id(nft, id):
     return data
 
 
-## DEFINED
+# DEFINED
 
 defined_chain_mappings = {
-            "eth": "1",
-            "arb": "42161",
-            "poly": "137",
-            "bsc": "46",
-            "opti": "10",
-            "base": "8453",
-        }
+    "eth": "1",
+    "arb": "42161",
+    "poly": "137",
+    "bsc": "46",
+    "opti": "10",
+    "base": "8453",
+}
+
 
 def get_price_change(address, chain):
     if chain in defined_chain_mappings:
-            chain = defined_chain_mappings[chain]
+        chain = defined_chain_mappings[chain]
 
     url = "https://api.defined.fi"
 
@@ -485,7 +487,8 @@ def get_price_change(address, chain):
     seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
 
     one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
-    twenty_four_hours_change = round(((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
+    twenty_four_hours_change = round(
+        ((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
     seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
 
     result = f"1H Change: {one_hour_change}%\n24H Change: {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
@@ -493,10 +496,9 @@ def get_price_change(address, chain):
     return result
 
 
-
 def get_token_image(token, chain):
     if chain in defined_chain_mappings:
-            chain = defined_chain_mappings[chain]
+        chain = defined_chain_mappings[chain]
 
     url = "https://api.defined.fi"
 
@@ -521,7 +523,7 @@ def get_token_image(token, chain):
 
 def get_volume(pair, chain):
     if chain in defined_chain_mappings:
-            chain = defined_chain_mappings[chain]
+        chain = defined_chain_mappings[chain]
 
     url = "https://api.defined.fi"
 
@@ -569,7 +571,7 @@ def escape_markdown(text):
         text = text.replace(char, '\\' + char)
     return text
 
-    
+
 def get_duration_years(duration):
     years = duration.days // 365
     months = (duration.days % 365) // 30
@@ -594,7 +596,7 @@ def get_fact():
 def get_giveaway_entries():
     with open("logs/entries.csv", "r") as file:
         csv_reader = csv.reader(file)
-        header = next(csv_reader)
+        _ = next(csv_reader)
         column_data = []
         for row in csv_reader:
             if len(row) > 0 and row[0] != "":
@@ -619,8 +621,8 @@ def get_pair_entries(ticker):
                 'chain': row[3],
                 'image_url': row[4]
             })
-    
-    return  matching_data
+
+    return matching_data
 
 
 def get_holders(token):
@@ -629,7 +631,6 @@ def get_holders(token):
     response = requests.get(url)
     data = response.json()
     return data.get("holdersCount")
-
 
 
 def get_quote():
@@ -668,8 +669,8 @@ def get_snapshot():
     url = "https://hub.snapshot.org/graphql"
     query = {
         "query": 'query { proposals ( first: 1, skip: 0, where: { space_in: ["X7COMMUNITY.eth"]}, '
-        'orderBy: "created", orderDirection: desc ) { id title start end snapshot state choices '
-        "scores scores_total author }}"
+                 'orderBy: "created", orderDirection: desc ) { id title start end snapshot state choices '
+                 "scores scores_total author }}"
     }
     response = requests.get(url, query)
     return response.json()
@@ -720,7 +721,9 @@ def get_word(word):
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
     response = requests.get(url)
     data = response.json()
+
     definition = None
+    audio_url = None
 
     if data and isinstance(data, list):
         meanings = data[0].get("meanings", [])
@@ -756,7 +759,7 @@ def push_github(location, message):
             file_content = file.read()
         encoded_content = base64.b64encode(file_content).decode('utf-8')
 
-        response = requests.put(
+        _ = requests.put(
             f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
             headers=headers,
             json={
