@@ -1,10 +1,12 @@
 import random
 from datetime import datetime
 
+
 # AUTO TIMES SECONDS
-def button_time(): 
+def button_time():
     time = random.randint(300, 21600)
     return time
+
 
 endorse_time = 7200
 volume_time = 7200

@@ -57,8 +57,8 @@ dev_multi_poly = "0x793444C1aC56BBaa74ae6c4b5d929FFE59304934"
 com_multi_poly = "0x3B4313E1a8A9beFCf34491a20F0991f22b4f1461"
 dev_multi_opti = "0xBC534678E9ab8Bf1009fE6Ca4De8B02C091c9ca8"
 com_multi_opti = "0xc8804440275c0B60a081e832bb027DDaAE4A2daa"
-dev_multi_base = "0xBC534678E9ab8Bf1009fE6Ca4De8B02C091c9ca8" ###
-com_multi_base = "0xc8804440275c0B60a081e832bb027DDaAE4A2daa" ###
+dev_multi_base = "0xBC534678E9ab8Bf1009fE6Ca4De8B02C091c9ca8"
+com_multi_base = "0xc8804440275c0B60a081e832bb027DDaAE4A2daa"
 
 # PAIRS
 # ETH
