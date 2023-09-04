@@ -1066,6 +1066,57 @@ async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
+    chain_mappings = {
+        "eth": ("(ETH)", url.ether_address, url.ether_tx, "eth"),
+        "bsc": ("(BSC)", url.bsc_address, url.bsc_tx, "bnb"),
+        "poly": ("(POLYGON)", url.poly_address, url.poly_tx, "matic"),
+        "opti": ("(OPTIMISM)", url.opti_address, url.opti_tx, "eth"),
+        "arb": ("(ARB)", url.arb_address, url.arb_tx, "eth"),
+        "base": ("(BASE)", url.base_address, url.base_tx, "eth"),
+    }
+    if chain in chain_mappings:
+        chain_name, chain_url, chain_tx, chain_native,  = chain_mappings[chain]
+    now = datetime.utcnow()
+    tx = api.get_tx(ca.fee_to, chain)
+    filter = [d for d in tx["result"] if d["to"] in f"{ca.eco_splitter}".lower() and d.get("functionName", "") != "pushAll()"]
+    value_raw = int(filter[0]["value"]) / 10**18
+    hash = filter[0]["hash"]
+    value = round(value_raw, 3) 
+    dollar = float(value) * float(api.get_native_price(chain_native)) / 1**18
+    time = datetime.utcfromtimestamp(int(filter[0]["timeStamp"]))
+    duration = now - time
+    days = duration.days
+    hours, remainder = divmod(duration.seconds, 3600)
+    minutes = (remainder % 3600) // 60
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*X7 Finance Xchange Fee Liquidation {chain_name}*\nUse `/fees [chain-name]` for other chains\n\n"
+        f'Last Liquidation: {time} UTC\n{value} {chain_native.upper()} (${"{:0,.0f}".format(dollar)})\n\n'
+        f"{days} days, {hours} hours and {minutes} minutes ago\n\n"
+        f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                                    [
+                    InlineKeyboardButton(
+                        text="Liquidation TX",
+                        url=f"{chain_tx}{hash}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="X7 Ecosystem Splitter", url=f"{chain_url}{ca.eco_splitter}"
+                    )
+                ],
+            ]
+        ),
+    )
+
+
 async def fg(update, context):
     fear_response = requests.get("https://api.alternative.me/fng/?limit=0")
     fear_data = fear_response.json()

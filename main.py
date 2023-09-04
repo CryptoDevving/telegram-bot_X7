@@ -157,6 +157,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("fact", commands.fact))
     application.add_handler(CommandHandler("factory", commands.factory))
     application.add_handler(CommandHandler("faq", commands.faq))
+    application.add_handler(CommandHandler(["fee", "fees"], commands.fees))
     application.add_handler(CommandHandler(["fg", "feargreed"], commands.fg))
     application.add_handler(CommandHandler("gas", commands.gas))
     application.add_handler(CommandHandler("giveaway", commands.giveaway_command))
