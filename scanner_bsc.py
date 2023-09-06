@@ -247,7 +247,6 @@ async def new_pair(event):
         f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
         f"{pool_text}\n\n"
         f"{liquidity_text}\n\n"
-        f"SCAN:\n"
         f"{status}\n",
         font=myfont,
         fill=(255, 255, 255),

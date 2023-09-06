@@ -111,6 +111,7 @@ def scanner():
         "scanner_arb.py",
         "scanner_poly.py",
         "scanner_opti.py",
+##        "scanner_base.py",
     ]
     python_executable = sys.executable
     processes = []

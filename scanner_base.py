@@ -1,5 +1,4 @@
 import os
-import csv
 import sys
 import time
 import random
@@ -18,14 +17,13 @@ from api import index as api
 from media import index as media
 
 
-alchemy_keys = os.getenv("ALCHEMY_ETH")
-alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
-web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
+web3 = Web3(Web3.HTTPProvider("https://mainnet.base.org"))
 
-factory = web3.eth.contract(address=ca.factory, abi=api.get_abi(ca.factory, "eth"))
-ill001 = web3.eth.contract(address=ca.ill001, abi=api.get_abi(ca.ill001, "eth"))
-ill002 = web3.eth.contract(address=ca.ill002, abi=api.get_abi(ca.ill002, "eth"))
-ill003 = web3.eth.contract(address=ca.ill003, abi=api.get_abi(ca.ill003, "eth"))
+
+factory = web3.eth.contract(address=ca.factory, abi=api.get_abi(ca.factory, "base"))
+ill001 = web3.eth.contract(address=ca.ill001, abi=api.get_abi(ca.ill001, "base"))
+ill002 = web3.eth.contract(address=ca.ill002, abi=api.get_abi(ca.ill002, "base"))
+ill003 = web3.eth.contract(address=ca.ill003, abi=api.get_abi(ca.ill003, "base"))
 
 pair_filter = factory.events.PairCreated.create_filter(fromBlock="latest")
 ill001_filter = ill001.events.LoanOriginated.create_filter(fromBlock="latest")
@@ -58,54 +56,50 @@ async def format_schedule(schedule1, schedule2):
 
 
 async def new_pair(event):
-    tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
-    liq = {"reserve0": 0, "reserve1": 0}
-    try:
-        liq = api.get_liquidity(event["args"]["pair"], "eth")
-    except Exception:
-        pass
+    tx = api.get_tx_from_hash(event["transactionHash"].hex(), "base")
+    liq = api.get_liquidity(event["args"]["pair"], "base")
     if event["args"]["token0"] == ca.weth:
-        native = api.get_token_name(event["args"]["token0"], "eth")
-        token_name = api.get_token_name(event["args"]["token1"], "eth")
+        native = api.get_token_name(event["args"]["token0"], "base")
+        token_name = api.get_token_name(event["args"]["token1"], "base")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
         token = liq["reserve1"]
-        dollar = int(weth) * 2 * api.get_native_price("eth") / 10**18
+        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
     elif event["args"]["token0"] in ca.stables:
-        native = api.get_token_name(event["args"]["token0"], "eth")
-        token_name = api.get_token_name(event["args"]["token1"], "eth")
+        native = api.get_token_name(event["args"]["token0"], "base")
+        token_name = api.get_token_name(event["args"]["token1"], "base")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
         token = liq["reserve1"]
-        dollar = int(weth) * 2 / 10**18
+        dollar = int(weth) * 2 / 10 ** 18
     elif event["args"]["token1"] in ca.stables:
-        native = api.get_token_name(event["args"]["token1"], "eth")
-        token_name = api.get_token_name(event["args"]["token0"], "eth")
+        native = api.get_token_name(event["args"]["token1"], "base")
+        token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
         token = liq["reserve0"]
-        dollar = int(weth) * 2 / 10**18
+        dollar = int(weth) * 2 / 10 ** 18
     else:
-        native = api.get_token_name(event["args"]["token1"], "eth")
-        token_name = api.get_token_name(event["args"]["token0"], "eth")
+        native = api.get_token_name(event["args"]["token1"], "base")
+        token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
         token = liq["reserve0"]
-        dollar = int(weth) * 2 * api.get_native_price("eth") / 10**18
-    verified_check = api.get_verified(token_address, "eth")
+        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
+    verified_check = api.get_verified(token_address, "base")
     if dollar == 0 or dollar == "" or not dollar:
         liquidity_text = "Total Liquidity: Unavailable"
     else:
         liquidity_text = f'Total Liquidity: ${"{:0,.0f}".format(dollar)}'
-    info = api.get_token_data(token_address, "eth")
+    info = api.get_token_data(token_address, "base")
     if (
         info[0]["decimals"] == ""
         or info[0]["decimals"] == "0"
         or not info[0]["decimals"]
     ):
-        supply = int(api.get_supply(token_address, "eth"))
+        supply = int(api.get_supply(token_address, "base"))
     else:
-        supply = int(api.get_supply(token_address, "eth")) / 10 ** int(
+        supply = int(api.get_supply(token_address, "base")) / 10 ** int(
             info[0]["decimals"]
         )
     status = ""
@@ -117,7 +111,7 @@ async def new_pair(event):
     if verified_check == "Yes":
         try:
             contract = web3.eth.contract(
-                address=token_address, abi=api.get_abi(token_address, "eth")
+                address=token_address, abi=api.get_abi(token_address, "base")
             )
             verified = "✅ Contract Verified"
         except Exception:
@@ -128,13 +122,13 @@ async def new_pair(event):
                 renounced = "✅ Contract Renounced"
             else:
                 renounced = "⚠️ Contract Not Renounced"
-        except Exception:
+        except (Exception, TimeoutError, ValueError, StopAsyncIteration):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
     time.sleep(10)
     try:
-        scan = api.get_scan(token_address, "eth")
+        scan = api.get_scan(token_address, "base")
         if scan[f"{str(token_address).lower()}"]["is_open_source"] == "1":
             try:
                 if scan[f"{str(token_address).lower()}"]["slippage_modifiable"] == "1":
@@ -143,7 +137,7 @@ async def new_pair(event):
                     tax_warning = ""
                 if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
                     return
-            except Exception:
+            except Exception as e:
                 tax_warning = ""
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
             try:
@@ -199,7 +193,7 @@ async def new_pair(event):
         else:
             tax = f"⚠️ Tax: Unavailable {tax_warning}"
         status = f"{verified}\n{tax}\n{renounced}\n{lock}"
-    except Exception:
+    except (Exception, TimeoutError, ValueError, StopAsyncIteration) as e:
         status = "⚠️ Scan Unavailable"
     pool = int(tx["result"]["value"], 0) / 10**18
     if pool == 0 or pool == "" or not pool:
@@ -210,18 +204,17 @@ async def new_pair(event):
             f'Launched Pool Amount: {pool} ETH (${"{:0,.0f}".format(pool_dollar)})'
         )
     im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.eth_logo)
+    im2 = Image.open(media.base_logo)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
     i1.text(
         (26, 30),
-        f"New Pair Created (ETH) \n\n"
+        f"New Pair Created (BASE)\n\n"
         f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
         f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
-        f"{pool_text}\n\n"
+        f"{pool_text}\n\n\n"
         f"{liquidity_text}\n\n"
-        f"SCAN:\n"
         f"{status}\n",
         font=myfont,
         fill=(255, 255, 255),
@@ -235,86 +228,50 @@ async def new_pair(event):
         await application.bot.send_photo(
             chat_id,
             photo=open(r"media/blackhole.png", "rb"),
-            caption=f"*New Pair Created (ETH)*\n\n"
+            caption=f"*New Pair Created (BASE)*\n\n"
             f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
             f"Token Address:\n`{token_address}`\n\n"
             f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
-            f"{pool_text}\n\n"
+            f"{pool_text}\n\n\n"
             f"{liquidity_text}\n\n"
-            f"{status}\n",
+            f"SCAN:\n" f"{status}\n",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton(
                             text=f"Buy On Xchange",
-                            url=f"{url.xchange_buy_eth}{token_address}",
+                            url=f"{url.xchange_buy_base}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Chart",
-                            url=f"{url.dex_tools_eth}{event['args']['pair']}",
+                            url=f"{url.dex_tools_base}{event['args']['pair']}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Token Contract",
-                            url=f"{url.ether_address}{token_address}",
+                            url=f"{url.base_address}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Deployer TX",
-                            url=f"{url.ether_tx}{event['transactionHash'].hex()}",
+                            url=f"{url.base_tx}{event['transactionHash'].hex()}",
                         )
                     ],
                 ]
             ),
         )
-        try:
-            params = [None] * 5 
-            params[0] = token_name[1]
-            params[1] = event["args"]["pair"]
-            params[2] = token_address
-            params[3] = "eth"
-            image_url = api.get_token_image(token_address, "eth")
-            params[4] = image_url if image_url is not None else "N/A"
-
-            existing_tokens = []
-            with open("logs/tokens.csv", 'r') as csv_file:
-                csv_reader = csv.reader(csv_file)
-                for row in csv_reader:
-                    existing_tokens.append(row)
-
-            replaced = False
-
-            for index, existing_token in enumerate(existing_tokens):
-                if params[0].lower() == existing_token[0].lower():
-                    existing_tokens[index] = params
-                    with open("logs/tokens.csv", 'w', newline='') as csv_file:
-                        csv_writer = csv.writer(csv_file)
-                        csv_writer.writerows(existing_tokens)
-                    replaced = True
-                    api.push_github("logs/tokens.csv", "auto: update pair")
-                    break
-
-            if not replaced:
-                with open("logs/tokens.csv", 'a', newline='') as csv_file:
-                    csv_writer = csv.writer(csv_file)
-                    csv_writer.writerow(params)
-                api.push_github("logs/tokens.csv", "auto: add pair")
-                break
-        except Exception as e:
-            sentry_sdk.capture_exception(e)
-                    
 
 
 async def new_loan(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
     try:
         address = to_checksum_address(ca.lpool)
-        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.lpool, "eth"))
+        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.lpool, "base"))
         amount = (
             contract.functions.getRemainingLiability(
                 int(event["args"]["loanID"])
@@ -333,41 +290,39 @@ async def new_loan(event):
         sentry_sdk.capture_exception(e)
         schedule_str = ""
         amount = ""
-
     cost = int(tx["result"]["value"], 0) / 10**18
     im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.eth_logo)
+    im2 = Image.open(media.base_logo)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
     i1.text(
         (26, 30),
-        f"New Loan Originated (ETH)\n\n"
+        f"*New Loan Originated (BASE)*\n\n"
+        f"Loan ID: {event['args']['loanID']}\n"
+        f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} ETH "
+        f'(${"{:0,.0f}".format(api.get_native_price("eth") * cost)})\n\n'
+        f"Payment Schedule (UTC):\n{schedule_str}\n\n"
+        f'Total: {amount} ETH (${"{:0,.0f}".format(api.get_native_price("eth") * amount)}',
+        font=myfont,
+        fill=(255, 255, 255),
+    )
+    im1.save(r"media/blackhole.png")
+    await application.bot.send_photo(
+        os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        photo=open(r"media/blackhole.png", "rb"),
+        caption=f"*New Loan Originated (BASE)*\n\n"
         f"Loan ID: {event['args']['loanID']}\n"
         f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} ETH "
         f'(${"{:0,.0f}".format(api.get_native_price("eth") * cost)})\n\n'
         f"Payment Schedule (UTC):\n{schedule_str}\n\n"
         f'Total: {amount} ETH (${"{:0,.0f}".format(api.get_native_price("eth") * amount)})',
-        font=myfont,
-        fill=(255, 255, 255),
-    )
-    im1.save(r"media/blackhole.png")
-
-    await application.bot.send_photo(
-        os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        photo=open(r"media/blackhole.png", "rb"),
-        caption=f"*New Loan Originated (ETH)*\n\n"
-        f"Loan ID: {event['args']['loanID']}\n"
-        f'Initial Cost: {cost} ETH (${"{:0,.0f}".format(api.get_native_price("eth") * cost)})\n\n'
-        f"Payment Schedule (UTC):\n{schedule_str}\n\n"
-        f'Total: {amount} ETH (${"{:0,.0f}".format(api.get_native_price("eth") * amount)})',
-        parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
                         text=f"Loan TX",
-                        url=f"{url.ether_tx}{event['transactionHash'].hex()}",
+                        url=f"{url.base_tx}{event['transactionHash'].hex()}",
                     )
                 ],
             ]
@@ -384,22 +339,18 @@ async def log_loop(
                 await new_pair(PairCreated)
 
             await asyncio.sleep(poll_interval)
-
             for LoanOriginated in ill001_filter.get_new_entries():
                 await new_loan(LoanOriginated)
 
             await asyncio.sleep(poll_interval)
-
             for LoanOriginated in ill002_filter.get_new_entries():
                 await new_loan(LoanOriginated)
 
             await asyncio.sleep(poll_interval)
-
             for LoanOriginated in ill003_filter.get_new_entries():
                 await new_loan(LoanOriginated)
 
             await asyncio.sleep(poll_interval)
-
         except Exception as e:
             sentry_sdk.capture_exception(e)
             await restart_script()
@@ -421,8 +372,9 @@ async def main():
 if __name__ == "__main__":
     application = (
         ApplicationBuilder()
-        .token(os.getenv("TELEGRAM_BOT_TOKEN_ETH"))
+        .token(os.getenv("TELEGRAM_BOT_TOKEN_BASE"))
         .connection_pool_size(512)
         .build()
     )
+
     asyncio.run(main())

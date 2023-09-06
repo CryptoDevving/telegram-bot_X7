@@ -1967,7 +1967,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         ],
                         [
                             InlineKeyboardButton(
-                                text=f"Basescan", url=f"{url.base_address}{loan_ca}"
+                                text=f"Base", url=f"{url.base_address}{loan_ca}"
                             )
                         ],
                     ]
@@ -1980,7 +1980,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "BSC": "https://bsc-dataseed.binance.org/",
             "POLY": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
             "OPTI": f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
-##            "BASE": "https://mainnet.base.org"
+            "BASE": "https://mainnet.base.org"
         }
         contract_networks = {
             "ETH": "eth",
@@ -1988,7 +1988,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "BSC": "bsc",
             "POLY": "poly",
             "OPTI": "opti",
-##            "BASE": "base",
+            "BASE": "base",
         }
         contract_instances = {}
         for network, web3_url in networks.items():
@@ -2006,8 +2006,8 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`BSC:`       {contract_instances["BSC"]}\n'
             f'`ARB:`       {contract_instances["ARB"]}\n'
             f'`POLY:`     {contract_instances["POLY"]}\n'
-            f'`OPTI:`     {contract_instances["OPTI"]}\n\n'
-##            f'`BASE:`     {contract_instances["BASE"]}\n\n'
+            f'`OPTI:`     {contract_instances["OPTI"]}\n'
+            f'`BASE:`     {contract_instances["BASE"]}\n\n'
             f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
             f"{api.get_quote()}",
             parse_mode="Markdown",
@@ -2360,13 +2360,13 @@ async def pair(update: Update, context: CallbackContext):
         "BSC": "https://bsc-dataseed.binance.org/",
         "POLY": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
         "OPTI": f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
-##        "BASE": "https://mainnet.base.org"
+        "BASE": "https://mainnet.base.org"
     }
     contract_networks = {
         "ETH": "eth",
         "ARB": "arb",
         "BSC": "bsc",
-        "POLY": "poly",##
+        "POLY": "poly",
         "OPTI": "opti",
         "BASE": "base",
     }
@@ -2386,8 +2386,8 @@ async def pair(update: Update, context: CallbackContext):
         f'`BSC:`       {contract_instances["BSC"]}\n'
         f'`ARB:`       {contract_instances["ARB"]}\n'
         f'`POLY:`     {contract_instances["POLY"]}\n'
-        f'`OPTI:`     {contract_instances["OPTI"]}\n\n'
-##        f'`BASE:`     {contract_instances["BASE"]}\n'
+        f'`OPTI:`     {contract_instances["OPTI"]}\n'
+        f'`BASE:`     {contract_instances["BASE"]}\n'
         f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -3220,7 +3220,7 @@ async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
                 [
                     InlineKeyboardButton(
-                        text="Basescan", url=f"{url.base_address}{ca.router}"
+                        text="Base", url=f"{url.base_address}{ca.router}"
                     )
                 ],
             ]

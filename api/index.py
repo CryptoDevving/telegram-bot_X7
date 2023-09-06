@@ -291,6 +291,7 @@ moralis_chain_mappings = {
     "poly": "polygon",
     "bsc": "bsc",
     "opti": "optimism",
+    "base": "base",
 }
 
 

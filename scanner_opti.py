@@ -58,40 +58,40 @@ async def format_schedule(schedule1, schedule2):
 
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "opti")
-    #    liq = api.get_liquidity(event["args"]["pair"], "opti")
+    liq = api.get_liquidity(event["args"]["pair"], "opti")
     if event["args"]["token0"] == ca.weth:
         native = api.get_token_name(event["args"]["token0"], "opti")
         token_name = api.get_token_name(event["args"]["token1"], "opti")
         token_address = event["args"]["token1"]
-    #        weth = liq["reserve0"]
-    #        token = liq["reserve1"]
-    #        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
+        weth = liq["reserve0"]
+        token = liq["reserve1"]
+        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
     elif event["args"]["token0"] in ca.stables:
         native = api.get_token_name(event["args"]["token0"], "opti")
         token_name = api.get_token_name(event["args"]["token1"], "opti")
         token_address = event["args"]["token1"]
-    #        weth = liq["reserve0"]
-    #        token = liq["reserve1"]
-    #        dollar = int(weth) * 2 / 10 ** 18
+        weth = liq["reserve0"]
+        token = liq["reserve1"]
+        dollar = int(weth) * 2 / 10 ** 18
     elif event["args"]["token1"] in ca.stables:
         native = api.get_token_name(event["args"]["token1"], "opti")
         token_name = api.get_token_name(event["args"]["token0"], "opti")
         token_address = event["args"]["token0"]
-    #        weth = liq["reserve1"]
-    #        token = liq["reserve0"]
-    #        dollar = int(weth) * 2 / 10 ** 18
+        weth = liq["reserve1"]
+        token = liq["reserve0"]
+        dollar = int(weth) * 2 / 10 ** 18
     else:
         native = api.get_token_name(event["args"]["token1"], "opti")
         token_name = api.get_token_name(event["args"]["token0"], "opti")
         token_address = event["args"]["token0"]
-    #        weth = liq["reserve1"]
-    #        token = liq["reserve0"]
-    #        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
+        weth = liq["reserve1"]
+        token = liq["reserve0"]
+        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
     verified_check = api.get_verified(token_address, "opti")
-    #    if dollar == 0 or dollar == "" or not dollar:
-    #        liquidity_text = "Total Liquidity: Unavailable"
-    #    else:
-    #        liquidity_text = f'Total Liquidity: ${"{:0,.0f}".format(dollar)}'
+    if dollar == 0 or dollar == "" or not dollar:
+        liquidity_text = "Total Liquidity: Unavailable"
+    else:
+        liquidity_text = f'Total Liquidity: ${"{:0,.0f}".format(dollar)}'
     info = api.get_token_data(token_address, "opti")
     if (
         info[0]["decimals"] == ""
@@ -215,8 +215,8 @@ async def new_pair(event):
         f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
         f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
         f"{pool_text}\n\n\n"
-        #            f"{liquidity_text}\n\n"
-        f"SCAN:\n" f"{status}\n",
+        f"{liquidity_text}\n\n"
+        f"{status}\n",
         font=myfont,
         fill=(255, 255, 255),
     )
@@ -234,7 +234,7 @@ async def new_pair(event):
             f"Token Address:\n`{token_address}`\n\n"
             f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
             f"{pool_text}\n\n\n"
-            #                f"{liquidity_text}\n\n"
+            f"{liquidity_text}\n\n"
             f"SCAN:\n" f"{status}\n",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
