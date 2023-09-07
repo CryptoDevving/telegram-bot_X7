@@ -12,7 +12,7 @@ endorse_time = 7200
 volume_time = 7200
 
 # COUNTDOWN
-countdown_time = datetime(2023, 9, 7, 12, 00, 00)
+countdown_time = datetime(2023, 9, 7, 23, 59, 59)
 countdown_title = "Xchange launch"
 countdown_desc = "https://app.x7.finance"
 
