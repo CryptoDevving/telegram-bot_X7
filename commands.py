@@ -645,23 +645,22 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    duration = times.countdown_time - datetime.utcnow()
-    days, hours, minutes = api.get_duration_days(duration)
-    if duration < timedelta(0):
-        await update.message.reply_photo(
-            photo=open(random.choice(media.logos), "rb"),
-            caption=f"*X7 Finance Countdown*\n\nNo countdown set, Please check back for more details\n\n{api.get_quote()}",
+        duration = times.countdown_time - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
+        if duration < timedelta(0):
+            await update.message.reply_photo(
+                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                caption=f"*X7 Finance Countdown*\n\nNo countdown set, Please check back for more details\n\n{api.get_quote()}",
+                parse_mode="Markdown",
+            )
+            return
+        await update.message.reply_text(
+            text=f"*X7 Finance Countdown:*\n\n"
+            f'{times.countdown_title}\n\n{times.countdown_time.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
+            f"{days} days, {hours} hours and {minutes} minutes\n\n"
+            f"{times.countdown_desc}\n\n{api.get_quote()}",
             parse_mode="Markdown",
         )
-        return
-    await update.message.reply_text(
-        text=f"*X7 Finance Countdown:*\n\n"
-        f'{times.countdown_title}\n\n{times.countdown_time.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
-        f"{days} days, {hours} hours and {minutes} minutes\n\n"
-        f"{times.countdown_desc}\n\n{api.get_quote()}",
-        parse_mode="Markdown",
-    )
-
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     input_contract = " ".join(context.args).lower()
@@ -4183,7 +4182,7 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
     response = api.twitter_v2.get_spaces(user_ids=1561721566689386496)
     if response[0] is None:
         await update.message.reply_photo(
-            photo=open((random.choice(media.logos)), "rb"),
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f"X7 Finance X space\n\nPlease check back for more details"
             f"\n\n{api.get_quote()}",
             parse_mode="Markdown",
