@@ -265,7 +265,6 @@ async def new_pair(event):
             f"Token Address:\n`{token_address}`\n\n"
             f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
             f"{pool_text}\n\n"
-            f"SCAN:\n"
             f"{liquidity_text}\n\n"
             f"{status}",
             parse_mode="Markdown",
