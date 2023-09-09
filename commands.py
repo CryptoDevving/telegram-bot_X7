@@ -2013,6 +2013,105 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
+    chain_mappings = {
+    "eth": (
+            "(ETH)",
+            url.ether_address,
+            Web3(
+                Web3.HTTPProvider(
+                    f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
+                )
+            ),
+        ),
+    "bsc": (
+        "(BSC)",
+        url.bsc_address,
+        Web3(
+            Web3.HTTPProvider(
+                "https://bsc-dataseed.binance.org/",
+            )
+        ),
+    ),
+    "poly": (
+        "(POLYGON)",
+        url.poly_address,
+        Web3(
+            Web3.HTTPProvider(
+                f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
+            )
+        ),
+    ),
+    "opti": (
+        "(OPTIMISM)",
+        url.opti_address,
+        Web3(
+            Web3.HTTPProvider(
+                f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
+            )
+        ),
+    ),
+    "arb": (
+        "(ARB)",
+        url.arb_address,
+        Web3(
+            Web3.HTTPProvider(
+                f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
+            )
+        ),
+    ),
+    "base": (
+        "(BASE)",
+        url.base_address,
+        Web3(
+            Web3.HTTPProvider(
+                f"https://mainnet.base.org",
+            )
+        ),
+    ),
+    }
+    if chain in chain_mappings:
+        chain_name, chain_url, web3 = chain_mappings[chain]
+        address = to_checksum_address(ca.time_lock)
+        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.time_lock, chain))
+        timestamp = contract.functions.globalUnlockTimestamp().call()
+
+        unlock_datetime = datetime.utcfromtimestamp(timestamp)
+        now = datetime.utcnow()
+        time_remaining = unlock_datetime - now
+
+        years = time_remaining.days // 365
+        months = (time_remaining.days % 365) // 30
+        days = (time_remaining.days % 365) % 30
+        weeks = days // 7
+        days = days % 7
+        remaining_time_str = f"{years} years, {months} months, {weeks} weeks, {days} days"
+        unlock_datetime_str = unlock_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*X7 Finance Liquidity Locks* {chain_name}\nfor other chains use `/locks [chain-name]`\n\n"
+            f"Unlock Date:\n{unlock_datetime_str}\n\n"
+            f"{remaining_time_str}\n\n"
+            f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Token Time Lock Contract",
+                            url=f"{chain_url}{ca.time_lock}#readContract",
+                        )
+                    ],
+                ]
+            ),
+        )
+
+
 async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
