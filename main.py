@@ -58,7 +58,7 @@ job_queue = application.job_queue
 if __name__ == "__main__":
     application.add_error_handler(error)
     application.add_handler(CallbackQueryHandler(auto.clicks))
-    
+
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
     application.add_handler(CommandHandler("alerts", commands.alerts))
@@ -121,6 +121,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["referral", "refer"], commands.refer))
     application.add_handler(CommandHandler("router", commands.router))
     application.add_handler(CommandHandler("say", commands.say))
+    application.add_handler(CommandHandler("scan", commands.scan))
     application.add_handler(CommandHandler("search", commands.search))
     application.add_handler(CommandHandler("signers", commands.signers))
     application.add_handler(CommandHandler("smart", commands.smart))

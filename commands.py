@@ -31,10 +31,8 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        return
-    except Exception as e:
-        print(e)
+    return
+
 
         
 # COMMANDS
@@ -3336,6 +3334,96 @@ async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
     engine.save_to_file(" ".join(context.args), "media/voicenote.mp3")
     engine.runAndWait()
     await update.message.reply_audio(audio=open("media/voicenote.mp3", "rb"))
+
+
+async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    token_address = " ".join(context.args).lower()
+    verified_check = api.get_verified(token_address, "eth")
+    alchemy_keys = os.getenv("ALCHEMY_ETH")
+    alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
+    web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
+    if verified_check == "Yes":
+        try:
+            contract = web3.eth.contract(
+            address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, "eth")
+            )
+            verified = "✅ Contract Verified"
+        except Exception as e:
+            print(e)
+            verified = "⚠️ Contract Unverified"
+        try:
+            owner = contract.functions.owner().call()
+            if owner == "0x0000000000000000000000000000000000000000":
+                renounced = "✅ Contract Renounced"
+            else:
+                renounced = "⚠️ Contract Not Renounced"
+        except Exception:
+            renounced = "⚠️ Contract Not Renounced"
+    else:
+        verified = "⚠️ Contract Unverified"
+    scan = api.get_scan(token_address, "eth")
+    if scan[f"{str(token_address).lower()}"]["is_open_source"] == "1":
+        try:
+            if scan[f"{str(token_address).lower()}"]["slippage_modifiable"] == "1":
+                tax_warning = "(Changeable)"
+            else:
+                tax_warning = ""
+            if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
+                return
+        except Exception:
+            tax_warning = ""
+    if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
+        try:
+            if (
+                scan[f"{str(token_address).lower()}"]["sell_tax"] == "1"
+                or scan[f"{str(token_address).lower()}"]["buy_tax"] == "1"
+            ):
+                return
+            buy_tax_raw = (
+                float(scan[f"{str(token_address).lower()}"]["buy_tax"]) * 100
+            )
+            sell_tax_raw = (
+                float(scan[f"{str(token_address).lower()}"]["sell_tax"]) * 100
+            )
+            buy_tax = int(buy_tax_raw)
+            sell_tax = int(sell_tax_raw)
+            if sell_tax > 10 or buy_tax > 10:
+                tax = f"⚠️ Tax: {buy_tax}/{sell_tax} {tax_warning}"
+            else:
+                tax = f"✅️ Tax: {buy_tax}/{sell_tax} {tax_warning}"
+        except Exception:
+            tax = f"⚠️ Tax: Unavailable {tax_warning}"
+    else:
+        tax = f"⚠️ Tax: Unavailable {tax_warning}"
+    if scan[f"{str(token_address).lower()}"]["is_mintable"] == "1":
+        mint = "❌ Mintable"
+    else:
+        mint = "✅️ Not Mintable"
+    if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
+        honey_pot = "❌ Honey Pot"
+    else:
+        honey_pot = "✅️ Not Honey Pot"
+    if scan[f"{str(token_address).lower()}"]["is_blacklisted"] == "1":
+        blacklist = "⚠️ Has Blacklist Functions"
+    else:
+        blacklist = "✅️ No Blacklist Functions"
+    if scan[f"{str(token_address).lower()}"]["cannot_sell_all"] == "1":
+        sellable = "❌ Not Sellable"
+    else:
+        sellable = "✅️ Sellable"
+    if scan[f"{str(token_address).lower()}"]["is_whitelisted"] == "1":
+        whitelist = "⚠️ Has Whitelist Functions"
+    else:
+        whitelist = "✅️ No Whitelist Functions"
+    
+    status = f"{verified}\n{tax}\n{renounced}\n{mint}\n{honey_pot}\n{sellable}\n{whitelist}\n{blacklist}"
+    token_name = scan[f"{str(token_address).lower()}"]["token_name"]
+
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address}\n\n{status}",
+        parse_mode="Markdown",
+    )
 
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
