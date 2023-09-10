@@ -2510,7 +2510,12 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True).raw)
         i1 = ImageDraw.Draw(img)
         myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
-        i1.text((360, 987.7), text, font=myfont, fill=(255, 255, 255))
+        letter_spacing = 7
+        position = (360, 987.7)
+        for char in text:
+            i1.text(position, char, font=myfont, fill=(255, 255, 255))
+            letter_width, _ = i1.textsize(char, font=myfont)
+            position = (position[0] + letter_width + letter_spacing, position[1])
         img.save(r"media/pfp.png")
         await update.message.reply_photo(
             photo=open(r"media/pfp.png", "rb"))
