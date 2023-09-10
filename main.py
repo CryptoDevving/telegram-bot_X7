@@ -12,76 +12,6 @@ from data import times
 from api import index as api
 
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global current_button_data, first_user_clicked, first_user_info
-    if context.user_data is None:
-        context.user_data = {}
-
-    current_button_data = context.bot_data.get("current_button_data")
-    button_generation_timestamp = context.bot_data.get("button_generation_timestamp")
-    if not current_button_data:
-        return
-
-    button_data = update.callback_query.data
-    user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}"
-
-    if button_data in auto.clicked_buttons:
-        return
-
-    auto.clicked_buttons.add(button_data)
-
-    if user_info not in auto.click_counts:
-        auto.click_counts[user_info] = 0
-
-    if button_data == current_button_data:
-        button_click_timestamp = t.time()
-        time_taken = button_click_timestamp - button_generation_timestamp
-        auto.click_counts[user_info] = auto.click_counts.get(user_info, 0) + 1
-        auto.clicks_save(auto.click_counts.copy())
-        auto.users_clicked_current_button.add(user_info)
-        user_clicks = auto.get_user_click_total(user_info)
-        if not auto.first_user_clicked:
-            first_user_info = user_info
-            first_user_clicked = True
-            total_click_count = auto.clicks_get_total()
-            if user_clicks == 1:
-                click_message = "🎉🎉 This is their first button click! 🎉🎉"
-            elif user_clicks % 10 == 0:
-                click_message = f"🎉🎉 They been the fastest Pioneer {user_clicks} times! 🎉🎉"
-            else:
-                click_message = f"They have been the fastest Pioneer {user_clicks} times!"
-            
-            message_text = (
-                f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.2f} seconds!\n\n"
-                f"{click_message}\n\n"
-                f"use `/leaderboard` to see the fastest Pioneers!\n\n"
-            )
-            
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=message_text,
-                parse_mode="Markdown",
-            )
-
-            if total_click_count % 50 == 0:
-                await context.bot.send_message(
-                    chat_id=update.effective_chat.id,
-                    text=f"🎉🎉 The button has been clicked a total of {total_click_count} times by all Pioneers! 🎉🎉",
-                    parse_mode="Markdown",
-                )
-                
-    context.user_data["current_button_data"] = None
-    auto.click_counts.clear()
-    
-    job_queue.run_once(
-        auto.auto_message_click,
-        times.button_time(),
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        name="Click Message",
-    )
-
-
 async def error(update: Update, context: CallbackContext):
     if update is None:
         return
@@ -127,8 +57,8 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
-    application.add_handler(CallbackQueryHandler(button))
-
+    application.add_handler(CallbackQueryHandler(auto.clicks))
+    
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
     application.add_handler(CommandHandler("alerts", commands.alerts))

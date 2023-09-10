@@ -76,6 +76,69 @@ async def auto_message_volume(context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
+async def clicks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    global current_button_data, first_user_clicked, first_user_info
+    if context.user_data is None:
+        context.user_data = {}
+
+    current_button_data = context.bot_data.get("current_button_data")
+    button_generation_timestamp = context.bot_data.get("button_generation_timestamp")
+    if not current_button_data:
+        return
+
+    button_data = update.callback_query.data
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+
+    if button_data in clicked_buttons:
+        return
+
+    clicked_buttons.add(button_data)
+
+    if user_info not in click_counts:
+        click_counts[user_info] = 0
+
+    if button_data == current_button_data:
+        button_click_timestamp = t.time()
+        time_taken = button_click_timestamp - button_generation_timestamp
+        click_counts[user_info] = click_counts.get(user_info, 0) + 1
+        clicks_save(click_counts.copy())
+        users_clicked_current_button.add(user_info)
+        user_clicks = clicks_get_user_total(user_info)
+        if not first_user_clicked:
+            first_user_info = user_info
+            first_user_clicked = True
+            total_click_count = clicks_get_total()
+            if user_clicks == 1:
+                click_message = "🎉🎉 This is their first button click! 🎉🎉"
+            elif user_clicks % 10 == 0:
+                click_message = f"🎉🎉 They been the fastest Pioneer {user_clicks} times! 🎉🎉"
+            else:
+                click_message = f"They have been the fastest Pioneer {user_clicks} times!"
+            
+            message_text = (
+                f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.2f} seconds!\n\n"
+                f"{click_message}\n\n"
+                f"use `/leaderboard` to see the fastest Pioneers!\n\n"
+            )
+            
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=message_text,
+                parse_mode="Markdown",
+            )
+
+            if total_click_count % 50 == 0:
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text=f"🎉🎉 The button has been clicked a total of {total_click_count} times by all Pioneers! 🎉🎉",
+                    parse_mode="Markdown",
+                )
+                
+    context.user_data["current_button_data"] = None
+    click_counts.clear()
+
+
 def clicks_get():
     click_counts = {}
     try:
@@ -104,7 +167,7 @@ def clicks_get_total():
     return total_count
 
 
-def get_user_click_total(username):
+def clicks_get_user_total(username):
     click_counts = clicks_get()
     return click_counts.get(username, 0)
 
