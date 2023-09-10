@@ -291,7 +291,7 @@ async def new_pair(event):
             for index, existing_token in enumerate(existing_tokens):
                 if params[0].lower() == existing_token[0].lower():
                     existing_tokens[index] = params
-                    with open("logs/tokens.csv", 'w', newline='') as csv_file:
+                    with open("logs/tokens.csv", 'r+', newline='') as csv_file:
                         csv_writer = csv.writer(csv_file)
                         csv_writer.writerows(existing_tokens)
                     replaced = True
