@@ -3338,6 +3338,11 @@ async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     token_address = " ".join(context.args).lower()
+    if token_address == "":
+        await update.message.reply_text(
+        f"Please provide Contract Address",
+    )
+        return
     verified_check = api.get_verified(token_address, "eth")
     alchemy_keys = os.getenv("ALCHEMY_ETH")
     alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"

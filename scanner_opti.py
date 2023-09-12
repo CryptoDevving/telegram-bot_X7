@@ -107,7 +107,6 @@ async def new_pair(event):
     renounced = ""
     lock = ""
     tax = ""
-    tax_warning = ""
     verified = ""
     if verified_check == "Yes":
         try:
@@ -130,16 +129,6 @@ async def new_pair(event):
     time.sleep(10)
     try:
         scan = api.get_scan(token_address, "opti")
-        if scan[f"{str(token_address).lower()}"]["is_open_source"] == "1":
-            try:
-                if scan[f"{str(token_address).lower()}"]["slippage_modifiable"] == "1":
-                    tax_warning = "(Changeable)"
-                else:
-                    tax_warning = ""
-                if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
-                    return
-            except Exception as e:
-                tax_warning = ""
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
             try:
                 if (
@@ -156,11 +145,11 @@ async def new_pair(event):
                 buy_tax = int(buy_tax_raw)
                 sell_tax = int(sell_tax_raw)
                 if sell_tax > 10 or buy_tax > 10:
-                    tax = f"⚠️ Tax: {buy_tax}/{sell_tax} {tax_warning}"
+                    tax = f"⚠️ Tax: {buy_tax}/{sell_tax}"
                 else:
-                    tax = f"✅️ Tax: {buy_tax}/{sell_tax} {tax_warning}"
+                    tax = f"✅️ Tax: {buy_tax}/{sell_tax}"
             except Exception:
-                tax = f"⚠️ Tax: Unavailable {tax_warning}"
+                tax = f"⚠️ Tax: Unavailable"
             if "lp_holders" in scan[f"{str(token_address).lower()}"]:
                 lp_holders = scan[f"{str(token_address).lower()}"]["lp_holders"]
             try:
@@ -178,21 +167,21 @@ async def new_pair(event):
                         ]
                         if lp_with_locked_detail:
                             lock = (
-                                f"✅ Liquidity Locked\n{locked_lp_list[0]['tag']} - "
-                                f"{locked_lp_list[0]['percent'][:6]}%\n"
-                                f"Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time']}"
+                                f"✅ Liquidity Locked\n"
+                                F" - {locked_lp_list[0]['tag']} - {locked_lp_list[0]['percent'][:6]}%\n"
+                                f" - Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time'][:10]}"
                             )
                         else:
                             lock = (
-                                f"✅ Liquidity Locked\n{locked_lp_list[0]['tag']} - "
-                                f"{locked_lp_list[0]['percent'][:6]}%\n"
+                                f"✅ Liquidity Locked\n"
+                                f" - {locked_lp_list[0]['percent'][:6]}%\n"
                             )
                 else:
                     lock = ""
             except Exception as e:
                 sentry_sdk.capture_exception(e)
         else:
-            tax = f"⚠️ Tax: Unavailable {tax_warning}"
+            tax = f"⚠️ Tax: Unavailable"
         status = f"{verified}\n{tax}\n{renounced}\n{lock}"
     except (Exception, TimeoutError, ValueError, StopAsyncIteration) as e:
         status = "⚠️ Scan Unavailable"
