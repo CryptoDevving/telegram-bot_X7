@@ -3353,8 +3353,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, "eth")
             )
             verified = "✅ Contract Verified"
-        except Exception as e:
-            print(e)
+        except Exception:
             verified = "⚠️ Contract Unverified"
         try:
             owner = contract.functions.owner().call()
@@ -3426,8 +3425,18 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address}\n\n{status}",
+        caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address}\n\n{status}\n\n{api.get_quote()}",
         parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text=f"{token_name} Contract",
+                        url=f"{url.ether_token}{token_address}",
+                    )
+                ],
+            ]
+        ),
     )
 
 
