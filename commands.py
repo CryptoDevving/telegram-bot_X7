@@ -3365,17 +3365,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    scan = api.get_scan(token_address, "eth")
-    if scan[f"{str(token_address).lower()}"]["is_open_source"] == "1":
-        try:
-            if scan[f"{str(token_address).lower()}"]["slippage_modifiable"] == "1":
-                tax_warning = "(Changeable)"
-            else:
-                tax_warning = ""
-            if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
-                return
-        except Exception:
-            tax_warning = ""
+    scan = api.get_scan(token_address, "eth")#
     if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
         try:
             if (
@@ -3392,52 +3382,83 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             buy_tax = int(buy_tax_raw)
             sell_tax = int(sell_tax_raw)
             if sell_tax > 10 or buy_tax > 10:
-                tax = f"⚠️ Tax: {buy_tax}/{sell_tax} {tax_warning}"
+                tax = f"⚠️ Tax: {buy_tax}/{sell_tax}"
             else:
-                tax = f"✅️ Tax: {buy_tax}/{sell_tax} {tax_warning}"
+                tax = f"✅️ Tax: {buy_tax}/{sell_tax}"
         except Exception:
-            tax = f"⚠️ Tax: Unavailable {tax_warning}"
+            tax = f"❓ Tax - Unknown"
     else:
-        tax = f"⚠️ Tax: Unavailable {tax_warning}"
-    if scan[f"{str(token_address).lower()}"]["is_mintable"] == "1":
-        mint = "❌ Mintable"
-    else:
-        mint = "✅️ Not Mintable"
-    if scan[f"{str(token_address).lower()}"]["is_honeypot"] == "1":
-        honey_pot = "❌ Honey Pot"
-    else:
-        honey_pot = "✅️ Not Honey Pot"
-    if scan[f"{str(token_address).lower()}"]["is_blacklisted"] == "1":
-        blacklist = "⚠️ Has Blacklist Functions"
-    else:
-        blacklist = "✅️ No Blacklist Functions"
-    if scan[f"{str(token_address).lower()}"]["cannot_sell_all"] == "1":
-        sellable = "❌ Not Sellable"
-    else:
-        sellable = "✅️ Sellable"
-    if scan[f"{str(token_address).lower()}"]["is_whitelisted"] == "1":
-        whitelist = "⚠️ Has Whitelist Functions"
-    else:
-        whitelist = "✅️ No Whitelist Functions"
-    
-    status = f"{verified}\n{tax}\n{renounced}\n{mint}\n{honey_pot}\n{sellable}\n{whitelist}\n{blacklist}"
-    token_name = scan[f"{str(token_address).lower()}"]["token_name"]
+        tax = f"❓ Tax - Unknown"
+    token_address_str = str(token_address)
 
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address}\n\n{status}\n\n{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
+    if token_address_str in scan:
+        if "is_mintable" in scan[token_address_str]:
+            if scan[token_address_str]["is_mintable"] == "1":
+                mint = "❌ Mintable"
+            else:
+                mint = "✅️ Not Mintable"
+        else:
+            mint = "❓ Mintable - Unknown"
+
+        if "is_honeypot" in scan[token_address_str]:
+            if scan[token_address_str]["is_honeypot"] == "1":
+                honey_pot = "❌ Honey Pot"
+            else:
+                honey_pot = "✅️ Not Honey Pot"
+        else:
+            honey_pot = "❓ Honey Pot - Unknown"
+
+        if "is_blacklisted" in scan[token_address_str]:
+            if scan[token_address_str]["is_blacklisted"] == "1":
+                blacklist = "⚠️ Has Blacklist Functions"
+            else:
+                blacklist = "✅️ No Blacklist Functions"
+        else:
+            blacklist = "❓ Blacklist Functions - Unknown"
+
+        if "cannot_sell_all" in scan[token_address_str]:
+            if scan[token_address_str]["cannot_sell_all"] == "1":
+                sellable = "❌ Not Sellable"
+            else:
+                sellable = "✅️ Sellable"
+        else:
+            sellable = "❓ Sellable - Unknown"
+
+        if "is_whitelisted" in scan[token_address_str]:
+            if scan[token_address_str]["is_whitelisted"] == "1":
+                whitelist = "⚠️ Has Whitelist Functions"
+            else:
+                whitelist = "✅️ No Whitelist Functions"
+        else:
+            whitelist = "❓ Whitelist Functions - Unknown"
+    else:
+        mint = "❓ Mintable - Unknown"
+        honey_pot = "❓ Honey Pot - Unknown"
+        blacklist = "❓ Blacklist Functions - Unknown"
+        sellable = "❓ Sellable - Unknown"
+        whitelist = "❓ Whitelist Functions Unknown"
+    
+    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}"
+    token_name = scan[f"{str(token_address).lower()}"]["token_name"]
+    try:
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address}\n\n{status}\n\n{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        text=f"{token_name} Contract",
-                        url=f"{url.ether_token}{token_address}",
-                    )
-                ],
-            ]
-        ),
-    )
+                    [
+                        InlineKeyboardButton(
+                            text=f"{token_name} Contract",
+                            url=f"{url.ether_token}{token_address}",
+                        )
+                    ],
+                ]
+            ),
+        )
+    except Exception as e:
+            await update.message.reply_text(f"{token_address} not found")
+
 
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
