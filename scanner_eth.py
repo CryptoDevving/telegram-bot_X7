@@ -261,41 +261,42 @@ async def new_pair(event):
             ),
         )
         try:
-            params = [None] * 5 
-            params[0] = token_name[1]
-            params[1] = event["args"]["pair"]
-            params[2] = token_address
-            params[3] = "eth"
-            image_url = api.get_token_image(token_address, "eth")
-            params[4] = image_url if image_url is not None else "N/A"
+            if event["args"]["token0"] == ca.weth:
+                params = [None] * 5 
+                params[0] = token_name[1]
+                params[1] = event["args"]["pair"]
+                params[2] = token_address
+                params[3] = "eth"
+                image_url = api.get_token_image(token_address, "eth")
+                params[4] = image_url if image_url is not None else "N/A"
 
-            existing_tokens = []
-            with open("logs/tokens.csv", 'r') as csv_file:
-                csv_reader = csv.reader(csv_file)
-                for row in csv_reader:
-                    existing_tokens.append(row)
+                existing_tokens = []
+                with open("logs/tokens.csv", 'r') as csv_file:
+                    csv_reader = csv.reader(csv_file)
+                    for row in csv_reader:
+                        existing_tokens.append(row)
 
-            replaced = False
+                replaced = False
 
-            for index, existing_token in enumerate(existing_tokens):
-                if params[0].lower() == existing_token[0].lower():
-                    existing_tokens[index] = params
-                    with open("logs/tokens.csv", 'r+', newline='') as csv_file:
+                for index, existing_token in enumerate(existing_tokens):
+                    if params[0].lower() == existing_token[0].lower():
+                        existing_tokens[index] = params
+                        with open("logs/tokens.csv", 'r+', newline='') as csv_file:
+                            csv_writer = csv.writer(csv_file)
+                            csv_writer.writerows(existing_tokens)
+                        replaced = True
+                        api.push_github("logs/tokens.csv", "auto: update pair")
+                        break
+
+                if not replaced:
+                    with open("logs/tokens.csv", 'a', newline='') as csv_file:
                         csv_writer = csv.writer(csv_file)
-                        csv_writer.writerows(existing_tokens)
-                    replaced = True
-                    api.push_github("logs/tokens.csv", "auto: update pair")
+                        csv_writer.writerow(params)
+                    api.push_github("logs/tokens.csv", "auto: add pair")
                     break
-
-            if not replaced:
-                with open("logs/tokens.csv", 'a', newline='') as csv_file:
-                    csv_writer = csv.writer(csv_file)
-                    csv_writer.writerow(params)
-                api.push_github("logs/tokens.csv", "auto: add pair")
-                break
         except Exception as e:
             sentry_sdk.capture_exception(e)
-                    
+                
 
 
 async def new_loan(event):

@@ -3205,18 +3205,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                     url=f"https://www.coingecko.com/en/coins/{token_id}",
                                 )
                             ],
-                            [
-                                InlineKeyboardButton(
-                                    text="Buy",
-                                    url=f"{url.xchange}/#/swap?outputCurrency={token_id}",
-                                )
-                            ],
                         ]
                     ),
                 )
     except IndexError:
         await update.message.reply_text(
-            f"{search.upper()} Not found, to add a token use `/add`",
+            f"{search.upper()} Not found",
             parse_mode="Markdown",
         )
 
