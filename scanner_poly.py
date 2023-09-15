@@ -70,15 +70,7 @@ async def new_pair(event):
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
         dollar = int(weth) * 2 * api.get_native_price("matic") / 10**18
-    elif event["args"]["token0"] == ca.weth:
-        weth_address = event["args"]["token0"]
-        native = api.get_token_name(event["args"]["token0"], "poly")
-        token_name = api.get_token_name(event["args"]["token1"], "poly")
-        token_address = event["args"]["token1"]
-        weth = liq["reserve0"]
-        dollar = int(weth) * 2 * api.get_native_price("eth") / 10**18
-    elif event["args"]["token1"] == ca.weth:
-        weth_address = event["args"]["token1"]
+    elif event["args"]["token1"] == ca.matic:
         native = api.get_token_name(event["args"]["token1"], "poly")
         token_name = api.get_token_name(event["args"]["token0"], "poly")
         token_address = event["args"]["token0"]
@@ -104,7 +96,7 @@ async def new_pair(event):
         token_name = api.get_token_name(event["args"]["token0"], "poly")
         token_address = event["args"]["token0"]
         weth = api.get_pool_liq_balance(event["args"]["pair"], weth_address, "poly")
-        dollar = int(weth) * 2 * api.get_native_price("matic") / 10**18
+        dollar = 0
     verified_check = api.get_verified(token_address, "eth")
     if dollar == 0 or dollar == "" or not dollar:
         liquidity_text = "Total Liquidity: Unavailable"

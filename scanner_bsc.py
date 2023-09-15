@@ -67,57 +67,43 @@ async def new_pair(event):
         token_name = api.get_token_name(event["args"]["token1"], "bsc")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
-        token = liq["reserve1"]
         dollar = int(weth) * 2 * api.get_native_price("bnb") / 10**18
-    elif event["args"]["token0"] in ca.bscpairs:
-        native = api.get_token_name(event["args"]["token0"], "bsc")
-        token_name = api.get_token_name(event["args"]["token1"], "bsc")
-        token_address = event["args"]["token1"]
-        weth = liq["reserve0"]
-        token = liq["reserve1"]
-        dollar = 0
-    elif event["args"]["token1"] in ca.bscpairs:
+    elif event["args"]["token1"] == ca.wbnb:
         native = api.get_token_name(event["args"]["token1"], "bsc")
         token_name = api.get_token_name(event["args"]["token0"], "bsc")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
-        dollar = 0
+        dollar = int(weth) * 2 * api.get_native_price("bsc") / 10**18
     elif event["args"]["token0"] in ca.bscethpairs:
         native = api.get_token_name(event["args"]["token0"], "bsc")
         token_name = api.get_token_name(event["args"]["token1"], "bsc")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
-        token = liq["reserve1"]
         dollar = int(weth) * 2 * api.get_native_price("eth") / 10**18
     elif event["args"]["token1"] in ca.bscethpairs:
         native = api.get_token_name(event["args"]["token1"], "bsc")
         token_name = api.get_token_name(event["args"]["token0"], "bsc")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
         dollar = int(weth) * 2 * api.get_native_price("eth") / 10**18
     elif event["args"]["token0"] in ca.stables:
         native = api.get_token_name(event["args"]["token0"], "bsc")
         token_name = api.get_token_name(event["args"]["token1"], "bsc")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
-        token = liq["reserve1"]
         dollar = int(weth) * 2 / 10**18
     elif event["args"]["token1"] in ca.stables:
         native = api.get_token_name(event["args"]["token1"], "bsc")
         token_name = api.get_token_name(event["args"]["token0"], "bsc")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
         dollar = int(weth) * 2 / 10**18
     else:
         native = api.get_token_name(event["args"]["token1"], "bsc")
         token_name = api.get_token_name(event["args"]["token0"], "bsc")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
-        dollar = int(weth) * 2 * api.get_native_price("bnb") / 10**18
+        dollar = 0
     verified_check = api.get_verified(token_address, "eth")
     if dollar == 0 or dollar == "" or not dollar:
         liquidity_text = "Total Liquidity: Unavailable"

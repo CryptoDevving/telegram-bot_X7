@@ -58,34 +58,36 @@ async def format_schedule(schedule1, schedule2):
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "base")
     liq = api.get_liquidity(event["args"]["pair"], "base")
-    if event["args"]["token0"] == ca.weth:
+    if event["args"]["token0"] == ca.cbeth:
         native = api.get_token_name(event["args"]["token0"], "base")
         token_name = api.get_token_name(event["args"]["token1"], "base")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
-        token = liq["reserve1"]
+        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
+    elif event["args"]["token1"] == ca.cbeth:
+        native = api.get_token_name(event["args"]["token1"], "base")
+        token_name = api.get_token_name(event["args"]["token0"], "base")
+        token_address = event["args"]["token0"]
+        weth = liq["reserve1"]
         dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
     elif event["args"]["token0"] in ca.stables:
         native = api.get_token_name(event["args"]["token0"], "base")
         token_name = api.get_token_name(event["args"]["token1"], "base")
         token_address = event["args"]["token1"]
         weth = liq["reserve0"]
-        token = liq["reserve1"]
         dollar = int(weth) * 2 / 10 ** 18
     elif event["args"]["token1"] in ca.stables:
         native = api.get_token_name(event["args"]["token1"], "base")
         token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
         dollar = int(weth) * 2 / 10 ** 18
     else:
         native = api.get_token_name(event["args"]["token1"], "base")
         token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
-        dollar = int(weth) * 2 * api.get_native_price("eth") / 10 ** 18
+        dollar = 0
     verified_check = api.get_verified(token_address, "base")
     if dollar == 0 or dollar == "" or not dollar:
         liquidity_text = "Total Liquidity: Unavailable"
