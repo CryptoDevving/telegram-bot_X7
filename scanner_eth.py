@@ -264,7 +264,7 @@ async def new_pair(event):
             ),
         )
         try:
-            if event["args"]["token0"] == ca.weth:
+            if event["args"]["token0"] == ca.weth or event["args"]["token1"] == ca.weth:
                 params = [None] * 5 
                 params[0] = token_name[1]
                 params[1] = event["args"]["pair"]
