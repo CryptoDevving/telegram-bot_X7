@@ -195,9 +195,6 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = f"{update.effective_message.text}"
     lower_message = message.lower()
     keyword_to_response = {
-        "rob the bank": {"text": text.rob, "mode": "Markdown"},
-        "delay": {"text": text.delay, "mode": "Markdown"},
-        "patience": {"text": text.patience, "mode": "Markdown"},
         "https://twitter": {
             "text": random.choice(text.x_replies),
             "mode": None,
@@ -206,7 +203,7 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "text": random.choice(text.x_replies),
             "mode": None,
         },
-        "gm": {"sticker": media.gm},
+        "gm ": {"sticker": media.gm},
         "new on chain message": {"sticker": media.onchain},
         "lfg": {"sticker": media.lfg},
         "goat": {"sticker": media.goat},
