@@ -3431,16 +3431,46 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 creator_percent = f'⚠️ Deployer Holds {creator_percent_str * 100}% of Supply'
             else:
                 creator_percent = f'✅️ Deployer Holds {creator_percent_str * 100}% of Supply'
+        else:
+            creator_percent = "❓ Tokens Held By Creator Unknown"
         if "owner_percent" in scan[token_address_str]:
             if renounced == "✅ Contract Renounced":
-                owner_percent = ""
+                owner_percent = f'✅️ Owner Holds 0.0% of Supply'
             else:
                 owner_percent_str = float(scan[token_address_str]["owner_percent"])
                 if scan[token_address_str]["owner_percent"] >= "0.05":
                     owner_percent = f'⚠️ Owner Holds {owner_percent_str * 100}% of Supply'
                 else:
                     owner_percent = f'✅️ Owner Holds {owner_percent_str * 100}% of Supply'
-                                        
+        else:
+            owner_percent = "❓ Tokens Held By Owner Unknown"
+        if "lp_holder_count" in scan[token_address_str]:
+            locked_lp_list = [
+                lp
+                for lp in scan[token_address_str]["lp_holders"]
+                if lp["is_locked"] == 1
+                and lp["address"]
+                != "0x0000000000000000000000000000000000000000"
+            ]
+            lock = ""
+            if locked_lp_list:
+                lp_with_locked_detail = [
+                    lp for lp in locked_lp_list if "locked_detail" in lp
+                ]
+                if lp_with_locked_detail:
+                    percent = float(locked_lp_list[0]['percent'])
+                    lock = (
+                        f"✅ Liquidity Locked - {locked_lp_list[0]['tag']} - {percent * 100:.2f}%\n"
+                        f"⏰ Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time'][:10]}"
+                    )
+                else:
+                    percent = float(locked_lp_list[0]['percent'])
+                    lock = (
+                        f"✅ Liquidity Locked - {percent * 100:.2f}%"
+                    )
+        else:
+            lock = ""
+                                 
     else:
         mint = "❓ Mintable - Unknown"
         honey_pot = "❓ Honey Pot - Unknown"
@@ -3449,8 +3479,9 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         whitelist = "❓ Whitelist Functions Unknown"
         creator_percent = "❓ Tokens Held By Deployer Unknown"
         owner_percent = "❓ Tokens Held By Owner Unknown"
-    
-    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}"
+        lock  = "❓ Liquidity Lock Unknown"
+
+    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}\n{lock}"
     token_name = scan[f"{str(token_address).lower()}"]["token_name"]
     try:
         await update.message.reply_photo(

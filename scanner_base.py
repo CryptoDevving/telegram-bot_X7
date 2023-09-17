@@ -106,7 +106,6 @@ async def new_pair(event):
         )
     status = ""
     renounced = ""
-    lock = ""
     tax = ""
     verified = ""
     if verified_check == "Yes":
@@ -153,37 +152,9 @@ async def new_pair(event):
                 tax = f"⚠️ Tax: Unavailable"
             if "lp_holders" in scan[f"{str(token_address).lower()}"]:
                 lp_holders = scan[f"{str(token_address).lower()}"]["lp_holders"]
-            try:
-                if "lp_holder_count" in scan[f"{str(token_address).lower()}"]:
-                    locked_lp_list = [
-                        lp
-                        for lp in scan[f"{str(token_address).lower()}"]["lp_holders"]
-                        if lp["is_locked"] == 1
-                        and lp["address"]
-                        != "0x0000000000000000000000000000000000000000"
-                    ]
-                    if locked_lp_list:
-                        lp_with_locked_detail = [
-                            lp for lp in locked_lp_list if "locked_detail" in lp
-                        ]
-                        if lp_with_locked_detail:
-                            lock = (
-                                f"✅ Liquidity Locked\n"
-                                F" - {locked_lp_list[0]['tag']} - {locked_lp_list[0]['percent'][:6]}%\n"
-                                f" - Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time'][:10]}"
-                            )
-                        else:
-                            lock = (
-                                f"✅ Liquidity Locked\n"
-                                f" - {locked_lp_list[0]['percent'][:6]}%\n"
-                            )
-                else:
-                    lock = ""
-            except Exception as e:
-                sentry_sdk.capture_exception(e)
         else:
             tax = f"⚠️ Tax: Unavailable"
-        status = f"{verified}\n{tax}\n{renounced}\n{lock}"
+        status = f"{verified}\n{tax}\n{renounced}"
     except (Exception, TimeoutError, ValueError, StopAsyncIteration) as e:
         status = "⚠️ Scan Unavailable"
     pool = int(tx["result"]["value"], 0) / 10**18
