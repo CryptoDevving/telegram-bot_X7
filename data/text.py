@@ -1,16 +1,8 @@
-ws1_1 = 0.95
-ws1_2 = 1
-ws2 = 0.85
-ws3 = 0.99
-ws4 = 0.90
-ws5 = 0
-ws6 = 0
-ws7 = 0.95
-ws8 = 0.5
-ws9 = 0.85
+import random
+
 
 about = (
-    "Welcome to X7 Finance - Home of Xchange.\n\n"
+    "*X7 Finance - Home of Xchange*\n\n"
     "X7 Finance is an ecosystem of innovative smart contracts, and the centre of the ecosystem is the X7 Finance"
     ' Lending Pool, a pool that provides those with visionary ideas access to Initial Liquidity Loans "ILL".\n\n'
     "At its core, Initial Liquidity Loans will provide anyone with a good idea the ability to raise 10-1000X "
@@ -208,7 +200,7 @@ ecosystem = (
 )
 
 endorse = (
-    "The X7 Dev team or the community team will not endorse any particular token or launch on Xchange.\n\n"
+    "*XChange Pairs*\n\nThe X7 Dev team or the community team will not endorse any particular token or launch on Xchange.\n\n"
     "Xchange is a permissionless swap protocol. We encourage DeFi participants to exercise the same level of "
     "caution they always should when evaluating a swap opportunity.\n\nFor new token alerts see XChange Alerts channel below"
     "\n\n"
@@ -240,7 +232,7 @@ mods = (
     "Marketing Team\n@Robthebank44\n@cryptod0c\n\n"
     "Sales Team\n@Gazuga\n\n"
     "Socials Team\n@Phlux\n@SlumdOg_shillionaire2022\n@DallasX7\n@Gavalars\n@KBCrypto11\n@CoastCorn\n\n"
-    "Tech Team\n@Adz1DoubleD\n@MikeMurpher\n@cryptod0c\n@CryptoA7"
+    "Tech Team\n@Adz1DoubleD\n@MikeMurpher\n@cryptod0c\n@MikeX7F"
 )
 
 mods_only = "You do not have permission to do this. #TrustNoOne"
@@ -280,7 +272,7 @@ refer = (
 )
 
 volume = (
-    "Our focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
+    "*Driving XChange Volume\n\nOur focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
     "*0.1% Back to the Ecosystem*\n\n"
     "With every trade made on Xchange, 0.1% flows back to the ecosystem. That's the power of X7 Finance.\n\n"
     "*Create Your Own Liquidity Pools*\n\n"
@@ -288,8 +280,6 @@ volume = (
     "*Achieve Volume with Just $1000*\n\n"
     "Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!"
 )
-
-rob = "`Rob The Bank (an outstanding community member and marketer)`\n\n`-X7 DAO founders`"
 
 quotes = [
     "Ethos\n\nX7’s founding team believes that capital should be available to those with great ideas and that the "
@@ -732,44 +722,6 @@ x_replies = [
     "Repost to resonate with the world!",
     "Craft reposts that leave a lasting impact!",
 ]
-usernamelist = (
-    "davidgokhshtein",
-    "cz_binance",
-    "EricCryptoman",
-    "Yourpop8",
-    "Bitboy_Crypto",
-    "MarioNawfal",
-    "IncomeSharks",
-    "kyle_chasse",
-    "cryptoskullx",
-    "koreanjewcrypto",
-    "3orovik",
-    "Ralvero",
-    "jamiekingston",
-    "ChadCaff",
-    "gandalfcryptto",
-    "x7_finance",
-    "TheDefiSaint",
-    "DefiIgnas",
-    "thedefiedge",
-    "Darrenlautf",
-    "CrossChainAlex",
-    "DeFi_Dad",
-    "DeFi_Brian",
-    "JustinCBram",
-    "kamikaz_ETH",
-    "TraderDefi",
-    "DeFi_Made_Here",
-    "CamiRusso",
-    "RyanSAdams",
-    "sassal0x",
-    "Rewkang",
-    "delitzer",
-    "kaiynne",
-    "StaniKulechov",
-    "VitalikButerin",
-    "garyvee",
-)
 
 voting = (
     "*Proposals and Voting*\n\nVoting will occur in multiple phases, each of which has either a minimum or maximum"

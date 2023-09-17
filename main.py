@@ -159,20 +159,13 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
-
-    job_queue.run_repeating(
-        auto.auto_message_endorsement,
-        times.endorse_time,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        name="Endorsement Message",
-    )
     
     job_queue.run_repeating(
-        auto.auto_message_volume,
-        times.volume_time,
+        auto.auto_message_info,
+        7200,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        first=3600,
-        name="Volume Message",
+        first=7200,
+        name="Auto Message",
     )
 
     job_queue.run_once(

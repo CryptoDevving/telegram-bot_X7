@@ -8,9 +8,6 @@ def button_time():
     return time
 
 
-endorse_time = 7200
-volume_time = 7200
-
 # COUNTDOWN
 countdown_time = datetime(2023, 9, 7, 12, 00, 00)
 countdown_title = "Xchange launch"

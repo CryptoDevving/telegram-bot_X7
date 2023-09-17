@@ -44,36 +44,23 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.bot_data["button_generation_timestamp"] = button_generation_timestamp
 
 
-async def auto_message_endorsement(context: ContextTypes.DEFAULT_TYPE) -> None:
+async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
-    photo_url = f"{url.pioneers}{api.get_random_pioneer_number()}.png"
-    caption_text = f"*X7 Finance Xchange Pairs*\n\n{text.endorse}"
-    keyboard_markup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton(text="Xchange Alerts", url=f"{url.tg_alerts}")]]
-    )
     await context.bot.send_photo(
         chat_id=job.chat_id,
-        photo=photo_url,
-        caption=caption_text,
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+    )
+    await context.bot.send_message(
+        chat_id=job.chat_id,
+        text=auto_message_list(),
         parse_mode="Markdown",
-        reply_markup=keyboard_markup,
     )
 
 
-async def auto_message_volume(context: ContextTypes.DEFAULT_TYPE) -> None:
-    job = context.job
-    photo_url = f"{url.pioneers}{api.get_random_pioneer_number()}.png"
-    caption_text = f"*Boosting Trading Volume on Xchange*\n\n{text.volume}"
-    keyboard_markup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton(text="Add Liquidity Now", url=f"https://app.x7.finance/#/pool/v2")]]
-    )
-    await context.bot.send_photo(
-        chat_id=job.chat_id,
-        photo=photo_url,
-        caption=caption_text,
-        parse_mode="Markdown",
-        reply_markup=keyboard_markup,
-    )
+def auto_message_list():
+    messages = [text.about,text.airdrop,text.ecosystem,text.endorse,text.refer,text.volume]
+    message = random.choice(messages)
+    return message
 
 
 async def clicks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
