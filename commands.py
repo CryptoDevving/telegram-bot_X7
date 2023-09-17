@@ -1352,7 +1352,7 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = api.get_duration_years(x7m105_duration)
     migration_duration = datetime.utcnow() - times.migration
     migration_years, migration_months, migration_weeks, migration_days = api.get_duration_years(migration_duration)
-    xchange_duration = - datetime.utcnow() - times.xchange 
+    xchange_duration = datetime.utcnow() - times.xchange 
     xchange_years, xchange_months, xchange_weeks, xchange_days = api.get_duration_years(xchange_duration)
     reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
     reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days ago\n\n"
