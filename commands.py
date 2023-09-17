@@ -3359,7 +3359,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    scan = api.get_scan(token_address, "eth")#
+    scan = api.get_scan(token_address, "eth")
     if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
         try:
             if (
@@ -3384,7 +3384,6 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         tax = f"❓ Tax - Unknown"
     token_address_str = str(token_address)
-
     if token_address_str in scan:
         if "is_mintable" in scan[token_address_str]:
             if scan[token_address_str]["is_mintable"] == "1":
@@ -3425,14 +3424,33 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 whitelist = "✅️ No Whitelist Functions"
         else:
             whitelist = "❓ Whitelist Functions - Unknown"
+            
+        if "creator_percent" in scan[token_address_str]:
+            creator_percent_str = float(scan[token_address_str]["creator_percent"])
+            if scan[token_address_str]["creator_percent"] >= "0.05":
+                creator_percent = f'⚠️ Deployer Holds {creator_percent_str * 100}% of Supply'
+            else:
+                creator_percent = f'✅️ Deployer Holds {creator_percent_str * 100}% of Supply'
+        if "owner_percent" in scan[token_address_str]:
+            if renounced == "✅ Contract Renounced":
+                owner_percent = ""
+            else:
+                owner_percent_str = float(scan[token_address_str]["owner_percent"])
+                if scan[token_address_str]["owner_percent"] >= "0.05":
+                    owner_percent = f'⚠️ Owner Holds {owner_percent_str * 100}% of Supply'
+                else:
+                    owner_percent = f'✅️ Owner Holds {owner_percent_str * 100}% of Supply'
+                                        
     else:
         mint = "❓ Mintable - Unknown"
         honey_pot = "❓ Honey Pot - Unknown"
         blacklist = "❓ Blacklist Functions - Unknown"
         sellable = "❓ Sellable - Unknown"
         whitelist = "❓ Whitelist Functions Unknown"
+        creator_percent = "❓ Tokens Held By Deployer Unknown"
+        owner_percent = "❓ Tokens Held By Owner Unknown"
     
-    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}"
+    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}"
     token_name = scan[f"{str(token_address).lower()}"]["token_name"]
     try:
         await update.message.reply_photo(
@@ -3452,6 +3470,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     except Exception as e:
             await update.message.reply_text(f"{token_address} not found")
+            print(e)
 
 
 
