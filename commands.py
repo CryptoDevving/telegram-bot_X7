@@ -3337,6 +3337,10 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Please provide Contract Address",
     )
         return
+    scan = api.get_scan(token_address, "eth")
+    if scan == {}:
+        await update.message.reply_text(f"{token_address} not found")
+        return
     verified_check = api.get_verified(token_address, "eth")
     alchemy_keys = os.getenv("ALCHEMY_ETH")
     alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
@@ -3359,7 +3363,6 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    scan = api.get_scan(token_address, "eth")
     if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
         try:
             if (
