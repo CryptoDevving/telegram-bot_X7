@@ -29,13 +29,16 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, chains, 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
+dune_flag = False
+dune_top_3 = ""
+dune_volume = ""
+dune_timestamp = datetime.utcnow().timestamp()
+dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    liq = api.get_liquidity("0xAE16720B931512F6eF8f3e56E83B8FAc63c94B88", "eth")
-    print(liq)
+    return
 
 
-        
 # COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -4232,122 +4235,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chain_mappings = {
-        "eth": (url.dex_tools_eth,"eth", url.ether_token),
-        "bsc": (url.dex_tools_bsc, "bnb", url.bsc_token),
-        "poly": (url.dex_tools_poly, "matic", url.poly_token),
-        "opti": (url.dex_tools_opti, "eth", url.opti_token),
-        "arb": (url.dex_tools_arb, "eth", url.arb_token),
-        "base": (url.dex_tools_base, "eth", url.base_token),
-        }
-    try:
-        execution_id = dune.execute_query("2970801", "medium")
-        await update.message.reply_text("Getting Xchange trending pairs, please wait. This usually takes around 30 seconds\n\n"
-                                        f"{api.escape_markdown(api.get_fact())}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard", url=f"{url.dune}"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="Xchange", url=f"{url.xchange}"
-                        )
-                    ],
-                ]
-            ),
-        )
-
-        async def delayed_response():
-            await asyncio.sleep(30)
-            response = dune.get_query_results(execution_id)
-
-            response_data = response.json()
-            rows = response_data["result"]["rows"]
-            rows = [row for row in rows if row["pair"] != "TOTAL"]
-
-            sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
-            top_3_last_24hr_amt = sorted_rows[:3]
-            top_3 = "*Xchange Trending Pairs*\n\n"
-
-            for idx, item in enumerate(top_3_last_24hr_amt, start=1):
-                
-                pair_name = item["pair"]
-                name = pair_name.split("-")[0].lower()
-                matching_pairs = api.get_pair_entries(name)
-                if matching_pairs:
-                    pair_address = matching_pairs[0]['pair'] 
-                    ca = matching_pairs[0]['ca']
-                    chain = matching_pairs[0]['chain']
-                    if chain in chain_mappings:
-                        dex_tools, token, scan = chain_mappings[chain]
-                    w3 = chains[chain].w3
-                    contract = w3.eth.contract(
-                        address=Web3.to_checksum_address(pair_address), abi=pairs
-                    )
-                    token0_address = contract.functions.token0().call()
-                    token1_address = contract.functions.token1().call()
-                    supply = contract.functions.totalSupply().call()
-                    is_reserve_token0 = ca.lower() == token0_address.lower()
-                    is_reserve_token1 = ca.lower() == token1_address.lower()
-                    supply = int(api.get_supply(ca, chain))
-                    eth = ""
-                    token_res = ""
-                    if is_reserve_token0:
-                        eth = contract.functions.getReserves().call()[1]
-                        token_res = contract.functions.getReserves().call()[0]
-                    elif is_reserve_token1:
-                        eth = contract.functions.getReserves().call()[0]
-                        token_res = contract.functions.getReserves().call()[1]
-
-                    decimals = contract.functions.decimals().call()
-                    eth_in_wei = int(eth)
-                    token_res_in_wei = int(token_res)
-                    liq = api.get_native_price(token) * eth_in_wei * 2
-                    formatted_liq = "${:,.2f}".format(liq / (10**decimals))
-                    token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
-                    mcap = token_price * supply
-                    formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-
-                    try:
-                        price_change = api.get_price_change(ca, chain)
-                    except Exception:
-                        price_change = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
-
-                    top_3 += (f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n'
-                              f'Liquidity: {formatted_liq}\nMarket Cap: {formatted_mcap}\n{price_change}\n'
-                              f'📊 [Chart]({dex_tools}{pair_address}) - 💰 [Buy]({url.xchange_buy_eth}{ca}) - 📝 [Contract]({scan}{ca})\n\n')
-                else:
-                    top_3 += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
-
-            await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f'{top_3}{api.get_quote()}',
-                parse_mode="Markdown"
-            )
-        asyncio.create_task(delayed_response())
-    except Exception as e:
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Trending Pairs*\n\n'
-                f'Unable to refresh Dune data, please try again or use the link below\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard ", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
-        )
-
-
 async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = " ".join(context.args)
     username = "@x7_finance"
@@ -4496,34 +4383,57 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        execution_id = dune.execute_query("2972368", "medium")
-        t.sleep(5)
-        response = dune.get_query_results(execution_id)
-        response_data = response.json()
+        global dune_flag, dune_volume, dune_date
+        if dune_flag == False:
+            execution_id = dune.execute_query("2972368", "medium")
+            t.sleep(5)
+            response = dune.get_query_results(execution_id)
+            response_data = response.json()
 
-        last_24hr_amt = response_data['result']['rows'][0]['last_24hr_amt']
-        last_30d_amt = response_data['result']['rows'][0]['last_30d_amt']
-        last_7d_amt = response_data['result']['rows'][0]['last_7d_amt']
-        lifetime_amt = response_data['result']['rows'][0]['lifetime_amt']
+            last_24hr_amt = response_data['result']['rows'][0]['last_24hr_amt']
+            last_30d_amt = response_data['result']['rows'][0]['last_30d_amt']
+            last_7d_amt = response_data['result']['rows'][0]['last_7d_amt']
+            lifetime_amt = response_data['result']['rows'][0]['lifetime_amt']
 
-        await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'*Xchange Trading Volume*\n\n'
+            dune_volume = (
                 f'Total:       ${"{:0,.0f}".format(lifetime_amt)}\n'
                 f'30 Day:    ${"{:0,.0f}".format(last_30d_amt)}\n'
                 f'7 Day:      ${"{:0,.0f}".format(last_7d_amt)}\n'
-                f'24 Hour:  ${"{:0,.0f}".format(last_24hr_amt)}\n\n{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
+                f'24 Hour:  ${"{:0,.0f}".format(last_24hr_amt)}'
+                )
+
+            await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*Xchange Trading Volume*\n\n{dune_volume}\n\n{api.get_quote()}",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="X7 Dune Dashboard", url=f"{url.dune}"
-                        )
-                    ],
-                ]
-            ),
-        )
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Dune Dashboard", url=f"{url.dune}"
+                            )
+                        ],
+                    ]
+                ),
+            )
+            dune_timestamp = datetime.utcnow().timestamp()
+            dune_flag = True
+        else:
+            await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f'*Xchange Trading Volume*\n\n'
+                    f'{dune_volume}\n\nLast Updated: {dune_date}\n\n{api.get_quote()}',
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Dune Dashboard", url=f"{url.dune}"
+                            )
+                        ],
+                    ]
+                ),
+            )
     except Exception as e:
         await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -4540,6 +4450,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             ),
         )
+    
 
 async def voting(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(

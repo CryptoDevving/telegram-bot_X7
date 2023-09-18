@@ -136,7 +136,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("german", commands.translate_german))
     application.add_handler(CommandHandler("german", commands.translate_japanese))
     application.add_handler(CommandHandler("treasury", commands.treasury))
-    application.add_handler(CommandHandler("trending", commands.trending))
     application.add_handler(CommandHandler(["twitter", "x"], commands.twitter))
     application.add_handler(CommandHandler("count", commands.twitter_count))
     application.add_handler(CommandHandler("draw", commands.twitter_draw))

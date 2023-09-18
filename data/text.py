@@ -124,7 +124,6 @@ commands = (
     "time - World Time\n"
     "today - On This Day\n"
     "treasury - X7 Finance Treasury Info\n"
-    "trending - Xchange Trending Pairs\n"
     "twitter - X7 Finance Twitter/X\n"
     "volume - Xchange Volume Info\n"
     "voting - DAO Voting Info\n"
