@@ -127,7 +127,6 @@ async def new_pair(event):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    time.sleep(10)
     try:
         scan = api.get_scan(token_address, "opti")
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":

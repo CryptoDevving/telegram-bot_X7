@@ -60,7 +60,7 @@ async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "arb")
     liq = {"reserve0": 0, "reserve1": 0}
     try:
-        liq = api.get_liquidity(event["args"]["pair"], "arbitrum")
+        liq = api.get_liquidity(event["args"]["pair"], "arb")
     except Exception:
         pass
     if event["args"]["token0"] == ca.aweth:
@@ -131,7 +131,6 @@ async def new_pair(event):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    time.sleep(10)
     try:
         scan = api.get_scan(token_address, "arb")
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":

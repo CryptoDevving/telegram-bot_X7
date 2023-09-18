@@ -31,7 +31,8 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    return
+    liq = api.get_liquidity("0xAE16720B931512F6eF8f3e56E83B8FAc63c94B88", "eth")
+    print(liq)
 
 
         

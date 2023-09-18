@@ -1,7 +1,6 @@
 import os
 import csv
 import sys
-import time
 import random
 import asyncio
 from datetime import datetime
@@ -93,9 +92,7 @@ async def new_pair(event):
         token_name = api.get_token_name(event["args"]["token0"], "eth")
         token_address = event["args"]["token0"]
         weth = liq["reserve1"]
-        token = liq["reserve0"]
         dollar = 0
-    verified_check = api.get_verified(token_address, "eth")
     if dollar == 0 or dollar == "" or not dollar:
         liquidity_text = "Total Liquidity: Unavailable"
     else:
@@ -115,6 +112,7 @@ async def new_pair(event):
     renounced = ""
     tax = ""
     verified = ""
+    verified_check = api.get_verified(token_address, "eth")
     if verified_check == "Yes":
         try:
             contract = web3.eth.contract(
@@ -133,7 +131,6 @@ async def new_pair(event):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    time.sleep(10)
     try:
         scan = api.get_scan(token_address, "eth")
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":

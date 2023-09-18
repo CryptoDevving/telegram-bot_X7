@@ -97,7 +97,7 @@ async def new_pair(event):
         token_address = event["args"]["token0"]
         weth = api.get_pool_liq_balance(event["args"]["pair"], weth_address, "poly")
         dollar = 0
-    verified_check = api.get_verified(token_address, "eth")
+    verified_check = api.get_verified(token_address, "poly")
     if dollar == 0 or dollar == "" or not dollar:
         liquidity_text = "Total Liquidity: Unavailable"
     else:
@@ -135,7 +135,6 @@ async def new_pair(event):
             renounced = "⚠️ Contract Not Renounced"
     else:
         verified = "⚠️ Contract Unverified"
-    time.sleep(10)
     try:
         scan = api.get_scan(token_address, "poly")
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
