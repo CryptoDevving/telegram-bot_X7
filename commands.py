@@ -4828,6 +4828,15 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7dao_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -4838,10 +4847,12 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7dao, "arb")
             poly_price = api.get_price(ca.x7dao, "poly")
             opti_price = api.get_price(ca.x7dao, "opti")
+            opti_price = api.get_price(ca.x7dao, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
@@ -4851,6 +4862,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7dao_logo)
         im1.paste(im2, (720, 20), im2)
@@ -4864,7 +4876,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:   {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n\n'
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:   {"{:0,.0f}".format(base_amount)}\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -4879,7 +4892,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`    {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`    {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`  {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
         return
@@ -4893,19 +4907,23 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7dao, "arb")
             poly_price = api.get_price(ca.x7dao, "poly")
             opti_price = api.get_price(ca.x7dao, "opti")
+            base_price = api.get_price(ca.x7dao, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7dao_logo)
         im1.paste(im2, (720, 20), im2)
@@ -4921,7 +4939,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n'
+            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:  ${"{:0,.0f}".format(base_amount)}\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -4936,7 +4955,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`   ${"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`   ${"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:` ${"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`  ${"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`  ${"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`  ${"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
         return
@@ -4948,10 +4968,12 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7dao, "arb")
             poly_price = api.get_price(ca.x7dao, "poly")
             opti_price = api.get_price(ca.x7dao, "opti")
+            base_price = api.get_price(ca.x7dao, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
@@ -4961,6 +4983,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7dao_logo)
         im1.paste(im2, (720, 20), im2)
@@ -4974,7 +4997,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:   ${"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:   ${"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:  ${"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}\n\n\n\n'
+            f'OPTI:  ${"{:0,.0f}".format(opti_amount)}'
+            f'BASE:  ${"{:0,.0f}".format(base_amount)}\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -4988,7 +5012,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`   ${"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`   ${"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:` ${"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`  ${"{:0,.0f}".format(opti_amount)}\n\n'
+            f'`OPTI:`  ${"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`  ${"{:0,.0f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5152,6 +5177,15 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7r_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -5162,10 +5196,12 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7r, "arb")
             poly_price = api.get_price(ca.x7r, "poly")
             opti_price = api.get_price(ca.x7r, "opti")
+            base_price = api.get_price(ca.x7r, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
@@ -5175,6 +5211,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7r_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5188,7 +5225,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:   {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:   {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:  {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:  {"{:0,.0f}".format(opti_amount)}\n\n\n'
+            f'OPTI:  {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:  {"{:0,.0f}".format(base_amount)}\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5203,7 +5241,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`  {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
         return
@@ -5215,19 +5254,23 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7r, "arb")
             poly_price = api.get_price(ca.x7r, "poly")
             opti_price = api.get_price(ca.x7r, "opti")
+            base_price = api.get_price(ca.x7r, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7r_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5241,7 +5284,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:   ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:   ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:  ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:,.2f}".format(opti_amount)}\n\n\n\n'
+            f'OPTI:  ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:  ${"{:,.2f}".format(base_amount)}\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5255,7 +5299,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:   ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:   ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY: ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:  ${"{:,.2f}".format(opti_amount)}\n\n'
+            f'OPTI:  ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:  ${"{:,.2f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5416,6 +5461,15 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7101_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -5426,19 +5480,23 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7101, "arb")
             poly_price = api.get_price(ca.x7101, "poly")
             opti_price = api.get_price(ca.x7101, "opti")
+            base_price = api.get_price(ca.x7101, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7101_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5452,7 +5510,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:   {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:   {"{:0,.0f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5467,7 +5526,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`   {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
     if chain.isdigit():
@@ -5478,19 +5538,23 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7101, "arb")
             poly_price = api.get_price(ca.x7101, "poly")
             opti_price = api.get_price(ca.x7101, "opti")
+            base_price = api.get_price(ca.x7101, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7101_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5504,7 +5568,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:   ${"{:,.2f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5518,7 +5583,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:    ${"{:,.2f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5681,6 +5747,15 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7102_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -5691,19 +5766,23 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7102, "arb")
             poly_price = api.get_price(ca.x7102, "poly")
             opti_price = api.get_price(ca.x7102, "opti")
+            base_price = api.get_price(ca.x7102, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7102_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5717,7 +5796,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:   {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:   {"{:0,.0f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5732,7 +5812,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`   {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
     if chain.isdigit():
@@ -5743,19 +5824,23 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7102, "arb")
             poly_price = api.get_price(ca.x7102, "poly")
             opti_price = api.get_price(ca.x7102, "opti")
+            base_price = api.get_price(ca.x7102, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7102_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5769,7 +5854,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:   ${"{:,.2f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5783,7 +5869,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:    ${"{:,.2f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -5946,6 +6033,15 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7103_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -5956,19 +6052,23 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7103, "arb")
             poly_price = api.get_price(ca.x7103, "poly")
             opti_price = api.get_price(ca.x7103, "opti")
+            base_price = api.get_price(ca.x7103, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7103_logo)
         im1.paste(im2, (720, 20), im2)
@@ -5982,7 +6082,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:   {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:   {"{:0,.0f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -5997,7 +6098,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`   {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
     if chain.isdigit():
@@ -6008,19 +6110,23 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7103, "arb")
             poly_price = api.get_price(ca.x7103, "poly")
             opti_price = api.get_price(ca.x7103, "opti")
+            base_price = api.get_price(ca.x7103, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7103_logo)
         im1.paste(im2, (720, 20), im2)
@@ -6034,7 +6140,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:   ${"{:,.2f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -6048,7 +6155,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:    ${"{:,.2f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -6211,6 +6319,15 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7104_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -6221,19 +6338,23 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7104, "arb")
             poly_price = api.get_price(ca.x7104, "poly")
             opti_price = api.get_price(ca.x7104, "opti")
+            base_price = api.get_price(ca.x7104, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7104_logo)
         im1.paste(im2, (720, 20), im2)
@@ -6247,7 +6368,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:   {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:   {"{:0,.0f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -6262,7 +6384,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`   {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
     if chain.isdigit():
@@ -6273,19 +6396,23 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7104, "arb")
             poly_price = api.get_price(ca.x7104, "poly")
             opti_price = api.get_price(ca.x7104, "opti")
+            base_price = api.get_price(ca.x7104, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7104_logo)
         im1.paste(im2, (720, 20), im2)
@@ -6299,7 +6426,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:   ${"{:,.2f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -6313,7 +6441,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:    ${"{:,.2f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -6476,6 +6605,15 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Optimismscan",
             "eth",
         ),
+        "base": (
+            "(BASE)",
+            url.base_token,
+            url.dex_tools_base,
+            ca.x7105_pair_base,
+            url.xchange_buy_base,
+            "Basescan",
+            "eth",
+        ),
     }
 
     if chain.startswith("$"):
@@ -6486,19 +6624,23 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7105, "arb")
             poly_price = api.get_price(ca.x7105, "poly")
             opti_price = api.get_price(ca.x7105, "opti")
+            base_price = api.get_price(ca.x7105, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
             opti_amount = float(chain[1:]) / opti_price
+            base_amount = float(chain[1:]) / base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7105_logo)
         im1.paste(im2, (720, 20), im2)
@@ -6512,7 +6654,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
             f'POLY:   {"{:0,.0f}".format(poly_amount)}\n'
-            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   {"{:0,.0f}".format(opti_amount)}\n'
+            f'BASE:   {"{:0,.0f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -6527,7 +6670,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
             f'`POLY:`   {"{:0,.0f}".format(poly_amount)}\n'
-            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n\n{api.get_quote()}',
+            f'`OPTI:`   {"{:0,.0f}".format(opti_amount)}\n'
+            f'`BASE:`   {"{:0,.0f}".format(base_amount)}\n\n{api.get_quote()}',
             parse_mode="Markdown",
         )
     if chain.isdigit():
@@ -6538,19 +6682,23 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             arb_price = api.get_price(ca.x7105, "arb")
             poly_price = api.get_price(ca.x7105, "poly")
             opti_price = api.get_price(ca.x7105, "opti")
+            base_price = api.get_price(ca.x7105, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
             opti_amount = float(chain) * opti_price
+            base_amount = float(chain) * base_price
         except Exception:
             bsc_price = 0
             arb_price = 0
             poly_price = 0
             opti_price = 0
+            base_price = 0
             bsc_amount = 0
             arb_amount = 0
             poly_amount = 0
             opti_amount = 0
+            base_amount = 0
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7105_logo)
         im1.paste(im2, (720, 20), im2)
@@ -6564,7 +6712,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:    ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:    ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n\n\n\n\n'
+            f'OPTI:   ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:   ${"{:,.2f}".format(base_amount)}\n\n\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -6578,7 +6727,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'ARB:     ${"{:,.2f}".format(arb_amount)}\n'
             f'BSC:     ${"{:,.2f}".format(bsc_amount)}\n'
             f'POLY:   ${"{:,.2f}".format(poly_amount)}\n'
-            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n\n'
+            f'OPTI:    ${"{:,.2f}".format(opti_amount)}\n'
+            f'BASE:    ${"{:,.2f}".format(base_amount)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
         )
