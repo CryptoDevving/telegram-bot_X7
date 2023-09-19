@@ -1104,15 +1104,11 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                                     [
                     InlineKeyboardButton(
-                        text="Liquidation TX",
-                        url=f"{chain_tx}{hash}",
+                        text="Liquidation Management Wallet",
+                        url=f"{chain_url}0x7000e84af80f817010cf1a9c0d5f8df2a5da60dd",
                     )
                 ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Ecosystem Splitter", url=f"{chain_url}{ca.eco_splitter}"
-                    )
-                ],
+
             ]
         ),
     )
