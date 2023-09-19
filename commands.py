@@ -1102,13 +1102,18 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                                    [
+                [
+                    InlineKeyboardButton(
+                        text="Last Liquidation TX",
+                        url=f"{chain_tx}{hash}",
+                    )
+                ],
+                [
                     InlineKeyboardButton(
                         text="Liquidation Management Wallet",
                         url=f"{chain_url}0x7000e84af80f817010cf1a9c0d5f8df2a5da60dd",
                     )
                 ],
-
             ]
         ),
     )
