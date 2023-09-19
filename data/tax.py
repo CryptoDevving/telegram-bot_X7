@@ -89,7 +89,7 @@ def generate_info(network):
             f"X7R: {x7r}%\nX7DAO: {x7dao}%\n"
             f"X7101-X7105: {x7100}%\n\n"
             "*Tax Discounts*\n\n"
-            "50000 X7DAO:\n"
+            "500000 X7DAO:\n"
             f"X7R: {x7r}%\n"
             f"X7DAO: {x7dao}%\n"
             f"X7101 - X7105: {x7100 - (x7100 * x7dao_discount_x7100 / 100)}%\n\n"
