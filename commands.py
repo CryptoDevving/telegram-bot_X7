@@ -2130,13 +2130,13 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
         holders = api.get_nft_holder_count(ca.magister, chain_holders)
     response = api.get_nft_holder_list(ca.magister, chain)
     magisters = [holder["owner_of"] for holder in response["result"]]
-    address = "\n\n".join(map(str, magisters))
+    address = "\n\n".join(map(lambda x: f"`{x}`", magisters))
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Magister Holders {chain_name}*\n"
         f"Use `/magisters [chain-name]` or other chains\n\n"
         f"Holders - {holders}\n\n"
-        f"`{address}`\n\n{api.get_quote()}",
+        f"{address}\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
