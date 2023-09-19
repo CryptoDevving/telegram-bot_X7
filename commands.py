@@ -3562,14 +3562,14 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     dev_response = api.get_signers(dev_wallet)
     com_response = api.get_signers(com_wallet)
     dev_list = dev_response["owners"]
-    dev_address = "\n\n".join(map(str, dev_list))
+    dev_address = "\n\n".join(map(lambda x: f"`{x}`", dev_list))
     com_list = com_response["owners"]
-    com_address = "\n\n".join(map(str, com_list))
+    com_address = "\n\n".join(map(lambda x: f"`{x}`", com_list))
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Multi-Sig Signers {chain_name}*\n"
         f"Use `/signers [chain-name]` or other chains\n\n"
-        f"*Developer Signers*\n`{dev_address}`\n\n*Community Signers*\n`{com_address}`\n\n"
+        f"*Developer Signers*\n{dev_address}\n\n*Community Signers*\n{com_address}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
