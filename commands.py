@@ -9,7 +9,6 @@ import pytz
 import pyttsx3
 import requests
 import textwrap
-import asyncio
 import sentry_sdk
 import wikipediaapi
 from web3 import Web3
@@ -30,8 +29,6 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, chains, 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 dune_flag = False
-dune_top_3 = ""
-dune_volume = ""
 dune_timestamp = datetime.utcnow().timestamp()
 dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -4384,7 +4381,7 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        global dune_flag, dune_volume, dune_date
+        global dune_flag, dune_date, dune_timestamp
         if dune_flag == False:
             execution_id = dune.execute_query("2972368", "medium")
             t.sleep(5)
