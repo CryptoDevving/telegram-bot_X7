@@ -190,7 +190,7 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "text": random.choice(text.x_replies),
             "mode": None,
         },
-        "gm ": {"sticker": media.gm},
+        "gm": {"sticker": media.gm},
         "new on chain message": {"sticker": media.onchain},
         "lfg": {"sticker": media.lfg},
         "goat": {"sticker": media.goat},
@@ -202,7 +202,7 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for keyword, response in keyword_to_response.items():
         target_message = message if "https://" in keyword else lower_message
 
-        if keyword in target_message:
+        if f" {keyword} " in f" {target_message} " or target_message.startswith(keyword + " ") or target_message.endswith(" " + keyword):
             if "text" in response:
                 await update.message.reply_text(
                     text=response["text"], parse_mode=response["mode"]
