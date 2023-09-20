@@ -228,10 +228,9 @@ evenly = (
 )
 
 mods = (
-    "Marketing Team\n@Robthebank44\n@cryptod0c\n\n"
-    "Sales Team\n@Gazuga\n\n"
-    "Socials Team\n@Phlux\n@SlumdOg_shillionaire2022\n@DallasX7\n@Gavalars\n@KBCrypto11\n@CoastCorn\n\n"
-    "Tech Team\n@Adz1DoubleD\n@MikeMurpher\n@cryptod0c\n@MikeX7F"
+    "Marketing + Sales Team\n@Robthebank44\n@cryptod0c\n@Gazuga\n\n"
+    "Socials Team\n@PhluxKapacitor\n@DallasX7\n@KBCrypto11\n@CoastCorn\n\n"
+    "Tech Team\n@Adz1DoubleD\n@cryptod0c\n@MikeMurpher\n@MikeX7F"
 )
 
 mods_only = "You do not have permission to do this. #TrustNoOne"
