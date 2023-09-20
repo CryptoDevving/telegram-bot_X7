@@ -1,5 +1,4 @@
-import url
-import ca
+from data import url, ca
 
 x7d_chain_mappings = {
     "eth": ("(ETH)", url.ether_address, "eth"),
