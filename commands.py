@@ -23,7 +23,7 @@ import auto
 from api import dune
 from api import index as api
 from media import index as media
-from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, chains, pairs
+from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, chains, pairs
 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
@@ -4713,16 +4713,9 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         holders = api.get_holders(ca.x7d)
     else:
         holders = "N/A"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, "eth"),
-        "arb": ("(ARB)", url.arb_address, "eth"),
-        "poly": ("(POLYGON)", url.poly_address, "matic"),
-        "bsc": ("(BSC)", url.bsc_address, "bnb"),
-        "opti": ("(OPTI)", url.opti_address, "eth"),
-        "base": ("(BASE)", url.base_address, "eth"),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_native = chain_mappings[chain]
+
+    if chain in tokens.x7d_chain_mappings:
+        chain_name, chain_url, chain_native = tokens.x7d_chain_mappings[chain]
         lpool_reserve = api.get_native_balance(ca.lpool_reserve, chain)
         lpool_reserve_dollar = (
             float(lpool_reserve) * float(api.get_native_price(chain_native)) / 1**18
@@ -4780,63 +4773,6 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7dao_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7dao_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7dao_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7dao_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7dao_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7dao_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7dao, "eth")
         eth_amount = float(chain[1:]) / float(eth_price)
@@ -5018,7 +4954,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7dao_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -5027,7 +4963,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7dao_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7dao, chain)
 
@@ -5129,63 +5065,6 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7r_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7r_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7r_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7r_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7r_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7r_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7r, "eth")
         eth_amount = float(chain[1:]) / eth_price
@@ -5305,7 +5184,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7r_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -5314,7 +5193,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7r_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7r, chain)
 
@@ -5413,63 +5292,6 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7101_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7101_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7101_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7101_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7101_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7101_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7101, "eth")
         eth_amount = float(chain[1:]) / eth_price
@@ -5589,7 +5411,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7101_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -5598,7 +5420,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7101_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7101, chain)
 
@@ -5699,63 +5521,6 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7102_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7102_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7102_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7102_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7102_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7102_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7102, "eth")
         eth_amount = float(chain[1:]) / eth_price
@@ -5875,7 +5640,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7102_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -5884,7 +5649,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7102_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7102, chain)
 
@@ -5985,63 +5750,6 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7103_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7103_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7103_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7103_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7103_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7103_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7103, "eth")
         eth_amount = float(chain[1:]) / eth_price
@@ -6161,7 +5869,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7103_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -6170,7 +5878,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7103_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7103, chain)
 
@@ -6271,63 +5979,6 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7104_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7104_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7104_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7104_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7104_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7104_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7104, "eth")
         eth_amount = float(chain[1:]) / eth_price
@@ -6447,7 +6098,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7104_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -6456,7 +6107,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7104_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7104, chain)
 
@@ -6557,63 +6208,6 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ether_token,
-            url.dex_tools_eth,
-            ca.x7105_pair_eth,
-            url.xchange_buy_eth,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.arb_token,
-            url.dex_tools_arb,
-            ca.x7105_pair_arb,
-            url.xchange_buy_arb,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.poly_token,
-            url.dex_tools_poly,
-            ca.x7105_pair_poly,
-            url.xchange_buy_poly,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.bsc_token,
-            url.dex_tools_bsc,
-            ca.x7105_pair_bsc,
-            url.xchange_buy_bsc,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.opti_token,
-            url.dex_tools_opti,
-            ca.x7105_pair_opti,
-            url.xchange_buy_opti,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.base_token,
-            url.dex_tools_base,
-            ca.x7105_pair_base,
-            url.xchange_buy_base,
-            "Basescan",
-            "eth",
-        ),
-    }
-
     if chain.startswith("$"):
         eth_price = api.get_price(ca.x7105, "eth")
         eth_amount = float(chain[1:]) / eth_price
@@ -6733,7 +6327,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in chain_mappings:
+    if chain in tokens.x7105_chain_mappings:
         (
             chain_name,
             chain_url,
@@ -6742,7 +6336,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = chain_mappings[chain]
+        ) = tokens.x7105_chain_mappings[chain]
     try:
         price = api.get_price(ca.x7105, chain)
 
