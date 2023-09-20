@@ -2422,15 +2422,28 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    tx = api.get_tx(ca.deployer, "eth")
-    tx_filter = [d for d in tx["result"] if d["to"] in f"{ca.dead}".lower()]
-    message = bytes.fromhex(tx_filter[0]["input"][2:]).decode("utf-8")
-    time = datetime.utcfromtimestamp(int(tx_filter[0]["timeStamp"]))
+    tx_deployer = api.get_tx(ca.deployer, "eth")
+    tx_magister_6 = api.get_tx(ca.magister_6, "eth")
+
+    tx_filter_deployer = [d for d in tx_deployer["result"] if d["to"] in f"{ca.dead}".lower()]
+    tx_filter_magister_6 = [d for d in tx_magister_6["result"] if d["to"] in f"{ca.dead}".lower()]
+
+    recent_tx_deployer = max(tx_filter_deployer, key=lambda tx: int(tx["timeStamp"]), default=None)
+    recent_tx_magister_6 = max(tx_filter_magister_6, key=lambda tx: int(tx["timeStamp"]), default=None)
+
+    if recent_tx_deployer and (not recent_tx_magister_6 or int(recent_tx_deployer["timeStamp"]) > int(recent_tx_magister_6["timeStamp"])):
+        recent_tx = recent_tx_deployer
+        address = ca.deployer
+    elif recent_tx_magister_6:
+        recent_tx = recent_tx_magister_6
+        address = ca.magister_6
+    message = bytes.fromhex(recent_tx["input"][2:]).decode("utf-8")
+    time = datetime.utcfromtimestamp(int(recent_tx["timeStamp"]))
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
     await update.message.reply_text(
-        f"*Last On Chain Message:*\n\n{time} UTC\n"
-        f"{days} days, {hours} hours and {minutes} minutes ago\n\n"
+        f"*Last On Chain Message from* `{address}`\n\n{time} UTC\n"
+        f"{days} days, {hours} hours, and {minutes} minutes ago\n\n"
         f"`{message}`",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -2438,7 +2451,7 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="View on chain",
-                        url=f'{url.ether_tx}{tx_filter[0]["hash"]}',
+                        url=f'{url.ether_tx}{recent_tx["hash"]}',
                     )
                 ],
                 [
