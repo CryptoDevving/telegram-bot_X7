@@ -3445,21 +3445,25 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 
             if "creator_percent" in scan[token_address_str]:
                 creator_percent_str = float(scan[token_address_str]["creator_percent"])
-                if scan[token_address_str]["creator_percent"] >= "0.05":
-                    creator_percent = f'⚠️ Deployer Holds {creator_percent_str * 100}% of Supply'
+                formatted_creator_percent = "{:.4f}".format(creator_percent_str * 100)
+
+                if creator_percent_str >= 0.05:
+                    creator_percent = f'⚠️ Deployer Holds {formatted_creator_percent}% of Supply'
                 else:
-                    creator_percent = f'✅️ Deployer Holds {creator_percent_str * 100}% of Supply'
+                    creator_percent = f'✅ Deployer Holds {formatted_creator_percent}% of Supply'
             else:
                 creator_percent = "❓ Tokens Held By Creator Unknown"
             if "owner_percent" in scan[token_address_str]:
                 if renounced == "✅ Contract Renounced":
-                    owner_percent = f'✅️ Owner Holds 0.0% of Supply'
+                    owner_percent = f'✅️ Owner Holds 0% of Supply'
                 else:
                     owner_percent_str = float(scan[token_address_str]["owner_percent"])
-                    if scan[token_address_str]["owner_percent"] >= "0.05":
-                        owner_percent = f'⚠️ Owner Holds {owner_percent_str * 100}% of Supply'
+                    formatted_owner_percent = "{:.4f}".format(owner_percent_str * 100)
+
+                    if owner_percent_str >= "0.05":
+                        owner_percent = f'⚠️ Owner Holds {formatted_owner_percent}% of Supply'
                     else:
-                        owner_percent = f'✅️ Owner Holds {owner_percent_str * 100}% of Supply'
+                        owner_percent = f'✅️ Owner Holds {formatted_owner_percent}% of Supply'
             else:
                 owner_percent = "❓ Tokens Held By Owner Unknown"
             if "lp_holder_count" in scan[token_address_str]:
@@ -3526,6 +3530,15 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 url=f"{url.ether_token}{token_address}",
                             )
                         ],
+                        [
+                            InlineKeyboardButton(
+                                text=f"Chart",
+                                url=f'{url.dex_tools_eth}{scan[str(token_address).lower()]["dex"][0]["pair"]})',
+                            )
+                        ],
+                        
+
+
                     ]
                 ),
             )
