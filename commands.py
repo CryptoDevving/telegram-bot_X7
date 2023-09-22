@@ -4190,6 +4190,13 @@ async def translate_japanese(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await update.message.reply_text(translation)
 
 
+async def translate_russian(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    translator = Translator(from_lang="english", to_lang="russian")
+    phrase = " ".join(context.args).lower()
+    translation = translator.translate(phrase)
+    await update.message.reply_text(translation)
+
+
 async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
