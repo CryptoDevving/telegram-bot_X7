@@ -4074,10 +4074,25 @@ async def timestamp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         stamp = int(" ".join(context.args).lower())
         time = api.timestamp_to_datetime(stamp)
+        current_time = datetime.utcnow()
+        timestamp_time = datetime.utcfromtimestamp(stamp)
+        time_difference = current_time - timestamp_time
+        if time_difference.total_seconds() > 0:
+            time_message = "ago"
+        else:
+            time_message = "away"
+            time_difference = abs(time_difference)
+        years = time_difference.days // 365
+        months = (time_difference.days % 365) // 30
+        days = time_difference.days % 30
+        hours, remainder = divmod(time_difference.seconds, 3600)
+        minutes = remainder // 60
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance Timestamp Conversion*\n\n"
-                    f"{stamp}\n{time} UTC",
+                    f"{stamp}\n{time} UTC\n\n"
+                    f"{years} years, {months} months, {days} days, "
+                    f"{hours} hours, {minutes} minutes {time_message}",
             parse_mode="Markdown",
         )
     except Exception as e:
