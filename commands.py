@@ -2012,102 +2012,123 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    chain = " ".join(context.args).lower()
-    if chain == "":
-        chain = "eth"
-    chain_mappings = {
-    "eth": (
-            "(ETH)",
-            url.ether_address,
+    try:
+        chain = " ".join(context.args).lower()
+        if chain == "":
+            chain = "eth"
+        chain_mappings = {
+        "eth": (
+                "(ETH)",
+                url.ether_address,
+                Web3(
+                    Web3.HTTPProvider(
+                        f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
+                    )
+                ),
+                ca.x7r_pair_eth,
+                ca.x7dao_pair_eth,
+            ),
+        "bsc": (
+            "(BSC)",
+            url.bsc_address,
             Web3(
                 Web3.HTTPProvider(
-                    f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
+                    "https://bsc-dataseed.binance.org/",
                 )
             ),
+                ca.x7r_pair_bsc,
+                ca.x7dao_pair_bsc,
         ),
-    "bsc": (
-        "(BSC)",
-        url.bsc_address,
-        Web3(
-            Web3.HTTPProvider(
-                "https://bsc-dataseed.binance.org/",
-            )
-        ),
-    ),
-    "poly": (
-        "(POLYGON)",
-        url.poly_address,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
-            )
-        ),
-    ),
-    "opti": (
-        "(OPTIMISM)",
-        url.opti_address,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
-            )
-        ),
-    ),
-    "arb": (
-        "(ARB)",
-        url.arb_address,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
-            )
-        ),
-    ),
-    "base": (
-        "(BASE)",
-        url.base_address,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://mainnet.base.org",
-            )
-        ),
-    ),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, web3 = chain_mappings[chain]
-        address = to_checksum_address(ca.time_lock)
-        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.time_lock, chain))
-        timestamp = contract.functions.globalUnlockTimestamp().call()
-
-        unlock_datetime = datetime.utcfromtimestamp(timestamp)
-        now = datetime.utcnow()
-        time_remaining = unlock_datetime - now
-
-        years = time_remaining.days // 365
-        months = (time_remaining.days % 365) // 30
-        days = (time_remaining.days % 365) % 30
-        weeks = days // 7
-        days = days % 7
-        remaining_time_str = f"{years} years, {months} months, {weeks} weeks, {days} days"
-        unlock_datetime_str = unlock_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
-
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*X7 Finance Liquidity Locks* {chain_name}\nfor other chains use `/locks [chain-name]`\n\n"
-            f"Unlock Date:\n{unlock_datetime_str}\n\n"
-            f"{remaining_time_str}\n\n"
-            f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="Token Time Lock Contract",
-                            url=f"{chain_url}{ca.time_lock}#readContract",
-                        )
-                    ],
-                ]
+        "poly": (
+            "(POLYGON)",
+            url.poly_address,
+            Web3(
+                Web3.HTTPProvider(
+                    f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
+                )
             ),
-        )
+                ca.x7r_pair_poly,
+                ca.x7dao_pair_poly,
+        ),
+        "opti": (
+            "(OPTIMISM)",
+            url.opti_address,
+            Web3(
+                Web3.HTTPProvider(
+                    f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
+                )
+            ),
+                ca.x7r_pair_opti,
+                ca.x7dao_pair_opti,
+        ),
+        "arb": (
+            "(ARB)",
+            url.arb_address,
+            Web3(
+                Web3.HTTPProvider(
+                    f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
+                )
+            ),
+                ca.x7r_pair_arb,
+                ca.x7dao_pair_arb,
+        ),
+        "base": (
+            "(BASE)",
+            url.base_address,
+            Web3(
+                Web3.HTTPProvider(
+                    f"https://mainnet.base.org",
+                )
+            ),
+                ca.x7r_pair_base,
+                ca.x7dao_pair_base,
+        ),
+        }
+        if chain in chain_mappings:
+            def calculate_remaining_time(web3, contract, token_pair, now):
+                timestamp = contract.functions.getTokenUnlockTimestamp(to_checksum_address(token_pair)).call()
+                unlock_datetime = datetime.utcfromtimestamp(timestamp)
+                time_remaining = unlock_datetime - now
+
+                years = time_remaining.days // 365
+                months = (time_remaining.days % 365) // 30
+                days = (time_remaining.days % 365) % 30
+                weeks = days // 7
+                days = days % 7
+                remaining_time_str = f"{years} years, {months} months, {weeks} weeks, {days} days"
+                unlock_datetime_str = unlock_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+                return remaining_time_str, unlock_datetime_str
+            chain_name, chain_url, web3, x7r_pair, x7dao_pair = chain_mappings[chain]
+            address = to_checksum_address(ca.time_lock)
+            contract = web3.eth.contract(address=address, abi=api.get_abi(ca.time_lock, chain))
+            now = datetime.utcnow()
+
+            x7r_remaining_time_str, x7r_unlock_datetime_str = calculate_remaining_time(web3, contract, x7r_pair, now)
+            x7dao_remaining_time_str, x7dao_unlock_datetime_str = calculate_remaining_time(web3, contract, x7dao_pair, now)
+
+            await update.message.reply_photo(
+                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                caption=f"*X7 Finance Liquidity Locks* {chain_name}\nfor other chains use `/locks [chain-name]`\n\n"
+                f"*X7R Unlock Date:*\n{x7r_unlock_datetime_str}\n"
+                f"{x7r_remaining_time_str}\n\n"
+                f"*X7DAO Unlock Date*:\n{x7dao_unlock_datetime_str}\n"
+                f"{x7dao_remaining_time_str}\n\n"
+                f"{api.get_quote()}",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text="Token Time Lock Contract",
+                                url=f"{chain_url}{ca.time_lock}#readContract",
+                            )
+                        ],
+                    ]
+                ),
+            )
+    except Exception as e:
+        print(e)
 
 
 async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -3459,13 +3480,22 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 else:
                     owner_percent_str = float(scan[token_address_str]["owner_percent"])
                     formatted_owner_percent = "{:.4f}".format(owner_percent_str * 100)
+                    owner = scan[token_address_str]["owner_address"]
+                    owner_eth_str = api.get_native_balance(owner, "eth")
+                    owner_eth = float(owner_eth_str)
+                    formatted_owner_eth = "{:.5f}".format(owner_eth)
+                    if owner_eth  > 1.0:
+                        owner_eth = f'✅ Owner Holds - {formatted_owner_eth} ETH'
+                    else:
+                        owner_eth = f'⚠️ Owner Holds - {formatted_owner_eth} ETH'
 
-                    if owner_percent_str >= "0.05":
+                    if owner_percent_str >= 0.05:
                         owner_percent = f'⚠️ Owner Holds {formatted_owner_percent}% of Supply'
                     else:
                         owner_percent = f'✅️ Owner Holds {formatted_owner_percent}% of Supply'
             else:
                 owner_percent = "❓ Tokens Held By Owner Unknown"
+                owner_eth = "❓ ETH Held By Owner Unknown"
             if "lp_holder_count" in scan[token_address_str]:
                 locked_lp_list = [
                     lp
@@ -3503,6 +3533,17 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     liquidity = f'⚠️ Liquidity - ${formatted_liq_eth}'
             else:
                 liquidity = "❓ Liquidity Unknown"
+            if "creator_address" in scan[token_address_str]:
+                deployer = scan[token_address_str]["creator_address"]
+                deployer_eth_str = api.get_native_balance(deployer, "eth")
+                deployer_eth = float(deployer_eth_str)
+                formatted_deployer_eth = "{:.5f}".format(deployer_eth)
+                if deployer_eth  > 1.0:
+                    creator_eth = f'✅ Deployer Holds - {formatted_deployer_eth} ETH'
+                else:
+                    creator_eth = f'⚠️ Deployer Holds - {formatted_deployer_eth} ETH'
+            else:
+                creator_eth = "❓ ETH Held By Deployer Unknown"
 
         else:
             mint = "❓ Mintable - Unknown"
@@ -3514,7 +3555,9 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             owner_percent = "❓ Tokens Held By Owner Unknown"
             lock  = "❓ Liquidity Lock Unknown"
             liquidity = "❓ Liquidity Unknown"
-        status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}\n{liquidity}\n{lock}"
+            creator_eth = "❓ ETH Held By Deployer Unknown"
+            owner_eth = "❓ ETH Held By Owner Unknown"
+        status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{creator_eth}\n{owner_percent}\n{owner_eth}\n{liquidity}\n{lock}"
         token_name = scan[f"{str(token_address).lower()}"]["token_name"]
 
         try:
