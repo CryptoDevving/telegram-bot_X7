@@ -33,9 +33,7 @@ dune_timestamp = datetime.utcnow().timestamp()
 dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    scan = api.get_scan(ca.x7r, "eth"
-                        )
-    print(scan)
+    return
 
 
 # COMMANDS
@@ -3361,232 +3359,228 @@ async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        token_address_title = " ".join(context.args)
-        token_address = " ".join(context.args).lower()
-        if token_address == "":
-            await update.message.reply_text(
-            f"Please provide Contract Address",
-        )
-            return
-        scan = api.get_scan(token_address,"eth")
-        if scan == {}:
-            await update.message.reply_text(f"{token_address} not found")
-            return
-        verified_check = api.get_verified(token_address, "eth")
-        alchemy_keys = os.getenv("ALCHEMY_ETH")
-        alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
-        web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
-        if verified_check == "Yes":
-            try:
-                contract = web3.eth.contract(
-                address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, "eth")
-                )
-                verified = "✅ Contract Verified"
-            except Exception:
-                verified = "⚠️ Contract Unverified"
-            try:
-                owner = contract.functions.owner().call()
-                if owner == "0x0000000000000000000000000000000000000000":
-                    renounced = "✅ Contract Renounced"
-                else:
-                    renounced = "⚠️ Contract Not Renounced"
-            except Exception:
-                renounced = "⚠️ Contract Not Renounced"
-        else:
+    token_address_title = " ".join(context.args)
+    token_address = " ".join(context.args).lower()
+    if token_address == "":
+        await update.message.reply_text(
+        f"Please provide Contract Address",
+    )
+        return
+    scan = api.get_scan(token_address,"eth")
+    if scan == {}:
+        await update.message.reply_text(f"{token_address} not found")
+        return
+    verified_check = api.get_verified(token_address, "eth")
+    alchemy_keys = os.getenv("ALCHEMY_ETH")
+    alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
+    web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
+    if verified_check == "Yes":
+        try:
+            contract = web3.eth.contract(
+            address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, "eth")
+            )
+            verified = "✅ Contract Verified"
+        except Exception:
             verified = "⚠️ Contract Unverified"
-        if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
-            try:
-                if (
-                    scan[f"{str(token_address).lower()}"]["sell_tax"] == "1"
-                    or scan[f"{str(token_address).lower()}"]["buy_tax"] == "1"
-                ):
-                    return
-                buy_tax_raw = (
-                    float(scan[f"{str(token_address).lower()}"]["buy_tax"]) * 100
-                )
-                sell_tax_raw = (
-                    float(scan[f"{str(token_address).lower()}"]["sell_tax"]) * 100
-                )
-                buy_tax = int(buy_tax_raw)
-                sell_tax = int(sell_tax_raw)
-                if sell_tax > 10 or buy_tax > 10:
-                    tax = f"⚠️ Tax: {buy_tax}/{sell_tax}"
-                else:
-                    tax = f"✅️ Tax: {buy_tax}/{sell_tax}"
-            except Exception:
-                tax = f"❓ Tax - Unknown"
-        else:
+        try:
+            owner = contract.functions.owner().call()
+            if owner == "0x0000000000000000000000000000000000000000":
+                renounced = "✅ Contract Renounced"
+            else:
+                renounced = "⚠️ Contract Not Renounced"
+        except Exception:
+            renounced = "⚠️ Contract Not Renounced"
+    else:
+        verified = "⚠️ Contract Unverified"
+    if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
+        try:
+            if (
+                scan[f"{str(token_address).lower()}"]["sell_tax"] == "1"
+                or scan[f"{str(token_address).lower()}"]["buy_tax"] == "1"
+            ):
+                return
+            buy_tax_raw = (
+                float(scan[f"{str(token_address).lower()}"]["buy_tax"]) * 100
+            )
+            sell_tax_raw = (
+                float(scan[f"{str(token_address).lower()}"]["sell_tax"]) * 100
+            )
+            buy_tax = int(buy_tax_raw)
+            sell_tax = int(sell_tax_raw)
+            if sell_tax > 10 or buy_tax > 10:
+                tax = f"⚠️ Tax: {buy_tax}/{sell_tax}"
+            else:
+                tax = f"✅️ Tax: {buy_tax}/{sell_tax}"
+        except Exception:
             tax = f"❓ Tax - Unknown"
-        token_address_str = str(token_address)
-        if token_address_str in scan:
-            if "is_mintable" in scan[token_address_str]:
-                if scan[token_address_str]["is_mintable"] == "1":
-                    mint = "❌ Mintable"
-                else:
-                    mint = "✅️ Not Mintable"
+    else:
+        tax = f"❓ Tax - Unknown"
+    token_address_str = str(token_address)
+    if token_address_str in scan:
+        if "is_mintable" in scan[token_address_str]:
+            if scan[token_address_str]["is_mintable"] == "1":
+                mint = "❌ Mintable"
             else:
-                mint = "❓ Mintable - Unknown"
-
-            if "is_honeypot" in scan[token_address_str]:
-                if scan[token_address_str]["is_honeypot"] == "1":
-                    honey_pot = "❌ Honey Pot"
-                else:
-                    honey_pot = "✅️ Not Honey Pot"
-            else:
-                honey_pot = "❓ Honey Pot - Unknown"
-
-            if "is_blacklisted" in scan[token_address_str]:
-                if scan[token_address_str]["is_blacklisted"] == "1":
-                    blacklist = "⚠️ Has Blacklist Functions"
-                else:
-                    blacklist = "✅️ No Blacklist Functions"
-            else:
-                blacklist = "❓ Blacklist Functions - Unknown"
-
-            if "cannot_sell_all" in scan[token_address_str]:
-                if scan[token_address_str]["cannot_sell_all"] == "1":
-                    sellable = "❌ Not Sellable"
-                else:
-                    sellable = "✅️ Sellable"
-            else:
-                sellable = "❓ Sellable - Unknown"
-
-            if "is_whitelisted" in scan[token_address_str]:
-                if scan[token_address_str]["is_whitelisted"] == "1":
-                    whitelist = "⚠️ Has Whitelist Functions"
-                else:
-                    whitelist = "✅️ No Whitelist Functions"
-            else:
-                whitelist = "❓ Whitelist Functions - Unknown"
-                
-            if "creator_percent" in scan[token_address_str]:
-                creator_percent_str = float(scan[token_address_str]["creator_percent"])
-                formatted_creator_percent = "{:.4f}".format(creator_percent_str * 100)
-
-                if creator_percent_str >= 0.05:
-                    creator_percent = f'⚠️ Deployer Holds {formatted_creator_percent}% of Supply'
-                else:
-                    creator_percent = f'✅ Deployer Holds {formatted_creator_percent}% of Supply'
-            else:
-                creator_percent = "❓ Tokens Held By Creator Unknown"
-            if "owner_percent" in scan[token_address_str]:
-                if renounced == "✅ Contract Renounced":
-                    owner_percent = f'✅️ Owner Holds 0% of Supply'
-                else:
-                    owner_percent_str = float(scan[token_address_str]["owner_percent"])
-                    formatted_owner_percent = "{:.4f}".format(owner_percent_str * 100)
-                    owner = scan[token_address_str]["owner_address"]
-                    owner_eth_str = api.get_native_balance(owner, "eth")
-                    owner_eth = float(owner_eth_str)
-                    formatted_owner_eth = "{:.5f}".format(owner_eth)
-                    if owner_eth  > 1.0:
-                        owner_eth = f'✅ Owner Holds - {formatted_owner_eth} ETH'
-                    else:
-                        owner_eth = f'⚠️ Owner Holds - {formatted_owner_eth} ETH'
-
-                    if owner_percent_str >= 0.05:
-                        owner_percent = f'⚠️ Owner Holds {formatted_owner_percent}% of Supply'
-                    else:
-                        owner_percent = f'✅️ Owner Holds {formatted_owner_percent}% of Supply'
-            else:
-                owner_percent = "❓ Tokens Held By Owner Unknown"
-                owner_eth = "❓ ETH Held By Owner Unknown"
-            if "lp_holder_count" in scan[token_address_str]:
-                locked_lp_list = [
-                    lp
-                    for lp in scan[token_address_str]["lp_holders"]
-                    if lp["is_locked"] == 1
-                    and lp["address"]
-                    != "0x0000000000000000000000000000000000000000"
-                ]
-                lock = ""
-                if locked_lp_list:
-                    lp_with_locked_detail = [
-                        lp for lp in locked_lp_list if "locked_detail" in lp
-                    ]
-                    if lp_with_locked_detail:
-                        percent = float(locked_lp_list[0]['percent'])
-                        lock = (
-                            f"✅ Liquidity Locked - {locked_lp_list[0]['tag']} - {percent * 100:.2f}%\n"
-                            f"⏰ Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time'][:10]}"
-                        )
-                    else:
-                        percent = float(locked_lp_list[0]['percent'])
-                        lock = (
-                            f"✅ Liquidity Locked - {percent * 100:.2f}%"
-                        )
-            else:
-                lock = ""
-            if "dex" in scan[token_address_str]:
-                liquidity = scan[f"{str(token_address).lower()}"]["dex"][0]["liquidity"]
-                liq_eth = float(liquidity) * 2
-                formatted_liq_eth = "{:,.2f}".format(liq_eth)
-                if liq_eth  > 5000:
-
-                    liquidity = f'✅ Liquidity - ${formatted_liq_eth}'
-                else:
-                    liquidity = f'⚠️ Liquidity - ${formatted_liq_eth}'
-            else:
-                liquidity = "❓ Liquidity Unknown"
-            if "creator_address" in scan[token_address_str]:
-                deployer = scan[token_address_str]["creator_address"]
-                deployer_eth_str = api.get_native_balance(deployer, "eth")
-                deployer_eth = float(deployer_eth_str)
-                formatted_deployer_eth = "{:.5f}".format(deployer_eth)
-                if deployer_eth  > 1.0:
-                    creator_eth = f'✅ Deployer Holds - {formatted_deployer_eth} ETH'
-                else:
-                    creator_eth = f'⚠️ Deployer Holds - {formatted_deployer_eth} ETH'
-            else:
-                creator_eth = "❓ ETH Held By Deployer Unknown"
-
+                mint = "✅️ Not Mintable"
         else:
             mint = "❓ Mintable - Unknown"
+
+        if "is_honeypot" in scan[token_address_str]:
+            if scan[token_address_str]["is_honeypot"] == "1":
+                honey_pot = "❌ Honey Pot"
+            else:
+                honey_pot = "✅️ Not Honey Pot"
+        else:
             honey_pot = "❓ Honey Pot - Unknown"
+
+        if "is_blacklisted" in scan[token_address_str]:
+            if scan[token_address_str]["is_blacklisted"] == "1":
+                blacklist = "⚠️ Has Blacklist Functions"
+            else:
+                blacklist = "✅️ No Blacklist Functions"
+        else:
             blacklist = "❓ Blacklist Functions - Unknown"
+
+        if "cannot_sell_all" in scan[token_address_str]:
+            if scan[token_address_str]["cannot_sell_all"] == "1":
+                sellable = "❌ Not Sellable"
+            else:
+                sellable = "✅️ Sellable"
+        else:
             sellable = "❓ Sellable - Unknown"
-            whitelist = "❓ Whitelist Functions Unknown"
-            creator_percent = "❓ Tokens Held By Deployer Unknown"
+
+        if "is_whitelisted" in scan[token_address_str]:
+            if scan[token_address_str]["is_whitelisted"] == "1":
+                whitelist = "⚠️ Has Whitelist Functions"
+            else:
+                whitelist = "✅️ No Whitelist Functions"
+        else:
+            whitelist = "❓ Whitelist Functions - Unknown"
+            
+        if "creator_percent" in scan[token_address_str]:
+            creator_percent_str = float(scan[token_address_str]["creator_percent"])
+            formatted_creator_percent = "{:.4f}".format(creator_percent_str * 100)
+
+            if creator_percent_str >= 0.05:
+                creator_percent = f'⚠️ Deployer Holds {formatted_creator_percent}% of Supply'
+            else:
+                creator_percent = f'✅ Deployer Holds {formatted_creator_percent}% of Supply'
+        else:
+            creator_percent = "❓ Tokens Held By Creator Unknown"
+        if "owner_percent" in scan[token_address_str]:
+            if renounced == "✅ Contract Renounced":
+                owner_eth = "❓ ETH Held By Owner Unknown"
+                owner_percent = f'✅️ Owner Holds 0% of Supply'
+            else:
+                owner_percent_str = float(scan[token_address_str]["owner_percent"])
+                formatted_owner_percent = "{:.4f}".format(owner_percent_str * 100)
+                owner = scan[token_address_str]["owner_address"]
+                owner_eth_str = api.get_native_balance(owner, "eth")
+                owner_eth = float(owner_eth_str)
+                formatted_owner_eth = "{:.5f}".format(owner_eth)
+                if owner_eth  > 1.0:
+                    owner_eth = f'✅ Owner Holds - {formatted_owner_eth} ETH'
+                else:
+                    owner_eth = f'⚠️ Owner Holds - {formatted_owner_eth} ETH'
+
+                if owner_percent_str >= 0.05:
+                    owner_percent = f'⚠️ Owner Holds {formatted_owner_percent}% of Supply'
+                else:
+                    owner_percent = f'✅️ Owner Holds {formatted_owner_percent}% of Supply'
+        else:
             owner_percent = "❓ Tokens Held By Owner Unknown"
-            lock  = "❓ Liquidity Lock Unknown"
-            liquidity = "❓ Liquidity Unknown"
-            creator_eth = "❓ ETH Held By Deployer Unknown"
             owner_eth = "❓ ETH Held By Owner Unknown"
-        status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{creator_eth}\n{owner_percent}\n{owner_eth}\n{liquidity}\n{lock}"
-        token_name = scan[f"{str(token_address).lower()}"]["token_name"]
+        if "lp_holder_count" in scan[token_address_str]:
+            locked_lp_list = [
+                lp
+                for lp in scan[token_address_str]["lp_holders"]
+                if lp["is_locked"] == 1
+                and lp["address"]
+                != "0x0000000000000000000000000000000000000000"
+            ]
+            lock = ""
+            if locked_lp_list:
+                lp_with_locked_detail = [
+                    lp for lp in locked_lp_list if "locked_detail" in lp
+                ]
+                if lp_with_locked_detail:
+                    percent = float(locked_lp_list[0]['percent'])
+                    lock = (
+                        f"✅ Liquidity Locked - {locked_lp_list[0]['tag']} - {percent * 100:.2f}%\n"
+                        f"⏰ Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time'][:10]}"
+                    )
+                else:
+                    percent = float(locked_lp_list[0]['percent'])
+                    lock = (
+                        f"✅ Liquidity Locked - {percent * 100:.2f}%"
+                    )
+        else:
+            lock = ""
+        if "dex" in scan[token_address_str]:
+            liquidity = scan[f"{str(token_address).lower()}"]["dex"][0]["liquidity"]
+            liq_eth = float(liquidity) * 2
+            formatted_liq_eth = "{:,.2f}".format(liq_eth)
+            if liq_eth  > 5000:
 
-        try:
-            await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address_title}\n\n{status}\n\n{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
+                liquidity = f'✅ Liquidity - ${formatted_liq_eth}'
+            else:
+                liquidity = f'⚠️ Liquidity - ${formatted_liq_eth}'
+        else:
+            liquidity = "❓ Liquidity Unknown"
+        if "creator_address" in scan[token_address_str]:
+            deployer = scan[token_address_str]["creator_address"]
+            deployer_eth_str = api.get_native_balance(deployer, "eth")
+            deployer_eth = float(deployer_eth_str)
+            formatted_deployer_eth = "{:.5f}".format(deployer_eth)
+            if deployer_eth  > 1.0:
+                creator_eth = f'✅ Deployer Holds - {formatted_deployer_eth} ETH'
+            else:
+                creator_eth = f'⚠️ Deployer Holds - {formatted_deployer_eth} ETH'
+        else:
+            creator_eth = "❓ ETH Held By Deployer Unknown"
+
+    else:
+        mint = "❓ Mintable - Unknown"
+        honey_pot = "❓ Honey Pot - Unknown"
+        blacklist = "❓ Blacklist Functions - Unknown"
+        sellable = "❓ Sellable - Unknown"
+        whitelist = "❓ Whitelist Functions Unknown"
+        creator_percent = "❓ Tokens Held By Deployer Unknown"
+        owner_percent = "❓ Tokens Held By Owner Unknown"
+        lock  = "❓ Liquidity Lock Unknown"
+        liquidity = "❓ Liquidity Unknown"
+        creator_eth = "❓ ETH Held By Deployer Unknown"
+        owner_eth = "❓ ETH Held By Owner Unknown"
+    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{creator_eth}\n{owner_percent}\n{owner_eth}\n{liquidity}\n{lock}"
+    token_name = scan[f"{str(token_address).lower()}"]["token_name"]
+
+    try:
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address_title}\n\n{status}\n\n{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
                     [
-                        [
-                            InlineKeyboardButton(
-                                text=f"{token_name} Contract",
-                                url=f"{url.ether_token}{token_address}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text=f"Chart",
-                                url=f'{url.dex_tools_eth}{scan[str(token_address).lower()]["dex"][0]["pair"]})',
-                            )
-                        ],
-                        
+                        InlineKeyboardButton(
+                            text=f"{token_name} Contract",
+                            url=f"{url.ether_token}{token_address}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text=f"Chart",
+                            url=f'{url.dex_tools_eth}{scan[str(token_address).lower()]["dex"][0]["pair"]})',
+                        )
+                    ],
+                    
 
 
-                    ]
-                ),
-            )
-        except Exception as e:
-                await update.message.reply_text(f"{token_address} not found")
-                print(e)
+                ]
+            ),
+        )
     except Exception as e:
-        print(e)
-
+            await update.message.reply_text(f"{token_address} not found")
 
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
