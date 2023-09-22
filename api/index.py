@@ -566,6 +566,15 @@ def datetime_to_timestamp(datetime_str):
         return "Invalid datetime format. Please use YYYY-MM-DD HH:MM."
 
 
+def timestamp_to_datetime(timestamp):
+    try:
+        datetime_obj = datetime.fromtimestamp(timestamp)
+        datetime_str = datetime_obj.strftime('%Y-%m-%d %H:%M')
+        return datetime_str
+    except ValueError:
+        return "Invalid timestamp."
+
+
 def escape_markdown(text):
     characters_to_escape = ['*', '_', '`']
     for char in characters_to_escape:
