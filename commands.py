@@ -2535,7 +2535,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if text == "":
             await update.message.reply_text("Please follow the command with desired name")
         else:
-            img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True, timeout=30).raw)
+            img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True, timeout=60).raw)
             i1 = ImageDraw.Draw(img)
             myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
             letter_spacing = 7
@@ -2556,9 +2556,12 @@ async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     url_to_test = os.getenv("RENDER")
 
     try:
+        start_time = t.time()
         response = requests.get(url_to_test, timeout=10)
+        end_time = t.time()
         if response.status_code == 200:
-            await update.message.reply_text("Server can reach the URL successfully.")
+            response_time = end_time - start_time
+            await update.message.reply_text(f"Server can reach the URL successfully in {response_time:.2f} seconds")
         else:
             await update.message.reply_text(f"Server received a non-200 status code: {response.status_code}")
     except requests.exceptions.RequestException as e:
