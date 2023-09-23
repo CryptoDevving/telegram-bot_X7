@@ -52,7 +52,7 @@ def get_abi(contract: str, chain: str) -> str:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return data["result"][0]["ABI"]
 
@@ -62,7 +62,7 @@ def get_block(chain: str, time: "int") -> str:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=block&action=getblocknobytime&timestamp={time}&closest=before{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return data["result"]
 
@@ -75,11 +75,11 @@ def get_daily_tx_count(contract: str, chain: str, ) -> int:
     block_yesterday = get_block(chain, yesterday)
     block_now = get_block(chain, int(t.time()))
     tx_url = f"{chain_info.url}?module=account&action=txlist&address={contract}&startblock={block_yesterday}&endblock={block_now}&page=1&offset=1000&sort=asc{chain_info.key}"
-    tx_response = requests.get(tx_url)
+    tx_response = requests.get(tx_url, timeout=30)
     tx_data = tx_response.json()
     tx_entry_count = len(tx_data['result']) if 'result' in tx_data else 0
     internal_tx_url = f"{chain_info.url}?module=account&action=txlist&address={contract}&startblock={block_yesterday}&endblock={block_now}&page=1&offset=1000&sort=asc{chain_info.key}"
-    internal_tx_response = requests.get(internal_tx_url)
+    internal_tx_response = requests.get(internal_tx_url, timeout=30)
     internal_tx_data = internal_tx_response.json()
     internal_tx_entry_count = len(internal_tx_data['result']) if 'result' in internal_tx_data else 0
     entry_count = tx_entry_count + internal_tx_entry_count
@@ -91,7 +91,7 @@ def get_gas(chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=gastracker&action=gasoracle{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
@@ -100,7 +100,7 @@ def get_native_balance(wallet, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=balancemulti&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     amount_raw = float(data["result"][0]["balance"])
     return f"{amount_raw / 10 ** 18}"
@@ -127,7 +127,7 @@ def get_native_price(token):
     if token not in tokens_info:
         raise ValueError(f"Invalid token: {token}")
     url = f"{tokens_info[token]['url']}&{tokens_info[token]['key']}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return float(data["result"][tokens_info[token]["field"]])
 
@@ -137,7 +137,7 @@ def get_pool_liq_balance(wallet, token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.Session().get(url)
+    response = requests.Session().get(url, timeout=30)
     data = response.json()
     return int(data["result"] or 0)
 
@@ -147,7 +147,7 @@ def get_stables_balance(wallet, token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return int(data["result"][:-6])
 
@@ -157,7 +157,7 @@ def get_supply(token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=stats&action=tokensupply&contractaddress={token}{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return data["result"]
 
@@ -167,7 +167,7 @@ def get_token_balance(wallet, token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return int(data["result"][:-18])
 
@@ -177,7 +177,7 @@ def get_tx_from_hash(tx, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=proxy&action=eth_getTransactionByHash&txhash={tx}{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
@@ -186,7 +186,7 @@ def get_tx(address, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=txlist&sort=desc&address={address}{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
@@ -195,7 +195,7 @@ def get_internal_tx(address, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=txlistinternal&sort=desc&address={address}{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
@@ -204,7 +204,7 @@ def get_verified(contract, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return "Yes" if "SourceCode" in data["result"][0] else "No"
 
@@ -214,7 +214,7 @@ def get_x7r_supply(chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={ca.x7r}&address={ca.dead}&tag=latest{chain_info.key}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     supply = ca.supply - int(data["result"][:-18])
     return supply
@@ -228,7 +228,7 @@ def get_ath(token):
         f"https://api.coingecko.com/api/v3/coins/{token}?localization=false&tickers=false&market_data="
         "true&community_data=false&developer_data=false&sparkline=false"
     )
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     value = data["market_data"]
     return (
@@ -251,13 +251,13 @@ def get_cg_price(token):
 
 def get_cg_search(token):
     url = "https://api.coingecko.com/api/v3/search?query=" + token
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
 def get_mcap(token):
     url = f"https://api.coingecko.com/api/v3/simple/price?ids={token}&vs_currencies=usd&include_market_cap=true"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return data[token]["usd_market_cap"]
 
@@ -268,7 +268,7 @@ def get_mcap(token):
 def get_maxi_holdings(wallet):
     url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=30)
     response_data = response.json()
     total_count = response_data.get("totalCount")
     return total_count
@@ -277,7 +277,7 @@ def get_maxi_holdings(wallet):
 def get_pioneer_holdings(wallet):
     url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=30)
     response_data = response.json()
     total_count = response_data.get("totalCount")
     return total_count
@@ -367,6 +367,7 @@ def get_nft_holder_count(nft, chain):
                 "accept": "application/json",
                 "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
             },
+            timeout=30
         )
         data = response.json()
         return data.get("total_tokens", "0")
@@ -386,6 +387,7 @@ def get_nft_floor(nft, chain):
                 "accept": "application/json",
                 "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
             },
+            timeout=30
         )
         data = response.json()
         exchange_data = data.get("exchange_data")
@@ -407,7 +409,7 @@ def get_nft_floor(nft, chain):
 
 def get_os_nft_collection(slug):
     url = f"https://api.opensea.io/api/v1/collection/{slug}"
-    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
+    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")}, timeout=30)
     data = response.json()
     return data
 
@@ -418,7 +420,7 @@ def get_os_nft_id(nft, identifier):
         "accept": "application/json",
         "X-API-KEY": os.getenv("OPENSEA_API_KEY")
     }
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=30)
     data = response.json()
     return data
 
@@ -480,7 +482,7 @@ def get_price_change(address, chain):
         }}
     }}"""
 
-    response = requests.post(url, headers=headers, json={"query": pricechange})
+    response = requests.post(url, headers=headers, json={"query": pricechange}, timeout=30)
     data = response.json()
     current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
     one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
@@ -516,7 +518,7 @@ def get_token_image(token, chain):
         }}
     '''
 
-    response = requests.post(url, headers=headers, json={"query": image})
+    response = requests.post(url, headers=headers, json={"query": image}, timeout=30)
     data = response.json()
     image_url = data['data']['getTokenInfo']['imageLargeUrl']
     return image_url
@@ -547,7 +549,7 @@ def get_volume(pair, chain):
         }}
         '''
 
-    response = requests.post(url, headers=headers, json={"query": volume})
+    response = requests.post(url, headers=headers, json={"query": volume}, timeout=30)
     data = response.json()
 
     current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
@@ -598,7 +600,7 @@ def get_duration_days(duration):
 
 
 def get_fact():
-    response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random")
+    response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random", timeout=30)
     quote = response.json()
     return quote["text"]
 
@@ -638,13 +640,13 @@ def get_pair_entries(ticker):
 def get_holders(token):
     base_url = "https://api.ethplorer.io/getTokenInfo"
     url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
     return data.get("holdersCount")
 
 
 def get_quote():
-    response = requests.get("https://type.fit/api/quotes")
+    response = requests.get("https://type.fit/api/quotes", timeout=30)
     data = response.json()
     quote = random.choice(data)
     quote_text = quote["text"]
@@ -665,13 +667,13 @@ def get_scan(token: str, chain: str) -> dict:
     if not chain_number:
         raise ValueError(f"{chain} is not a valid chain")
     url = f"https://api.gopluslabs.io/api/v1/token_security/{chain_number}?contract_addresses={token}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()["result"]
 
 
 def get_signers(wallet):
     url = f"https://safe-transaction-mainnet.safe.global/api/v1/safes/{wallet}/"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
@@ -682,7 +684,7 @@ def get_snapshot():
                  'orderBy: "created", orderDirection: desc ) { id title start end snapshot state choices '
                  "scores scores_total author }}"
     }
-    response = requests.get(url, query)
+    response = requests.get(url, query, timeout=30)
     return response.json()
 
 
@@ -723,13 +725,13 @@ def get_split(eth_value):
 def get_today():
     now = datetime.now()
     url = f"http://history.muffinlabs.com/date/{now.month}/{now.day}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     return response.json()
 
 
 def get_word(word):
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     data = response.json()
 
     definition = None
@@ -758,7 +760,7 @@ def push_github(location, message):
     }
     response = requests.get(
         f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
-        headers=headers
+        headers=headers, timeout=30
     )
 
     if response.status_code == 200:
@@ -776,7 +778,8 @@ def push_github(location, message):
                 'message': message,
                 'content': encoded_content,
                 'sha': sha
-            }
+            },
+            timeout=30
         )
 
 

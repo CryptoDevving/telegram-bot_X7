@@ -490,7 +490,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
             x = (token_market_cap - x7_market_cap) / x7_market_cap
             token_value = token_market_cap / x7_supply
-            img = Image.open(requests.get(thumb, stream=True).raw)
+            img = Image.open(requests.get(thumb, stream=True, timeout=30).raw)
             result = img.convert("RGBA")
             result.save(r"media/cgtokenlogo.png")
             im1 = Image.open((random.choice(media.blackhole)))
@@ -1114,7 +1114,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def fg(update, context):
-    fear_response = requests.get("https://api.alternative.me/fng/?limit=0")
+    fear_response = requests.get("https://api.alternative.me/fng/?limit=0", timeout=30)
     fear_data = fear_response.json()
     fear_values = []
     for i in range(7):
@@ -1330,7 +1330,7 @@ async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    joke_response = requests.get("https://v2.jokeapi.dev/joke/Any?safe-mode")
+    joke_response = requests.get("https://v2.jokeapi.dev/joke/Any?safe-mode", timeout=30)
     joke = joke_response.json()
     if joke["type"] == "single":
         await update.message.reply_photo(
@@ -2533,7 +2533,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text == "":
         await update.message.reply_text("Please follow the command with desired name")
     else:
-        img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True).raw)
+        img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True, timeout=30).raw)
         i1 = ImageDraw.Draw(img)
         myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
         letter_spacing = 7
@@ -2904,7 +2904,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 im1 = Image.open((random.choice(media.blackhole)))
                 try:
                     image = token_instance['image_url']
-                    img = Image.open(requests.get(image, stream=True).raw)
+                    img = Image.open(requests.get(image, stream=True, timeout=30).raw)
                     img = img.resize((200, 200), Image.ANTIALIAS)
                     result = img.convert("RGBA")
                     result.save(r"media/tokenlogo.png")
@@ -3128,7 +3128,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if search in gas_token_mappings:
                 token_name, cg_name, chain = gas_token_mappings[search]
                 gas_data = api.get_gas(chain)
-                im2 = Image.open(requests.get(thumb, stream=True).raw)
+                im2 = Image.open(requests.get(thumb, stream=True, timeout=30).raw)
                 price = api.get_cg_price(cg_name)
                 price_change = token_price[cg_name]["usd_24h_change"]
                 if price_change is None:
@@ -3198,7 +3198,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 market_cap = token_price[token_id]["usd_market_cap"]
                 if market_cap is None or market_cap == 0:
                     market_cap = " N/A"
-                img = Image.open(requests.get(thumb, stream=True).raw)
+                img = Image.open(requests.get(thumb, stream=True, timeout=30).raw)
                 result = img.convert("RGBA")
                 result.save(r"media/cgtokenlogo.png")
                 im1 = Image.open((random.choice(media.blackhole)))
@@ -4470,7 +4470,7 @@ async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Authorization": "Bearer {}".format(os.getenv("TWITTER_BEARER")),
                 "User-Agent": "v2SpacesLookupPython",
             }
-            response = requests.request("GET", url, headers=headers)
+            response = requests.request("GET", url, headers=headers, timeout=30)
             result = response.json()
             return result["data"]
 
