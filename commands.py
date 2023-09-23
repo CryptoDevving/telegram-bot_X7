@@ -2549,7 +2549,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 photo=open(r"media/pfp.png", "rb"))
     except Exception as e:
         error_message = f"An error occurred: {type(e).__name__} - {str(e)}\n\n{traceback.format_exc()}"
-        await update.message.reply_text(error_message)
+        sentry_sdk.capture_exception(error_message)
 
 
 async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
