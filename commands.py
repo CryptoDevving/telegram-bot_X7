@@ -10,6 +10,7 @@ import pyttsx3
 import requests
 import textwrap
 import sentry_sdk
+import traceback
 import wikipediaapi
 from web3 import Web3
 from telegram import *
@@ -2529,22 +2530,39 @@ async def pair(update: Update, context: CallbackContext):
 
 
 async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = " ".join(context.args)
-    if text == "":
-        await update.message.reply_text("Please follow the command with desired name")
-    else:
-        img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True, timeout=30).raw)
-        i1 = ImageDraw.Draw(img)
-        myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
-        letter_spacing = 7
-        position = (360, 987.7)
-        for char in text:
-            i1.text(position, char, font=myfont, fill=(255, 255, 255))
-            letter_width, _ = i1.textsize(char, font=myfont)
-            position = (position[0] + letter_width + letter_spacing, position[1])
-        img.save(r"media/pfp.png")
-        await update.message.reply_photo(
-            photo=open(r"media/pfp.png", "rb"))
+    try:
+        text = " ".join(context.args)
+        if text == "":
+            await update.message.reply_text("Please follow the command with desired name")
+        else:
+            img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True, timeout=30).raw)
+            i1 = ImageDraw.Draw(img)
+            myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
+            letter_spacing = 7
+            position = (360, 987.7)
+            for char in text:
+                i1.text(position, char, font=myfont, fill=(255, 255, 255))
+                letter_width, _ = i1.textsize(char, font=myfont)
+                position = (position[0] + letter_width + letter_spacing, position[1])
+            img.save(r"media/pfp.png")
+            await update.message.reply_photo(
+                photo=open(r"media/pfp.png", "rb"))
+    except Exception as e:
+        error_message = f"An error occurred: {type(e).__name__} - {str(e)}\n\n{traceback.format_exc()}"
+        await update.message.reply_text(error_message)
+
+
+async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
+    url_to_test = os.getenv("RENDER")
+
+    try:
+        response = requests.get(url_to_test, timeout=10)
+        if response.status_code == 200:
+            await update.message.reply_text("Server can reach the URL successfully.")
+        else:
+            await update.message.reply_text(f"Server received a non-200 status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        await update.message.reply_text(f"Failed to connect to the URL: {e}")
 
 
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):

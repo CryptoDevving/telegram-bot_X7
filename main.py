@@ -112,6 +112,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["on_chain", "onchain", "message"], commands.on_chain))
     application.add_handler(CommandHandler(["pair", "pairs"], commands.pair))
     application.add_handler(CommandHandler("pfp", commands.pfp))
+    application.add_handler(CommandHandler("ping", commands.ping))
     application.add_handler(CommandHandler("pioneer", commands.pioneer))
     application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
     application.add_handler(CommandHandler(["price", "prices", "x"], commands.price))
