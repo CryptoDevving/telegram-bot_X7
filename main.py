@@ -56,7 +56,7 @@ job_queue = application.job_queue
 
 
 if __name__ == "__main__":
-#    application.add_error_handler(error)
+    application.add_error_handler(error)
     application.add_handler(CallbackQueryHandler(auto.clicks))
 
     application.add_handler(CommandHandler("about", commands.about))
