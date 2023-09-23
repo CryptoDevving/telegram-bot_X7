@@ -12,26 +12,26 @@ from data import times
 from api import index as api
 
 
-#async def error(update: Update, context: CallbackContext):
-#    if update is None:
-#        return
-#    if update.edited_message is not None:
-#        return
-#    else:
-#        message: Message = update.message
-#        if message is not None and message.text is not None:
-#            await update.message.reply_text(
-#                "Error while loading data, please try again"
-#            )
-#            sentry_sdk.capture_exception(
-#                Exception(f"{message.text} caused error: {context.error}")
-#            )
-#        else:
-#            sentry_sdk.capture_exception(
-#                Exception(
-#                    f"Error occurred without a valid message: {context.error}"
-#                )
-#            )
+async def error(update: Update, context: CallbackContext):
+    if update is None:
+        return
+    if update.edited_message is not None:
+        return
+    else:
+        message: Message = update.message
+        if message is not None and message.text is not None:
+            await update.message.reply_text(
+                "Error while loading data, please try again"
+            )
+            sentry_sdk.capture_exception(
+                Exception(f"{message.text} caused error: {context.error}")
+            )
+        else:
+            sentry_sdk.capture_exception(
+                Exception(
+                    f"Error occurred without a valid message: {context.error}"
+                )
+            )
 
 
 def scanner():
@@ -51,7 +51,7 @@ def scanner():
         processes.append(process)
 
 
-application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).read_timeout(30).write_timeout(30).build()
+application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).read_timeout(30).write_timeout(30).connection_pool_size(1024).build()
 job_queue = application.job_queue
 
 

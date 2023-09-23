@@ -52,7 +52,7 @@ def get_abi(contract: str, chain: str) -> str:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return data["result"][0]["ABI"]
 
@@ -62,7 +62,7 @@ def get_block(chain: str, time: "int") -> str:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=block&action=getblocknobytime&timestamp={time}&closest=before{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return data["result"]
 
@@ -75,11 +75,11 @@ def get_daily_tx_count(contract: str, chain: str, ) -> int:
     block_yesterday = get_block(chain, yesterday)
     block_now = get_block(chain, int(t.time()))
     tx_url = f"{chain_info.url}?module=account&action=txlist&address={contract}&startblock={block_yesterday}&endblock={block_now}&page=1&offset=1000&sort=asc{chain_info.key}"
-    tx_response = requests.get(tx_url, timeout=30)
+    tx_response = requests.get(tx_url)
     tx_data = tx_response.json()
     tx_entry_count = len(tx_data['result']) if 'result' in tx_data else 0
     internal_tx_url = f"{chain_info.url}?module=account&action=txlist&address={contract}&startblock={block_yesterday}&endblock={block_now}&page=1&offset=1000&sort=asc{chain_info.key}"
-    internal_tx_response = requests.get(internal_tx_url, timeout=30)
+    internal_tx_response = requests.get(internal_tx_url)
     internal_tx_data = internal_tx_response.json()
     internal_tx_entry_count = len(internal_tx_data['result']) if 'result' in internal_tx_data else 0
     entry_count = tx_entry_count + internal_tx_entry_count
@@ -91,7 +91,7 @@ def get_gas(chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=gastracker&action=gasoracle{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
@@ -100,7 +100,7 @@ def get_native_balance(wallet, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=balancemulti&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     amount_raw = float(data["result"][0]["balance"])
     return f"{amount_raw / 10 ** 18}"
@@ -127,7 +127,7 @@ def get_native_price(token):
     if token not in tokens_info:
         raise ValueError(f"Invalid token: {token}")
     url = f"{tokens_info[token]['url']}&{tokens_info[token]['key']}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return float(data["result"][tokens_info[token]["field"]])
 
@@ -137,7 +137,7 @@ def get_pool_liq_balance(wallet, token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.Session().get(url, timeout=30)
+    response = requests.Session().get(url)
     data = response.json()
     return int(data["result"] or 0)
 
@@ -147,7 +147,7 @@ def get_stables_balance(wallet, token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return int(data["result"][:-6])
 
@@ -157,7 +157,7 @@ def get_supply(token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=stats&action=tokensupply&contractaddress={token}{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return data["result"]
 
@@ -167,7 +167,7 @@ def get_token_balance(wallet, token, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return int(data["result"][:-18])
 
@@ -177,7 +177,7 @@ def get_tx_from_hash(tx, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=proxy&action=eth_getTransactionByHash&txhash={tx}{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
@@ -186,7 +186,7 @@ def get_tx(address, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=txlist&sort=desc&address={address}{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
@@ -195,7 +195,7 @@ def get_internal_tx(address, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=txlistinternal&sort=desc&address={address}{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
@@ -204,7 +204,7 @@ def get_verified(contract, chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return "Yes" if "SourceCode" in data["result"][0] else "No"
 
@@ -214,7 +214,7 @@ def get_x7r_supply(chain):
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
     url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={ca.x7r}&address={ca.dead}&tag=latest{chain_info.key}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     supply = ca.supply - int(data["result"][:-18])
     return supply
@@ -760,7 +760,7 @@ def push_github(location, message):
     }
     response = requests.get(
         f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
-        headers=headers, timeout=30
+        headers=headers
     )
 
     if response.status_code == 200:
