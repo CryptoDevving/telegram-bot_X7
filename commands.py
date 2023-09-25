@@ -3209,7 +3209,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     price = "{:.8f}".format(token_price[token_id]["usd"]) 
                 else:
                     price = "{:.2f}".format(token_price[token_id]["usd"])
-
                 price_change = token_price[token_id]["usd_24h_change"]
                 if price_change is None:
                     price_change = 0
@@ -3217,7 +3216,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     price_change = round(token_price[token_id]["usd_24h_change"], 2)
                 market_cap = token_price[token_id]["usd_market_cap"]
                 if market_cap is None or market_cap == 0:
-                    market_cap = " N/A"
+                    market_cap_formatted = " N/A"
+                else:
+                    market_cap_formatted = "${:0,.0f}".format(float(market_cap))
                 img = Image.open(requests.get(thumb, stream=True).raw)
                 result = img.convert("RGBA")
                 result.save(r"media/cgtokenlogo.png")
@@ -3231,7 +3232,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{symbol} price - CoinGecko\n\n"
                     f'Price: ${price}\n'
                     f"24 Hour Change: {price_change}%\n"
-                    f'Market Cap: ${"{:0,.0f}".format(market_cap)}\n\n\n\n\n\n\n\n'
+                    f'Market Cap: ${market_cap_formatted}\n\n\n\n\n\n\n\n'
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
                     fill=(255, 255, 255),
