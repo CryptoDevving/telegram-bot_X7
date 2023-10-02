@@ -91,6 +91,9 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["fee", "fees"], commands.fees))
     application.add_handler(CommandHandler(["fg", "feargreed"], commands.fg))
     application.add_handler(CommandHandler("gas", commands.gas))
+    application.add_handler(CommandHandler("games", commands.games))
+    application.add_handler(CommandHandler("coinflip", commands.game_coinflip))
+    application.add_handler(CommandHandler("roll", commands.game_roll))
     application.add_handler(CommandHandler("giveaway", commands.giveaway_command))
     application.add_handler(CommandHandler("holders", commands.holders))
     application.add_handler(CommandHandler("image", commands.image))
@@ -160,7 +163,17 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["website", "site"], commands.website))
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
+
+    game_conversation = ConversationHandler(
+    entry_points=[CommandHandler('guess', commands.game_guess)],
+    states={
+        commands.PLAYING: [MessageHandler(filters.TEXT & (~filters.COMMAND), commands.game_play)],
+    },
+    fallbacks=[CommandHandler('cancel', commands.game_cancel)],
+)
+    application.add_handler(game_conversation)
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
+
     
     job_queue.run_repeating(
         auto.auto_message_info,
