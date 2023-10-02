@@ -228,7 +228,7 @@ def get_ath(token):
         f"https://api.coingecko.com/api/v3/coins/{token}?localization=false&tickers=false&market_data="
         "true&community_data=false&developer_data=false&sparkline=false"
     )
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     value = data["market_data"]
     return (
@@ -251,13 +251,13 @@ def get_cg_price(token):
 
 def get_cg_search(token):
     url = "https://api.coingecko.com/api/v3/search?query=" + token
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
 def get_mcap(token):
     url = f"https://api.coingecko.com/api/v3/simple/price?ids={token}&vs_currencies=usd&include_market_cap=true"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return data[token]["usd_market_cap"]
 
@@ -268,7 +268,7 @@ def get_mcap(token):
 def get_maxi_holdings(wallet):
     url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers, timeout=30)
+    response = requests.get(url, headers=headers)
     response_data = response.json()
     total_count = response_data.get("totalCount")
     return total_count
@@ -277,7 +277,7 @@ def get_maxi_holdings(wallet):
 def get_pioneer_holdings(wallet):
     url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers, timeout=30)
+    response = requests.get(url, headers=headers)
     response_data = response.json()
     total_count = response_data.get("totalCount")
     return total_count
@@ -367,7 +367,6 @@ def get_nft_holder_count(nft, chain):
                 "accept": "application/json",
                 "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
             },
-            timeout=30
         )
         data = response.json()
         return data.get("total_tokens", "0")
@@ -386,9 +385,7 @@ def get_nft_floor(nft, chain):
             headers={
                 "accept": "application/json",
                 "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
-            },
-            timeout=30
-        )
+            })
         data = response.json()
         exchange_data = data.get("exchange_data")
         if exchange_data is not None:
@@ -409,7 +406,7 @@ def get_nft_floor(nft, chain):
 
 def get_os_nft_collection(slug):
     url = f"https://api.opensea.io/api/v1/collection/{slug}"
-    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")}, timeout=30)
+    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
     data = response.json()
     return data
 
@@ -420,7 +417,7 @@ def get_os_nft_id(nft, identifier):
         "accept": "application/json",
         "X-API-KEY": os.getenv("OPENSEA_API_KEY")
     }
-    response = requests.get(url, headers=headers, timeout=30)
+    response = requests.get(url, headers=headers)
     data = response.json()
     return data
 
@@ -482,7 +479,7 @@ def get_price_change(address, chain):
         }}
     }}"""
 
-    response = requests.post(url, headers=headers, json={"query": pricechange}, timeout=30)
+    response = requests.post(url, headers=headers, json={"query": pricechange})
     data = response.json()
     current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
     one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
@@ -518,7 +515,7 @@ def get_token_image(token, chain):
         }}
     '''
 
-    response = requests.post(url, headers=headers, json={"query": image}, timeout=30)
+    response = requests.post(url, headers=headers, json={"query": image})
     data = response.json()
     image_url = data['data']['getTokenInfo']['imageLargeUrl']
     return image_url
@@ -549,7 +546,7 @@ def get_volume(pair, chain):
         }}
         '''
 
-    response = requests.post(url, headers=headers, json={"query": volume}, timeout=30)
+    response = requests.post(url, headers=headers, json={"query": volume})
     data = response.json()
 
     current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
@@ -600,7 +597,7 @@ def get_duration_days(duration):
 
 
 def get_fact():
-    response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random", timeout=30)
+    response = requests.get("https://uselessfacts.jsph.pl/api/v2/facts/random")
     quote = response.json()
     return quote["text"]
 
@@ -640,13 +637,13 @@ def get_pair_entries(ticker):
 def get_holders(token):
     base_url = "https://api.ethplorer.io/getTokenInfo"
     url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
     return data.get("holdersCount")
 
 
 def get_quote():
-    response = requests.get("https://type.fit/api/quotes", timeout=30)
+    response = requests.get("https://type.fit/api/quotes")
     data = response.json()
     quote = random.choice(data)
     quote_text = quote["text"]
@@ -661,19 +658,26 @@ def get_random_pioneer_number():
     return f"{random.randint(1, 4480)}".zfill(4)
 
 
+def get_random_word():
+    url = "https://random-word-api.herokuapp.com/word?length=6"
+    response = requests.get(url)
+    data = response.json()
+    return data[0]
+
+
 def get_scan(token: str, chain: str) -> dict:
     chains = {"eth": 1, "bsc": 56, "arb": 42161, "opti": 10, "poly": 137}
     chain_number = chains.get(chain)
     if not chain_number:
         raise ValueError(f"{chain} is not a valid chain")
     url = f"https://api.gopluslabs.io/api/v1/token_security/{chain_number}?contract_addresses={token}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()["result"]
 
 
 def get_signers(wallet):
     url = f"https://safe-transaction-mainnet.safe.global/api/v1/safes/{wallet}/"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
@@ -684,7 +688,7 @@ def get_snapshot():
                  'orderBy: "created", orderDirection: desc ) { id title start end snapshot state choices '
                  "scores scores_total author }}"
     }
-    response = requests.get(url, query, timeout=30)
+    response = requests.get(url, query)
     return response.json()
 
 
@@ -725,13 +729,13 @@ def get_split(eth_value):
 def get_today():
     now = datetime.now()
     url = f"http://history.muffinlabs.com/date/{now.month}/{now.day}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     return response.json()
 
 
 def get_word(word):
     url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
-    response = requests.get(url, timeout=30)
+    response = requests.get(url)
     data = response.json()
 
     definition = None
@@ -779,7 +783,6 @@ def push_github(location, message):
                 'content': encoded_content,
                 'sha': sha
             },
-            timeout=30
         )
 
 

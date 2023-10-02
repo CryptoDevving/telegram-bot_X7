@@ -176,6 +176,11 @@ if __name__ == "__main__":
     fallbacks=[CommandHandler('cancel_rps', games.rps_cancel)])
     application.add_handler(rps_conversation)
 
+    hangman_conversation = ConversationHandler(entry_points=[CommandHandler('hangman', games.hangman)],
+    states={games.PLAYING_RPS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.hangman_game)],},
+    fallbacks=[CommandHandler('cancel_rps', games.hangman_cancel)])
+    application.add_handler(hangman_conversation)
+
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
     job_queue.run_repeating(
