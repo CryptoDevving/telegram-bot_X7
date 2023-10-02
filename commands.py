@@ -1199,18 +1199,18 @@ async def game_play(update: Update, context: CallbackContext):
         return ConversationHandler.END
     elif guess < secret_number:
         message = (f"{api.escape_markdown(user_info)}, Try a higher number.\n"
-                    f"Attempts left: {attempts_left}\nEnter your next guess:")
+                    f"Attempts left: {attempts_left -1}\nEnter your next guess:")
         await update.message.reply_text(message)
     else:
         message = (f"{api.escape_markdown(user_info)}, Try a lower number.\n"
-                    f"Attempts left: {attempts_left}\nEnter your next guess:")
+                    f"Attempts left: {attempts_left -1}\nEnter your next guess:")
         await update.message.reply_text(message)
 
     attempts_left -= 1
     user_data['attempts_left'] = attempts_left
 
     if attempts_left == 0:
-        message = (f"Sorry {api.escape_markdown(user_info)}, you've used all 7 attempts. The secret number was {secret_number}.")
+        message = (f"Sorry {api.escape_markdown(user_info)}, you've used all 5 attempts. The secret number was {secret_number}.")
         await update.message.reply_text(message)
         del context_data[user_id]
         return ConversationHandler.END
