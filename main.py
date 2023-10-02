@@ -51,7 +51,7 @@ def scanner():
         processes.append(process)
 
 
-application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).read_timeout(30).write_timeout(30).connection_pool_size(1024).build()
+application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).read_timeout(600).get_updates_read_timeout(600).write_timeout(600).get_updates_write_timeout(600).pool_timeout(600).get_updates_pool_timeout(600).connect_timeout(600).get_updates_connect_timeout(600).build()
 job_queue = application.job_queue
 
 

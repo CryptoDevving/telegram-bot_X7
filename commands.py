@@ -3330,7 +3330,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"*{symbol} price* - CoinGecko\n\n"
                     f'Price: ${price}\n'
                     f'24 Hour Change: {price_change}%\n'
-                    f'Market Cap: ${"{:0,.0f}".format(market_cap)}\n\n'
+                    f'Market Cap: ${market_cap_formatted}\n\n'
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
                     reply_markup=InlineKeyboardMarkup(
