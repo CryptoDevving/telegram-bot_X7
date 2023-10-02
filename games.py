@@ -25,7 +25,8 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'attempts_left': 5
     }
     await update.message.reply_text(f"Welcome {api.escape_markdown(user_info)} to the Number Guessing Game!\n\n"
-                              "I'm thinking of a number between 1 and 100. Can You guess it? You have 5 attempts.")
+                                    "I'm thinking of a number between 1 and 100. Can You guess it? You have 5 attempts.",
+                                    parse_mode="Markdown")
     return PLAYING_GUESS
 
 
@@ -42,7 +43,8 @@ async def guess_game(update: Update, context: CallbackContext):
     try:
         guess = int(update.message.text)
     except ValueError:
-        await update.message.reply_text(f"{api.escape_markdown(user_info)}, Thats an invalid input. Please enter a valid number.")
+        await update.message.reply_text(f"{api.escape_markdown(user_info)}, Thats an invalid input. Please enter a valid number.",
+                                        parse_mode="Markdown")
         return PLAYING_GUESS
 
     secret_number = user_data['secret_number']
@@ -56,7 +58,8 @@ async def guess_game(update: Update, context: CallbackContext):
     elif guess < secret_number:
         message = (f"{api.escape_markdown(user_info)}, Try a higher number.\n"
                     f"Attempts left: {attempts_left -1}\nEnter your next guess:")
-        await update.message.reply_text(message)
+        await update.message.reply_text(message,
+                   parse_mode="Markdown")
     else:
         message = (f"{api.escape_markdown(user_info)}, Try a lower number.\n"
                     f"Attempts left: {attempts_left -1}\nEnter your next guess:")
@@ -78,7 +81,8 @@ async def guess_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         del context_data[user_id]
         await update.message.reply_text("Game canceled.")
     else:
-        await update.message.reply_text("You are not currently playing a game.")
+        await update.message.reply_text("You are not currently playing a game.",
+                                        parse_mode="Markdown")
     return ConversationHandler.END
 
 
@@ -90,29 +94,37 @@ async def roll(update: Update, context: CallbackContext):
         result = random.randint(1, max_number)
         await update.message.reply_text(f'{api.escape_markdown(user_info)} rolled  {result}\n\nBetween 1 and {max_number}')
     except (IndexError, ValueError):
-        await update.message.reply_text('Please provide a valid maximum number for the roll.')
+        await update.message.reply_text('Please provide a valid maximum number for the roll with /roll [number].',
+                                        parse_mode="Markdown")
 
 
 async def rps(update: Update, context: CallbackContext):
-    await update.message.reply_text("Welcome to the Rock, Paper, Scissors game! "
-                              "Please choose 'rock', 'paper', or 'scissors'")
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    await update.message.reply_text(f"Welcome, {api.escape_markdown(user_info)}, to the Rock, Paper, Scissors game!\n"
+                                    "Please choose 'rock', 'paper', or 'scissors'",
+                                    parse_mode="Markdown")
     return PLAYING_RPS
 
 
 async def rps_game(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
     user_choice = update.message.text.lower()
 
     if user_choice not in ['rock', 'paper', 'scissors']:
-        await update.message.reply_text("Invalid choice. Please choose 'rock', 'paper', or 'scissors'.")
+        await update.message.reply_text("Invalid choice. Please choose 'rock', 'paper', or 'scissors'.",
+                                        parse_mode="Markdown")
         return ConversationHandler.END
 
     bot_choice = random.choice(['rock', 'paper', 'scissors'])
 
     result = rps_determine_winner(user_choice, bot_choice)
 
-    await update.message.reply_text(f"You chose {user_choice}.\n"
+    await update.message.reply_text(f"{api.escape_markdown(user_info)}, chose {user_choice}.\n"
                                     f"Bot chose {bot_choice}.\n\n"
-                                    f"Result: {result}")
+                                    f"Result: {result}",
+                                    parse_mode="Markdown")
     return ConversationHandler.END
 
 
