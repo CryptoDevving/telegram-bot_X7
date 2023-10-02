@@ -8,6 +8,7 @@ from telegram.ext import *
 
 import auto
 import commands
+import games
 from data import times
 from api import index as api
 
@@ -92,8 +93,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["fg", "feargreed"], commands.fg))
     application.add_handler(CommandHandler("gas", commands.gas))
     application.add_handler(CommandHandler("games", commands.games))
-    application.add_handler(CommandHandler("coinflip", commands.game_coinflip))
-    application.add_handler(CommandHandler("roll", commands.game_roll))
     application.add_handler(CommandHandler("giveaway", commands.giveaway_command))
     application.add_handler(CommandHandler("holders", commands.holders))
     application.add_handler(CommandHandler("image", commands.image))
@@ -164,17 +163,21 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
-    game_conversation = ConversationHandler(
-    entry_points=[CommandHandler('guess', commands.game_guess)],
-    states={
-        commands.PLAYING: [MessageHandler(filters.TEXT & (~filters.COMMAND), commands.game_play)],
-    },
-    fallbacks=[CommandHandler('cancel', commands.game_cancel)],
-)
-    application.add_handler(game_conversation)
+    application.add_handler(CommandHandler("coinflip", games.coinflip))
+    application.add_handler(CommandHandler("roll", games.roll))
+
+    guess_conversation = ConversationHandler(entry_points=[CommandHandler('guess', games.guess)],
+    states={games.PLAYING_GUESS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.guess_game)],},
+    fallbacks=[CommandHandler('cancel_guess', games.guess_cancel)])
+    application.add_handler(guess_conversation)
+
+    rps_conversation = ConversationHandler(entry_points=[CommandHandler('rps', games.rps)],
+    states={games.PLAYING_RPS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.rps_game)],},
+    fallbacks=[CommandHandler('cancel_rps', games.rps_cancel)])
+    application.add_handler(rps_conversation)
+
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
-    
     job_queue.run_repeating(
         auto.auto_message_info,
         7200,

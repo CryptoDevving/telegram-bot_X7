@@ -1152,96 +1152,10 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
     caption=f"*X7 Finance Games*\n\n"
-    f"`/coinflip`\n`/guess`\n`/leaderboard`\n`/me`\n`/roll`",
+    f"`/coinflip`\n`/guess`\n`/leaderboard`\n`/me`\n`/roll`\n`/rps`",
     parse_mode="Markdown",
 )
 
-
-START, PLAYING = range(2)
-context_data = {}
-
-
-async def game_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}"
-    context_data[update.effective_user.id] = {
-        'secret_number': random.randint(1, 100),
-        'attempts_left': 5
-    }
-    await update.message.reply_text(f"Welcome {api.escape_markdown(user_info)} to the Number Guessing Game!\n\n"
-                              "I'm thinking of a number between 1 and 100. Can You guess it? You have 5 attempts.")
-    return PLAYING
-
-
-async def game_play(update: Update, context: CallbackContext):
-    user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}"
-    user_id = update.effective_user.id
-    user_data = context_data.get(user_id)
-
-    if not user_data:
-        await update.message.reply_text("Please start the game using /guess.")
-        return ConversationHandler.END
-
-    try:
-        guess = int(update.message.text)
-    except ValueError:
-        await update.message.reply_text(f"{api.escape_markdown(user_info)}, Thats an invalid input. Please enter a valid number.")
-        return PLAYING
-
-    secret_number = user_data['secret_number']
-    attempts_left = user_data['attempts_left']
-
-    if guess == secret_number:
-        message = (f"Congratulations! {api.escape_markdown(user_info)} You guessed the correct number: {secret_number}\n")
-        await update.message.reply_text(message)
-        del context_data[user_id]
-        return ConversationHandler.END
-    elif guess < secret_number:
-        message = (f"{api.escape_markdown(user_info)}, Try a higher number.\n"
-                    f"Attempts left: {attempts_left -1}\nEnter your next guess:")
-        await update.message.reply_text(message)
-    else:
-        message = (f"{api.escape_markdown(user_info)}, Try a lower number.\n"
-                    f"Attempts left: {attempts_left -1}\nEnter your next guess:")
-        await update.message.reply_text(message)
-
-    attempts_left -= 1
-    user_data['attempts_left'] = attempts_left
-
-    if attempts_left == 0:
-        message = (f"Sorry {api.escape_markdown(user_info)}, you've used all 5 attempts. The secret number was {secret_number}.")
-        await update.message.reply_text(message)
-        del context_data[user_id]
-        return ConversationHandler.END
-
-async def game_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id in context_data:
-        del context_data[user_id]
-        await update.message.reply_text("Game canceled.")
-    else:
-        await update.message.reply_text("You are not currently playing a game.")
-    return ConversationHandler.END
-
-
-async def game_coinflip(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}"
-    choose = ["Heads", "Tails"]
-    choice = random.choice(choose)
-    await update.message.reply_text(f"{api.escape_markdown(user_info)} flipped {choice}")
-
-
-async def game_roll(update: Update, context: CallbackContext):
-    try:
-        user = update.effective_user
-        user_info = user.username or f"{user.first_name} {user.last_name}"
-        max_number = int(context.args[0])
-        result = random.randint(1, max_number)
-        await update.message.reply_text(f'{api.escape_markdown(user_info)} rolled  {result}\n\nBetween 1 and {max_number}')
-    except (IndexError, ValueError):
-        await update.message.reply_text('Please provide a valid maximum number for the roll.')
 
 async def gas(update, context):
     chain = " ".join(context.args).lower()
