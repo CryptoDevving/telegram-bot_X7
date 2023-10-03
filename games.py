@@ -22,10 +22,9 @@ current_combination = None
 
 async def start_emoji(update, context):
     chat_id = update.message.chat_id
-    restrictions = context.chat_data.get(chat_id, False)
-    if restrictions:
-        await update.message.reply_text("Games locked in this chat. Please use in private or a group that is not locked.")
-    else:
+    restrictions = context.chat_data.get(chat_id, True)
+    chat_type = update.message.chat.type
+    if chat_type == "private" or not restrictions:
         user = update.effective_user
         user_id = user.id
         if "round_count" not in user_data:
@@ -58,15 +57,18 @@ async def start_emoji(update, context):
 
         context.user_data[user_id] = user_data
         return PLAYING_EMOJI
+    else:
+        await update.message.reply_text(f"Games are locked in group chats by default.\n\n"
+                                        f"Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n",
+                                        parse_mode="Markdown")
+
 
 
 async def start_hangman(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
-    restrictions = context.chat_data.get(chat_id, False)
-    if restrictions:
-        await update.message.reply_text("Games locked in this chat. Please use in private or a group that is not locked.")
-    else:
-
+    restrictions = context.chat_data.get(chat_id, True)
+    chat_type = update.message.chat.type
+    if chat_type == "private" or not restrictions:
         word = api.get_random_word("word?length=6")
         user = update.effective_user
         user_info = user.username or f"{user.first_name} {user.last_name}"
@@ -78,14 +80,15 @@ async def start_hangman(update: Update, context: CallbackContext):
         await update.message.reply_text(f"Welcome {user_info}, to Hangman! I'm thinking of a word. Try to guess it by typing one letter at a time."
                                 f"\nYou have 6 attempts.\n\n{display_text}\n\nType a letter to guess.")
         return PLAYING_HANGMAN
-
-
+    else:
+        await update.message.reply_text(f"Games are locked in group chats by default.\n\n"
+                                f"Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n",
+                                parse_mode="Markdown")
 async def start_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
-    restrictions = context.chat_data.get(chat_id, False)
-    if restrictions:
-        await update.message.reply_text("Games locked in this chat. Please use in private or a group that is not locked.")
-    else:
+    restrictions = context.chat_data.get(chat_id, True)
+    chat_type = update.message.chat.type
+    if chat_type == "private" or not restrictions:
         user = update.effective_user
         user_info = user.username or f"{user.first_name} {user.last_name}"
         context_data[update.effective_user.id] = {
@@ -95,14 +98,17 @@ async def start_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Welcome {user_info} to the Number Guessing Game!\n\n"
                                         "I'm thinking of a number between 1 and 100. Can You guess it? You have 5 attempts.")
         return PLAYING_GUESS
+    else:
+        await update.message.reply_text(f"Games are locked in group chats by default.\n\n"
+                                f"Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n",
+                                parse_mode="Markdown")
 
 
 async def start_puzzle(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
-    restrictions = context.chat_data.get(chat_id, False)
-    if restrictions:
-        await update.message.reply_text("Games locked in this chat. Please use in private or a group that is not locked.")
-    else:    
+    restrictions = context.chat_data.get(chat_id, True)
+    chat_type = update.message.chat.type
+    if chat_type == "private" or not restrictions:
         puzzle = puzzle_generate()
         chat_id = update.message.chat_id
         user_data[chat_id] = {
@@ -114,7 +120,10 @@ async def start_puzzle(update: Update, context: CallbackContext):
             "Welcome to the Number Puzzle Game!\nTo solve the puzzle, arrange the numbers in chronological order (1-9).\nTo rage quit use /cancel_puzzle:\n" + puzzle_print(
                 puzzle))
         return PLAYING_PUZZLE
-
+    else:
+        await update.message.reply_text(f"Games are locked in group chats by default.\n\n"
+                                f"Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n",
+                                parse_mode="Markdown")
 
 async def start_rps(update: Update, context: CallbackContext):
     user = update.effective_user
@@ -145,11 +154,9 @@ async def start_roll(update: Update, context: CallbackContext):
 
 async def start_scramble(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
-    chat_id = update.message.chat_id
-    restrictions = context.chat_data.get(chat_id, False)
-    if restrictions:
-        await update.message.reply_text("Games locked in this chat. Please use in private or a group that is not locked.")
-    else:
+    restrictions = context.chat_data.get(chat_id, True)
+    chat_type = update.message.chat.type
+    if chat_type == "private" or not restrictions:
         user = update.effective_user
         user_info = user.username or f"{user.first_name} {user.last_name}"
         secret_word = api.get_random_word("word")
@@ -162,7 +169,11 @@ async def start_scramble(update: Update, context: CallbackContext):
 
         await update.message.reply_text(f"Welcome {user_info}, to Word Scramble!\n\nUnscramble the word: {context.user_data['scrambled_word']}\n\nYou have {context.user_data['attempts_left']} attempts.")
 
-    return PLAYING_SCRAMBLE
+        return PLAYING_SCRAMBLE
+    else:
+        await update.message.reply_text(f"Games are locked in group chats by default.\n\n"
+                                f"Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n",
+                                parse_mode="Markdown")
 
 
 async def emoji_cancel(update, context):

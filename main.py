@@ -105,6 +105,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["loans", "borrow"], commands.loans_command))
     application.add_handler(CommandHandler("locks", commands.locks))
     application.add_handler(CommandHandler("lock_games", commands.games_lock))
+    application.add_handler(CommandHandler("unlock_games", commands.games_unlock))
     application.add_handler(CommandHandler("me", commands.me))
     application.add_handler(CommandHandler("magisters", commands.magisters))
     application.add_handler(CommandHandler(["mcap", "marketcap", "cap"], commands.mcap))
