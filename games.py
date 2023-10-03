@@ -10,7 +10,7 @@ START_GUESS, PLAYING_GUESS = range(2)
 START_HANGMAN, PLAYING_HANGMAN = range(2)
 START_SCRAMBLE, PLAYING_SCRAMBLE = range(2)
 START_PUZZLE, PLAYING_PUZZLE,  = range(2)
-START_EMOJI, PLAYING_EMOJI, END_EMOJI = range(3)
+START_EMOJI, PLAYING_EMOJI, = range(2)
 GRID_SIZE = 3
 user_data = {}
 context_data = {}
@@ -26,6 +26,75 @@ async def coinflip(update: Update, context: ContextTypes.DEFAULT_TYPE):
     choose = ["Heads", "Tails"]
     choice = random.choice(choose)
     await update.message.reply_text(f"{user_info} flipped {choice}")
+
+
+async def emoji(update: Update, context: CallbackContext):
+    global round_count, player_score
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    player_score = 0
+    round_count += 1
+
+    if round_count > max_rounds:
+        await emoji_cancel(update, context)
+        return
+    if round_count == 1:
+        welcome = f"Welcome {user_info} to the Emoji game\n\n"
+    else:
+        welcome = ""
+
+    current_combination = random.choice(text.emoji_combinations)
+    emojis = current_combination["emojis"]
+    context.user_data["correct_answer"] = current_combination["answer"]
+    
+    last_result_message = context.user_data.get("last_result_message", "")
+    if last_result_message != "":
+        last_result_message += "\n\n"
+    
+    await update.message.reply_text(f"{welcome}{last_result_message}Round {round_count}/{max_rounds}: Guess the phrase represented by these emojis:\n\n{emojis}")
+    return PLAYING_EMOJI
+
+
+async def emoji_cancel(update: Update, context: CallbackContext):
+    global round_count
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    player_score = context.user_data.get("player_score", 0)
+    last_result_message = context.user_data.get("last_result_message", "")
+    await update.message.reply_text(f"{last_result_message}\n\nGame Over {user_info}!\nYour Score: {player_score}/{max_rounds}")
+    context.user_data.clear()
+    round_count = 0
+    player_score = 0
+    return ConversationHandler.END
+
+
+async def emoji_game(update: Update, context: CallbackContext):
+    global round_count, max_rounds
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    if "correct_answer" not in context.user_data:
+        return
+    user_guess = update.message.text.strip()
+    correct_answer = context.user_data.get("correct_answer", "").lower()
+
+    if user_guess.lower() == correct_answer:
+        context.user_data["player_score"] = context.user_data.get("player_score", 0) + 1
+        result_message = "Correct! You earned a point."
+    else:
+        result_message = f"Wrong! The correct answer is:\n\n{correct_answer}"
+
+    context.user_data["last_result_message"] = result_message
+
+    if round_count < max_rounds:
+        await emoji(update, context)
+    else:
+        last_result_message = context.user_data.get("last_result_message", "")
+        player_score = context.user_data.get("player_score", 0)
+        await update.message.reply_text(f"{last_result_message}\n\nGame Over {user_info}!\nYour Score: {player_score}/{max_rounds}")
+        context.user_data.clear()
+        round_count = 0
+        player_score = 0
+        return ConversationHandler.END
 
 
 async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -143,7 +212,7 @@ async def hangman_game(update: Update, context: CallbackContext):
         else:
             context.user_data['attempts_left'] -= 1
             if context.user_data['attempts_left'] == 0:
-                await update.message.reply_text(f"Sorry, you've used all your attempts. The word was\n\n{context.user_data['secret_word'].upper()}'"
+                await update.message.reply_text(f"Sorry, you've used all your attempts. The word was\n\n{context.user_data['secret_word'].upper()}"
                                           "\n\nType /hangman to start a new game.")
                 return ConversationHandler.END
             else:
@@ -303,7 +372,6 @@ async def puzzle_game(update: Update, context: CallbackContext):
         puzzle_str = puzzle_print(user_puzzle["puzzle"])
 
         if puzzle_solved(user_puzzle["puzzle"]):
-            print("finished")
             await update.message.reply_text(
                 f"Congratulations! You solved the puzzle in {user_puzzle['attempts']} attempts.\n" + puzzle_str)
         else:
@@ -352,7 +420,6 @@ def puzzle_solved(puzzle):
     return True
 
 
-
 def puzzle_move(puzzle, direction):
     i, j = puzzle_get_empty_position(puzzle)
     if direction == 'up' and i < GRID_SIZE - 1:
@@ -363,67 +430,3 @@ def puzzle_move(puzzle, direction):
         puzzle[i][j], puzzle[i][j + 1] = puzzle[i][j + 1], puzzle[i][j]
     elif direction == 'right' and j > 0:
         puzzle[i][j], puzzle[i][j - 1] = puzzle[i][j - 1], puzzle[i][j]
-
-
-
-
-
-async def emoji(update: Update, context: CallbackContext):
-    try:
-        global round_count, player_score
-        user = update.effective_user
-        user_info = user.username or f"{user.first_name} {user.last_name}"
-        player_score = 0
-        round_count += 1
-
-        if round_count > max_rounds:
-            await emoji_cancel(update, context)
-            return
-        if round_count == 1:
-            welcome = f"Welcome {user_info} to the Emoji game\n\n"
-        else:
-            welcome = ""
-
-        current_combination = random.choice(text.emoji_combinations)
-        emojis = current_combination["emojis"]
-        context.user_data["correct_answer"] = current_combination["answer"]
-        
-        last_result_message = context.user_data.get("last_result_message", "")
-        if last_result_message != "":
-            last_result_message += "\n\n"
-        
-        await update.message.reply_text(f"{welcome}{last_result_message}Round {round_count}/{max_rounds}: Guess the phrase represented by these emojis:\n\n{emojis}")
-        return PLAYING_EMOJI
-    except Exception as e:
-        print(e)
-
-async def emoji_game(update: Update, context: CallbackContext):
-    if "correct_answer" not in context.user_data:
-        return
-    user_guess = update.message.text.strip()
-    correct_answer = context.user_data.get("correct_answer", "").lower()
-
-    if user_guess.lower() == correct_answer:
-        context.user_data["player_score"] = context.user_data.get("player_score", 0) + 1
-        result_message = "Correct! You earned a point."
-    else:
-        result_message = f"Wrong! The correct answer is:\n\n{correct_answer}"
-
-    context.user_data["last_result_message"] = result_message
-
-    if round_count < max_rounds:
-        await emoji(update, context)
-    else:
-        await emoji_cancel(update, context)
-
-
-async def emoji_cancel(update: Update, context: CallbackContext):
-    user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}"
-    player_score = context.user_data.get("player_score", 0)
-
-    last_result_message = context.user_data.get("last_result_message", "")
-
-    await update.message.reply_text(f"{last_result_message}\n\nGame Over {user_info}!\nYour Score: {player_score}/{max_rounds}")
-    context.user_data.clear()
-    return ConversationHandler.END
