@@ -34,7 +34,11 @@ dune_timestamp = datetime.utcnow().timestamp()
 dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    return
+    try:
+        data = api.get_riddle()
+        data["riddle"]
+    except Exception as e:
+        print(e)
 
 
 # COMMANDS
@@ -1152,7 +1156,7 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
     caption=f"*X7 Finance Games*\n\n"
-    f"`/coinflip`\n`/leaderboard`\n`/me`\n`/roll`\n`/rps`\n\n"
+    f"`/coinflip`\n`/leaderboard`\n`/me`\n`/roll`\n`/riddle`\n`/rps`\n\n"
     f"The following games are locked in group chats by default. Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n"
     f"`/emoji`\n`/guess`\n`/hangman`\n`/puzzle`\n`/scramble`\n\n",
     parse_mode="Markdown",
