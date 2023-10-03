@@ -101,13 +101,15 @@ async def emoji_game(update, context):
     if user_data["round_count"] < max_rounds:
         await emoji(update, context)
     else:
-        last_result_message = context.user_data.get("last_result_message", "")
-        player_score = context.user_data.get("player_score", 0)
+        last_result_message = user_data.get("last_result_message", "")
+        player_score = user_data.get("player_score", 0)
         await update.message.reply_text(f"{last_result_message}\n\nGame Over {user_info}!\nYour Score: {player_score}/{max_rounds}")
-        context.user_data.clear()
-        round_count = 0
-        player_score = 0
+        user_data.clear()
         return ConversationHandler.END
+
+    context.user_data[user_id] = user_data
+
+    return PLAYING_EMOJI
     
     context.user_data[user_id] = user_data
 
