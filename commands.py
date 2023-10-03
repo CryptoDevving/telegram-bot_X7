@@ -1152,7 +1152,7 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
     caption=f"*X7 Finance Games*\n\n"
-    f"`/coinflip`\n`/guess`\n`/hangman`\n`/leaderboard`\n`/me`\n`/roll`\n`/rps`",
+    f"`/coinflip`\n`/emoji`\n`/guess`\n`/hangman`\n`/leaderboard`\n`/me`\n`/puzzle`\n`/roll`\n`/rps`\n`/scramble`",
     parse_mode="Markdown",
 )
 

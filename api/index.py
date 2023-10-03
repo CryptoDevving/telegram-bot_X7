@@ -658,8 +658,8 @@ def get_random_pioneer_number():
     return f"{random.randint(1, 4480)}".zfill(4)
 
 
-def get_random_word():
-    url = "https://random-word-api.herokuapp.com/word?length=6"
+def get_random_word(variable):
+    url = f"https://random-word-api.herokuapp.com/{variable}"
     response = requests.get(url)
     data = response.json()
     return data[0]

@@ -2,12 +2,22 @@ from telegram import *
 from telegram.ext import *
 import random
 from api import index as api
+from data import text
 
 
 START_RPS, PLAYING_RPS  = range(2)
 START_GUESS, PLAYING_GUESS = range(2)
 START_HANGMAN, PLAYING_HANGMAN = range(2)
+START_SCRAMBLE, PLAYING_SCRAMBLE = range(2)
+START_PUZZLE, PLAYING_PUZZLE,  = range(2)
+START_EMOJI, PLAYING_EMOJI, END_EMOJI = range(3)
+GRID_SIZE = 3
+user_data = {}
 context_data = {}
+player_score = 0
+round_count = 0
+max_rounds = 5
+current_combination = None
 
 
 async def coinflip(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -28,6 +38,18 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"Welcome {user_info} to the Number Guessing Game!\n\n"
                                     "I'm thinking of a number between 1 and 100. Can You guess it? You have 5 attempts.")
     return PLAYING_GUESS
+
+
+async def guess_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    user_id = update.effective_user.id
+    if user_id in context_data:
+        del context_data[user_id]
+        await update.message.reply_text(f"Game canceled for {user_info}")
+    else:
+        await update.message.reply_text("You are not currently playing a game.")
+    return ConversationHandler.END
 
 
 async def guess_game(update: Update, context: CallbackContext):
@@ -73,18 +95,8 @@ async def guess_game(update: Update, context: CallbackContext):
         return ConversationHandler.END
 
 
-async def guess_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id in context_data:
-        del context_data[user_id]
-        await update.message.reply_text("Game canceled.")
-    else:
-        await update.message.reply_text("You are not currently playing a game.")
-    return ConversationHandler.END
-
-
 async def hangman(update: Update, context: CallbackContext):
-    word = api.get_random_word()
+    word = api.get_random_word("word?length=6")
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
     context.user_data['attempts_left'] = 6
@@ -95,6 +107,13 @@ async def hangman(update: Update, context: CallbackContext):
     await update.message.reply_text(f"Welcome {user_info}, to Hangman! I'm thinking of a word. Try to guess it by typing one letter at a time."
                               f"\nYou have 6 attempts.\n\n{display_text}\n\nType a letter to guess.")
     return PLAYING_HANGMAN
+
+
+async def hangman_cancel(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    await update.message.reply_text(f"Game canceled for {user_info}. Type /hangman to start a new game.")
+    return ConversationHandler.END
 
 
 async def hangman_game(update: Update, context: CallbackContext):
@@ -139,18 +158,13 @@ async def hangman_game(update: Update, context: CallbackContext):
     else:
         context.user_data['attempts_left'] -= 1
         if context.user_data['attempts_left'] == 0:
-            await update.message.reply_text(f"Sorry, you've used all your attempts. The word was\n\n{context.user_data['secret_word'].upper()}'"
+            await update.message.reply_text(f"Sorry, you've used all your attempts. The word was\n\n{context.user_data['secret_word'].upper()}"
                                         "\n\nType /hangman to start a new game.")
             return ConversationHandler.END
         else:
             await update.message.reply_text(f"Incorrect guess. You have {context.user_data['attempts_left']} attempts left.")
     
     return PLAYING_HANGMAN
-
-
-async def hangman_cancel(update: Update, context: CallbackContext):
-    await update.message.reply_text("Game canceled. Type /hangman to start a new game.")
-    return START_HANGMAN
 
 
 async def roll(update: Update, context: CallbackContext):
@@ -172,6 +186,13 @@ async def rps(update: Update, context: CallbackContext):
     return PLAYING_RPS
 
 
+async def rps_cancel(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    await update.message.reply_text(f"Game canceled for {user_info}. Type /rps to start a new game.")
+    return ConversationHandler.END
+
+
 async def rps_game(update: Update, context: CallbackContext):
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
@@ -183,7 +204,7 @@ async def rps_game(update: Update, context: CallbackContext):
 
     bot_choice = random.choice(['rock', 'paper', 'scissors'])
 
-    result = rps_determine_winner(user_choice, bot_choice)
+    result = rps_winner(user_choice, bot_choice)
 
     await update.message.reply_text(f"{user_info}, chose {user_choice}.\n"
                                     f"Bot chose {bot_choice}.\n\n"
@@ -191,7 +212,7 @@ async def rps_game(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
-def rps_determine_winner(user_choice, bot_choice):
+def rps_winner(user_choice, bot_choice):
     if user_choice == bot_choice:
         return "It's a tie!"
     elif (user_choice == 'rock' and bot_choice == 'scissors') or \
@@ -200,9 +221,209 @@ def rps_determine_winner(user_choice, bot_choice):
         return "You win!"
     else:
         return "Bot wins!"
+    
+
+async def scramble(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    secret_word = api.get_random_word("word")
+    word_characters = list(secret_word)
+    random.shuffle(word_characters)
+    word = ''.join(word_characters)
+    context.user_data['secret_word'] = secret_word
+    context.user_data['scrambled_word'] = word
+    context.user_data['attempts_left'] = 3
+
+    await update.message.reply_text(f"Welcome {user_info}, to Word Scramble!\n\nUnscramble the word: {context.user_data['scrambled_word']}\n\nYou have {context.user_data['attempts_left']} attempts.")
+
+    return PLAYING_SCRAMBLE
 
 
-async def rps_cancel(update: Update, context: CallbackContext):
-    await update.message.reply_text("Game canceled. Type /rps to start a new game.")
-    return START_RPS
+async def scramble_cancel(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    await update.message.reply_text(f"Game canceled for {user_info}. Type /scramble to start a new game.")
+    return ConversationHandler.END
 
+
+async def scramble_game(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    user_guess = update.message.text.lower()
+    secret_word = context.user_data['secret_word']
+
+    if user_guess == secret_word:
+        await update.message.reply_text(f"Correct {user_info}! The word is {secret_word.upper()}.\n\nYou win!")
+        return ConversationHandler.END
+    else:
+        context.user_data['attempts_left'] -= 1
+
+        if context.user_data['attempts_left'] > 0:
+            await update.message.reply_text(f"Incorrect guess. Try again.\n\nAttempts left: {context.user_data['attempts_left']}")
+        else:
+            await update.message.reply_text(f"Sorry {user_info}, You are out of attempts! The word was:\n\n{secret_word.upper()}")
+            return ConversationHandler.END
+
+
+async def puzzle(update: Update, context: CallbackContext):
+    puzzle = puzzle_generate()
+    chat_id = update.message.chat_id
+    user_data[chat_id] = {
+        "puzzle": puzzle,
+        "attempts": 0
+    }
+
+    await update.message.reply_text(
+        "Welcome to the Number Puzzle Game!\nTo solve the puzzle, arrange the numbers in chronological order (1-9).\nTo rage quit use /cancel_puzzle:\n" + puzzle_print(
+            puzzle))
+    return PLAYING_PUZZLE
+
+
+async def puzzle_cancel(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    await update.message.reply_text(f"Game canceled for {user_info}. Type /puzzle to start a new game.")
+    return ConversationHandler.END
+
+
+async def puzzle_game(update: Update, context: CallbackContext):
+    direction = update.message.text.strip().lower()
+    valid_directions = ['up', 'down', 'left', 'right']
+
+    if direction in valid_directions:
+        chat_id = update.message.chat_id
+        user_puzzle = user_data.get(chat_id)
+
+        if not user_puzzle:
+            await update.message.reply_text("You must start a new game using /puzzle first.")
+            return
+
+        puzzle_move(user_puzzle["puzzle"], direction)
+        user_puzzle["attempts"] += 1
+        puzzle_str = puzzle_print(user_puzzle["puzzle"])
+
+        if puzzle_solved(user_puzzle["puzzle"]):
+            print("finished")
+            await update.message.reply_text(
+                f"Congratulations! You solved the puzzle in {user_puzzle['attempts']} attempts.\n" + puzzle_str)
+        else:
+            await update.message.reply_text("Move the numbers:\n" + puzzle_str)
+    else:
+        await update.message.reply_text("Invalid move. Use /up, /down, /left, or /right to move the numbers.")
+
+
+def puzzle_generate():
+    numbers = list(range(1, GRID_SIZE**2))
+    numbers.append(None)
+    random.shuffle(numbers)
+    puzzle = [numbers[i:i+GRID_SIZE] for i in range(0, GRID_SIZE**2, GRID_SIZE)]
+    return puzzle
+
+
+def puzzle_get_empty_position(puzzle):
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            if puzzle[i][j] is None:
+                return i, j
+
+
+def puzzle_print(puzzle):
+    puzzle_str = ""
+    for row in puzzle:
+        puzzle_str += " | ".join(map(lambda x: str(x) if x is not None else " ", row)) + "\n"
+        puzzle_str += "-" * (GRID_SIZE * 4 - 1) + "\n"
+    return puzzle_str
+
+
+def puzzle_solved(puzzle):
+    n = GRID_SIZE**2
+    expected_value = 1
+
+    for i in range(n):
+        for j in range(n):
+            if puzzle[i][j] is not None:
+                if puzzle[i][j] != expected_value:
+                    return False
+                expected_value += 1
+
+    if puzzle[n - 1][n - 1] is not None:
+        return False
+
+    return True
+
+
+
+def puzzle_move(puzzle, direction):
+    i, j = puzzle_get_empty_position(puzzle)
+    if direction == 'up' and i < GRID_SIZE - 1:
+        puzzle[i][j], puzzle[i + 1][j] = puzzle[i + 1][j], puzzle[i][j]
+    elif direction == 'down' and i > 0:
+        puzzle[i][j], puzzle[i - 1][j] = puzzle[i - 1][j], puzzle[i][j]
+    elif direction == 'left' and j < GRID_SIZE - 1:
+        puzzle[i][j], puzzle[i][j + 1] = puzzle[i][j + 1], puzzle[i][j]
+    elif direction == 'right' and j > 0:
+        puzzle[i][j], puzzle[i][j - 1] = puzzle[i][j - 1], puzzle[i][j]
+
+
+
+
+
+async def emoji(update: Update, context: CallbackContext):
+    try:
+        global round_count, player_score
+        user = update.effective_user
+        user_info = user.username or f"{user.first_name} {user.last_name}"
+        player_score = 0
+        round_count += 1
+
+        if round_count > max_rounds:
+            await emoji_cancel(update, context)
+            return
+        if round_count == 1:
+            welcome = f"Welcome {user_info} to the Emoji game\n\n"
+        else:
+            welcome = ""
+
+        current_combination = random.choice(text.emoji_combinations)
+        emojis = current_combination["emojis"]
+        context.user_data["correct_answer"] = current_combination["answer"]
+        
+        last_result_message = context.user_data.get("last_result_message", "")
+        if last_result_message != "":
+            last_result_message += "\n\n"
+        
+        await update.message.reply_text(f"{welcome}{last_result_message}Round {round_count}/{max_rounds}: Guess the phrase represented by these emojis:\n\n{emojis}")
+        return PLAYING_EMOJI
+    except Exception as e:
+        print(e)
+
+async def emoji_game(update: Update, context: CallbackContext):
+    if "correct_answer" not in context.user_data:
+        return
+    user_guess = update.message.text.strip()
+    correct_answer = context.user_data.get("correct_answer", "").lower()
+
+    if user_guess.lower() == correct_answer:
+        context.user_data["player_score"] = context.user_data.get("player_score", 0) + 1
+        result_message = "Correct! You earned a point."
+    else:
+        result_message = f"Wrong! The correct answer is:\n\n{correct_answer}"
+
+    context.user_data["last_result_message"] = result_message
+
+    if round_count < max_rounds:
+        await emoji(update, context)
+    else:
+        await emoji_cancel(update, context)
+
+
+async def emoji_cancel(update: Update, context: CallbackContext):
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}"
+    player_score = context.user_data.get("player_score", 0)
+
+    last_result_message = context.user_data.get("last_result_message", "")
+
+    await update.message.reply_text(f"{last_result_message}\n\nGame Over {user_info}!\nYour Score: {player_score}/{max_rounds}")
+    context.user_data.clear()
+    return ConversationHandler.END

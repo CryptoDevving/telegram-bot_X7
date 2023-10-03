@@ -5,7 +5,6 @@ import subprocess
 import sentry_sdk
 from telegram import *
 from telegram.ext import *
-
 import auto
 import commands
 import games
@@ -177,9 +176,24 @@ if __name__ == "__main__":
     application.add_handler(rps_conversation)
 
     hangman_conversation = ConversationHandler(entry_points=[CommandHandler('hangman', games.hangman)],
-    states={games.PLAYING_RPS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.hangman_game)],},
-    fallbacks=[CommandHandler('cancel_rps', games.hangman_cancel)])
+    states={games.PLAYING_HANGMAN: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.hangman_game)],},
+    fallbacks=[CommandHandler('cancel_hangman', games.hangman_cancel)])
     application.add_handler(hangman_conversation)
+
+    scramble_conversation = ConversationHandler(entry_points=[CommandHandler('scramble', games.scramble)],
+    states={games.PLAYING_SCRAMBLE: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.scramble_game)],},
+    fallbacks=[CommandHandler('cancel_scramble', games.scramble_cancel)])
+    application.add_handler(scramble_conversation)
+
+    puzzle_conversation = ConversationHandler(entry_points=[CommandHandler('puzzle', games.puzzle)],
+    states={games.PLAYING_PUZZLE: [MessageHandler(filters.Regex(r'^(up|down|left|right)$'), games.puzzle_game)]},
+    fallbacks=[CommandHandler('cancel_scramble', games.puzzle_cancel)])
+    application.add_handler(puzzle_conversation)
+
+    emoji_conversation = ConversationHandler(entry_points=[CommandHandler('emoji', games.emoji)],
+    states={games.PLAYING_EMOJI: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.emoji_game)]},
+    fallbacks=[CommandHandler('cancel_emoji', games.emoji_cancel)])
+    application.add_handler(emoji_conversation)
 
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
