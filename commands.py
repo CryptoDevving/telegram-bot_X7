@@ -1155,7 +1155,15 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     f"`/coinflip`\n`/emoji`\n`/guess`\n`/hangman`\n`/leaderboard`\n`/me`\n`/puzzle`\n`/roll`\n`/rps`\n`/scramble`",
     parse_mode="Markdown",
 )
-
+    
+async def games_lock(update, context):
+    chat_admins = await update.effective_chat.get_administrators()
+    if update.effective_user in (admin.user for admin in chat_admins):
+        chat_id = update.message.chat_id
+        context.chat_data[chat_id] = True
+        await update.message.reply_text("Games locked in this chat. Please use in private or a group that is not locked.")
+    else:
+        await update.message.reply_text(f"{text.mods_only}")
 
 async def gas(update, context):
     chain = " ".join(context.args).lower()

@@ -104,6 +104,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("loan", commands.loan))
     application.add_handler(CommandHandler(["loans", "borrow"], commands.loans_command))
     application.add_handler(CommandHandler("locks", commands.locks))
+    application.add_handler(CommandHandler("lock_games", commands.games_lock))
     application.add_handler(CommandHandler("me", commands.me))
     application.add_handler(CommandHandler("magisters", commands.magisters))
     application.add_handler(CommandHandler(["mcap", "marketcap", "cap"], commands.mcap))
@@ -162,35 +163,35 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
-    application.add_handler(CommandHandler("coinflip", games.coinflip))
-    application.add_handler(CommandHandler("roll", games.roll))
+    application.add_handler(CommandHandler("coinflip", games.start_coinflip))
+    application.add_handler(CommandHandler("roll", games.start_roll))
 
-    guess_conversation = ConversationHandler(entry_points=[CommandHandler('guess', games.guess)],
+    guess_conversation = ConversationHandler(entry_points=[CommandHandler('guess', games.start_guess)],
     states={games.PLAYING_GUESS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.guess_game)],},
     fallbacks=[CommandHandler('cancel_guess', games.guess_cancel)])
     application.add_handler(guess_conversation)
 
-    rps_conversation = ConversationHandler(entry_points=[CommandHandler('rps', games.rps)],
+    rps_conversation = ConversationHandler(entry_points=[CommandHandler('rps', games.start_rps)],
     states={games.PLAYING_RPS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.rps_game)],},
     fallbacks=[CommandHandler('cancel_rps', games.rps_cancel)])
     application.add_handler(rps_conversation)
 
-    hangman_conversation = ConversationHandler(entry_points=[CommandHandler('hangman', games.hangman)],
+    hangman_conversation = ConversationHandler(entry_points=[CommandHandler('hangman', games.start_hangman)],
     states={games.PLAYING_HANGMAN: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.hangman_game)],},
     fallbacks=[CommandHandler('cancel_hangman', games.hangman_cancel)])
     application.add_handler(hangman_conversation)
 
-    scramble_conversation = ConversationHandler(entry_points=[CommandHandler('scramble', games.scramble)],
+    scramble_conversation = ConversationHandler(entry_points=[CommandHandler('scramble', games.start_scramble)],
     states={games.PLAYING_SCRAMBLE: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.scramble_game)],},
     fallbacks=[CommandHandler('cancel_scramble', games.scramble_cancel)])
     application.add_handler(scramble_conversation)
 
-    puzzle_conversation = ConversationHandler(entry_points=[CommandHandler('puzzle', games.puzzle)],
+    puzzle_conversation = ConversationHandler(entry_points=[CommandHandler('puzzle', games.start_puzzle)],
     states={games.PLAYING_PUZZLE: [MessageHandler(filters.Regex(r'^(up|down|left|right)$'), games.puzzle_game)]},
     fallbacks=[CommandHandler('cancel_scramble', games.puzzle_cancel)])
     application.add_handler(puzzle_conversation)
 
-    emoji_conversation = ConversationHandler(entry_points=[CommandHandler('emoji', games.emoji)],
+    emoji_conversation = ConversationHandler(entry_points=[CommandHandler('emoji', games.start_emoji)],
     states={games.PLAYING_EMOJI: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.emoji_game)]},
     fallbacks=[CommandHandler('cancel_emoji', games.emoji_cancel)])
     application.add_handler(emoji_conversation)
