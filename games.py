@@ -141,7 +141,6 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 parse_mode="Markdown")
 
 
-
 async def guess_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
@@ -287,7 +286,6 @@ async def riddle(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PLAYING_RIDDLE
 
 
-
 async def riddle_game(update: Update, context):
         user_id = update.effective_user.id
         user_info = update.effective_user.username or f"{update.effective_user.first_name} {update.effective_user.last_name}"
@@ -355,7 +353,8 @@ def rps_winner(user_choice, bot_choice):
         return "You win!"
     else:
         return "Bot wins!"
-    
+
+
 async def scramble(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
     restrictions = context.chat_data.get(chat_id, True)
