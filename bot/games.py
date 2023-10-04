@@ -1,7 +1,7 @@
 from telegram import *
 from telegram.ext import *
 import random
-import os
+from pyfiglet import Figlet
 
 from api import index as api
 from data import text
@@ -19,6 +19,15 @@ user_data = {}
 context_data = {}
 max_rounds = 5
 current_combination = None
+
+
+async def ascii(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        input_text = " ".join(context.args).upper()
+        words = input_text.split()
+        input_text = "\n".join(words)
+        custom_fig = Figlet(font="slant")
+        ascii_art = custom_fig.renderText(input_text)
+        await update.message.reply_text(f"Best viewed on PC full screen.\n\n`{ascii_art}`", parse_mode="Markdown")
 
 
 async def coinflip(update: Update, context: ContextTypes.DEFAULT_TYPE):

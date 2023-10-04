@@ -165,6 +165,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("raid", twitter.raid))
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
+    application.add_handler(CommandHandler("ascii", games.ascii))
     application.add_handler(CommandHandler("coinflip", games.coinflip))
     application.add_handler(CommandHandler("roll", games.start_roll))
 
