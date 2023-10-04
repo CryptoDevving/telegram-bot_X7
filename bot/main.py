@@ -160,7 +160,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
     application.add_handler(CommandHandler(["twitter", "x"], twitter.tweet))
-    application.add_handler(CommandHandler("count", twitter.twitter_count))
+    application.add_handler(CommandHandler("count", twitter.count))
     application.add_handler(CommandHandler("draw", twitter.draw))
     application.add_handler(CommandHandler("raid", twitter.raid))
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
