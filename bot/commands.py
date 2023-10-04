@@ -34,7 +34,26 @@ dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        return
+
+        owner = 'x7finance'
+        repo_name = 'telegram-bot'
+        url = f'https://api.github.com/repos/{owner}/{repo_name}'
+        headers = {'Authorization': f'token {os.getenv("GITHUB_PAT")}'}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            repo_info = response.json()
+            update_time_raw = repo_info["pushed_at"]
+            timestamp_datetime = datetime.fromisoformat(update_time_raw).astimezone(timezone.utc)
+            current_datetime = datetime.now(timezone.utc)
+            time_difference = (current_datetime - timestamp_datetime).total_seconds()
+            days, seconds = divmod(int(time_difference), 86400)
+            hours, seconds = divmod(seconds, 3600)
+            minutes, seconds = divmod(seconds, 60)
+            print(current_datetime)
+            print(f"Last Updated {timestamp_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"{days} days, {hours} hours and {minutes} minutes ago")
+        else:
+            print('Repository not found or access denied.')
     except Exception as e:
         print(e)
 
@@ -51,9 +70,6 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         ),
     )
-
-
-
 
 
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1138,7 +1154,7 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
     caption=f"*X7 Finance Games*\n\n"
-    f"`/coinflip`\n`/leaderboard`\n`/me`\n`/roll`\n`/riddle`\n`/rps`\n\n"
+    f"`/ascii`\n`/coinflip`\n`/leaderboard`\n`/me`\n`/roll`\n`/riddle`\n`/rps`\n\n"
     f"The following games are locked in group chats by default. Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n"
     f"`/emoji`\n`/guess`\n`/hangman`\n`/puzzle`\n`/scramble`\n\n",
     parse_mode="Markdown",
@@ -4093,6 +4109,43 @@ async def splitters(update: Update, context):
                             parse_mode="Markdown",
                         )
 
+
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    github_url = f'https://api.github.com/repos/x7finance/telegram-bot'
+    headers = {'Authorization': f'token {os.getenv("GITHUB_PAT")}'}
+    response = requests.get(github_url, headers=headers)
+    repo_info = response.json()
+    update_time_raw = repo_info["pushed_at"]
+    timestamp_datetime = datetime.fromisoformat(update_time_raw).astimezone(timezone.utc)
+    current_datetime = datetime.now(timezone.utc)
+    time_difference = (current_datetime - timestamp_datetime).total_seconds()
+    days, seconds = divmod(int(time_difference), 86400)
+    hours, seconds = divmod(seconds, 3600)
+    minutes, seconds = divmod(seconds, 60)
+    contriburots_url = f'https://api.github.com/repos/x7finance/telegram-bot/contributors'
+    contributors_response = requests.get(contriburots_url, headers=headers)
+    contributors = contributors_response.json()
+    contributor_info = ''
+    for contributor in contributors:
+        contributor_info += f'{contributor["login"]}, Contributions: {contributor["contributions"]}\n'
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f'*X7 Finance Telegram Bot Stats*\n\n'
+                f'Language: {repo_info["language"]}\n'
+                f'Stars: {repo_info["stargazers_count"]}\n'
+                f'Watchers: {repo_info["watchers_count"]}\n'
+                f'Forks: {repo_info["forks_count"]}\n'
+                f'Open Issues: {repo_info["open_issues_count"]}\n\n'
+                f'Contributors:\n{contributor_info}\n'
+                f"Last Updated {timestamp_datetime.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                f"{days} days, {hours} hours and {minutes} minutes ago",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="GitHub", url=f"https://github.com/x7finance/telegram-bot")],
+            ]
+        ),
+    )
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     token_pairs = {

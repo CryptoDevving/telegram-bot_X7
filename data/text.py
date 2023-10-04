@@ -120,6 +120,7 @@ commands = (
     "/smart - X7 Finance Smart Contract Details\n"
     "/snapshot - X7 Finance Snapshot.org\n"
     "/splitters - X7 Finance Splitters Info\n"
+    "/stats - X7 Telegram Bot Stats\n"
     "/supply - Uniswap Supply Info\n"
     "/tax - X7 Finance Token Tax Info\n"
     "/time - World Time\n"

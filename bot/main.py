@@ -131,6 +131,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("smart", commands.smart))
     application.add_handler(CommandHandler("snapshot", commands.snapshot))
     application.add_handler(CommandHandler(["split", "splitters", "splitter"], commands.splitters))
+    application.add_handler(CommandHandler("stats", commands.stats))
     application.add_handler(CommandHandler("supply", commands.supply))
     application.add_handler(CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap))
     application.add_handler(CommandHandler(["tax", "slippage"], commands.tax_command))
