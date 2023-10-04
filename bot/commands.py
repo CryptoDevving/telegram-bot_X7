@@ -34,26 +34,8 @@ dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-
-        owner = 'x7finance'
-        repo_name = 'telegram-bot'
-        url = f'https://api.github.com/repos/{owner}/{repo_name}'
-        headers = {'Authorization': f'token {os.getenv("GITHUB_PAT")}'}
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            repo_info = response.json()
-            update_time_raw = repo_info["pushed_at"]
-            timestamp_datetime = datetime.fromisoformat(update_time_raw).astimezone(timezone.utc)
-            current_datetime = datetime.now(timezone.utc)
-            time_difference = (current_datetime - timestamp_datetime).total_seconds()
-            days, seconds = divmod(int(time_difference), 86400)
-            hours, seconds = divmod(seconds, 3600)
-            minutes, seconds = divmod(seconds, 60)
-            print(current_datetime)
-            print(f"Last Updated {timestamp_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
-            print(f"{days} days, {hours} hours and {minutes} minutes ago")
-        else:
-            print('Repository not found or access denied.')
+        api.push_github("bot/commands.py", "bot push test")
+        print("ok")
     except Exception as e:
         print(e)
 
