@@ -645,7 +645,7 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    input_contract = " ".join(context.args).lower()
+    input_contract = "".join(context.args).lower()
     if not input_contract:
         contract_names = list(dao.contract_mappings.keys())
         formatted_contract_names = '\n'.join(contract_names)
@@ -655,6 +655,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Use `/dao [contract-name]` for a list of DAO callable functions\n\n"
                 f"*Contract Names:*\n\n{formatted_contract_names}",
         parse_mode="Markdown")
+        return
     matching_contract = None
     for contract in dao.contract_mappings:
         if contract.lower() == input_contract:
@@ -1349,14 +1350,10 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = api.get_duration_years(x7m105_duration)
     migration_duration = datetime.utcnow() - times.migration
     migration_years, migration_months, migration_weeks, migration_days = api.get_duration_years(migration_duration)
-    xchange_duration = datetime.utcnow() - times.xchange 
-    xchange_years, xchange_months, xchange_weeks, xchange_days = api.get_duration_years(xchange_duration)
     reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
     reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days ago\n\n"
     reply_message += f'V2 Migration\n{times.migration.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
     reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
-    reply_message += f'Xchange Launch\n{times.xchange.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
-    reply_message += f"{xchange_years} years, {xchange_months} months, {xchange_weeks} weeks, and {xchange_days} days ago\n\n"
     reply_message += api.get_quote()
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",

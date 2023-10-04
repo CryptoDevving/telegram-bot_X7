@@ -46,21 +46,29 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
+    messages = [text.about,text.airdrop,text.ecosystem,text.endorse,text.refer,text.volume, random.choice(text.quotes)]
+    random_message = random.choice(messages)
+    if random_message in text.quotes:
+        message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
+    else:
+        message = random_message
+
     await context.bot.send_photo(
         chat_id=job.chat_id,
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
     )
+
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=auto_message_list(),
+        text=f"{message}",
         parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.dashboard}")],
+            ]
+        ),
     )
-
-
-def auto_message_list():
-    messages = [text.about,text.airdrop,text.ecosystem,text.endorse,text.refer,text.volume]
-    message = random.choice(messages)
-    return message
 
 
 async def clicks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

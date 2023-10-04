@@ -206,16 +206,14 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], admin.admin_command))
     application.add_handler(CommandHandler("lock_games", admin.games_lock))
     application.add_handler(CommandHandler("unlock_games", admin.games_unlock))
-    application.add_handler(CommandHandler("chats", admin.show_chats))
-
 
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
     job_queue.run_repeating(
         auto.auto_message_info,
-        7200,
+        times.auto_message_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        first=7200,
+        first=times.auto_message_time,
         name="Auto Message",
     )
 

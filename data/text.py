@@ -1,4 +1,4 @@
-import random
+from api import index as api
 
 
 about = (
@@ -12,7 +12,7 @@ about = (
     "• X7 Finance has a novel DAO governance structure + IPFS website, that ensures complete decentralization "
     "and censorship-resistance.\n\n"
     "Our Telegram network and X are community-run, in the spirit of decentralization.\n\n"
-    "• First target - Capturing 1% of the $100b daily trading volume on the Ethereum network.\n\n"
+    f"• First target - Capturing 1% of the $100b daily trading volume on the Ethereum network.\n\n"
     '`"X7’s founding team believes that capital should be available to those with great ideas and that the '
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
     "downside risk.`\n\n#LongLiveDefi"
@@ -84,6 +84,7 @@ commands = (
     "/faq - X7 Finance FAQ Links\n"
     "/fees - Xchange Fee Liquidation TXs\n"
     "/fg - Market Fear/Greed Index\n"
+    "/games - X7 Finance Mini Games\n"
     "/gas - Network Gas Info\n"
     "/giveaway - Giveaway Info\n"
     "/holders - X7 Finance Holder Counts\n"
@@ -173,7 +174,7 @@ discount = (
     "The NFTs provide a fixed percentage discount. The Borrowing Incentive NFT is consumed upon "
     "loan origination.\n\n"
     "The latter two discounts provide a linear sliding scale, based on the minimum and maximum loan amounts and "
-    "loan periods. The starting values for these discounts are 0-10% discount.\n\n"
+    f"loan periods. The starting values for these discounts are 0-10% discount.\n\n"
     "The time based discount is imposing an opportunity cost of lent funds - and incentivizing taking out the "
     "shortest loan possible.\n"
     "The amount based discount is recognizing that a loan origination now is more valuable than a possible loan "
@@ -366,17 +367,17 @@ refer = (
     "4. Once the project launches successfully with an ILL, the reward will be deposited to your submitted "
     "wallet address 2 weeks after the launch of the project.\n\n"
     "NOTE: community multi-sig team has final discretion on payment. Any individual or group looking to "
-    "exploit this program will not be eligible for a reward."
+    "exploit this program will not be eligible for a reward.\n\n[Refer here](https://docs.google.com/forms/d/e/1FAIpQLSf5h3ngT_swsq2My5BfY1W_ZWv3jni9JeWEfgkWFgorNLknQg/viewform)"
 )
 
 volume = (
-    "*Driving XChange Volume\n\nOur focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
+    "*Driving XChange Volume*\n\nOur focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
     "*0.1% Back to the Ecosystem*\n\n"
-    "With every trade made on Xchange, 0.1% flows back to the ecosystem. That's the power of X7 Finance.\n\n"
+    f"With every trade made on Xchange, '0.1%' flows back to the ecosystem. That's the power of X7 Finance.\n\n"
     "*Create Your Own Liquidity Pools*\n\n"
     "Create liquidity pools now to further fuel the ecosystem. Best performers? Those with low fees and proven high volume.\n\n"
     "*Achieve Volume with Just $1000*\n\n"
-    "Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!"
+    f"Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!\n\nhttps://beta.x7.finance/#/add/v2/ETH'"
 )
 
 quotes = [
@@ -386,7 +387,7 @@ quotes = [
     "Executive Summary\n\nX7 is an ecosystem of innovative smart contracts that provide those with visionary ideas "
     "access to leveraged seed capital without lenders incurring the risk of losing the principal.",
     "Total Addressable Market\n\nEthereum and ERC20 tokens have 24hr trading volume in the 100s of billions. We will "
-    "consider X7 a success if 1% of all trading volume takes place on Xchange.",
+    f"consider X7 a success if 1% of all trading volume takes place on Xchange.",
     "Customers And Use Cases\n\nUnderstanding who our customers are, and what their needs and use cases are, is "
     "fundamental to finding product-market fit. We have identified 4 primary user personas that have distinct needs and"
     " have optimized the system to meet their requirements.\n\nProject Launchers - Seeking Capital\nThe whole reason "
@@ -613,7 +614,7 @@ quotes = [
     " However, these durations may be changed (within hard-coded limits) to meet future governance needs.",
     "*Proposals and Voting*\n\nVoting will occur in multiple phases, each of which has either a minimum or maximum "
     "time phase duration.\n\n*Phase 1: Quorum-seeking*\nX7DAO token holders will be able to stake their tokens as "
-    "X7sDAO, a non-transferable staked version of X7DAO.\n\nA quorum is reached when more than 50% of circulating "
+    f"X7sDAO, a non-transferable staked version of X7DAO.\n\nA quorum is reached when more than 50% of circulating "
     "X7DAO has been staked as X7sDAO.\n\nOnce a quorum is reached and a minimum quorum-seeking time period has "
     "passed, the X7sDAO tokens are temporarily locked (and no more X7DAO tokens may be staked until the next Quorum "
     "seeking period) and the governance process moves to the next phase\n\n*Phase 2: Proposal creation*\nA proposal "
@@ -626,7 +627,7 @@ quotes = [
     "and the total amount of X7sDAO they have staked.\n\nProposals pass by a majority vote of the quorum of X7sDAO "
     "tokens.\n\nA parallel voting process will occur with Magister tokens, where each Magister token carries one "
     "vote.\n\nIf a majority of magister token holders vote against a proposal, the proposal must reach an X7sDAO vote "
-    "of 75% of the quorum of X7sDAO tokens.\n\n*Phase 4: Proposal adoption*\nDuring this phase, proposals that have "
+    f"of 75% of the quorum of X7sDAO tokens.\n\n*Phase 4: Proposal adoption*\nDuring this phase, proposals that have "
     "passed will be enqueued for execution. This step ensures proper ordering and is a guard against various forms of "
     "process griefing.\n\n*Phase 5: Proposal execution*\nAfter proposal adoption, all passed proposals must be executed"
     " before a new Quorum Seeking phase may commence.",
