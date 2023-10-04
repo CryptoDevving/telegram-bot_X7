@@ -7,7 +7,8 @@ from datetime import datetime, timedelta, timezone, date
 import pytz
 from dateutil import parser
 
-from data import  text, media, url
+from data import  text, url
+from media import index as media
 from api import index as api
 
 
