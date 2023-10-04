@@ -15,7 +15,6 @@ import wikipediaapi
 from web3 import Web3
 from telegram import *
 from telegram.ext import *
-from dateutil import parser
 from translate import Translator
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
@@ -35,8 +34,7 @@ dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        data = api.get_riddle()
-        data["riddle"]
+        return
     except Exception as e:
         print(e)
 
@@ -55,24 +53,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        await update.message.reply_text(
-            f"{text.admin_commands}",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="Rose Bot Anti-flood",
-                            url="https://missrose.org/guide/antiflood/",
-                        )
-                    ],
-                ]
-            ),
-        )
-    else:
-        await update.message.reply_text(f"{text.mods_only}")
+
 
 
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1162,23 +1143,7 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     parse_mode="Markdown",
 )
     
-async def games_lock(update, context):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        chat_id = update.message.chat_id
-        context.chat_data[chat_id] = True
-        await update.message.reply_text(f"Games locked in this chat. Play in private chat with @x7finance_bot or a group that is not locked.")
-    else:
-        await update.message.reply_text(f"{text.mods_only}")
-    
-async def games_unlock(update, context):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        chat_id = update.message.chat_id
-        context.chat_data[chat_id] = False
-        await update.message.reply_text("Games are now unlocked in this chat.")
-    else:
-        await update.message.reply_text(f"{text.mods_only}")
+
 
 async def gas(update, context):
     chain = " ".join(context.args).lower()
@@ -4482,152 +4447,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         ),
     )
-
-
-async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    ext = " ".join(context.args)
-    username = "@x7_finance"
-    if ext == "":
-        try:
-            tweet = api.twitter.user_timeline(
-                screen_name=username, count=1, exclude_replies=True, include_rts=False
-            )
-            await update.message.reply_sticker(sticker=media.twitter_sticker)
-            await update.message.reply_text(
-                f"Latest X7 Finance X Post\n\n{tweet[0].text}\n\n"
-                f"{url.twitter}status/{tweet[0].id}\n\n"
-                f"{random.choice(text.x_replies)}"
-            )
-        except Exception as e:
-            await update.message.reply_sticker(sticker=media.twitter_sticker)
-            await update.message.reply_text(
-                f"*X7 Finance X*\n\n" f"{random.choice(text.x_replies)}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="X7 Finance X",
-                                url=f"{url.twitter}",
-                            )
-                        ],
-                    ]
-                ),
-            )
-    if ext == "count":
-        chat_admins = await update.effective_chat.get_administrators()
-        if update.effective_user in (admin.user for admin in chat_admins):
-            tweet = api.twitter.user_timeline(
-                screen_name=username, count=1, exclude_replies=True, include_rts=False
-            )
-            response = api.twitter_v2.get_retweeters(tweet[0].id)
-            status = api.twitter.get_status(tweet[0].id)
-            retweet_count = status.retweet_count
-            count = "\n".join(f"{p}" for p in response.data)
-            await update.message.reply_sticker(sticker=media.twitter_sticker)
-            await update.message.reply_text(
-                f"Latest X7 Finance Tweet\n\n{tweet[0].text}\n\n"
-                f"{url.twitter}status/{tweet[0].id}\n\n"
-                f"Retweeted {retweet_count} times, by the following members:\n\n{count}"
-            )
-        else:
-            await update.message.reply_text(f"{text.mods_only}")
-
-
-async def twitter_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    tweet = context.args[0]
-    start = tweet.index("status/")
-    end = tweet.index("?", start + 1)
-    tweet_id = tweet[start + 7 : end]
-    response = api.twitter_v2.get_retweeters(tweet_id)
-    status = api.twitter.get_status(tweet_id)
-    retweet_count = status.retweet_count
-    rt_names = "\n".join(f"{p}" for p in response.data)
-    await update.message.reply_sticker(sticker=media.twitter_sticker)
-    await update.message.reply_text(
-        f"Reposted {retweet_count} times, by the following members:\n\n{rt_names}"
-    )
-
-
-async def twitter_draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        tweet = context.args[0]
-        start = tweet.index("status/")
-        end = tweet.index("?", start + 1)
-        tweet_id = tweet[start + 7 : end]
-        response = api.twitter_v2.get_retweeters(tweet_id)
-        status = api.twitter.get_status(tweet_id)
-        retweet_count = status.retweet_count
-        rt_names = "\n".join(f"{p}" for p in response.data)
-        await update.message.reply_sticker(sticker=media.twitter_sticker)
-        await update.message.reply_text(f"{retweet_count} Entries:\n\n{rt_names}")
-        await update.message.reply_text(
-            f"The Winner is....\n\n{random.choice(response.data)}\n\n"
-            f"Congratulations, Please DM @X7_Finance on X to verify your account"
-        )
-    else:
-        await update.message.reply_text(f"{text.mods_only}")
-
-
-async def twitter_raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        username = random.choice(text.usernamelist)
-        tweet = api.twitter.user_timeline(
-            screen_name=username, count=1, include_rts="false", exclude_replies="true"
-        )
-        await update.message.reply_sticker(sticker=media.twitter_sticker)
-        await update.message.reply_text(
-            f"🚨🚨 Raid {username} 🚨🚨\n\n"
-            f"{tweet[0].text}\n\n"
-            f"https://twitter.com/intent/tweet?text=@X7_Finance&hashtags=LongLiveDefi&in_reply_to={tweet[0].id}\n\n"
-            f"{random.choice(text.x_replies)}",
-            disable_web_page_preview=True,
-        )
-    else:
-        await update.message.reply_text(f"{text.mods_only}")
-
-
-async def twitter_spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    response = api.twitter_v2.get_spaces(user_ids=1561721566689386496)
-    if response[0] is None:
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"X7 Finance X space\n\nPlease check back for more details"
-            f"\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-        )
-    else:
-        data = f"{response[0]}"
-        start = data.index("=")
-        end = data.index(" ", start)
-        space_id = data[start + 1 : end]
-
-        def get_space():
-            url = f"https://api.twitter.com/2/spaces/{space_id}?space.fields=scheduled_start,title"
-            headers = {
-                "Authorization": "Bearer {}".format(os.getenv("TWITTER_BEARER")),
-                "User-Agent": "v2SpacesLookupPython",
-            }
-            response = requests.request("GET", url, headers=headers)
-            result = response.json()
-            return result["data"]
-
-        space = get_space()
-        then = parser.parse(space["scheduled_start"]).astimezone(pytz.utc)
-        duration = then - datetime.utcnow()
-        days, hours, minutes = api.get_duration_days(duration)
-        await update.message.reply_sticker(sticker=media.twitter_sticker)
-        await update.message.reply_text(
-            text=f"Next X7 Finance X space:\n\n"
-            f'{space["title"]}\n\n'
-            f'{then.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
-            f"{days} days, {hours} hours and {minutes} minutes\n\n"
-            f"[Click here](https://twitter.com/i/spaces/{space_id}) to set a reminder!"
-            f"\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-        )
 
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):

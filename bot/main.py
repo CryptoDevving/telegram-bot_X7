@@ -8,6 +8,9 @@ from telegram.ext import *
 import auto
 import commands
 import games
+import admin
+import twitter
+
 from data import times
 from api import index as api
 
@@ -36,12 +39,12 @@ async def error(update: Update, context: CallbackContext):
 
 def scanner():
     scripts = [
-        "scanner_bsc.py",
-        "scanner_eth.py",
-        "scanner_arb.py",
-        "scanner_poly.py",
-        "scanner_opti.py",
-##        "scanner_base.py",
+        "scanner/bsc.py",
+        "scanner/eth.py",
+        "scanner/arb.py",
+        "scanner/poly.py",
+        "scanner/opti.py",
+##        "scanner/base.py",
     ]
     python_executable = sys.executable
     processes = []
@@ -60,7 +63,6 @@ if __name__ == "__main__":
     application.add_handler(CallbackQueryHandler(auto.clicks))
 
     application.add_handler(CommandHandler("about", commands.about))
-    application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin))
     application.add_handler(CommandHandler("alerts", commands.alerts))
     application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
     application.add_handler(CommandHandler("alumni", commands.alumni))
@@ -104,8 +106,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("loan", commands.loan))
     application.add_handler(CommandHandler(["loans", "borrow"], commands.loans_command))
     application.add_handler(CommandHandler("locks", commands.locks))
-    application.add_handler(CommandHandler("lock_games", commands.games_lock))
-    application.add_handler(CommandHandler("unlock_games", commands.games_unlock))
     application.add_handler(CommandHandler("me", commands.me))
     application.add_handler(CommandHandler("magisters", commands.magisters))
     application.add_handler(CommandHandler(["mcap", "marketcap", "cap"], commands.mcap))
@@ -142,11 +142,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("japanese", commands.translate_japanese))
     application.add_handler(CommandHandler("russian", commands.translate_russian))
     application.add_handler(CommandHandler("treasury", commands.treasury))
-    application.add_handler(CommandHandler(["twitter", "x"], commands.twitter))
-    application.add_handler(CommandHandler("count", commands.twitter_count))
-    application.add_handler(CommandHandler("draw", commands.twitter_draw))
-    application.add_handler(CommandHandler("raid", commands.twitter_raid))
-    application.add_handler(CommandHandler(["spaces", "space"], commands.twitter_spaces))
     application.add_handler(CommandHandler("website", commands.website))
     application.add_handler(CommandHandler("x7r", commands.x7r))
     application.add_handler(CommandHandler("x7d", commands.x7d))
@@ -163,6 +158,12 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["website", "site"], commands.website))
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
+
+    application.add_handler(CommandHandler(["twitter", "x"], twitter.tweet))
+    application.add_handler(CommandHandler("count", twitter.twitter_count))
+    application.add_handler(CommandHandler("draw", twitter.draw))
+    application.add_handler(CommandHandler("raid", twitter.raid))
+    application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
     application.add_handler(CommandHandler("coinflip", games.coinflip))
     application.add_handler(CommandHandler("roll", games.start_roll))
@@ -201,6 +202,12 @@ if __name__ == "__main__":
     states={games.PLAYING_RIDDLE: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.riddle_game)]},
     fallbacks=[])
     application.add_handler(riddle_conversation)
+
+    application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], admin.admin_command))
+    application.add_handler(CommandHandler("lock_games", admin.games_lock))
+    application.add_handler(CommandHandler("unlock_games", admin.games_unlock))
+    application.add_handler(CommandHandler("chats", admin.show_chats))
+
 
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 

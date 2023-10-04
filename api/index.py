@@ -664,11 +664,13 @@ def get_random_word(variable):
     data = response.json()
     return data[0]
 
+
 def get_riddle():
     url = f"https://riddles-api.vercel.app/random"
     response = requests.get(url)
     data = response.json()
     return data
+
 
 def get_scan(token: str, chain: str) -> dict:
     chains = {"eth": 1, "bsc": 56, "arb": 42161, "opti": 10, "poly": 137}
