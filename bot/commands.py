@@ -794,7 +794,6 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Discount Application", url=url.dac)],
                 [
                     InlineKeyboardButton(
                         text="X7 Lending Discount Contract",
