@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone, date
 
 import csv
 import pytz
-import pyttsx3
+from gtts import gTTS
 import requests
 import textwrap
 import sentry_sdk
@@ -26,10 +26,6 @@ from media import index as media
 from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, chains, pairs
 
 
-sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
-
-
-
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         return
@@ -37,7 +33,6 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(e)
 
 
-# COMMANDS
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"{text.about}",
@@ -162,8 +157,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f'- {x7104_readable_date}\n'
         f'X7105 - ${x7105_ath} (${"{:0,.0f}".format(x7105_mcap)}) {x7105_ath_change}% '
         f'- {x7105_readable_date}\n\n'
-        f'Total Market Cap ATH:\n${"{:0,.0f}".format(total)}'
-        f'\n\n\n\n'
+        f'Total Market Cap ATH:\n${"{:0,.0f}".format(total)}\n\n\n\n'
         f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font=myfont,
         fill=(255, 255, 255),
@@ -3449,9 +3443,8 @@ async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    engine = pyttsx3.init()
-    engine.save_to_file(" ".join(context.args), "media/voicenote.mp3")
-    engine.runAndWait()
+    voice_note = gTTS(" ".join(context.args), lang='en', slow=False)
+    voice_note.save("media/voicenote.mp3")
     await update.message.reply_audio(audio=open("media/voicenote.mp3", "rb"))
 
 

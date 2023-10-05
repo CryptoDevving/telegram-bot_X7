@@ -36,32 +36,14 @@ async def error(update: Update, context: CallbackContext):
                 )
             )
 
-
-def scanner():
-    scripts = [
-        "scanner/bsc.py",
-        "scanner/eth.py",
-        "scanner/arb.py",
-        "scanner/poly.py",
-        "scanner/opti.py",
-##        "scanner/base.py",
-    ]
-    python_executable = sys.executable
-    processes = []
-    for script in scripts:
-        command = [python_executable, script]
-        process = subprocess.Popen(command)
-        processes.append(process)
-
-
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
 job_queue = application.job_queue
 
 
 if __name__ == "__main__":
     application.add_error_handler(error)
-    application.add_handler(CallbackQueryHandler(auto.clicks))
 
+    ## COMANDS ##
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler("alerts", commands.alerts))
     application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
@@ -160,12 +142,14 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
+    ## TWITTER ##
     application.add_handler(CommandHandler(["twitter", "x"], twitter.tweet))
     application.add_handler(CommandHandler("count", twitter.count))
     application.add_handler(CommandHandler("draw", twitter.draw))
     application.add_handler(CommandHandler("raid", twitter.raid))
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
+    ## GAMES ##
     application.add_handler(CommandHandler("ascii", games.ascii))
     application.add_handler(CommandHandler("coinflip", games.coinflip))
     application.add_handler(CommandHandler("roll", games.start_roll))
@@ -205,10 +189,13 @@ if __name__ == "__main__":
     fallbacks=[])
     application.add_handler(riddle_conversation)
 
+    ## ADMIN ##
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], admin.admin_command))
     application.add_handler(CommandHandler("lock_games", admin.games_lock))
     application.add_handler(CommandHandler("unlock_games", admin.games_unlock))
 
+    ## AUTO ##
+    application.add_handler(CallbackQueryHandler(auto.clicks))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
     job_queue.run_repeating(
@@ -226,5 +213,21 @@ if __name__ == "__main__":
         name="Click Message",
     )
 
-    scanner()
+    ## SCANNERS ##
+    scanners = [
+        "scanner/bsc.py",
+        "scanner/eth.py",
+        "scanner/arb.py",
+        "scanner/poly.py",
+        "scanner/opti.py",
+##        "scanner/base.py",
+    ]
+    python_executable = sys.executable
+    processes = []
+    for scanner in scanners:
+        command = [python_executable, scanner]
+        process = subprocess.Popen(command)
+        processes.append(process)
+
+    ## RUN ##
     application.run_polling()
