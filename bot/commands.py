@@ -193,7 +193,7 @@ async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance DAO*\n\n"
-                "Follow the /bio command with a few sentances about yourself to be uploaded to x7finance.org"f"\n\n"
+                "Follow the /bio command with a few sentences about yourself to be uploaded to x7finance.org"f"\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown"
         )
