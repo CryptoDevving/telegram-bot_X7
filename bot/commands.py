@@ -3627,7 +3627,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             owner_percent = "❓ Tokens Held By Owner Unknown"
             owner_eth = "❓ ETH Held By Owner Unknown"
-        if "lp_holder_count" in scan[token_address_str]:
+        if "lp_holders" in scan[token_address_str]:
             locked_lp_list = [
                 lp
                 for lp in scan[token_address_str]["lp_holders"]

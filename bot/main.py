@@ -36,6 +36,7 @@ async def error(update: Update, context: CallbackContext):
                 )
             )
 
+
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
 job_queue = application.job_queue
 
