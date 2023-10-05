@@ -28,32 +28,11 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
-dune_flag = False
-dune_timestamp = datetime.utcnow().timestamp()
-dune_date = datetime.fromtimestamp(dune_timestamp).strftime("%Y-%m-%d %H:%M:%S")
+
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-
-        owner = 'x7finance'
-        repo_name = 'telegram-bot'
-        url = f'https://api.github.com/repos/{owner}/{repo_name}'
-        headers = {'Authorization': f'token {os.getenv("GITHUB_PAT")}'}
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            repo_info = response.json()
-            update_time_raw = repo_info["pushed_at"]
-            timestamp_datetime = datetime.fromisoformat(update_time_raw).astimezone(timezone.utc)
-            current_datetime = datetime.now(timezone.utc)
-            time_difference = (current_datetime - timestamp_datetime).total_seconds()
-            days, seconds = divmod(int(time_difference), 86400)
-            hours, seconds = divmod(seconds, 3600)
-            minutes, seconds = divmod(seconds, 60)
-            print(current_datetime)
-            print(f"Last Updated {timestamp_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
-            print(f"{days} days, {hours} hours and {minutes} minutes ago")
-        else:
-            print('Repository not found or access denied.')
+        return
     except Exception as e:
         print(e)
 
@@ -4501,8 +4480,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        global dune_flag, dune_date, dune_timestamp
-        if dune_flag == False:
+        if dune.flag == False:
             execution_id = dune.execute_query("2972368", "medium")
             t.sleep(5)
             response = dune.get_query_results(execution_id)
@@ -4513,7 +4491,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             last_7d_amt = response_data['result']['rows'][0]['last_7d_amt']
             lifetime_amt = response_data['result']['rows'][0]['lifetime_amt']
 
-            dune_volume = (
+            volume = (
                 f'Total:       ${"{:0,.0f}".format(lifetime_amt)}\n'
                 f'30 Day:    ${"{:0,.0f}".format(last_30d_amt)}\n'
                 f'7 Day:      ${"{:0,.0f}".format(last_7d_amt)}\n'
@@ -4522,7 +4500,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*Xchange Trading Volume*\n\n{dune_volume}\n\n{api.get_quote()}",
+            caption=f"*Xchange Trading Volume*\n\n{volume}\n\n{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [
@@ -4534,13 +4512,14 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]
                 ),
             )
-            dune_timestamp = datetime.utcnow().timestamp()
-            dune_flag = True
+            dune.timestamp = datetime.utcnow().timestamp()
+            dune.flag = True
+            dune.volume = volume
         else:
             await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Trading Volume*\n\n'
-                    f'{dune_volume}\n\nLast Updated: {dune_date}\n\n{api.get_quote()}',
+                    f'{dune.volume}\n\nLast Updated: {dune.last_date}\n\n{api.get_quote()}',
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [

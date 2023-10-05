@@ -1,10 +1,15 @@
 import os
 from requests import get, post
+from datetime import datetime, timedelta, timezone, date
 
 API_KEY = os.getenv("DUNE_API_KEY")
 HEADER = {"x-dune-api-key": API_KEY}
 BASE_URL = "https://api.dune.com/api/v1/"
 
+flag = False
+timestamp = datetime.utcnow().timestamp()
+last_date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+volume = ""
 
 def make_api_url(module, action, identifier):
     return f"{BASE_URL}{module}/{identifier}/{action}"
