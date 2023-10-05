@@ -654,7 +654,7 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    input_contract = "".join(context.args).lower()
+    input_contract = " ".join(context.args).lower()
     contract_names = list(dao.contract_mappings.keys())
     formatted_contract_names = '\n'.join(contract_names)
     if input_contract == "list":
