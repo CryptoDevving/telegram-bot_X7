@@ -26,7 +26,7 @@ gTTS==2.4.0
 h11==0.14.0
 hexbytes==0.3.1
 httpcore==0.17.2
-httpx==0.24.1
+httpx==0.25
 idna==3.4
 jsonschema==4.17.3
 libretranslatepy==2.1.1
