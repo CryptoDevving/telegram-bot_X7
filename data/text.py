@@ -118,7 +118,6 @@ commands = (
     "/search - Search the Web\n"
     "/signers - X7 Finance Multi Sig Signers\n"
     "/smart - X7 Finance Smart Contract Details\n"
-    "/snapshot - X7 Finance Snapshot.org\n"
     "/splitters - X7 Finance Splitters Info\n"
     "/stats - X7 Telegram Bot Stats\n"
     "/supply - Uniswap Supply Info\n"

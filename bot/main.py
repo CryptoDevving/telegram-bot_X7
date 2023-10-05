@@ -111,7 +111,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("search", commands.search))
     application.add_handler(CommandHandler("signers", commands.signers))
     application.add_handler(CommandHandler("smart", commands.smart))
-    application.add_handler(CommandHandler("snapshot", commands.snapshot))
     application.add_handler(CommandHandler(["split", "splitters", "splitter"], commands.splitters))
     application.add_handler(CommandHandler("stats", commands.stats))
     application.add_handler(CommandHandler("supply", commands.supply))

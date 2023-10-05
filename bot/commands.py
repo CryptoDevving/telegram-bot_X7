@@ -636,15 +636,62 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     input_contract = "".join(context.args).lower()
-    if not input_contract:
-        contract_names = list(dao.contract_mappings.keys())
-        formatted_contract_names = '\n'.join(contract_names)
+    contract_names = list(dao.contract_mappings.keys())
+    formatted_contract_names = '\n'.join(contract_names)
+    if input_contract == "list":
         await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance DAO Functions*\n\n"
-                f"Use `/dao [contract-name]` for a list of DAO callable functions\n\n"
-                f"*Contract Names:*\n\n{formatted_contract_names}",
-        parse_mode="Markdown")
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*X7 Finance DAO*\n\nUse `/dao contract-name` for a list of DAO callable functions\n\n"
+                    f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
+            parse_mode="Markdown",
+            )
+        return
+    if not input_contract:
+        snapshot = api.get_snapshot()
+        end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        start = datetime.utcfromtimestamp(
+            snapshot["data"]["proposals"][0]["start"]
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+        duration = then - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
+        if duration < timedelta(0):
+            countdown = "Vote Closed"
+            caption = "View"
+        else:
+            countdown = f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes"
+            caption = "Vote"
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*X7 Finance DAO*\n\n"
+                f'use `/dao list` for a list of call callable contracts\n\n'
+                f'*Latest Proposal:*\n\n'
+                f'{snapshot["data"]["proposals"][0]["title"]} by - '
+                f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
+                f"Voting Start: {start} UTC\n"
+                f"Voting End:   {end} UTC\n\n"
+                f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
+                f"{countdown}\n\n{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text=f"{caption} Here",
+                            url=f"{url.snapshot}/proposal/"
+                            f'{snapshot["data"]["proposals"][0]["id"]}',
+                        )
+                    ],
+                ]
+            ),
+        )
+        
         return
     matching_contract = None
     for contract in dao.contract_mappings:
@@ -3878,52 +3925,6 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 [
                     InlineKeyboardButton(
                         text="X7 Xchange Factory", url=f"{chain_url}{ca.factory}"
-                    )
-                ],
-            ]
-        ),
-    )
-
-
-async def snapshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    snapshot = api.get_snapshot()
-    end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
-    start = datetime.utcfromtimestamp(
-        snapshot["data"]["proposals"][0]["start"]
-    ).strftime("%Y-%m-%d %H:%M:%S")
-    then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-    duration = then - datetime.utcnow()
-    days, hours, minutes = api.get_duration_days(duration)
-    if duration < timedelta(0):
-        countdown = "Vote Closed"
-        caption = "View"
-    else:
-        countdown = f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes"
-        caption = "Vote"
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance Community Snapshot*\n\n"
-        f"Latest Proposal:\n\n"
-        f'{snapshot["data"]["proposals"][0]["title"]} by - '
-        f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
-        f"Voting Start: {start} UTC\n"
-        f"Voting End:   {end} UTC\n\n"
-        f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
-        f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
-        f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
-        f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
-        f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
-        f"{countdown}\n\n{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text=f"{caption} Here",
-                        url=f"{url.snapshot}/proposal/"
-                        f'{snapshot["data"]["proposals"][0]["id"]}',
                     )
                 ],
             ]
