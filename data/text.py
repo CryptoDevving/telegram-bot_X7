@@ -61,6 +61,7 @@ commands = (
     "/alumni - X7 Finance Alumni\n"
     "/announcements - Announcements Channel\n"
     "/ath - All Time High Info\n"
+    "/bio - Submit a bio to x7finance.org\n"
     "/blocks - Block Info\n"
     "/blog - X7 Finance Blog\n"
     "/burn - X7R Burn Info\n"

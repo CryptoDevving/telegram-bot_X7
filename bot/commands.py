@@ -28,7 +28,6 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-
         return
     except Exception as e:
         print(e)
@@ -188,18 +187,38 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    input = " ".join(context.args)
+    if not input:
+        await update.message.reply_photo(
+            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            caption=f"*X7 Finance DAO*\n\n"
+                "Follow the /bio command with a few sentances about yourself to be uploaded to x7finance.org"f"\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown"
+        )
+    else:
+        user = update.effective_user
+        user_info = user.username or f"{user.first_name} {user.last_name}"
+        await context.bot.send_message(
+            chat_id=os.getenv("BIO_TELEGRAM_CHANNEL_ID"),
+            text=f"{user_info}\n\n{input}",
+            parse_mode="Markdown")
+        await update.message.reply_text(
+            f"Thanks {user_info}, Your bio has been submitted")
+
+
 async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     time = round(t.time())
     block_types = ["eth", "arb", "bsc", "poly", "opti", "base"]
     blocks = {block_type: api.get_block(block_type, time) for block_type in block_types}
     blocks_text = "\n".join([f"{block_type.upper()}: {block}" for block_type, block in blocks.items()])
-    quote = api.get_quote()
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=
         f"*Latest Blocks*\n\n"
         f"{blocks_text}\n\n"
-        f"{quote}",
+        f"{api.get_quote()}",
         parse_mode="Markdown"
     )
 
