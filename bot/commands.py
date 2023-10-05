@@ -28,6 +28,7 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+
         return
     except Exception as e:
         print(e)
