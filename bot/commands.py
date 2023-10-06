@@ -193,16 +193,20 @@ async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance DAO*\n\n"
-                "Follow the /bio command with a few sentences about yourself to be uploaded to x7finance.org"f"\n\n"
+                "Follow the /bio command with a few sentences about yourself to be uploaded to x7finance.org/community/meetthedao\n\n No more than 230 characters"f"\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown"
         )
+    elif len(input) > 230:
+        await update.message.reply_text(
+            f"Your bio exceeds the maximum character limit of 230 characters, please resubmit")
     else:
         user = update.effective_user
         user_info = user.username or f"{user.first_name} {user.last_name}"
         await context.bot.send_message(
             chat_id=os.getenv("BIO_TELEGRAM_CHANNEL_ID"),
-            text=f"{user_info}\n\n{input}",
+            text=f"{user.first_name}\nhttp://t.me/{user.username}\n\n{input}",
+            disable_web_page_preview="true",
             parse_mode="Markdown")
         await update.message.reply_text(
             f"Thanks {user_info}, Your bio has been submitted")
@@ -221,6 +225,7 @@ async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{api.get_quote()}",
         parse_mode="Markdown"
     )
+
 
 async def blog(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
