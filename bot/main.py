@@ -86,7 +86,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["links", "socials"], commands.links))
     application.add_handler(CommandHandler("liquidate", commands.liquidate))
     application.add_handler(CommandHandler("liquidity", commands.liquidity))
-    application.add_handler(CommandHandler("loan", commands.loan))
+    application.add_handler(CommandHandler("loan_id", commands.loan))
     application.add_handler(CommandHandler(["loans", "borrow"], commands.loans_command))
     application.add_handler(CommandHandler("locks", commands.locks))
     application.add_handler(CommandHandler("me", commands.me))
