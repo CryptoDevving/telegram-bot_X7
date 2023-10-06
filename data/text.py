@@ -97,7 +97,7 @@ commands = (
     "/links - X7 Finance Socials Links\n"
     "/liquidate - Loan Liquidation Info\n"
     "/liquidity - X7 Finance Liquidity Info\n"
-    "/loan - Specific Loan ID Info\n"
+    "/loan_id - Specific Loan ID Info\n"
     "/loans - Loan Term Details\n"
     "/locks - Liquidity Locks Info\n"
     "/me - Individual Fastest Pioneer details\n"
