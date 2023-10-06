@@ -26,6 +26,8 @@ admin_commands = (
     "/antiflood - (Dis)Enable anti-flood mode\n"
     "/lock all - mutes chat\n"
     "/unlock all - unmute chat\n"
+    "/lock_games - lock games\n"
+    "/unlock_games\n"
     "/shield - Start shield raid\n"
     "BuyBotTech - X7R\n"
     "BobbyBuyBot - X7DAO, X7101, X7102\n"
@@ -67,7 +69,6 @@ commands = (
     "/burn - X7R Burn Info\n"
     "/buy - X7 Finance Buy Links\n"
     "/buybacks - X7 Finance Buy Backs\n"
-    "/buyevenly - Buy Constellations Evenly\n"
     "/channels - List of X7 Finance Channels\n"
     "/chart - X7 Finance Charts\n"
     "/check - Check 2 Input Addresses\n"
@@ -129,7 +130,6 @@ commands = (
     "/treasury - X7 Finance Treasury Info\n"
     "/twitter - X7 Finance Twitter/X\n"
     "/volume - Xchange Volume Info\n"
-    "/voting - DAO Voting Info\n"
     "/wei - WEI Conversion\n"
     "/wallet - Wallet Tracking\n"
     "/website - X7 finance Website Links\n"
@@ -299,7 +299,6 @@ emoji_combinations = [
 ]
 
 
-
 endorse = (
     "*XChange Pairs*\n\nThe X7 Dev team or the community team will not endorse any particular token or launch on Xchange.\n\n"
     "Xchange is a permissionless swap protocol. We encourage DeFi participants to exercise the same level of "
@@ -308,26 +307,6 @@ endorse = (
     "Trust No one, trust code. Long Live Defi"
 )
 
-evenly = (
-    "*Buy All X7 Finance Constellation Tokens Evenly (ETH)*\n\n"
-    "Simply connect to https://dapp.x7community.space/constellation via metamask mobile or desktop"
-    " and enter your desired Eth amount\n\n"
-    "Alternatively you can interact with the follow contract and follow the steps "
-    "below:\n\n"
-    "1. Head over to the Buy Evenly contract:\nhttps://etherscan.io/address/0x0419074afe1a137dfa6afd5b6af5"
-    "771c3ffbea49#code\n"
-    '1.1. Press on "Contract" If it\'s not already selected.\n2. Press on "Write contract"\n'
-    '3. Press on "Connect to Web3" and connect your desired wallet to the website. \n'
-    "4. Deposit the desired values\n4.1. depositIntoX7SeriesTokens -> amount of ETH you want to spend (e.g. 0.5).\n"
-    "4.2. slippagePercent  -> desired slippage (e.g. 4)\n4.3 deadline -> Go to [epoch-converter]"
-    '(https://www.epochconverter.com/) and add like 500 to the current epoch. Click "Timestamp to Human date" '
-    'and verify that Relative is at least "In 1 minute" (e.g. 1667508502).\n'
-    '4.4 Copy the epoch to the "deadline" field\n4.4 Press "Write" and confirm the transaction in your wallet.\n'
-    "4.5 You should receive tokens to your wallet in few blocks.\n\n"
-    "*Testrun TX*:\n"
-    "https://etherscan.io/tx/0x321e5bb6cc1695d5d7085eceb92f01143b69c2274402aab46e4a0a47d069d0af\n\n"
-    "Credit: @WoxieX"
-)
 
 mods = (
     "Marketing + Sales Team\n@Robthebank44\n@cryptod0c\n@Gazuga\n\n"
@@ -337,7 +316,6 @@ mods = (
 
 mods_only = "You do not have permission to do this. #TrustNoOne"
 
-patience = "`Patience is bitter, but its fruit is sweet.\n\n- Aristotle`"
 
 proposals = (
     "*Listing proposal:*\n"

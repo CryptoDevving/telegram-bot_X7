@@ -337,34 +337,6 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def buy_evenly(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        f"{text.evenly}\n\n{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="Via Dashboard", url="https://dapp.x7community.space/"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Via Etherscan",
-                        url="https://etherscan.io/address/0x0419074afe1a"
-                        "137dfa6afd5b6af5771c3ffbea49#code",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Epoch Convertor", url="https://www.epochconverter.com/"
-                    )
-                ],
-            ]
-        ),
-    )
-
-
 async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -4565,24 +4537,6 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             ),
         )
-    
-
-async def voting(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        f"{text.voting}\n\n{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="Website", url="https://x7.finance")],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Finance Whitepaper",
-                        url=f"{url.wp_link}",
-                    )
-                ],
-            ]
-        ),
-    )
 
 
 async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):

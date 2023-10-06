@@ -46,7 +46,8 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
-    messages = [text.about,text.airdrop,text.ecosystem,text.endorse,text.refer,text.volume, random.choice(text.quotes)]
+    messages = [text.about, text.airdrop, text.ecosystem, text.endorse,
+                text.refer, text.volume, text.voting, random.choice(text.quotes)]
     random_message = random.choice(messages)
     if random_message in text.quotes:
         message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
