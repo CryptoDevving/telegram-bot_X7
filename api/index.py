@@ -574,40 +574,47 @@ def timestamp_to_datetime(timestamp):
         return "Invalid timestamp."
 
 
-async def format_schedule(schedule1, schedule2, native_token):
-    schedule_list = []
-    if len(schedule1[0]) > 0 and len(schedule1[1]) > 0:
-        if len(schedule2[0]) > 0 and len(schedule2[1]) > 0:
+def format_schedule(schedule1, schedule2, native_token):
+    current_datetime = datetime.utcnow()
+    next_payment_datetime = None
+    next_payment_value = None
 
-            date_accumulator = {}
-            for date1, value1 in zip(schedule1[0], schedule1[1]):
-                formatted_date = datetime.fromtimestamp(date1).strftime("%Y-%m-%d %H:%M:%S")
-                formatted_value = value1 / 10**18
-                date_accumulator[formatted_date] = formatted_value
-            
-            for date2, value2 in zip(schedule2[0], schedule2[1]):
-                formatted_date = datetime.fromtimestamp(date2).strftime("%Y-%m-%d %H:%M:%S")
-                formatted_value = value2 / 10**18
-                if formatted_date in date_accumulator:
-                    date_accumulator[formatted_date] += formatted_value
-                else:
-                    date_accumulator[formatted_date] = formatted_value
-            
-            for date, total_value in date_accumulator.items():
-                sch = f"{date} - {total_value} {native_token}"
-                schedule_list.append(sch)
-        else:
-            for date, value in zip(schedule1[0], schedule1[1]):
-                formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
-                formatted_value = value / 10**18
-                sch = f"{formatted_date} - {formatted_value} {native_token}"
-                schedule_list.append(sch)
-    else:
-        for date, value in zip(schedule2[0], schedule2[1]):
-            formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
-            formatted_value = value / 10**18
-            sch = f"{formatted_date} - {formatted_value} {native_token}"
-            schedule_list.append(sch)
+    if len(schedule1[0]) > 0 and len(schedule1[1]) > 0:
+        for date1, value1 in zip(schedule1[0], schedule1[1]):
+            formatted_date = datetime.fromtimestamp(date1).strftime("%Y-%m-%d %H:%M:%S")
+            formatted_value = value1 / 10**18
+            if datetime.fromtimestamp(date1) > current_datetime:
+                if next_payment_datetime is None or datetime.fromtimestamp(date1) < next_payment_datetime:
+                    next_payment_datetime = datetime.fromtimestamp(date1)
+                    next_payment_value = formatted_value
+
+    if len(schedule2[0]) > 0 and len(schedule2[1]) > 0:
+        for date2, value2 in zip(schedule2[0], schedule2[1]):
+            formatted_date = datetime.fromtimestamp(date2).strftime("%Y-%m-%d %H:%M:%S")
+            formatted_value = value2 / 10**18
+            if datetime.fromtimestamp(date2) > current_datetime:
+                if next_payment_datetime is None or datetime.fromtimestamp(date2) < next_payment_datetime:
+                    next_payment_datetime = datetime.fromtimestamp(date2)
+                    next_payment_value = formatted_value
+
+    schedule_list = []
+
+    for date, total_value in zip(schedule1[0] + schedule2[0], schedule1[1] + schedule2[1]):
+        formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
+        formatted_value = total_value / 10**18
+        sch = f"{formatted_date} - {formatted_value} {native_token}"
+        schedule_list.append(sch)
+
+    if next_payment_datetime:
+        time_until_next_payment = next_payment_datetime - current_datetime
+
+        days, seconds = divmod(time_until_next_payment.total_seconds(), 86400)
+        hours, seconds = divmod(seconds, 3600)
+        minutes, seconds = divmod(seconds, 60)
+        time_remaining_str = f"{int(days)} days, {int(hours)} hours, {int(minutes)} minutes"
+
+        schedule_list.append(f"\nNext Payment Due:\n{next_payment_value} {native_token}\n{time_remaining_str}")
+
     return "\n".join(schedule_list)
 
 

@@ -1869,43 +1869,10 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except (Exception, TimeoutError, ValueError, StopAsyncIteration) as e:
         pass
     liability = contract.functions.getRemainingLiability(int(loan_id)).call() / 10**18
-    remaining = f'Remaining Liability {liability} {chain_native.upper()} (${"{:0,.0f}".format(price * liability)})'
+    remaining = f'Remaining Liability:\n{liability} {chain_native.upper()} (${"{:0,.0f}".format(price * liability)})'
     schedule1 = contract.functions.getPremiumPaymentSchedule(int(loan_id)).call()
     schedule2 = contract.functions.getPrincipalPaymentSchedule(int(loan_id)).call()
-    schedule_list = []
-    if len(schedule1[0]) > 0 and len(schedule1[1]) > 0:
-        if len(schedule2[0]) > 0 and len(schedule2[1]) > 0:
-
-            date_accumulator = {}
-            for date1, value1 in zip(schedule1[0], schedule1[1]):
-                formatted_date = datetime.fromtimestamp(date1).strftime("%Y-%m-%d %H:%M:%S")
-                formatted_value = value1 / 10**18
-                date_accumulator[formatted_date] = formatted_value
-            
-            for date2, value2 in zip(schedule2[0], schedule2[1]):
-                formatted_date = datetime.fromtimestamp(date2).strftime("%Y-%m-%d %H:%M:%S")
-                formatted_value = value2 / 10**18
-                if formatted_date in date_accumulator:
-                    date_accumulator[formatted_date] += formatted_value
-                else:
-                    date_accumulator[formatted_date] = formatted_value
-            
-            for date, total_value in date_accumulator.items():
-                sch = f"{date} - {total_value} {chain_native.upper()}"
-                schedule_list.append(sch)
-        else:
-            for date, value in zip(schedule1[0], schedule1[1]):
-                formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
-                formatted_value = value / 10**18
-                sch = f"{formatted_date} - {formatted_value} {chain_native.upper()}"
-                schedule_list.append(sch)
-    else:
-        for date, value in zip(schedule2[0], schedule2[1]):
-            formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
-            formatted_value = value / 10**18
-            sch = f"{formatted_date} - {formatted_value} {chain_native.upper()}"
-            schedule_list.append(sch)
-    schedule_str = schedule_str = await api.format_schedule(schedule1, schedule2, chain_native.upper())
+    schedule_str = api.format_schedule(schedule1, schedule2, chain_native.upper())
 
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
