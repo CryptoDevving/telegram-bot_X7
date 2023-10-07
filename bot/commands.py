@@ -2,15 +2,13 @@ import os
 import re
 import random
 import time as t
-from datetime import datetime, timedelta, timezone, date
+from datetime import datetime, timedelta, timezone
 
 import csv
 import pytz
 from gtts import gTTS
 import requests
 import textwrap
-import sentry_sdk
-import traceback
 import wikipediaapi
 from web3 import Web3
 from telegram import *
@@ -28,10 +26,7 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        hours, remainder = divmod(times.button_time, 3600)
-        minutes, _ = divmod(remainder, 60)
-
-        print(f"Time: {hours} hours and {minutes} minutes")
+        return
     except Exception as e:
         print(e)
 
@@ -1421,10 +1416,12 @@ async def leaderboard(update: Update, context: CallbackContext):
     formatted_click_counts = api.escape_markdown("\n".join(
         f"{i + 1}. {user}: {count}" for i, (user, count) in enumerate(top_click_counts))
     )
+    clicks_needed = auto.burn_increment - (click_counts_total % auto.burn_increment)
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)*\n\n"
              f"{formatted_click_counts}\n\n"
-             f"Total clicks: *{click_counts_total}*\n",
+             f"Total clicks: *{click_counts_total}*\n"
+             f"Clicks till next X7R Burn: *{clicks_needed}*\n",
         parse_mode="Markdown"
     )
     

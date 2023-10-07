@@ -1,5 +1,7 @@
 from telegram import *
 from telegram.ext import *
+from datetime import datetime, timedelta
+import os
 
 from data import  text, times
 
@@ -45,12 +47,14 @@ async def games_unlock(update, context):
 
 
 async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await update.effective_chat.get_administrators()
-    if update.effective_user in (admin.user for admin in chat_admins):
-        hours, remainder = divmod(times.button_time, 3600)
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        target_timestamp = times.restart_time + times.button_time
+        time_difference_seconds = target_timestamp - datetime.now().timestamp()
+        time_difference = timedelta(seconds=time_difference_seconds)
+        hours, remainder = divmod(time_difference.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        await update.message.reply_text(
-            f"Next Click Me:\n\n{hours} hours and {minutes} minutes and {seconds} seconds")
+        await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds")
     else:
         await update.message.reply_text(f"{text.mods_only}")
  

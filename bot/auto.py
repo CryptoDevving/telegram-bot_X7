@@ -23,6 +23,7 @@ clicked_buttons = set()
 first_user_clicked = False
 first_user_info = ""
 click_counts = {}
+burn_increment = 50
 
 
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -126,7 +127,7 @@ async def clicks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 parse_mode="Markdown",
             )
 
-            if total_click_count % 50 == 0:
+            if total_click_count % burn_increment == 0:
                 try:
                     alchemy_keys = os.getenv("ALCHEMY_ETH")
                     alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
