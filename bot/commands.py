@@ -28,7 +28,10 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        return
+        hours, remainder = divmod(times.button_time, 3600)
+        minutes, _ = divmod(remainder, 60)
+
+        print(f"Time: {hours} hours and {minutes} minutes")
     except Exception as e:
         print(e)
 

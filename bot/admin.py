@@ -1,7 +1,7 @@
 from telegram import *
 from telegram.ext import *
 
-from data import  text
+from data import  text, times
 
 
 async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -42,3 +42,15 @@ async def games_unlock(update, context):
         await update.message.reply_text("Games are now unlocked in this chat.")
     else:
         await update.message.reply_text(f"{text.mods_only}")
+
+
+async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_admins = await update.effective_chat.get_administrators()
+    if update.effective_user in (admin.user for admin in chat_admins):
+        hours, remainder = divmod(times.button_time, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        await update.message.reply_text(
+            f"Next Click Me:\n\n{hours} hours and {minutes} minutes and {seconds} seconds")
+    else:
+        await update.message.reply_text(f"{text.mods_only}")
+ 

@@ -3,10 +3,11 @@ from datetime import datetime
 
 
 # AUTO TIMES SECONDS
-def button_time():
+def random_button_time():
     time = random.randint(300, 21600)
     return time
 
+button_time = random_button_time()
 auto_message_time = 7200
 
 # COUNTDOWN

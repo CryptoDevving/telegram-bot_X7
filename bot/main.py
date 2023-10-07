@@ -192,6 +192,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], admin.admin_command))
     application.add_handler(CommandHandler("lock_games", admin.games_lock))
     application.add_handler(CommandHandler("unlock_games", admin.games_unlock))
+    application.add_handler(CommandHandler("wen", admin.wen))
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(auto.clicks))
@@ -207,7 +208,7 @@ if __name__ == "__main__":
 
     job_queue.run_once(
         auto.auto_message_click,
-        times.button_time(),
+        times.button_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
     )
