@@ -1783,11 +1783,11 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) >= 2:
-        chain = context.args[0].lower()
-        loan_id = context.args[1]
+        loan_id = context.args[0]
+        chain = context.args[1].lower()
     else:
         await update.message.reply_text(
-            f"Please use `/loan chain_name loan_id` to see details",
+            f"Please use `/loan_id # chain` to see details",
             parse_mode="Markdown",
         )
         return
@@ -1874,21 +1874,28 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     schedule2 = contract.functions.getPrincipalPaymentSchedule(int(loan_id)).call()
     schedule_list = []
     if len(schedule1[0]) > 0 and len(schedule1[1]) > 0:
-        if len(schedule2[0]) == len(schedule1[0]) and len(schedule2[1]) == len(
-            schedule1[1]
-        ):
-            for date1, value1, value2 in zip(schedule1[0], schedule1[1], schedule2[1]):
-                formatted_date = datetime.fromtimestamp(date1).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                combined_value = (value1 + value2) / 10**18
-                sch = f"{formatted_date} - {combined_value} {chain_native.upper()}"
+        if len(schedule2[0]) > 0 and len(schedule2[1]) > 0:
+
+            date_accumulator = {}
+            for date1, value1 in zip(schedule1[0], schedule1[1]):
+                formatted_date = datetime.fromtimestamp(date1).strftime("%Y-%m-%d %H:%M:%S")
+                formatted_value = value1 / 10**18
+                date_accumulator[formatted_date] = formatted_value
+            
+            for date2, value2 in zip(schedule2[0], schedule2[1]):
+                formatted_date = datetime.fromtimestamp(date2).strftime("%Y-%m-%d %H:%M:%S")
+                formatted_value = value2 / 10**18
+                if formatted_date in date_accumulator:
+                    date_accumulator[formatted_date] += formatted_value
+                else:
+                    date_accumulator[formatted_date] = formatted_value
+            
+            for date, total_value in date_accumulator.items():
+                sch = f"{date} - {total_value} {chain_native.upper()}"
                 schedule_list.append(sch)
         else:
             for date, value in zip(schedule1[0], schedule1[1]):
-                formatted_date = datetime.fromtimestamp(date).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
+                formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
                 formatted_value = value / 10**18
                 sch = f"{formatted_date} - {formatted_value} {chain_native.upper()}"
                 schedule_list.append(sch)
@@ -1899,6 +1906,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             sch = f"{formatted_date} - {formatted_value} {chain_native.upper()}"
             schedule_list.append(sch)
     schedule_str = "\n".join(schedule_list)
+
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Initial Liquidity Loan - {loan_id} {chain_name}*\n\n"
