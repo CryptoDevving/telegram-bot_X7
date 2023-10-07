@@ -46,16 +46,6 @@ async def restart_script():
     os.execl(python, python, script)
 
 
-async def format_schedule(schedule1, schedule2):
-    schedule_list = []
-    for date, value1, value2 in zip(schedule1[0], schedule1[1], schedule2[1]):
-        formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
-        combined_value = (value1 + value2) / 10**18
-        sch = f"{formatted_date} - {combined_value} ETH"
-        schedule_list.append(sch)
-    return "\n".join(schedule_list)
-
-
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
     liq = {"reserve0": 0, "reserve1": 0}
@@ -286,7 +276,7 @@ async def new_loan(event):
             int(event["args"]["loanID"])
         ).call()
 
-        schedule_str = await format_schedule(schedule1, schedule2)
+        schedule_str = await api.format_schedule(schedule1, schedule2, "ETH")
     except Exception as e:
         sentry_sdk.capture_exception(e)
         schedule_str = ""

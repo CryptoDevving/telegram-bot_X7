@@ -1905,7 +1905,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             formatted_value = value / 10**18
             sch = f"{formatted_date} - {formatted_value} {chain_native.upper()}"
             schedule_list.append(sch)
-    schedule_str = "\n".join(schedule_list)
+    schedule_str = schedule_str = await api.format_schedule(schedule1, schedule2, chain_native.upper())
 
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
