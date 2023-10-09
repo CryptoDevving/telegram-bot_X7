@@ -838,7 +838,7 @@ def push_github(location, message):
 
 # DB
 
-db_connection = sqlite3.connect("data/database.db")
+db_connection = sqlite3.connect("database.db")
 
 
 def init_db():

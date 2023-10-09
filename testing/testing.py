@@ -1,7 +1,7 @@
 import sqlite3
 from api import index as api
 
-db_connection = sqlite3.connect("testing/testdb.db")
+db_connection = sqlite3.connect("testdb.db")
 
 def init_db():
     cursor = db_connection.cursor()
