@@ -17,7 +17,6 @@ from translate import Translator
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
-import auto
 from api import dune
 from api import index as api
 from media import index as media
@@ -1409,21 +1408,16 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def leaderboard(update: Update, context: CallbackContext):
-    click_counts = auto.clicks_get()
-    click_counts_total = auto.clicks_get_total()
-    sorted_click_counts = sorted(click_counts.items(), key=lambda x: x[1], reverse=True)
-    top_click_counts = sorted_click_counts[:20]
-    formatted_click_counts = api.escape_markdown("\n".join(
-        f"{i + 1}. {user}: {count}" for i, (user, count) in enumerate(top_click_counts))
-    )
-    clicks_needed = auto.burn_increment - (click_counts_total % auto.burn_increment)
-    await update.message.reply_text(
-        text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)*\n\n"
-             f"{formatted_click_counts}\n\n"
-             f"Total clicks: *{click_counts_total}*\n"
-             f"Clicks till next X7R Burn: *{clicks_needed}*\n",
-        parse_mode="Markdown"
-    )
+        board = api.clicks_get_leaderboard()
+        click_counts_total = api.clicks_get_total()
+        clicks_needed = main.burn_increment - (click_counts_total % main.burn_increment)
+        await update.message.reply_text(
+            text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
+                f"{board}\n"
+                f"Total clicks: *{click_counts_total}*\n"
+                f"Clicks till next X7R Burn: *{clicks_needed}*\n",
+            parse_mode="Markdown"
+        )
     
 
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2242,8 +2236,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def me(update: Update, context: CallbackContext):
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
-    click_counts = auto.clicks_get()
-    click_count = click_counts.get(str(user_info), 0)
+    click_count = api.clicks_get_by_name(user_info)
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
         f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{click_count}* times\n\n"
