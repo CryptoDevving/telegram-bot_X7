@@ -9,5 +9,5 @@ pyvenv.cfg
 myenv/
 .DS_Store
 .env
-/data/database.db
-/testing/testdb.db
+data/database.db
+testing/testdb.db
