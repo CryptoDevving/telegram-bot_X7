@@ -290,7 +290,7 @@ async def riddle(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
-    user_data[user_id] = riddle["answer"]
+    context.user_data['answer'] = riddle["answer"]
     await update.message.reply_text(f"{user_info}, {riddle['riddle']}")
     return PLAYING_RIDDLE
 
@@ -299,10 +299,10 @@ async def riddle_game(update: Update, context):
         user_id = update.effective_user.id
         user_info = update.effective_user.username or f"{update.effective_user.first_name} {update.effective_user.last_name}"
         user_answer = update.message.text
-        if user_answer.lower() == (user_data[user_id]).lower():
+        if user_answer.lower() == context.user_data['answer'].lower():
             await update.message.reply_text(f"Correct, {user_info}! You've solved the riddle.")
         else:
-            await update.message.reply_text(f"Sorry, {user_info}, that's not correct. The answer is: {(user_data[user_id])}")
+            await update.message.reply_text(f"Sorry, {user_info}, that's not correct. The answer is: {context.user_data['answer']}")
         user_data.pop(user_id, None)
 
         return ConversationHandler.END
