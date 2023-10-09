@@ -317,6 +317,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap))
     application.add_handler(CommandHandler(["tax", "slippage"], commands.tax_command))
     application.add_handler(CommandHandler("test", commands.test))
+    application.add_handler(CommandHandler("test_leaderboard", commands.test_leaderboard))
     application.add_handler(CommandHandler("timestamp", commands.timestamp_command))
     application.add_handler(CommandHandler(["time", "clock"], commands.time))
     application.add_handler(CommandHandler("today", commands.today))
