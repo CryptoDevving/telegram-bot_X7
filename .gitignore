@@ -10,3 +10,4 @@ myenv/
 .DS_Store
 .env
 /data/database.db
+/testing/testdb.db
