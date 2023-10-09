@@ -1410,7 +1410,7 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def leaderboard(update: Update, context: CallbackContext):
         board = api.clicks_get_leaderboard()
         click_counts_total = api.clicks_get_total()
-        clicks_needed = main.burn_increment - (click_counts_total % main.burn_increment)
+        clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
         await update.message.reply_text(
             text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
                 f"{board}\n"

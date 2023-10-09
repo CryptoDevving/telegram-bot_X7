@@ -1,5 +1,6 @@
 from api import index as api
 
+burn_increment = 50
 
 about = (
     "*X7 Finance - Home of Xchange*\n\n"
