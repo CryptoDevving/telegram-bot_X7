@@ -22,28 +22,12 @@ from api import index as api
 from media import index as media
 from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, chains, pairs
 
-from testing import testing
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        user = update.effective_user
-        user_info = user.username or f"{user.first_name} {user.last_name}"
-        await testing.clicks_update(user_info)
+        return
     except Exception as e:
         print(e)
-
-
-async def test_leaderboard(update: Update, context: CallbackContext):
-        board = testing.clicks_get_leaderboard()
-        click_counts_total = api.clicks_get_total()
-        clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
-        await update.message.reply_text(
-            text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
-                f"{board}\n"
-                f"Total clicks: *{click_counts_total}*\n"
-                f"Clicks till next X7R Burn: *{clicks_needed}*\n",
-            parse_mode="Markdown"
-        )
 
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
