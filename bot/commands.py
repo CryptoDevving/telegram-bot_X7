@@ -28,7 +28,7 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         user = update.effective_user
         user_info = user.username or f"{user.first_name} {user.last_name}"
-        testing.clicks_update(user_info)
+        await testing.clicks_update(user_info)
     except Exception as e:
         print(e)
 
