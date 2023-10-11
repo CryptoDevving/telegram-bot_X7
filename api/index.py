@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import tweepy
 import base64
 import requests
-import sqlite3
+import mysql.connector
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 
@@ -838,15 +838,21 @@ def push_github(location, message):
 
 # DB
 
-db_connection = sqlite3.connect("database.db")
+db_connection = mysql.connector.connect(
+    host = os.getenv("DB_HOST"),
+    user = os.getenv("DB_USER"),
+    password = os.getenv("DB_PASSWORD"),
+    database = os.getenv("DB_NAME") ,
+    port = os.getenv("DB_PORT")
+)
+cursor = db_connection.cursor()
 
 
 def init_db():
-    cursor = db_connection.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS leaderboard (
-            name TEXT PRIMARY KEY,
-            clicks INTEGER
+            name VARCHAR(255) PRIMARY KEY,
+            clicks INT
         )
     """)
     db_connection.commit()
@@ -854,108 +860,80 @@ def init_db():
 
 def clicks_get_by_name(name):
     try:
-        cursor = db_connection.cursor()
-        
         cursor.execute("""
             SELECT clicks
             FROM leaderboard
-            WHERE name = ?
+            WHERE name = %s
         """, (name,))
-        
         user_data = cursor.fetchone()
-        
         return user_data[0] if user_data else 0
-    
-    except sqlite3.Error:
+    except mysql.connector.Error:
         return 0
 
 
 def clicks_get_leaderboard(limit=20):
     try:
-        cursor = db_connection.cursor()
-        
         cursor.execute("""
             SELECT name, clicks
             FROM leaderboard
             ORDER BY clicks DESC
-            LIMIT ?
+            LIMIT %s
         """, (limit,))
-        
         leaderboard_data = cursor.fetchall()
-        
         leaderboard_text = ""
-        
         for rank, (name, clicks) in enumerate(leaderboard_data, start=1):
-            leaderboard_text += f"{rank} {api.escape_markdown(name)}: {clicks}\n"
-        
+            leaderboard_text += f"{rank} {name}: {clicks}\n"
         return leaderboard_text
-    
-    except sqlite3.Error:
+    except mysql.connector.Error:
         return "Error retrieving leaderboard data"
 
 
 def clicks_get_user_total(user_id):
     try:
-        cursor = db_connection.cursor()
-        
         cursor.execute("""
             SELECT SUM(clicks)
             FROM leaderboard
-            WHERE name = ?
+            WHERE name = %s
         """, (user_id,))
-        
         total_clicks = cursor.fetchone()
-        
         return total_clicks[0] if total_clicks else 0
-    
-    except sqlite3.Error:
-        return 0 
-
+    except mysql.connector.Error:
+        return 0
 
 def clicks_get_total():
     try:
-        cursor = db_connection.cursor()
-        
         cursor.execute("""
             SELECT SUM(clicks)
             FROM leaderboard
         """)
-        
         total_clicks = cursor.fetchone()
-        
         return total_clicks[0] if total_clicks else 0
-    
-    except sqlite3.Error:
+    except mysql.connector.Error:
         return 0
 
 
 async def clicks_update(name):
-    cursor = db_connection.cursor()
-    
     cursor.execute("""
         SELECT clicks
         FROM leaderboard
-        WHERE name = ?
+        WHERE name = %s
     """, (name,))
-    
     user_data = cursor.fetchone()
-    
     if user_data is None:
         cursor.execute("""
             INSERT INTO leaderboard (name, clicks)
-            VALUES (?, 1)
+            VALUES (%s, 1)
         """, (name,))
     else:
         cursor.execute("""
             UPDATE leaderboard
-            SET clicks = ?
-            WHERE name = ?
+            SET clicks = %s
+            WHERE name = %s
         """, (user_data[0] + 1, name))
-    
     db_connection.commit()
 
-# TWITTER
 
+# TWITTER
 
 auth = tweepy.OAuthHandler(os.getenv("TWITTER_API"), os.getenv("TWITTER_API_SECRET"))
 auth.set_access_token(os.getenv("TWITTER_ACCESS"), os.getenv("TWITTER_ACCESS_SECRET"))

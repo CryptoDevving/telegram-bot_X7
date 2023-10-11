@@ -1408,16 +1408,16 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def leaderboard(update: Update, context: CallbackContext):
-        board = api.clicks_get_leaderboard()
-        click_counts_total = api.clicks_get_total()
-        clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
-        await update.message.reply_text(
-            text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
-                f"{board}\n"
-                f"Total clicks: *{click_counts_total}*\n"
-                f"Clicks till next X7R Burn: *{clicks_needed}*\n",
-            parse_mode="Markdown"
-        )
+    board = api.clicks_get_leaderboard()
+    click_counts_total = api.clicks_get_total()
+    clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
+    await update.message.reply_text(
+        text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
+            f"{api.escape_markdown(board)}\n"
+            f"Total clicks: *{click_counts_total}*\n"
+            f"Clicks till next X7R Burn: *{clicks_needed}*\n",
+        parse_mode="Markdown"
+    )
     
 
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):

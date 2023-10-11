@@ -34,12 +34,13 @@ lru-dict==1.2.0
 lxml==4.9.2
 moralis==0.1.37
 multidict==6.0.4
+mysql-connector-python==8.1.0
 numpy==1.24.0
 oauthlib==3.2.2
 parsimonious==0.9.0
 Pillow==9.5.0
 platformdirs==3.5.1
-protobuf==4.23.2
+protobuf==4.21.12
 pycoingecko==3.1.0
 pycryptodome==3.18.0
 pyfiglet==1.0.2
