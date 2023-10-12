@@ -141,10 +141,10 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         button_click_timestamp = t.time()
         time_taken = button_click_timestamp - button_generation_timestamp
         await api.clicks_update(user_info)
-        user_clicks = api.clicks_get_user_total(user_info)
+        user_clicks = api.db_clicks_get_user_total(user_info)
         if not first_user_clicked:
             first_user_clicked = True
-            total_click_count = api.clicks_get_total()
+            total_click_count = api.db_clicks_get_total()
             if user_clicks == 1:
                 click_message = "🎉🎉 This is their first button click! 🎉🎉"
             elif user_clicks % 10 == 0:
@@ -316,7 +316,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("supply", commands.supply))
     application.add_handler(CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap))
     application.add_handler(CommandHandler(["tax", "slippage"], commands.tax_command))
-    application.add_handler(CommandHandler("test", commands.test))
     application.add_handler(CommandHandler("timestamp", commands.timestamp_command))
     application.add_handler(CommandHandler(["time", "clock"], commands.time))
     application.add_handler(CommandHandler("today", commands.today))

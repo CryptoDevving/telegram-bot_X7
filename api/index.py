@@ -657,27 +657,6 @@ def get_giveaway_entries():
     return [entry[-5:] for entry in column_data]
 
 
-def get_pair_entries(ticker):
-    data = []
-    with open('logs/tokens.csv', 'r') as file:
-        csv_reader = csv.reader(file)
-        for row in csv_reader:
-            data.append(row)
-    csv_data = data
-    matching_data = []
-    for row in csv_data:
-        if row[0].lower() == ticker.lower():
-            matching_data.append({
-                'ticker': row[0],
-                'pair': row[1],
-                'ca': row[2],
-                'chain': row[3],
-                'image_url': row[4]
-            })
-
-    return matching_data
-
-
 def get_holders(token):
     base_url = "https://api.ethplorer.io/getTokenInfo"
     url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
@@ -848,17 +827,9 @@ db_connection = mysql.connector.connect(
 cursor = db_connection.cursor()
 
 
-def init_db():
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS leaderboard (
-            name VARCHAR(255) PRIMARY KEY,
-            clicks INT
-        )
-    """)
-    db_connection.commit()
 
 
-def clicks_get_by_name(name):
+def db_clicks_get_by_name(name):
     try:
         cursor.execute("""
             SELECT clicks
@@ -871,7 +842,7 @@ def clicks_get_by_name(name):
         return 0
 
 
-def clicks_get_leaderboard(limit=20):
+def db_clicks_get_leaderboard(limit=20):
     try:
         cursor.execute("""
             SELECT name, clicks
@@ -888,7 +859,7 @@ def clicks_get_leaderboard(limit=20):
         return "Error retrieving leaderboard data"
 
 
-def clicks_get_user_total(user_id):
+def db_clicks_get_user_total(user_id):
     try:
         cursor.execute("""
             SELECT SUM(clicks)
@@ -900,7 +871,7 @@ def clicks_get_user_total(user_id):
     except mysql.connector.Error:
         return 0
 
-def clicks_get_total():
+def db_clicks_get_total():
     try:
         cursor.execute("""
             SELECT SUM(clicks)
@@ -932,6 +903,44 @@ async def clicks_update(name):
         """, (user_data[0] + 1, name))
     db_connection.commit()
 
+
+def db_token_add(ticker, pair, ca, chain, image_url):
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tokens (
+            ticker VARCHAR(255) PRIMARY KEY,
+            pair VARCHAR(255),
+            ca VARCHAR(255),
+            chain VARCHAR(255),
+            image_url VARCHAR(255)
+        )
+    """)
+    db_connection.commit()
+
+    cursor.execute("SELECT ticker FROM tokens WHERE ticker = %s", (ticker,))
+    existing_token = cursor.fetchone()
+
+    if existing_token:
+        cursor.execute("""
+            UPDATE tokens 
+            SET pair = %s, ca = %s, chain = %s, image_url = %s
+            WHERE ticker = %s
+        """, (pair, ca, chain, image_url, ticker))
+        db_connection.commit()
+    else:
+        cursor.execute("""
+            INSERT INTO tokens (ticker, pair, ca, chain, image_url)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (ticker, pair, ca, chain, image_url))
+        db_connection.commit()
+
+
+
+def db_token_get(ticker):
+    cursor = db_connection.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM tokens WHERE ticker = %s", (ticker.lower(),))
+    matching_data = cursor.fetchall()
+
+    return matching_data
 
 # TWITTER
 

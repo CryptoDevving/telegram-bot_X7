@@ -1408,8 +1408,8 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def leaderboard(update: Update, context: CallbackContext):
-    board = api.clicks_get_leaderboard()
-    click_counts_total = api.clicks_get_total()
+    board = api.db_clicks_get_leaderboard()
+    click_counts_total = api.db_clicks_get_total()
     clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
@@ -2236,7 +2236,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def me(update: Update, context: CallbackContext):
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
-    click_count = api.clicks_get_by_name(user_info)
+    click_count = api.db_clicks_get_by_name(user_info)
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
         f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{click_count}* times\n\n"
@@ -2862,7 +2862,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:    
         search = " ".join(context.args).lower()
-        token_info = api.get_pair_entries(search)
+        token_info = api.db_token_get(search)
         for token_instance in token_info:
             if token_instance['ticker'].lower() == search:
                 if token_instance['chain'] == "eth":
@@ -3343,6 +3343,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"{search.upper()} Not found",
             parse_mode="Markdown",
         )
+    except Exception as e:
+        print(e)
 
 
 
