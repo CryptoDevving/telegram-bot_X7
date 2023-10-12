@@ -405,12 +405,12 @@ if __name__ == "__main__":
         name="Auto Message",
     )
 
-#    job_queue.run_once(
-#        auto_message_click,
-#        times.button_time,
-#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_#ID"),
-#        name="Click Message",
-#    )
+    job_queue.run_once(
+        auto_message_click,
+        times.button_time,
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_#ID"),
+        name="Click Message",
+    )
 
     ## SCANNERS ##
     scanners = [
