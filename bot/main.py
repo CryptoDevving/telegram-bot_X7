@@ -400,17 +400,17 @@ if __name__ == "__main__":
     job_queue.run_repeating(
         auto_message_info,
         times.auto_message_time,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        #chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         first=times.auto_message_time,
         name="Auto Message",
     )
 
-    job_queue.run_once(
-        auto_message_click,
-        times.button_time,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        name="Click Message",
-    )
+#    job_queue.run_once(
+#        auto_message_click,
+#        times.button_time,
+#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_#ID"),
+#        name="Click Message",
+#    )
 
     ## SCANNERS ##
     scanners = [
