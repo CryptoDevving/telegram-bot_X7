@@ -208,10 +208,10 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 
         times.restart_time = datetime.now().timestamp()        
         context.user_data["current_button_data"] = None
-        
+        random_time = times.random_button_time()
         job_queue.run_once(
         auto_message_click,
-        times.button_time,
+        random_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
     )
