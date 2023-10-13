@@ -205,7 +205,9 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                         f"{burn_message}"
                 )
                 
+        times.restart_time = datetime.now().timestamp()        
         context.user_data["current_button_data"] = None
+        
         job_queue.run_once(
         auto_message_click,
         times.button_time,
