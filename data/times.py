@@ -7,7 +7,8 @@ def random_button_time():
     time = random.randint(300, 14400)
     return time
 
-button_time = random_button_time()
+first_button_time = random_button_time()
+button_time = None
 restart_time = datetime.now().timestamp()
 auto_message_time = 7200
 

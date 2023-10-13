@@ -24,6 +24,7 @@ clicked_buttons = set()
 first_user_clicked = False
 
 
+
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     global current_button_data, first_user_clicked
     first_user_clicked = False
@@ -208,13 +209,14 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 
         times.restart_time = datetime.now().timestamp()        
         context.user_data["current_button_data"] = None
-        random_time = times.random_button_time()
+        times.button_time = times.random_button_time()
         job_queue.run_once(
         auto_message_click,
-        random_time,
+        times.button_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
     )
+        return times.button_time
     
 
 async def error(update: Update, context: CallbackContext):
@@ -402,14 +404,14 @@ if __name__ == "__main__":
     job_queue.run_repeating(
         auto_message_info,
         times.auto_message_time,
-        #chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         first=times.auto_message_time,
         name="Auto Message",
     )
 
     job_queue.run_once(
         auto_message_click,
-        times.button_time,
+        times.first_button_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_#ID"),
         name="Click Message",
     )
