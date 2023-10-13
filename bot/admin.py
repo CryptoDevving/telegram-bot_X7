@@ -49,7 +49,11 @@ async def games_unlock(update, context):
 async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        target_timestamp = times.restart_time + times.button_time
+        if times.button_time is not None:
+            time = times.button_time
+        else:    
+            time = times.first_button_time
+        target_timestamp = times.restart_time + time
         time_difference_seconds = target_timestamp - datetime.now().timestamp()
         time_difference = timedelta(seconds=time_difference_seconds)
         hours, remainder = divmod(time_difference.seconds, 3600)
