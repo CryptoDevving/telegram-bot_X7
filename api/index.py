@@ -817,33 +817,45 @@ def push_github(location, message):
 
 # DB
 
-db_connection = mysql.connector.connect(
-    host = os.getenv("DB_HOST"),
-    user = os.getenv("DB_USER"),
-    password = os.getenv("DB_PASSWORD"),
-    database = os.getenv("DB_NAME") ,
-    port = os.getenv("DB_PORT")
-)
-cursor = db_connection.cursor()
+def create_db_connection():
+    return mysql.connector.connect(
+        host = os.getenv("DB_HOST"),
+        user = os.getenv("DB_USER"),
+        password = os.getenv("DB_PASSWORD"),
+        database = os.getenv("DB_NAME") ,
+        port = os.getenv("DB_PORT")
+    )
+
+
+def close_db_connection(db_connection, cursor):
+    cursor.close()
+    db_connection.close()
+
 
 
 
 
 def db_clicks_get_by_name(name):
     try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
         cursor.execute("""
             SELECT clicks
             FROM leaderboard
             WHERE name = %s
         """, (name,))
         user_data = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
         return user_data[0] if user_data else 0
+    
     except mysql.connector.Error:
         return 0
 
 
 def db_clicks_get_leaderboard(limit=20):
     try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
         cursor.execute("""
             SELECT name, clicks
             FROM leaderboard
@@ -854,6 +866,7 @@ def db_clicks_get_leaderboard(limit=20):
         leaderboard_text = ""
         for rank, (name, clicks) in enumerate(leaderboard_data, start=1):
             leaderboard_text += f"{rank} {name}: {clicks}\n"
+        close_db_connection(db_connection, cursor)
         return leaderboard_text
     except mysql.connector.Error:
         return "Error retrieving leaderboard data"
@@ -861,29 +874,37 @@ def db_clicks_get_leaderboard(limit=20):
 
 def db_clicks_get_user_total(user_id):
     try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
         cursor.execute("""
             SELECT SUM(clicks)
             FROM leaderboard
             WHERE name = %s
         """, (user_id,))
         total_clicks = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
         return total_clicks[0] if total_clicks else 0
     except mysql.connector.Error:
         return 0
 
 def db_clicks_get_total():
     try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
         cursor.execute("""
             SELECT SUM(clicks)
             FROM leaderboard
         """)
         total_clicks = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
         return total_clicks[0] if total_clicks else 0
     except mysql.connector.Error:
         return 0
 
 
 async def clicks_update(name):
+    db_connection = create_db_connection()
+    cursor = db_connection.cursor()
     cursor.execute("""
         SELECT clicks
         FROM leaderboard
@@ -902,9 +923,12 @@ async def clicks_update(name):
             WHERE name = %s
         """, (user_data[0] + 1, name))
     db_connection.commit()
+    close_db_connection(db_connection, cursor)
 
 
 def db_token_add(ticker, pair, ca, chain, image_url):
+    db_connection = create_db_connection()
+    cursor = db_connection.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tokens (
             ticker VARCHAR(255) PRIMARY KEY,
@@ -932,13 +956,16 @@ def db_token_add(ticker, pair, ca, chain, image_url):
             VALUES (%s, %s, %s, %s, %s)
         """, (ticker, pair, ca, chain, image_url))
         db_connection.commit()
+    close_db_connection(db_connection, cursor)
 
 
 
 def db_token_get(ticker):
+    db_connection = create_db_connection()
     cursor = db_connection.cursor(dictionary=True)
     cursor.execute("SELECT * FROM tokens WHERE ticker = %s", (ticker.lower(),))
     matching_data = cursor.fetchall()
+    close_db_connection(db_connection, cursor)
 
     return matching_data
 
