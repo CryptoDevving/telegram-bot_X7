@@ -4,7 +4,7 @@ from datetime import datetime
 
 # AUTO TIMES SECONDS
 def random_button_time():
-    time = random.randint(1, 5)
+    time = random.randint(1, 44444)
     return time
 
 first_button_time = random_button_time()
