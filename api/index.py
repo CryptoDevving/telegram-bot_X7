@@ -832,7 +832,46 @@ def close_db_connection(db_connection, cursor):
     db_connection.close()
 
 
+def db_clicks_check_is_fastest(time_to_check):
+    try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
+        cursor.execute("""
+            SELECT MIN(time_taken)
+            FROM leaderboard
+            WHERE time_taken IS NOT NULL
+        """)
+        fastest_time_taken_data = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
 
+        fastest_time_taken = fastest_time_taken_data[0] if fastest_time_taken_data else None
+        if fastest_time_taken is None:
+            return True
+        elif isinstance(time_to_check, (int, float)) and isinstance(fastest_time_taken, (int, float)):
+            if time_to_check < fastest_time_taken:
+                return True
+            else:
+                return False
+        else:
+            return False
+    except mysql.connector.Error:
+        return False
+
+
+def db_clicks_fastest_time():
+    try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
+        cursor.execute("""
+            SELECT name, MIN(time_taken)
+            FROM leaderboard
+            WHERE time_taken IS NOT NULL
+        """)
+        fastest_time_taken_data = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
+        return fastest_time_taken_data if fastest_time_taken_data else ("No user", 0)
+    except mysql.connector.Error:
+        return ("No user", 0)
 
 
 def db_clicks_get_by_name(name):
@@ -840,16 +879,15 @@ def db_clicks_get_by_name(name):
         db_connection = create_db_connection()
         cursor = db_connection.cursor()
         cursor.execute("""
-            SELECT clicks
+            SELECT clicks, time_taken
             FROM leaderboard
             WHERE name = %s
         """, (name,))
         user_data = cursor.fetchone()
         close_db_connection(db_connection, cursor)
-        return user_data[0] if user_data else 0
-    
+        return user_data if user_data else (0, 0)
     except mysql.connector.Error:
-        return 0
+        return (0, 0)
 
 
 def db_clicks_get_leaderboard(limit=20):
@@ -872,21 +910,6 @@ def db_clicks_get_leaderboard(limit=20):
         return "Error retrieving leaderboard data"
 
 
-def db_clicks_get_user_total(user_id):
-    try:
-        db_connection = create_db_connection()
-        cursor = db_connection.cursor()
-        cursor.execute("""
-            SELECT SUM(clicks)
-            FROM leaderboard
-            WHERE name = %s
-        """, (user_id,))
-        total_clicks = cursor.fetchone()
-        close_db_connection(db_connection, cursor)
-        return total_clicks[0] if total_clicks else 0
-    except mysql.connector.Error:
-        return 0
-
 def db_clicks_get_total():
     try:
         db_connection = create_db_connection()
@@ -902,26 +925,36 @@ def db_clicks_get_total():
         return 0
 
 
-async def clicks_update(name):
+async def clicks_update(name, time_taken):
     db_connection = create_db_connection()
     cursor = db_connection.cursor()
     cursor.execute("""
-        SELECT clicks
+        SELECT clicks, time_taken
         FROM leaderboard
         WHERE name = %s
     """, (name,))
     user_data = cursor.fetchone()
     if user_data is None:
         cursor.execute("""
-            INSERT INTO leaderboard (name, clicks)
-            VALUES (%s, 1)
-        """, (name,))
+            INSERT INTO leaderboard (name, clicks, time_taken)
+            VALUES (%s, 1, %s)
+        """, (name, time_taken))
     else:
-        cursor.execute("""
-            UPDATE leaderboard
-            SET clicks = %s
-            WHERE name = %s
-        """, (user_data[0] + 1, name))
+        clicks = user_data[0]
+        current_time_taken = user_data[1]
+
+        if current_time_taken is None or time_taken < current_time_taken:
+            cursor.execute("""
+                UPDATE leaderboard
+                SET clicks = %s, time_taken = %s
+                WHERE name = %s
+            """, (clicks + 1, time_taken, name))
+        else:
+            cursor.execute("""
+                UPDATE leaderboard
+                SET clicks = %s, time_taken = %s
+                WHERE name = %s
+            """, (clicks + 1, current_time_taken, name))
     db_connection.commit()
     close_db_connection(db_connection, cursor)
 
@@ -968,6 +1001,7 @@ def db_token_get(ticker):
     close_db_connection(db_connection, cursor)
 
     return matching_data
+
 
 # TWITTER
 
