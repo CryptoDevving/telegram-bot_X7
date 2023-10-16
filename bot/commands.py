@@ -2462,27 +2462,65 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     time = datetime.utcfromtimestamp(int(recent_tx["timeStamp"]))
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
-    await update.message.reply_text(
-        f"*Last On Chain Message from* `{address}`\n\n{time} UTC\n"
-        f"{days} days, {hours} hours, and {minutes} minutes ago\n\n"
-        f"`{message}`",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
+    try:
+        await update.message.reply_text(
+            f"*Last On Chain Message from* `{address}`\n\n{time} UTC\n"
+            f"{days} days, {hours} hours, and {minutes} minutes ago\n\n"
+            f"`{message}`",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        text="View on chain",
-                        url=f'{url.ether_tx}{recent_tx["hash"]}',
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="View all on chains", url=f"{url.dashboard}docs/onchains"
-                    )
-                ],
-            ]
-        ),
-    )
+                    [
+                        InlineKeyboardButton(
+                            text="View on chain",
+                            url=f'{url.ether_tx}{recent_tx["hash"]}',
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="View all on chains", url=f"{url.dashboard}docs/onchains"
+                        )
+                    ],
+                ]
+            ),
+        )
+    except Exception as e:
+        error_message = str(e)
+        if "Message is too long" in error_message:
+            middle_index = len(message) // 2
+
+            part1 = message[:middle_index]
+            part2 = message[middle_index:]
+
+            await update.message.reply_text(
+                f"*Last On Chain Message from* `{address}`\n\n{time} UTC\n"
+                f"{days} days, {hours} hours, and {minutes} minutes ago\n\n"
+                f"`{part1}...`",
+                parse_mode="Markdown",
+            )
+            try:
+                await update.message.reply_text(
+                    f"`...{part2}`",
+                    parse_mode="Markdown",
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton(
+                                    text="View on chain",
+                                    url=f'{url.ether_tx}{recent_tx["hash"]}',
+                                )
+                            ],
+                            [
+                                InlineKeyboardButton(
+                                    text="View all on chains", url=f"{url.dashboard}docs/onchains"
+                                )
+                            ],
+                        ]
+                    ),
+                )
+            except Exception as e:
+                print(e)
+
 
 
 async def pair(update: Update, context: CallbackContext):
