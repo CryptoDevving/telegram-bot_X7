@@ -175,42 +175,10 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 text=message_text,
                 parse_mode="Markdown",
             )
+
             if total_click_count % text.burn_increment == 0:
-                try:
-                    alchemy_keys = os.getenv("ALCHEMY_ETH")
-                    alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
-                    w3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
-                    sender_address = os.getenv("BURN_WALLET")
-                    recipient_address = ca.dead
-                    token_contract_address = ca.x7r
-                    sender_private_key = os.getenv("BURN_WALLET_PRIVATE_KEY")
-                    amount_to_send_tokens = 100
-                    decimals = 18  
-                    amount_to_send_wei = amount_to_send_tokens * (10 ** decimals)
-
-                    token_transfer_data = (
-                        '0xa9059cbb'
-                        + recipient_address[2:].rjust(64, '0')
-                        + hex(amount_to_send_wei)[2:].rjust(64, '0')
-                    )
-
-                    transaction = {
-                        'from': sender_address,
-                        'to': token_contract_address,
-                        'data': token_transfer_data,
-                        'gasPrice': w3.to_wei('50', 'gwei'),
-                    }
-                    
-                    gas_estimate = w3.eth.estimate_gas(transaction)
-                    nonce = w3.eth.get_transaction_count(sender_address)
-                    transaction['gas'] = gas_estimate
-                    transaction['nonce'] = nonce
-                    signed_transaction = w3.eth.account.sign_transaction(transaction, sender_private_key)
-                    tx_hash = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
-                    burn_message = f"{amount_to_send_tokens} X7R Burnt\n\n{url.ether_tx}{tx_hash.hex()}"
-                except Exception as e:
-                        burn_message = f'Error burning X7R: {e}'
-                await context.bot.send_message(
+                burn_message = await api.burn_x7r(100)
+            await context.bot.send_message(
                     chat_id=update.effective_chat.id,
                     text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
                         f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
@@ -257,6 +225,7 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
+    application.add_handler(CommandHandler("test", commands.test))
 
     ## COMANDS ##
     application.add_handler(CommandHandler("about", commands.about))

@@ -1,18 +1,19 @@
 import os
 import csv
 import random
+import base64
+import requests
 import time as t
 from typing import Tuple
 from datetime import datetime, timedelta
 
 import tweepy
-import base64
-import requests
+from web3 import Web3
 import mysql.connector
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 
-from data import ca
+from data import ca, url
 from api import index as api
 
 
@@ -554,6 +555,41 @@ def get_volume(pair, chain):
 
 
 # OTHER
+
+async def burn_x7r(amount):
+    try:
+        alchemy_keys = os.getenv("ALCHEMY_ETH")
+        alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
+        w3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
+        sender_address = os.getenv("BURN_WALLET")
+        recipient_address = ca.dead
+        token_contract_address = ca.x7r
+        sender_private_key = os.getenv("BURN_WALLET_PRIVATE_KEY")
+        decimals = 18  
+        amount_to_send_wei = amount * (10 ** decimals)
+
+        token_transfer_data = (
+            '0xa9059cbb'
+            + recipient_address[2:].rjust(64, '0')
+            + hex(amount_to_send_wei)[2:].rjust(64, '0')
+        )
+
+        transaction = {
+            'from': sender_address,
+            'to': token_contract_address,
+            'data': token_transfer_data,
+            'gasPrice': w3.to_wei('50', 'gwei'),
+        }
+        
+        gas_estimate = w3.eth.estimate_gas(transaction)
+        nonce = w3.eth.get_transaction_count(sender_address)
+        transaction['gas'] = gas_estimate
+        transaction['nonce'] = nonce
+        signed_transaction = w3.eth.account.sign_transaction(transaction, sender_private_key)
+        tx_hash = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
+        return f"{amount} X7R Burnt\n\n{url.ether_tx}{tx_hash.hex()}"
+    except Exception as e:
+            return f'Error burning X7R: {e}'
 
 
 def datetime_to_timestamp(datetime_str):
