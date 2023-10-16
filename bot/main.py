@@ -178,12 +178,12 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
             if total_click_count % text.burn_increment == 0:
                 burn_message = await api.burn_x7r(100)
-            await context.bot.send_message(
-                    chat_id=update.effective_chat.id,
-                    text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
-                        f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
-                        f"{burn_message}"
-                )
+                await context.bot.send_message(
+                        chat_id=update.effective_chat.id,
+                        text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
+                            f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
+                            f"{burn_message}"
+                    )
                 
         times.restart_time = datetime.now().timestamp()        
         context.user_data["current_button_data"] = None
