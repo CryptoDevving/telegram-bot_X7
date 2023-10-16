@@ -865,7 +865,7 @@ def db_clicks_fastest_time():
         cursor.execute("""
             SELECT name, MIN(time_taken)
             FROM leaderboard
-            WHERE time_taken IS NOT NULL
+            WHERE time_taken = (SELECT MIN(time_taken) FROM leaderboard WHERE time_taken IS NOT NULL)
         """)
         fastest_time_taken_data = cursor.fetchone()
         close_db_connection(db_connection, cursor)

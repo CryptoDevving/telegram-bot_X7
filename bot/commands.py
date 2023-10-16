@@ -1418,7 +1418,7 @@ async def leaderboard(update: Update, context: CallbackContext):
         text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
             f"{api.escape_markdown(board)}\n"
             f"Total clicks: *{click_counts_total}*\n\n"
-            f"Fastest Click:\n{fastest_time} seconds\nby {fastest_user}\n\n"
+            f"Fastest Click:\n{fastest_time} seconds\nby {api.escape_markdown(fastest_user)}\n\n"
             f"Clicks till next X7R Burn: *{clicks_needed}*\n",
         parse_mode="Markdown"
     )
@@ -2243,14 +2243,20 @@ async def me(update: Update, context: CallbackContext):
     user_data = api.db_clicks_get_by_name(user_info)
     clicks = user_data[0]
     fastest_time = user_data[1]
+
+    if fastest_time is None:
+        message = f"*X7 Finance Fastest Pioneer Leaderboard*\n\n" \
+                  f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times\n\n" \
+                  f"Your fastest time has not been logged yet\n\n{api.get_quote()}"
+    else:
+        message = f"*X7 Finance Fastest Pioneer Leaderboard*\n\n" \
+                  f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times\n\n" \
+                  f"Your fastest time is {fastest_time} seconds\n\n{api.get_quote()}"
+
     await update.message.reply_text(
-        text=f"*X7 Finance Fastest Pioneer Leaderboard*\n\n"
-        f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times\n\n"
-        f" Your fastest time is {fastest_time} seconds\n\n"
-        f"{api.get_quote()}",
+        text=message,
         parse_mode="Markdown"
     )
-
 
 async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
