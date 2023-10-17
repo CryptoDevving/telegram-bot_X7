@@ -4791,7 +4791,6 @@ async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 [InlineKeyboardButton(text="Website", url=f"{url.dashboard}")],
                 [InlineKeyboardButton(text="Full WP", url=f"{url.wp_link}")],
-                [InlineKeyboardButton(text="Short WP", url=f"{url.short_wp_link}")],
             ]
         ),
     )
