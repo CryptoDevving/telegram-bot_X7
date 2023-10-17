@@ -25,7 +25,8 @@ from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        return
+        tx = api.get_tx_from_hash("0xe6a97f98c0c69093a76659eefb284d4c3b49d8437ad9c52547a37e29d427edc8", "poly")
+        print(tx)
     except Exception as e:
         print(e)
 
