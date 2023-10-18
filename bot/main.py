@@ -11,7 +11,6 @@ import random
 from datetime import datetime
 
 import commands
-import admin
 import twitter
 
 from data import times, url, ca, text
