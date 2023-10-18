@@ -22,7 +22,10 @@ current_combination = None
 
 
 async def ascii(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        input_text = " ".join(context.args).upper()
+    input_text = " ".join(context.args).upper()
+    if input_text == "":
+        await update.message.reply_text("Please follow the command with the word you wish to convert")
+    else:
         words = input_text.split()
         input_text = "\n".join(words)
         custom_fig = Figlet(font="slant")

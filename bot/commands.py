@@ -1175,7 +1175,6 @@ async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
 )
     
 
-
 async def gas(update, context):
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4211,29 +4210,35 @@ async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def timestamp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        stamp = int(" ".join(context.args).lower())
-        time = api.timestamp_to_datetime(stamp)
-        current_time = datetime.utcnow()
-        timestamp_time = datetime.utcfromtimestamp(stamp)
-        time_difference = current_time - timestamp_time
-        if time_difference.total_seconds() > 0:
-            time_message = "ago"
-        else:
-            time_message = "away"
-            time_difference = abs(time_difference)
-        years = time_difference.days // 365
-        months = (time_difference.days % 365) // 30
-        days = time_difference.days % 30
-        hours, remainder = divmod(time_difference.seconds, 3600)
-        minutes = remainder // 60
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*X7 Finance Timestamp Conversion*\n\n"
-                    f"{stamp}\n{time} UTC\n\n"
-                    f"{years} years, {months} months, {days} days, "
-                    f"{hours} hours, {minutes} minutes {time_message}",
-            parse_mode="Markdown",
-        )
+        text = " ".join(context.args)
+        if text == "":
+            await update.message.reply_text(
+                "Please follow the command with the timestamp you wish to convert"
+            )
+        else:  
+            stamp = int(" ".join(context.args).lower())
+            time = api.timestamp_to_datetime(stamp)
+            current_time = datetime.utcnow()
+            timestamp_time = datetime.utcfromtimestamp(stamp)
+            time_difference = current_time - timestamp_time
+            if time_difference.total_seconds() > 0:
+                time_message = "ago"
+            else:
+                time_message = "away"
+                time_difference = abs(time_difference)
+            years = time_difference.days // 365
+            months = (time_difference.days % 365) // 30
+            days = time_difference.days % 30
+            hours, remainder = divmod(time_difference.seconds, 3600)
+            minutes = remainder // 60
+            await update.message.reply_photo(
+                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                caption=f"*X7 Finance Timestamp Conversion*\n\n"
+                        f"{stamp}\n{time} UTC\n\n"
+                        f"{years} years, {months} months, {days} days, "
+                        f"{hours} hours, {minutes} minutes {time_message}",
+                parse_mode="Markdown",
+            )
     except Exception as e:
         await update.message.reply_text(
             "Timestamp not recognised"
@@ -4310,7 +4315,7 @@ async def today(update: Update, context: ContextTypes.DEFAULT_TYPE):
     today = random.choice(data["data"]["Events"])
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f'`On this day in {today["year"]}:\n\n{today["text"]}`',
+        caption=f'On this day in {today["year"]}:\n\n{today["text"]}',
         parse_mode="Markdown",
     )
 
@@ -4318,22 +4323,31 @@ async def today(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def translate_german(update: Update, context: ContextTypes.DEFAULT_TYPE):
     translator = Translator(from_lang="english", to_lang="german")
     phrase = " ".join(context.args).lower()
-    translation = translator.translate(phrase)
-    await update.message.reply_text(translation)
+    if phrase == "":
+        await update.message.reply_text("Please follow the command with the sentence you wish to translate")
+    else:
+        translation = translator.translate(phrase)
+        await update.message.reply_text(translation)
 
 
 async def translate_japanese(update: Update, context: ContextTypes.DEFAULT_TYPE):
     translator = Translator(from_lang="english", to_lang="japanese")
     phrase = " ".join(context.args).lower()
-    translation = translator.translate(phrase)
-    await update.message.reply_text(translation)
+    if phrase == "":
+        await update.message.reply_text("Please follow the command with the sentence you wish to translate")
+    else:
+        translation = translator.translate(phrase)
+        await update.message.reply_text(translation)
 
 
 async def translate_russian(update: Update, context: ContextTypes.DEFAULT_TYPE):
     translator = Translator(from_lang="english", to_lang="russian")
     phrase = " ".join(context.args).lower()
-    translation = translator.translate(phrase)
-    await update.message.reply_text(translation)
+    if phrase == "":
+        await update.message.reply_text("Please follow the command with the sentence you wish to translate")
+    else:
+        translation = translator.translate(phrase)
+        await update.message.reply_text(translation)
 
 
 async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -4751,10 +4765,13 @@ async def website(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def wei(update: Update, context: ContextTypes.DEFAULT_TYPE):
     eth = " ".join(context.args)
-    wei = int(float(eth) * 10**18)
-    await update.message.reply_text(
-        f"{eth} ETH is equal to \n" f"`{wei}` wei", parse_mode="Markdown"
-    )
+    if eth == "":
+        await update.message.reply_text("Please follow the command with the amount of eth you wish to convert")
+    else:
+        wei = int(float(eth) * 10**18)
+        await update.message.reply_text(
+            f"{eth} ETH is equal to \n" f"`{wei}` wei", parse_mode="Markdown"
+        )
 
 
 async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):
