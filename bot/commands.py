@@ -44,6 +44,26 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_admins = await update.effective_chat.get_administrators()
+    if update.effective_user in (admin.user for admin in chat_admins):
+        await update.message.reply_text(
+            f"{text.admin_commands}",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Rose Bot Anti-flood",
+                            url="https://missrose.org/guide/antiflood/",
+                        )
+                    ],
+                ]
+            ),
+        )
+    else:
+        await update.message.reply_text(f"{text.mods_only}")
+
+
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(sticker=media.chains)
     await update.message.reply_text(
@@ -1167,10 +1187,8 @@ async def fg(update, context):
 async def games(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-    caption=f"*X7 Finance Games*\n\n"
-    f"`/ascii`\n`/coinflip`\n`/leaderboard`\n`/me`\n`/roll`\n`/riddle`\n`/rps`\n\n"
-    f"The following games are locked in group chats by default. Play in private chat with {api.escape_markdown('@x7finance_bot')} or ask your favourite mod to unlock in the group chat with `/unlock_games`\n\n"
-    f"`/emoji`\n`/guess`\n`/hangman`\n`/puzzle`\n`/scramble`\n\n",
+    caption=f"*X7 Games*\n\n"
+    f"Coming soon!",
     parse_mode="Markdown",
 )
     
@@ -1182,7 +1200,7 @@ async def gas(update, context):
     chain_mappings = {
         "eth": ("(ETH)", "https://etherscan.io/gastracker", media.eth_logo),
         "bsc": ("(BSC)", "https://bscscan.com/gastracker", media.bsc_logo),
-        "poly": ("(POLYGON)", "https://polygon.com/gastracker", media.poly_logo),
+        "poly": ("(POLYGON)", "https://polygonscan.com/gastracker", media.poly_logo),
         "base": ("(BASE)", "https://basescan.org/gastracker", media.base_logo),
     }
     if chain in chain_mappings:
@@ -4772,6 +4790,23 @@ async def wei(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             f"{eth} ETH is equal to \n" f"`{wei}` wei", parse_mode="Markdown"
         )
+
+
+async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        if times.button_time is not None:
+            time = times.button_time
+        else:    
+            time = times.first_button_time
+        target_timestamp = times.restart_time + time
+        time_difference_seconds = target_timestamp - datetime.now().timestamp()
+        time_difference = timedelta(seconds=time_difference_seconds)
+        hours, remainder = divmod(time_difference.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds")
+    else:
+        await update.message.reply_text(f"{text.mods_only}")
 
 
 async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):

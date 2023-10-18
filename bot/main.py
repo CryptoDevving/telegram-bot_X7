@@ -11,7 +11,6 @@ import random
 from datetime import datetime
 
 import commands
-import games
 import admin
 import twitter
 
@@ -229,6 +228,7 @@ if __name__ == "__main__":
 
     ## COMANDS ##
     application.add_handler(CommandHandler("about", commands.about))
+    application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin_command))
     application.add_handler(CommandHandler("alerts", commands.alerts))
     application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
     application.add_handler(CommandHandler("alumni", commands.alumni))
@@ -320,6 +320,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("wei", commands.wei))
     application.add_handler(CommandHandler("wallet", commands.wallet))
     application.add_handler(CommandHandler(["website", "site"], commands.website))
+    application.add_handler(CommandHandler("wen", commands.wen))
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
@@ -329,52 +330,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("draw", twitter.draw))
     application.add_handler(CommandHandler("raid", twitter.raid))
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
-
-    ## GAMES ##
-    application.add_handler(CommandHandler("ascii", games.ascii))
-    application.add_handler(CommandHandler("coinflip", games.coinflip))
-    application.add_handler(CommandHandler("roll", games.start_roll))
-
-    guess_conversation = ConversationHandler(entry_points=[CommandHandler('guess', games.guess)],
-    states={games.PLAYING_GUESS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.guess_game)],},
-    fallbacks=[CommandHandler('cancel_guess', games.guess_cancel)])
-    application.add_handler(guess_conversation)
-
-    rps_conversation = ConversationHandler(entry_points=[CommandHandler('rps', games.rps)],
-    states={games.PLAYING_RPS: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.rps_game)],},
-    fallbacks=[CommandHandler('cancel_rps', games.rps_cancel)])
-    application.add_handler(rps_conversation)
-
-    hangman_conversation = ConversationHandler(entry_points=[CommandHandler('hangman', games.hangman)],
-    states={games.PLAYING_HANGMAN: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.hangman_game)],},
-    fallbacks=[CommandHandler('cancel_hangman', games.hangman_cancel)])
-    application.add_handler(hangman_conversation)
-
-    scramble_conversation = ConversationHandler(entry_points=[CommandHandler('scramble', games.scramble)],
-    states={games.PLAYING_SCRAMBLE: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.scramble_game)],},
-    fallbacks=[CommandHandler('cancel_scramble', games.scramble_cancel)])
-    application.add_handler(scramble_conversation)
-
-    puzzle_conversation = ConversationHandler(entry_points=[CommandHandler('puzzle', games.puzzle)],
-    states={games.PLAYING_PUZZLE: [MessageHandler(filters.Regex(r'^(up|down|left|right)$'), games.puzzle_game)]},
-    fallbacks=[CommandHandler('cancel_scramble', games.puzzle_cancel)])
-    application.add_handler(puzzle_conversation)
-
-    emoji_conversation = ConversationHandler(entry_points=[CommandHandler('emoji', games.emoji)],
-    states={games.PLAYING_EMOJI: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.emoji_game)]},
-    fallbacks=[CommandHandler('cancel_emoji', games.emoji_cancel)])
-    application.add_handler(emoji_conversation)
-
-    riddle_conversation = ConversationHandler(entry_points=[CommandHandler('riddle', games.riddle)],
-    states={games.PLAYING_RIDDLE: [MessageHandler(filters.TEXT & (~filters.COMMAND), games.riddle_game)]},
-    fallbacks=[])
-    application.add_handler(riddle_conversation)
-
-    ## ADMIN ##
-    application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], admin.admin_command))
-    application.add_handler(CommandHandler("lock_games", admin.games_lock))
-    application.add_handler(CommandHandler("unlock_games", admin.games_unlock))
-    application.add_handler(CommandHandler("wen", admin.wen))
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(clicks_function))
