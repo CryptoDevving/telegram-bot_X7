@@ -223,9 +223,9 @@ async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_info = user.username or f"{user.first_name} {user.last_name}"
         await context.bot.send_message(
             chat_id=os.getenv("BIO_TELEGRAM_CHANNEL_ID"),
-            text=f"{user.first_name}\nhttp://t.me/{user.username}\n\n{input}",
+            text=f"{user.first_name}\nhttps://t.me/{user.username}\n\n{input}",
             disable_web_page_preview="true",
-            parse_mode="Markdown")
+            )
         await update.message.reply_text(
             f"Thanks {user_info}, Your bio has been submitted")
 
