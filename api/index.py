@@ -560,7 +560,7 @@ async def burn_x7r(amount):
     try:
         alchemy_keys = os.getenv("ALCHEMY_ETH")
         alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
-        w3 = Web3(Web3.HTTPProvider(alchemy_eth_url), chain_id=1)
+        w3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
         sender_address = os.getenv("BURN_WALLET")
         recipient_address = ca.dead
         token_contract_address = ca.x7r
