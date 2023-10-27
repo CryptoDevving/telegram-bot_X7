@@ -153,11 +153,10 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             total_click_count = api.db_clicks_get_total()
             if clicks == 1:
                 click_message = "🎉🎉 This is their first button click! 🎉🎉"
+
             elif clicks % 10 == 0:
                 click_message = f"🎉🎉 They been the fastest Pioneer {clicks} times! 🎉🎉"
-
-            elif clicks == 20:
-                click_message = f"🎉🎉 They been the fastest Pioneer {clicks} times and won a X7 Finance Pioneer NFT! 🎉🎉"
+                
             else:
                 click_message = f"They have been the fastest Pioneer {clicks} times!"
 
