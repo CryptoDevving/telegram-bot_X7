@@ -377,7 +377,7 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
                 [
                     InlineKeyboardButton(
-                        text=f"DAO Chat", url=f"{url.tg_dao}",
+                        text=f"DAO Proposers Chat", url=f"{url.tg_dao}",
                     )
                     ],
                 [
@@ -712,7 +712,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ],
                     [
                         InlineKeyboardButton(
-                            text=f"DAO Chat",
+                            text=f"DAO Proposers Chat",
                             url=f"{url.tg_dao}",
                         )
                     ],
