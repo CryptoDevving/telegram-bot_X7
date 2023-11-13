@@ -14,6 +14,7 @@ xchange_fund = "https://app.x7.finance/#/fund"
 tg_main = "t.me/x7m105portal"
 tg_alerts = "t.me/xchange_alerts"
 tg_announcements = "t.me/x7announcements"
+tg_dao = "https://telegram.me/collablandbot?start=VFBDI1RFTCNDT01NIy0xMDAyMTM5MTc4NTQx"
 
 # ETHERSCAN
 ether_token = "https://etherscan.io/token/"

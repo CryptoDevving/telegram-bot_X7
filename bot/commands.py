@@ -377,6 +377,11 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
                 [
                     InlineKeyboardButton(
+                        text=f"DAO Chat", url=f"{url.tg_dao}",
+                    )
+                    ],
+                [
+                    InlineKeyboardButton(
                         text="Xchange Alerts", url="https://t.me/x7_alerts"
                     )
                 ],
@@ -703,6 +708,12 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             text=f"{caption} Here",
                             url=f"{url.snapshot}/proposal/"
                             f'{snapshot["data"]["proposals"][0]["id"]}',
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text=f"DAO Chat",
+                            url=f"{url.tg_dao}",
                         )
                     ],
                 ]
