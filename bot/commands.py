@@ -3396,7 +3396,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{symbol} price - CoinGecko\n\n"
                     f'Price: ${price}\n'
                     f"24 Hour Change: {price_change}%\n"
-                    f'Market Cap: ${market_cap_formatted}\n\n\n\n\n\n\n\n'
+                    f'Market Cap: {market_cap_formatted}\n\n\n\n\n\n\n\n'
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
                     fill=(255, 255, 255),
@@ -3407,7 +3407,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"*{symbol} price* - CoinGecko\n\n"
                     f'Price: ${price}\n'
                     f'24 Hour Change: {price_change}%\n'
-                    f'Market Cap: ${market_cap_formatted}\n\n'
+                    f'Market Cap: {market_cap_formatted}\n\n'
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
                     reply_markup=InlineKeyboardMarkup(
