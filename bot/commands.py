@@ -22,11 +22,239 @@ from api import index as api
 from media import index as media
 from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, chains, pairs
 
+abi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pairedAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_factoryAddress",
+        "type": "address"
+      }
+    ],
+    "name": "addToken",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "amendFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "changeOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_treasury",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_initialTokens",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": False,
+    "inputs": [
+      {
+        "indexed": False,
+        "internalType": "uint256",
+        "name": "newFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "amendedBy",
+        "type": "address"
+      }
+    ],
+    "name": "FeeAmended",
+    "type": "event"
+  },
+  {
+    "anonymous": False,
+    "inputs": [
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      },
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "changedBy",
+        "type": "address"
+      }
+    ],
+    "name": "OwnerChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": False,
+    "inputs": [
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "addedBy",
+        "type": "address"
+      }
+    ],
+    "name": "TokenAdded",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "fee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRegisteredTokens",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "registeredTokenList",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "registeredTokens",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "treasury",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    address_ = "0x0bcf41a7f121705151cfa41db9cafa541d12f394"
+    alchemy_poly = os.getenv("ALCHEMY_POLY")
+    alchemy_poly_url = f"https://polygon-mainnet.g.alchemy.com/v2/{alchemy_poly}"
+    web3 = Web3(Web3.HTTPProvider(alchemy_poly_url))
     try:
-        tx = api.get_tx_from_hash("0xe6a97f98c0c69093a76659eefb284d4c3b49d8437ad9c52547a37e29d427edc8", "poly")
-        print(tx)
+        address = to_checksum_address(address_)
+        contract = web3.eth.contract(address=address, abi=abi)
+        amount = (
+            contract.functions.getRegisteredTokens()
+            ).call()
+        for elem in amount:
+            print(elem)
     except Exception as e:
         print(e)
 
@@ -2828,6 +3056,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             + opti_lpool_dollar
             + base_lpool_dollar
         )
+
         total_dollar = poly_dollar + bsc_dollar + opti_dollar + arb_dollar + eth_dollar + base_dollar
         im1 = Image.open((random.choice(media.blackhole)))
         im2 = Image.open(media.x7d_logo)
@@ -2869,22 +3098,30 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         chain_mappings = {
-            "eth": ("(ETH)", url.ether_address, "eth", media.eth_logo),
-            "bsc": ("(BSC)", url.bsc_address, "bnb", media.bsc_logo),
-            "poly": ("(POLYGON)", url.poly_address, "matic", media.poly_logo),
-            "opti": ("(OPTIMISM)", url.opti_address, "eth", media.opti_logo),
-            "arb": ("(ARB)", url.arb_address, "eth", media.arb_logo),
+            "eth": ("(ETH)", url.ether_address, "eth", media.eth_logo, f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"),
+            "bsc": ("(BSC)", url.bsc_address, "bnb", media.bsc_logo, f"{random.choice(url.bsc)}"),
+            "poly": ("(POLYGON)", url.poly_address, "matic", media.poly_logo, f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}"),
+            "opti": ("(OPTIMISM)", url.opti_address, "eth", media.opti_logo, f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}"),
+            "arb": ("(ARB)", url.arb_address, "eth", media.arb_logo, f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"),
             "base": ("(BASE)", url.base_address, "eth", media.base_logo),
         }
+
+        
         if chain in chain_mappings:
-            chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
+            chain_name, chain_url, chain_native, chain_logo, web3_url = chain_mappings[chain]
+            
+            web3 = Web3(Web3.HTTPProvider(web3_url))
+            address = to_checksum_address(ca.lpool)
+            contract = web3.eth.contract(address=address, abi=api.get_abi(ca.lpool, chain))
+            available = (contract.functions.availableCapital().call() / 10**18)
+
             lpool_reserve = api.get_native_balance(ca.lpool_reserve, chain)
             lpool_reserve_dollar = (
                 float(lpool_reserve)
                 * float(api.get_native_price(chain_native))
                 / 1**18
             )
-            lpool = api.get_native_balance(ca.lpool, chain)
+            lpool = float(api.get_native_balance(ca.lpool, chain))
             lpool_dollar = (
                 float(lpool) * float(api.get_native_price(chain_native)) / 1**18
             )
@@ -2892,11 +3129,16 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             dollar = lpool_reserve_dollar + lpool_dollar
             lpool_reserve = round(float(lpool_reserve), 2)
             lpool = round(float(lpool), 2)
+
+            used = lpool - available
+            percent = int((used / pool) * 100)
+            
+
         im2 = Image.open(chain_logo)
         im1 = Image.open((random.choice(media.blackhole)))
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
-        myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
+        myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
         i1.text(
             (28, 36),
             f"X7 Finance Lending Pool Info {chain_name}\n\n"
@@ -2905,7 +3147,9 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"External Deposits\n"
             f'{lpool_reserve} {chain_native.upper()} (${"{:0,.0f}".format(lpool_reserve_dollar)})\n\n'
             f"Total\n"
-            f'{pool} {chain_native.upper()} (${"{:0,.0f}".format(dollar)})\n\n\n'
+            f'{pool} {chain_native.upper()} (${"{:0,.0f}".format(dollar)})\n\n'
+            f'Currently Borrowed\n'
+            f'{used:.2f} {chain_native.upper()} ({percent}%)\n\n'
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font=myfont,
             fill=(255, 255, 255),
@@ -2921,6 +3165,8 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'{lpool_reserve} {chain_native.upper()} (${"{:0,.0f}".format(lpool_reserve_dollar)})\n\n'
             f"Total\n"
             f'{pool} {chain_native.upper()} (${"{:0,.0f}".format(dollar)})\n\n'
+            f'Currently Borrowed\n'
+            f'{used:.2f} {chain_native.upper()} ({percent}%)\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
