@@ -406,7 +406,7 @@ def get_nft_floor(nft, chain):
 # OPENSEA
 
 def get_os_nft_collection(slug):
-    url = f"https://api.opensea.io/api/v1/collection/{slug}"
+    url = f"https://api.opensea.io/api/v2/collections/{slug}"
     response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
     data = response.json()
     return data

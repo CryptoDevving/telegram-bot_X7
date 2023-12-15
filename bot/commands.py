@@ -2880,13 +2880,6 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         else:
             floor_round = "N/A"
             floor_dollar = 0 
-        traits = data["collection"]["traits"]["Transfer Lock Status"]["unlocked"]
-        sales = data["collection"]["stats"]["total_sales"]
-        owners = data["collection"]["stats"]["num_owners"]
-        price = round(data["collection"]["stats"]["average_price"], 2)
-        price_dollar = price * float(api.get_native_price("eth")) / 1**18
-        volume = round(data["collection"]["stats"]["total_volume"], 2)
-        volume_dollar = volume * float(api.get_native_price("eth")) / 1**18
         pioneer_pool = api.get_native_balance(ca.pioneer, "eth")
         each = float(pioneer_pool) / 639
         each_dollar = float(each) * float(api.get_native_price("eth")) / 1**18
@@ -2899,11 +2892,6 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 (28, 36),
                 f"X7 Pioneer NFT Info\n\n"
                 f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
-                f"Average Price: {price} ETH (${'{:0,.0f}'.format(price_dollar)})\n"
-                f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
-                f"Total Sales: {sales}\n"
-                f"Number of Owners: {owners}\n"
-                f"Pioneers Unlocked: {traits}\n\n\n"
                 f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
                 f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
                 f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
@@ -2915,10 +2903,6 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 photo=open(r"media/blackhole.png", "rb"),
                 caption=f"*X7 Pioneer NFT Info*\n\n"
                 f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
-                f"Average Price: {price} ETH (${'{:0,.0f}'.format(price_dollar)})\n"
-                f"Total Volume: {volume} ETH (${'{:0,.0f}'.format(volume_dollar)})\n"
-                f"Number of Owners: {owners}\n"
-                f"Pioneers Unlocked: {traits}\n\n"
                 f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
                 f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
                 f"{api.get_quote()}",
@@ -2961,13 +2945,14 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                         [
                             InlineKeyboardButton(
                                 text="Opensea",
-                                url=f"https://pro.opensea.io/nft/{ca.pioneer}/{pioneer_id}",
+                                url=f"https://pro.opensea.io/nft/ethereum/{ca.pioneer}/{pioneer_id}",
                             )
                         ],
                     ]
                 ),
             )
-    except Exception:
+    except Exception as e:
+        print(e)
         await update.message.reply_text(f"Pioneer {pioneer_id} not found")
 
 
