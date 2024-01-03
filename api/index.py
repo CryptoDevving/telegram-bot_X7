@@ -908,6 +908,22 @@ def db_clicks_fastest_time():
         return fastest_time_taken_data if fastest_time_taken_data else ("No user", 0)
     except mysql.connector.Error:
         return ("No user", 0)
+    
+
+def db_clicks_slowest_time():
+    try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
+        cursor.execute("""
+            SELECT name, MAX(time_taken)
+            FROM leaderboard
+            WHERE time_taken = (SELECT MAX(time_taken) FROM leaderboard WHERE time_taken IS NOT NULL)
+        """)
+        slowest_time_taken_data = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
+        return slowest_time_taken_data if slowest_time_taken_data else ("No user", 0)
+    except mysql.connector.Error:
+        return ("No user", 0)
 
 
 def db_clicks_get_by_name(name):
@@ -926,7 +942,7 @@ def db_clicks_get_by_name(name):
         return (0, 0)
 
 
-def db_clicks_get_leaderboard(limit=20):
+def db_clicks_get_leaderboard(limit=10):
     try:
         db_connection = create_db_connection()
         cursor = db_connection.cursor()
@@ -959,6 +975,18 @@ def db_clicks_get_total():
         return total_clicks[0] if total_clicks else 0
     except mysql.connector.Error:
         return 0
+
+
+def db_clicks_reset():
+    try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
+        cursor.execute("DELETE FROM leaderboard")
+        db_connection.commit()
+        close_db_connection(db_connection, cursor)
+        return "Leaderboard cleared successfully"
+    except mysql.connector.Error:
+        return "Error clearing leaderboard"
 
 
 async def clicks_update(name, time_taken):

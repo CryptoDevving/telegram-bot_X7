@@ -22,7 +22,6 @@ clicked_buttons = set()
 first_user_clicked = False
 
 
-
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     global current_button_data, first_user_clicked
     first_user_clicked = False
@@ -176,14 +175,14 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 parse_mode="Markdown",
             )
 
-            if total_click_count % text.burn_increment == 0:
-                burn_message = await api.burn_x7r(100)
-                await context.bot.send_message(
-                        chat_id=update.effective_chat.id,
-                        text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
-                            f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
-                            f"{burn_message}"
-                    )
+#            if total_click_count % text.burn_increment == 0:
+#                burn_message = await api.burn_x7r(100)
+#                await context.bot.send_message(
+#                        chat_id=update.effective_chat.id,
+#                        text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
+#                            f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
+#                            f"{burn_message}"
+#                    )
                 
         times.restart_time = datetime.now().timestamp()        
         context.user_data["current_button_data"] = None
@@ -230,8 +229,8 @@ if __name__ == "__main__":
     ## COMANDS ##
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["admin_commands", "admin", "admincommands"], commands.admin_command))
-    application.add_handler(CommandHandler("alerts", commands.alerts))
     application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
+    application.add_handler(CommandHandler("alerts", commands.alerts))
     application.add_handler(CommandHandler("alumni", commands.alumni))
     application.add_handler(CommandHandler("announcements", commands.announcements))
     application.add_handler(CommandHandler("ath", commands.ath))
@@ -289,6 +288,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("logo", commands.price_logo))
     application.add_handler(CommandHandler("proposal", commands.proposal))
     application.add_handler(CommandHandler("quote", commands.quote))
+    application.add_handler(CommandHandler("reset_leaderboard", commands.reset_leaderboard))
     application.add_handler(CommandHandler(["referral", "refer"], commands.refer))
     application.add_handler(CommandHandler("router", commands.router))
     application.add_handler(CommandHandler("say", commands.say))
@@ -336,20 +336,20 @@ if __name__ == "__main__":
     application.add_handler(CallbackQueryHandler(clicks_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
 
-#    job_queue.run_repeating(
-#        auto_message_info,
-#        times.auto_message_time,
-#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-#        first=times.auto_message_time,
-#        name="Auto Message",
-#    )
+    job_queue.run_repeating(
+        auto_message_info,
+        times.auto_message_time,
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        first=times.auto_message_time,
+        name="Auto Message",
+    )
 
-#    job_queue.run_once(
-#        auto_message_click,
-#        times.first_button_time,
-#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_#ID"),
-#        name="Click Message",
-#    )
+    job_queue.run_once(
+        auto_message_click,
+        times.first_button_time,
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        name="Click Message",
+    )
 
     ## SCANNERS ##
     scanners = [

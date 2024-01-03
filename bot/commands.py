@@ -22,241 +22,9 @@ from api import index as api
 from media import index as media
 from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, chains, pairs
 
-abi = [
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_pairedAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_factoryAddress",
-        "type": "address"
-      }
-    ],
-    "name": "addToken",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_newFee",
-        "type": "uint256"
-      }
-    ],
-    "name": "amendFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "changeOwner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_treasury",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_initialFee",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_initialTokens",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": False,
-    "inputs": [
-      {
-        "indexed": False,
-        "internalType": "uint256",
-        "name": "newFee",
-        "type": "uint256"
-      },
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "amendedBy",
-        "type": "address"
-      }
-    ],
-    "name": "FeeAmended",
-    "type": "event"
-  },
-  {
-    "anonymous": False,
-    "inputs": [
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      },
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "changedBy",
-        "type": "address"
-      }
-    ],
-    "name": "OwnerChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": False,
-    "inputs": [
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "addedBy",
-        "type": "address"
-      }
-    ],
-    "name": "TokenAdded",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "fee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRegisteredTokens",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "registeredTokenList",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "registeredTokens",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "treasury",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-]
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    address_ = "0x0bcf41a7f121705151cfa41db9cafa541d12f394"
-    alchemy_poly = os.getenv("ALCHEMY_POLY")
-    alchemy_poly_url = f"https://polygon-mainnet.g.alchemy.com/v2/{alchemy_poly}"
-    web3 = Web3(Web3.HTTPProvider(alchemy_poly_url))
-    try:
-        address = to_checksum_address(address_)
-        contract = web3.eth.contract(address=address, abi=abi)
-        amount = (
-            contract.functions.getRegisteredTokens()
-            ).call()
-        for elem in amount:
-            print(elem)
-    except Exception as e:
-        print(e)
+    return
 
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1673,14 +1441,18 @@ async def leaderboard(update: Update, context: CallbackContext):
     fastest = api.db_clicks_fastest_time()
     fastest_user = fastest[0]
     fastest_time = fastest[1]
+    slowest = api.db_clicks_slowest_time()
+    slowest_user = slowest[0]
+    slowest_time = slowest[1]
     clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
     await update.message.reply_text(
-        text=f"*X7 Finance Fastest Pioneer Leaderboard\n(Top 20)\n\n*"
+        text=f"*X7 Finance Fastest Pioneer 2024 Leaderboard\n(Top 10)\n\n*"
             f"{api.escape_markdown(board)}\n"
             f"Total clicks: *{click_counts_total}*\n\n"
             f"Fastest Click:\n{fastest_time} seconds\nby {api.escape_markdown(fastest_user)}\n\n"
-            f"Clicks till next X7R Burn: *{clicks_needed}*\n",
-        parse_mode="Markdown"
+            f"Slowest Click:\n{slowest_time} seconds\nby {api.escape_markdown(slowest_user)}\n\n"
+#            f"Clicks till next X7R Burn: *{clicks_needed}*\n"
+        ,parse_mode="Markdown"
     )
     
 
@@ -2511,7 +2283,7 @@ async def me(update: Update, context: CallbackContext):
     else:
         message = f"*X7 Finance Fastest Pioneer Leaderboard*\n\n" \
                   f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times\n\n" \
-                  f"Your fastest time is {fastest_time} seconds\n\n{api.get_quote()}"
+                  f"Your fastest time is {fastest_time} seconds\n\n"
 
     await update.message.reply_text(
         text=message,
@@ -3705,6 +3477,14 @@ async def proposal(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"{api.get_quote()}",
+        parse_mode="Markdown",
+    )
+
+
 async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"{text.refer}",
@@ -3722,12 +3502,12 @@ async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"{api.get_quote()}",
-        parse_mode="Markdown",
-    )
+async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        api.db_clicks_reset()
+    else:
+        await update.message.reply_text(f"{text.mods_only}")
 
 
 async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
