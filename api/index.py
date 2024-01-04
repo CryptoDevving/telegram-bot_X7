@@ -989,7 +989,7 @@ def db_clicks_reset():
         return "Error clearing leaderboard"
 
 
-async def clicks_update(name, time_taken):
+async def db_clicks_update(name, time_taken):
     db_connection = create_db_connection()
     cursor = db_connection.cursor()
     cursor.execute("""

@@ -10,7 +10,7 @@ def random_button_time():
 first_button_time = random_button_time()
 button_time = None
 restart_time = datetime.now().timestamp()
-auto_message_time = 7200
+auto_message_time = 14400
 
 # COUNTDOWN
 countdown_time = datetime(2023, 9, 7, 12, 00, 00)

@@ -141,7 +141,7 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         button_click_timestamp = t.time()
         time_taken = button_click_timestamp - button_generation_timestamp
 
-        await api.clicks_update(user_info, time_taken)
+        await api.db_clicks_update(user_info, time_taken)
     
 
         if not first_user_clicked:
