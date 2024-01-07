@@ -116,11 +116,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     x7r_ath, x7r_ath_change, x7r_date = get_ath_info("x7r")
     x7dao_ath, x7dao_ath_change, x7dao_date = get_ath_info("x7dao")
-    x7101_ath, x7101_ath_change, x7101_date = get_ath_info("x7101")
-    x7102_ath, x7102_ath_change, x7102_date = get_ath_info("x7102")
-    x7103_ath, x7103_ath_change, x7103_date = get_ath_info("x7103")
-    x7104_ath, x7104_ath_change, x7104_date = get_ath_info("x7104")
-    x7105_ath, x7105_ath_change, x7105_date = get_ath_info("x7105")
+    
     x7dao_date_object = datetime.fromisoformat(x7dao_date.replace("Z", "+00:00"))
     x7dao_readable_date = x7dao_date_object.strftime("%Y-%m-%d %H:%M:%S")
     x7dao_mcap = x7dao_ath * ca.supply
@@ -129,49 +125,20 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7r_readable_date = x7r_date_object.strftime("%Y-%m-%d %H:%M:%S")
     x7r_mcap = x7r_ath * api.get_x7r_supply("eth")
 
-    x7101_date_object = datetime.fromisoformat(x7101_date.replace("Z", "+00:00"))
-    x7101_readable_date = x7101_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7101_mcap = x7101_ath * ca.supply
-
-    x7102_date_object = datetime.fromisoformat(x7102_date.replace("Z", "+00:00"))
-    x7102_readable_date = x7102_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7102_mcap = x7102_ath * ca.supply
-
-    x7103_date_object = datetime.fromisoformat(x7103_date.replace("Z", "+00:00"))
-    x7103_readable_date = x7103_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7103_mcap = x7103_ath * ca.supply
-    
-    x7104_date_object = datetime.fromisoformat(x7104_date.replace("Z", "+00:00"))
-    x7104_readable_date = x7104_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7104_mcap = x7104_ath * ca.supply
-
-    x7105_date_object = datetime.fromisoformat(x7105_date.replace("Z", "+00:00"))
-    x7105_readable_date = x7105_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7105_mcap = x7105_ath * ca.supply
-
-    total = x7r_mcap + x7dao_mcap + x7101_mcap + x7102_mcap + x7103_mcap + x7104_mcap + x7105_mcap 
-
     img = Image.open((random.choice(media.blackhole)))
     i1 = ImageDraw.Draw(img)
-    myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 24)
+    myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
     i1.text(
         (28, 36),
         f"X7 Finance ATH Info (ETH)\n\n"
-        f'X7R   - ${x7r_ath}   (${"{:0,.0f}".format(x7r_mcap)}) {x7r_ath_change}% '
-        f'- {x7r_readable_date}\n'
-        f'X7DAO - ${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)}) {x7dao_ath_change}% '
-        f'- {x7dao_readable_date}\n'
-        f'X7101 - ${x7101_ath} (${"{:0,.0f}".format(x7101_mcap)}) {x7101_ath_change}% '
-        f'- {x7101_readable_date}\n'
-        f'X7102 - ${x7102_ath} (${"{:0,.0f}".format(x7102_mcap)}) {x7102_ath_change}% '
-        f'- {x7102_readable_date}\n'
-        f'X7103 - ${x7103_ath} (${"{:0,.0f}".format(x7103_mcap)}) {x7103_ath_change}% '
-        f'- {x7103_readable_date}\n'
-        f'X7104 - ${x7104_ath} (${"{:0,.0f}".format(x7104_mcap)}) {x7104_ath_change}% '
-        f'- {x7104_readable_date}\n'
-        f'X7105 - ${x7105_ath} (${"{:0,.0f}".format(x7105_mcap)}) {x7105_ath_change}% '
-        f'- {x7105_readable_date}\n\n'
-        f'Total Market Cap ATH:\n${"{:0,.0f}".format(total)}\n\n\n\n'
+        f'X7R\n'
+        f'${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)})\n'
+        f'{x7r_ath_change}%\n'
+        f'{x7r_readable_date}\n\n'
+        f'X7DAO\n'
+        f'${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)})\n'
+        f'{x7dao_ath_change}%\n'
+        f'{x7dao_readable_date}\n\n\n'
         f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font=myfont,
         fill=(255, 255, 255),
@@ -179,21 +146,14 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     img.save(r"media/blackhole.png")
     caption = (
         f"*X7 Finance ATH Info*\n\n"
-        f'X7R - ${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)}) {x7r_ath_change}%\n'
+        f'*X7R*\n'
+        f'${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)})\n'
+        f'{x7r_ath_change}%\n'
         f"{x7r_readable_date}\n\n"
-        f'X7DAO - ${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)}) {x7dao_ath_change}%\n'
+        f'*X7DAO*\n'
+        f'${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)})\n'
+        f'{x7dao_ath_change}%\n'
         f"{x7dao_readable_date}\n\n"
-        f'X7101 - ${x7101_ath} (${"{:0,.0f}".format(x7101_mcap)}) {x7101_ath_change}%\n'
-        f"{x7101_readable_date}\n\n"
-        f'X7102 - ${x7102_ath} (${"{:0,.0f}".format(x7102_mcap)}) {x7102_ath_change}%\n'
-        f"{x7102_readable_date}\n\n"
-        f'X7103 - ${x7103_ath} (${"{:0,.0f}".format(x7103_mcap)}) {x7103_ath_change}%\n'
-        f"{x7103_readable_date}\n\n"
-        f'X7104 - ${x7104_ath} (${"{:0,.0f}".format(x7104_mcap)}) {x7104_ath_change}%\n'
-        f"{x7104_readable_date}\n\n"
-        f'X7105 - ${x7105_ath} (${"{:0,.0f}".format(x7105_mcap)}) {x7105_ath_change}%\n'
-        f"{x7105_readable_date}\n\n"
-        f'Total Market Cap ATH:\n${"{:0,.0f}".format(total)}\n\n'
         f"{api.get_quote()}"
     )
     await update.message.reply_photo(
