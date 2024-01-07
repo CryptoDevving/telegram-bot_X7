@@ -21,6 +21,11 @@ current_button_data = None
 clicked_buttons = set()
 first_user_clicked = False
 
+sentry_sdk.init(
+    dsn = os.getenv("SENTRY_DSN"),
+    traces_sample_rate=1.0
+)
+
 
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     global current_button_data, first_user_clicked
@@ -209,13 +214,14 @@ async def error(update: Update, context: CallbackContext):
             )
             sentry_sdk.capture_exception(
                 Exception(f"{message.text} caused error: {context.error}")
-            )
+                )
         else:
             sentry_sdk.capture_exception(
                 Exception(
                     f"Error occurred without a valid message: {context.error}"
                 )
             )
+            
 
 
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
