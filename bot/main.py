@@ -291,7 +291,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("pioneer", commands.pioneer))
     application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
     application.add_handler(CommandHandler(["price", "prices", "x"], commands.price))
-    application.add_handler(CommandHandler("logo", commands.price_logo))
     application.add_handler(CommandHandler("proposal", commands.proposal))
     application.add_handler(CommandHandler("quote", commands.quote))
     application.add_handler(CommandHandler("reset_leaderboard", commands.reset_leaderboard))
@@ -342,13 +341,13 @@ if __name__ == "__main__":
     application.add_handler(CallbackQueryHandler(clicks_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
 
-    job_queue.run_repeating(
-        auto_message_info,
-        times.auto_message_time,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        first=times.auto_message_time,
-        name="Auto Message",
-    )
+#    job_queue.run_repeating(
+#        auto_message_info,
+#        times.auto_message_time,
+#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+#        first=times.auto_message_time,
+#        name="Auto Message",
+#    )
 
     job_queue.run_once(
         auto_message_click,

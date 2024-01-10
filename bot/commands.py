@@ -4,7 +4,6 @@ import random
 import time as t
 from datetime import datetime, timedelta, timezone
 
-import csv
 import pytz
 from gtts import gTTS
 import requests
@@ -1404,7 +1403,7 @@ async def leaderboard(update: Update, context: CallbackContext):
     slowest = api.db_clicks_slowest_time()
     slowest_user = slowest[0]
     slowest_time = slowest[1]
-    clicks_needed = text.burn_increment - (click_counts_total % text.burn_increment)
+    clicks_needed = times.burn_increment - (click_counts_total % times.burn_increment)
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer 2024 Leaderboard\n(Top 10)\n\n*"
             f"{api.escape_markdown(board)}\n"
@@ -3391,44 +3390,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-
-
-async def price_logo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    params = context.args
-
-    ticker = params[0]
-    image_url = params[1]
-
-    if not image_url.startswith('http') and image_url != "N/A":
-        await update.message.reply_text("Image link not recognised, link should start with 'http'")
-        return
-
-    existing_tokens = []
-    with open("logs/tokens.csv", 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader:
-            existing_tokens.append(row)
-
-    replaced = False
-
-    for index, existing_token in enumerate(existing_tokens):
-        if params[0].lower() == existing_token[0].lower():
-            existing_token[4] = image_url
-            existing_tokens[index] = existing_token
-            with open("logs/tokens.csv", 'w', newline='') as csv_file:
-                csv_writer = csv.writer(csv_file)
-                csv_writer.writerows(existing_tokens)
-            replaced = True
-            await update.message.reply_text(
-                f"{ticker.upper()} image updated successfully.",
-                parse_mode="Markdown")
-            api.push_github("logs/tokens.csv", "auto: update image")
-            break
-
-    if not replaced:
-        await update.message.reply_text(f"{ticker.upper()} has not been added. Use `/add` to add a new pair.")
-
-
 async def proposal(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -3509,6 +3470,9 @@ async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("Please provide some words to convert to speech.")
+        return
     voice_note = gTTS(" ".join(context.args), lang='en', slow=False)
     voice_note.save("media/voicenote.mp3")
     await update.message.reply_audio(audio=open("media/voicenote.mp3", "rb"))

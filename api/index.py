@@ -1,7 +1,6 @@
 import os
 import csv
 import random
-import base64
 import requests
 import time as t
 from typing import Tuple
@@ -14,7 +13,6 @@ from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 
 from data import ca, url
-from api import index as api
 
 
 bsc = os.getenv("BSC")
@@ -823,33 +821,6 @@ def get_word(word):
 
     return definition, audio_url
 
-
-def push_github(location, message):
-    headers = {
-        'Authorization': f'Bearer {os.getenv("GITHUB_PAT")}'
-    }
-    response = requests.get(
-        f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
-        headers=headers
-    )
-
-    if response.status_code == 200:
-        content = response.json()
-        sha = content['sha']
-
-        with open(location, 'rb') as file:
-            file_content = file.read()
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
-
-        _ = requests.put(
-            f'https://api.github.com/repos/x7finance/telegram-bot/contents/{location}',
-            headers=headers,
-            json={
-                'message': message,
-                'content': encoded_content,
-                'sha': sha
-            },
-        )
 
 # DB
 

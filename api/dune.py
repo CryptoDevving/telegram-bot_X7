@@ -1,6 +1,6 @@
 import os
 from requests import get, post
-from datetime import datetime, timedelta, timezone, date
+from datetime import datetime
 
 API_KEY = os.getenv("DUNE_API_KEY")
 HEADER = {"x-dune-api-key": API_KEY}

@@ -3,7 +3,7 @@ from telegram.ext import *
 import random
 import os
 import requests
-from datetime import datetime, timedelta, timezone, date
+from datetime import datetime
 import pytz
 from dateutil import parser
 
