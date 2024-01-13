@@ -49,8 +49,8 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
-    messages = [text.about, text.airdrop, text.ecosystem, text.endorse,
-                text.refer, text.volume, text.voting, random.choice(text.quotes)]
+    messages = [text.about, text.airdrop, text.ecosystem,
+                text.volume, text.voting, random.choice(text.quotes)]
     random_message = random.choice(messages)
     if random_message in text.quotes:
         message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
@@ -69,7 +69,7 @@ async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.dashboard}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
             ]
         ),
     )
@@ -265,7 +265,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["fee", "fees"], commands.fees))
     application.add_handler(CommandHandler(["fg", "feargreed"], commands.fg))
     application.add_handler(CommandHandler("gas", commands.gas))
-    application.add_handler(CommandHandler("games", commands.games))
     application.add_handler(CommandHandler("giveaway", commands.giveaway_command))
     application.add_handler(CommandHandler("holders", commands.holders))
     application.add_handler(CommandHandler("image", commands.image))
@@ -294,7 +293,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("proposal", commands.proposal))
     application.add_handler(CommandHandler("quote", commands.quote))
     application.add_handler(CommandHandler("reset_leaderboard", commands.reset_leaderboard))
-    application.add_handler(CommandHandler(["referral", "refer"], commands.refer))
     application.add_handler(CommandHandler("router", commands.router))
     application.add_handler(CommandHandler("say", commands.say))
     application.add_handler(CommandHandler("scan", commands.scan))

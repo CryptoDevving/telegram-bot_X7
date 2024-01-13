@@ -54,19 +54,19 @@ class LoanTerm:
 
     def generate_terms(self):
         return f"""
-> Min Loan: {self.min_loan} ETH
-> Max Loan: {self.max_loan} ETH
-> Leverage: {self.leverage} leverage
-> Number of repayment periods: {self.num_repayment_periods}
-> Number of premium periods: {self.num_premium_periods}
-> Min Loan Duration: {self.min_loan_duration}
-> Max Loan Duration: {self.max_loan_duration}
-> Loan Origination Fee: {self.loan_origination_fee} of borrowed capital, payable within the transaction for adding initial liquidity
-> Loan Retention Premium Fee Schedule: {self.loan_retention_premium_fee_schedule} of borrowed capital payable by the end of each quarter of the loan term for a total retention premium fee of 25% of borrowed capital
-> Principal Repayment Condition: {self.principal_repayment_condition} principal must be returned by the end of the loan term.
-> Liquidation conditions: {self.liquidation_conditions}
-> Liquidator reward: {self.liquidator_reward} of the loan origination fee will be reserved for a liquidation bounty
-"""
+    > Min Loan: {self.min_loan} ETH
+    > Max Loan: {self.max_loan} ETH
+    > Leverage: {self.leverage} leverage
+    > Number of repayment periods: {self.num_repayment_periods}
+    > Number of premium periods: {self.num_premium_periods}
+    > Min Loan Duration: {self.min_loan_duration}
+    > Max Loan Duration: {self.max_loan_duration}
+    > Loan Origination Fee: {self.loan_origination_fee} of borrowed capital, payable within the transaction for adding initial liquidity
+    > Loan Retention Premium Fee Schedule: {self.loan_retention_premium_fee_schedule} of borrowed capital payable by the end of each quarter of the loan term for a total retention premium fee of 25% of borrowed capital
+    > Principal Repayment Condition: {self.principal_repayment_condition} principal must be returned by the end of the loan term.
+    > Liquidation conditions: {self.liquidation_conditions}
+    > Liquidator reward: {self.liquidator_reward} of the loan origination fee will be reserved for a liquidation bounty
+    """
 
 
 ill001_terms = LoanTerm(

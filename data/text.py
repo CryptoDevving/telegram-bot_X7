@@ -25,8 +25,6 @@ admin_commands = (
     "/antiflood - (Dis)Enable anti-flood mode\n"
     "/lock all - mutes chat\n"
     "/unlock all - unmute chat\n"
-    "/lock_games - lock games\n"
-    "/unlock_games\n"
     "/shield - Start shield raid\n"
     "BuyBotTech - X7R\n"
     "BobbyBuyBot - X7DAO, X7101, X7102\n"
@@ -85,7 +83,6 @@ commands = (
     "/faq - X7 Finance FAQ Links\n"
     "/fees - Xchange Fee Liquidation TXs\n"
     "/fg - Market Fear/Greed Index\n"
-    "/games - X7 Finance Mini Games\n"
     "/gas - Network Gas Info\n"
     "/giveaway - Giveaway Info\n"
     "/holders - X7 Finance Holder Counts\n"
@@ -112,7 +109,6 @@ commands = (
     "/pool - X7 Finance Lending Pool Info\n"
     "/price - [followed by token] Token Price Info\n"
     "/quote - Daily Quote\n"
-    "/referral - Refer a project to Xchange\n"
     "/router - X7 Finance Router Info\n"
     "/say - Text to Speech\n"
     "/scan  - Scan a CA\n"
@@ -132,9 +128,8 @@ commands = (
     "/wei - WEI Conversion\n"
     "/wallet - Wallet Tracking\n"
     "/website - X7 finance Website Links\n"
-    "/word - Word Definition\n"
     "/whitepaper - X7 finance WP Link\n"
-    "/xchange - Xchange Links\n"
+    "/word - Word Definition\n"
     "/x7r - X7R Info\n"
     "/x7d - X7D Info\n"
     "/x7dao - X7DAO Info\n"
@@ -143,6 +138,7 @@ commands = (
     "/x7103 - X7103 Info\n"
     "/x7104 - X7104 Info\n"
     "/x7105 - X7105 Info\n"
+    "/xchange - Xchange Links\n"
 )
 
 delay = (
@@ -200,102 +196,6 @@ ecosystem = (
     "The X7 Finance protocol will only permit minting of new X7 Deposit tokens when on-chain reserves permit."
 )
 
-emoji_combinations = [
-    {"emojis": "⭐️💸", "answer": "Starbucks", "category": "brand"},
-    {"emojis": "🏰 + 🌃", "answer": "Fortnite", "category": "brand"},
-    {"emojis": "🔥🦊", "answer": "Firefox", "category": "brand"},
-    {"emojis": "⬆️🧭😊", "answer": "North Face", "category": "brand"},
-    {"emojis": "👨👨👨👨👨", "answer": "Five guys", "category": "brand"},
-    {"emojis": "👛🌊🐷", "answer": "Percy Pig", "category": "brand"},
-    {"emojis": "🌮🔔", "answer": "Taco bell", "category": "brand"},
-    {"emojis": "☁️☀️🌧🥄🥄", "answer": "Wetherspoons", "category": "brand"},
-    {"emojis": "🚫🔑", "answer": "Nokia", "category": "brand"},
-    {"emojis": "🔋🐰", "answer": "Energizer", "category": "brand"},
-    {"emojis": "👀📱", "answer": "iphone", "category": "brand"},
-
-    {"emojis": "🪑+⬆️", "answer": "Cheer up", "category": "saying"},
-    {"emojis": "🏠+🍭 🍬 🍫+🏠", "answer": "Home sweet home", "category": "saying"},
-    {"emojis": "☝🏼+🔵+🌙", "answer": "Once in a blue moon", "category": "saying"},
-    {"emojis": "🧩+🤝", "answer": "Pieces together", "category": "saying"},
-    {"emojis": "🐝+↪️+🔙", "answer": "Be right back", "category": "saying"},
-    {"emojis": "🕰️🏅 + 🕊️ + 🐛", "answer": "The early bird catches the worm", "category": "saying"},
-    {"emojis": "👶+🥶+➡️", "answer": "Baby it's cold outside", "category": "saying"},
-    {"emojis": "👸🏼 +😘🐸➡️🤴🏼", "answer": "True love's kiss", "category": "saying"},
-
-    {"emojis": "👑+🐝", "answer": "Queen bee", "category": "general"},
-    {"emojis": "🍯+🌖", "answer": "Honeymoon", "category": "general"},
-    {"emojis": "🍕🍕🍕🍕", "answer": "Four cheese pizza", "category": "general"},
-    {"emojis": "🐻🧸", "answer": "Teddy bear", "category": "general"},
-    {"emojis": "🌍+🥛", "answer": "World Cup", "category": "general"},
-    {"emojis": "🎨+🖌️", "answer": "Paint brush", "category": "general"},
-    {"emojis": "🚪+🚶‍♀️", "answer": "Doorstep", "category": "general"},
-    {"emojis": "🎃👻🕸️🕷️", "answer": "Halloween", "category": "general"},
-    {"emojis": "👋+☀️", "answer": "Bison", "category": "general"},
-    {"emojis": "❄️+🍵", "answer": "Iced tea", "category": "general"},
-    {"emojis": "🗿 + ⭐️", "answer": "Rock star", "category": "general"},
-    {"emojis": "👻+🏠", "answer": "Haunted house", "category": "general"},
-
-    {"emojis": "🐀👨🏻‍🍳 + 🍳🇫🇷", "answer": "Ratatouille", "category": "movie"},
-    {"emojis": "🏰❄️👩🏻‍❤️‍👩🏼⛄️", "answer": "Frozen", "category": "movie"},
-    {"emojis": "🌕 + 👨🏻‍🦰➡️🐺", "answer": "Werewolf", "category": "movie"},
-    {"emojis": "🦁+👑", "answer": "Lion king", "category": "movie"},
-    {"emojis": "😈+👀+👢", "answer": "The devil wears Prada", "category": "movie"},
-    {"emojis": "🍴🙏❤️", "answer": "Eat Pray Love", "category": "movie"},
-    {"emojis": "5️⃣0️⃣0️⃣☀️❤️", "answer": "500 Days of Summer", "category": "movie"},
-    {"emojis": "😈 👠", "answer": "The Devil Wears Prada", "category": "movie"},
-    {"emojis": "🚆👀", "answer": "Trainspotting", "category": "movie"},
-    {"emojis": "👨✂️👐", "answer": "Edward Scissorhands", "category": "movie"},
-    {"emojis": "🥊 ♣️", "answer": "Fight Club", "category": "movie"},
-    {"emojis": "👰👭💩", "answer": "Bridesmaids", "category": "movie"},
-    {"emojis": "🔎🐟", "answer": "Finding Nemo", "category": "movie"},
-    {"emojis": "👨⚡", "answer": "Harry Potter", "category": "movie"},
-    {"emojis": "🐒🪔🧞‍♂️", "answer": "Aladin", "category": "movie"},
-    {"emojis": "👸🏿🐸", "answer": "Princess and the Frog", "category": "movie"},
-    {"emojis": "👶🧜🏽‍♀️", "answer": "The Little Mermaid", "category": "movie"},
-    {"emojis": "🧸📖", "answer": "Toy Story", "category": "movie"},
-    {"emojis": "👩🏻🐉🗡", "answer": "Mulan", "category": "movie"},
-    {"emojis": "😴👸🏼", "answer": " Sleeping Beauty", "category": "movie"},
-    {"emojis": "👸🏻🌹👹", "answer": "Beauty and the Beast", "category": "movie"},
-
-    {"emojis": "🇬🇧🍰", "answer": "Great British Bake Off,", "category": "tv"},
-    {"emojis": "🦑🎮", "answer": "Squid Game", "category": "tv"},
-    {"emojis": "💰🇪🇸", "answer": "Money Heist", "category": "tv"},
-    {"emojis": "⚰️2️⃣🙋", "answer": "Dead to Me", "category": "tv"},
-    {"emojis": "👻⛰️🏠", "answer": "The Haunting of Hill Hous", "category": "tv"},
-    {"emojis": "💊♟️👩‍🦰", "answer": "The Queen's Gambit", "category": "tv"},
-    {"emojis": "🇮🇪🚸👯", "answer": "Derry Girls", "category": "tv"},
-    {"emojis": "🍆🍑💦👩‍🏫", "answer": "Sex Education", "category": "tv"},
-    {"emojis": "🥵❤️🏝️💸", "answer": "Too Hot Too Handle", "category": "tv"},
-    {"emojis": "👇🔛⛪", "answer": "Downton Abbey", "category": "tv"},
-
-    {"emojis": "🐈+🦸‍♀️", "answer": "Catwoman", "category": "celebrities"},
-    {"emojis": "🕷 🕸+🙋🏻‍♂️", "answer": "Spiderman", "category": "celebrities"},
-    {"emojis": "🔍+🔦", "answer": "Sherlock Holmes", "category": "celebrities"},
-    {"emojis": "🤱🚦🚣 🐝", "answer": "Margot Robbie", "category": "celebrities"},
-    {"emojis": "🐝🔛🌊", "answer": "Beyonce", "category": "celebrities"},
-    {"emojis": "🐻👧👧", "answer": "Bear Grylls", "category": "celebrities"},
-    {"emojis": "🎭🏆🍟", "answer": "Oprah Winfrey", "category": "celebrities"},
-    {"emojis": "🥤🥫🐝🥶", "answer": "Justin Bieber", "category": "celebrities"},
-    {"emojis": "📅📹🥓", "answer": "David Beckham", "category": "celebrities"},
-    {"emojis": "✒️👋🅿️🛳️", "answer": "Penelope Cruz", "category": "celebrities"},
-    {"emojis": "🏝️🎣", "answer": "Isla Fisher", "category": "celebrities"},
-    {"emojis": "😩👨🐄", "answer": "Simon Cowell", "category": "celebrities"},
-    {"emojis": "🏹👋💇👨‍👦⛰️🦇🔟🏆🛶", "answer": "Archie Harrison Mountbatten-Windsor", "category": "celebrities"},
-
-    {"emojis": "😡+⛽️+🚗", "answer": "Madagascar", "category": "places"},
-    {"emojis": "🎭🎬🎥", "answer": "Holywood", "category": "places"},
-    {"emojis": "🔟+🇪🇪+👁", "answer": "Tennessee", "category": "places"},
-    {"emojis": "🗣️🎶🐾", "answer": "Singapore", "category": "places"},
-    {"emojis": "🔩🔛", "answer": "Bolton", "category": "places"},
-    {"emojis": "💥🍆", "answer": "Bangkok", "category": "places"},
-    {"emojis": "🥫🐻", "answer": "Canberra", "category": "places"},
-    {"emojis": "👹🚰", "answer": "Helsinki", "category": "places"},
-    {"emojis": "🦶🔑0️⃣", "answer": "Tokyo", "category": "places"},
-    {"emojis": "⬛ 🏊", "answer": "Blackpool", "category": "places"},
-    {"emojis": "🚗🐂", "answer": "Kabul", "category": "places"},
-    {"emojis": "🚢 👄", "answer": "Portsmouth", "category": "places"},
-    {"emojis": "🔥", "answer": "Bern", "category": "places"}, 
-]
 
 
 endorse = (
@@ -307,46 +207,8 @@ endorse = (
 )
 
 
-mods = (
-    "Marketing + Sales Team\n@Robthebank44\n@cryptod0c\n@Gazuga\n\n"
-    "Socials Team\n@PhluxKapacitor\n@DallasX7\n@KBCrypto11\n@CoastCorn\n\n"
-    "Tech Team\n@Adz1DoubleD\n@cryptod0c\n@MikeMurpher\n@MikeX7F"
-)
-
 mods_only = "You do not have permission to do this. #TrustNoOne"
 
-
-proposals = (
-    "*Listing proposal:*\n"
-    "X7 Finance does not prioritize paid listings. Instead, for CEXs to acquire the desired supply "
-    "amount needed to list X7 on their exchange, they will need to purchase it from existing markets.\n\n"
-    "*Marketing proposal:*\n"
-    "X7 Finance does not incur expenses for requested marketing activities. Instead, our team leverages "
-    "its extensive network and connections in the market to independently select and collaborate with "
-    "relevant parties.\n\n"
-    "If, despite this information, you still find it necessary to get in touch, you can always send a "
-    "DM to our X account. Please be aware that responses to such DMs are not guaranteed."
-)
-
-refer = (
-    "*XChange Referral Program*\n\nDriving new projects to take advantage of X7’s lending pool currently "
-    "valued over 200k USD across 5 chains is a top priority to ensure successful adoption of XChange in the "
-    "market. Every individual who refers a project that successfully launches on XChange,\n\n"
-    "1. Earn $250 for each project you refer to XChange, for the first 10 projects\n\n"
-    "2.Earn $500 for each additional project you refer to XChange beyond the first 10 projects\n\n"
-    "3. There is no limit to how many projects you can refer.\n\n"
-    "For example, if you refer 15 projects to X7, you will earn $2,500 for the first 10 and $2,500 for the "
-    "last 5 for a total of $5,000. The more you refer, the more you earn.\n\n"
-    "*How to participate*\n\n"
-    "1. Refer a project to launch on XChange with an Initial Liquidity Loan (ILL) - (2 ETH minimum)\n\n"
-    "2. Ensure the referred project confirms your referral to ensure the referral is valid. (X7 Finance "
-    "Community Multi-Sig will have full discretion to validate or invalidate any referrals)\n\n"
-    "3. Submit these details via this the form below\n\n"
-    "4. Once the project launches successfully with an ILL, the reward will be deposited to your submitted "
-    "wallet address 2 weeks after the launch of the project.\n\n"
-    "NOTE: community multi-sig team has final discretion on payment. Any individual or group looking to "
-    "exploit this program will not be eligible for a reward.\n\n[Refer here](https://docs.google.com/forms/d/e/1FAIpQLSf5h3ngT_swsq2My5BfY1W_ZWv3jni9JeWEfgkWFgorNLknQg/viewform)"
-)
 
 volume = (
     "*Driving XChange Volume*\n\nOur focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"

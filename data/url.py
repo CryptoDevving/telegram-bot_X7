@@ -56,12 +56,10 @@ dex_tools_base = "https://www.dextools.io/app/base/pair-explorer/"
 
 # LINKS
 ca_directory = "https://www.x7finance.org/en/docs/breakdowns/contracts"
-dac = "http://shorturl.at/ehnr9"
-dashboard = "https://www.x7finance.org/"
+
 discord = "https://discord.gg/x7finance"
 dune = "https://dune.com/mike_x7f/x7finance"
 github = "https://github.com/x7finance/"
-
 medium = "https://medium.com/@X7Finance"
 pioneers = "https://img.x7.finance/pioneers/"
 reddit = "https://www.reddit.com/r/x7finance"
@@ -69,10 +67,10 @@ referral = "https://docs.google.com/forms/d/e/1FAIpQLSf5h3ngT_swsq2My5BfY1W_ZWv3
 short_wp_link = "https://x7community.space/wp-short.pdf"
 snapshot = "https://snapshot.org/#/x7community.eth"
 twitter = "https://twitter.com/x7_finance/"
-website = "https://x7.finance/"
+website = "https://www.x7finance.org/"
+website_dev = "https://x7.finance/"
 wp_link = "https://x7.finance/whitepaper"
 youtube = "https://www.youtube.com/@X7Finance"
-list_token = "https://github.com/x7finance/telegram-bot/blob/main/tokens/README.md"
 
 # OPENSEA
 os_eco = "https://pro.opensea.io/collection/x7-ecosystem-maxi"
