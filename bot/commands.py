@@ -1211,18 +1211,10 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_logo = chain_mappings[chain]
         im2 = Image.open(chain_logo)
-    ### REVISIT AT MIGRATION
-    x7dao_holders = x7r_holders = x7101_holders = x7102_holders = x7103_holders = x7104_holders = x7105_holders = x7d_holders = 0
 
-    if chain == "eth":
-        x7dao_holders = api.get_holders(ca.x7dao)
-        x7r_holders = api.get_holders(ca.x7r)
-        x7101_holders = api.get_holders(ca.x7101)
-        x7102_holders = api.get_holders(ca.x7102)
-        x7103_holders = api.get_holders(ca.x7103)
-        x7104_holders = api.get_holders(ca.x7104)
-        x7105_holders = api.get_holders(ca.x7105)
-        x7d_holders = api.get_holders(ca.x7d)
+    x7dao_holders = api.get_holders(ca.x7dao, chain)
+    x7r_holders = api.get_holders(ca.x7r, chain)
+    x7d_holders = api.get_holders(ca.x7d, chain)
     
     im1 = Image.open(random.choice(media.blackhole))
     im1.paste(im2, (720, 20), im2)
@@ -1233,11 +1225,6 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"X7 Finance Token Holders {chain_name}\n\n"
         f"X7R:   {x7r_holders}\n"
         f"X7DAO: {x7dao_holders}\n"
-        f"X7101: {x7101_holders}\n"
-        f"X7102: {x7102_holders}\n"
-        f"X7103: {x7103_holders}\n"
-        f"X7104: {x7104_holders}\n"
-        f"X7105: {x7105_holders}\n"
         f"X7D:   {x7d_holders}\n\n\n\n"
         f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font=myfont,
@@ -1250,11 +1237,6 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"For other chains use `/holders [chain-name]`\n\n"
         f"X7R:        {x7r_holders}\n"
         f"X7DAO:  {x7dao_holders}\n"
-        f"X7101:    {x7101_holders}\n"
-        f"X7102:    {x7102_holders}\n"
-        f"X7103:    {x7103_holders}\n"
-        f"X7104:    {x7104_holders}\n"
-        f"X7105:    {x7105_holders}\n"
         f"X7D:        {x7d_holders}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -2809,18 +2791,14 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for token_instance in token_info:
             if token_instance['ticker'].lower() == search:
                 if token_instance['chain'] == "eth":
-                    holders = api.get_holders(token_instance['ca'])
                     token = "eth"
                 elif token_instance['chain'] == "poly":
                     token = "matic"
-                    holders = "N/A"
                 elif token_instance['chain'] == "bsc":
                     token = "bnb"
-                    holders = "N/A"
                 else:
-                    holders = "N/A"
                     token = "eth"
-
+                holders = api.get_holders(token_instance['ca'], token_instance['chain'])
                 scan = chains[token_instance['chain']].scan
                 dext = chains[token_instance['chain']].dext
                 w3 = chains[token_instance['chain']].w3
@@ -2993,7 +2971,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 cg = api.get_cg_price(search)
                 volume = cg[search]["usd_24h_vol"]
                 change = cg[search]["usd_24h_change"]
-                holders = api.get_holders(token_ca)
+                holders = api.get_holders(token_ca, "eth")
                 if change == None or 0:
                     change = 0
                 else: 
@@ -3138,14 +3116,14 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 
             if search.startswith("0x") and len(search) == 42:
                 try:
-                    scan = api.get_scan(search,"eth")
+                    scan = api.get_scan(search, "eth")
                 except Exception:
                     await update.message.reply_text(
                         f"{search} Not found",
                         parse_mode="Markdown",
                     )
                     return
-                holders = api.get_holders(search)
+                holders = api.get_holders(search, "eth")
                 pair = scan[str(search).lower()]["dex"][0]["pair"]
                 token_price = api.get_price(search, "eth")
                 volume = "${:,.0f}".format(float(api.get_volume(pair, "eth")))
@@ -4641,10 +4619,6 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-        holders = api.get_holders(ca.x7d)
-    else:
-        holders = "N/A"
-
     if chain in tokens.x7d_chain_mappings:
         chain_name, chain_url, chain_native = tokens.x7d_chain_mappings[chain]
         lpool_reserve = api.get_native_balance(ca.lpool_reserve, chain)
@@ -4659,6 +4633,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
+        holders = api.get_holders(ca.x7d, chain)
     im1 = Image.open((random.choice(media.blackhole)))
     im2 = Image.open(media.x7d_logo)
     im1.paste(im2, (720, 20), im2)
@@ -4895,6 +4870,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7dao_chain_mappings[chain]
+        holders = api.get_holders(ca.x7dao, chain)
     try:
         price = api.get_price(ca.x7dao, chain)
 
@@ -4904,7 +4880,6 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7dao")
         volume = cg["x7dao"]["usd_24h_vol"]
         change = cg["x7dao"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7dao)
         if change == None or 0:
             change = 0
         else:
@@ -4924,7 +4899,6 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         volume = "N/A"
         change = "N/A"
         ath = "N/A"
-        holders = "N/A"
         market_cap = "N/A"
 
     try:
@@ -5128,6 +5102,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7r_chain_mappings[chain]
+        holders = api.get_holders(ca.x7r, chain)
     try:
         price = api.get_price(ca.x7r, chain)
 
@@ -5137,7 +5112,6 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7r")
         volume = cg["x7r"]["usd_24h_vol"]
         change = cg["x7r"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7r)
         if change == None or 0:
             change = 0
         else:
@@ -5358,6 +5332,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7101_chain_mappings[chain]
+        holders = api.get_holders(ca.x7101, chain)
     try:
         price = api.get_price(ca.x7101, chain)
 
@@ -5367,7 +5342,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7101")
         volume = cg["x7101"]["usd_24h_vol"]
         change = cg["x7101"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7101)
+
         if change == None or 0:
             change = 0
         else:
@@ -5590,6 +5565,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7102_chain_mappings[chain]
+        holders = api.get_holders(ca.x7102, chain)
     try:
         price = api.get_price(ca.x7102, chain)
 
@@ -5599,7 +5575,6 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7102")
         volume = cg["x7102"]["usd_24h_vol"]
         change = cg["x7102"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7102)
         if change == None or 0:
             change = 0
         else:
@@ -5822,6 +5797,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7103_chain_mappings[chain]
+        holders = api.get_holders(ca.x7103, chain)
     try:
         price = api.get_price(ca.x7103, chain)
 
@@ -5831,7 +5807,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7103")
         volume = cg["x7103"]["usd_24h_vol"]
         change = cg["x7103"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7103)
+
         if change == None or 0:
             change = 0
         else:
@@ -6054,6 +6030,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7104_chain_mappings[chain]
+        holders = api.get_holders(ca.x7104, chain)
     try:
         price = api.get_price(ca.x7104, chain)
 
@@ -6063,7 +6040,6 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7104")
         volume = cg["x7104"]["usd_24h_vol"]
         change = cg["x7104"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7104)
         if change == None or 0:
             change = 0
         else:
@@ -6286,6 +6262,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7105_chain_mappings[chain]
+        holders = api.get_holders(ca.x7105, chain)
     try:
         price = api.get_price(ca.x7105, chain)
 
@@ -6295,7 +6272,6 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cg = api.get_cg_price("x7105")
         volume = cg["x7105"]["usd_24h_vol"]
         change = cg["x7105"]["usd_24h_change"]
-        holders = api.get_holders(ca.x7105)
         if change == None or 0:
             change = 0
         else:

@@ -43,6 +43,34 @@ chains_info = {
 }
 
 
+# DEX TOOLS
+
+dextools_chain_mappings = {
+    "eth": "ether",
+    "arb": "arbitrum",
+    "poly": "polygon",
+    "bsc": "bnb",
+    "opti": "optimism",
+    "base": "base",
+}
+
+def get_holders(pair, chain):
+    if chain in dextools_chain_mappings:
+        dextools_chain = dextools_chain_mappings[chain]
+    url = f'https://open-api.dextools.io/free/v2/token/{dextools_chain}/{pair}/info'
+    headers = {
+        'accept': 'application/json',
+        'X-BLOBR-KEY': os.getenv("DEXTOOLS_API_KEY")
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data["data"]["holders"]
+    else:
+        return None
+
 # SCAN
 
 
@@ -690,14 +718,6 @@ def get_giveaway_entries():
             if len(row) > 0 and row[0] != "":
                 column_data.append(row[0])
     return [entry[-5:] for entry in column_data]
-
-
-def get_holders(token):
-    base_url = "https://api.ethplorer.io/getTokenInfo"
-    url = f"{base_url}/{token}{os.getenv('ETHPLORER_API_KEY')}"
-    response = requests.get(url)
-    data = response.json()
-    return data.get("holdersCount")
 
 
 def get_quote():
