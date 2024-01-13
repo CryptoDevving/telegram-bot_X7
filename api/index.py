@@ -477,23 +477,24 @@ def get_price_change(address, chain):
             priceUsd
         }}
     }}"""
+    try:
+        response = requests.post(url, headers=headers, json={"query": pricechange})
+        data = response.json()
 
-    response = requests.post(url, headers=headers, json={"query": pricechange})
-    data = response.json()
-    current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
-    one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
-    twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
-    seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
+        current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
+        one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
+        twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
+        seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
 
-    one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
-    twenty_four_hours_change = round(
-        ((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
-    seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
+        one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
+        twenty_four_hours_change = round(
+            ((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
+        seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
 
-    result = f"1H Change: {one_hour_change}%\n24H Change: {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
-
+        result = f"1H Change: {one_hour_change}%\n24H Change: {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
+    except Exception:
+        result = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
     return result
-
 
 def get_token_image(token, chain):
     if chain in defined_chain_mappings:
