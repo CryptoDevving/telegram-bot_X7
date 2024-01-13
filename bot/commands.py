@@ -3797,122 +3797,105 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     }
     if chain in chain_mappings:
         chain_name, chain_url = chain_mappings[chain]
+        buttons = [
+        [
+            InlineKeyboardButton(
+                text="Contracts Directory",
+                url=f"{url.ca_directory}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7100 Liquidity Hub", url=f"{chain_url}{ca.x7100_liq_hub}"
+            ),
+            InlineKeyboardButton(
+                text="X7R Liquidity Hub", url=f"{chain_url}{ca.x7r_liq_hub}"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7DAO Liquidity Hub", url=f"{chain_url}{ca.x7dao_liq_hub}"
+            ),
+            InlineKeyboardButton(
+                text="X7 Token Burner", url=f"{chain_url}{ca.burner}"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7100 Discount Authority",
+                url=f"{chain_url}{ca.x7100_discount}",
+            ),
+            InlineKeyboardButton(
+                text="X7R Discount Authority",
+                url=f"{chain_url}{ca.x7r_discount}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7DAO Discount Authority",
+                url=f"{chain_url}{ca.x7dao_discount}",
+            ),
+            InlineKeyboardButton(
+                text="X7 Token Time Lock", url=f"{chain_url}{ca.time_lock}"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7 Ecosystem Splitter",
+                url=f"{chain_url}{ca.eco_splitter}",
+            ),
+            InlineKeyboardButton(
+                text="X7 Treasury Splitter",
+                url=f"{chain_url}{ca.treasury_splitter}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7 Profit Share Splitter",
+                url=f"{chain_url}{ca.profit_sharing}",
+            ),
+            InlineKeyboardButton(
+                text="X7 Lending Pool Reserve",
+                url=f"{chain_url}{ca.lpool_reserve}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7 Xchange Discount Authority",
+                url=f"{chain_url}{ca.xchange_discount}",
+            ),
+            InlineKeyboardButton(
+                text="X7 Lending Discount Authority",
+                url=f"{chain_url}{ca.lending_discount}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7 Xchange Router", url=f"{chain_url}{ca.router}"
+            ),
+            InlineKeyboardButton(
+                text="X7 Xchange Router with Discounts",
+                url=f"{chain_url}{ca.discount_router}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="X7 Lending Pool Contract", url=f"{chain_url}{ca.lpool}"
+            ),
+            InlineKeyboardButton(
+                text="X7 Xchange Factory", url=f"{chain_url}{ca.factory}"
+            ),
+        ],
+    ]
+
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Smart Contracts {chain_name}*\nUse `/smart [chain-name]` or other chains\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="Contracts Directory - by MikeMurpher",
-                        url=f"{url.ca_directory}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7100 Liquidity Hub", url=f"{chain_url}{ca.x7100_liq_hub}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7R Liquidity Hub", url=f"{chain_url}{ca.x7r_liq_hub}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7DAO Liquidity Hub", url=f"{chain_url}{ca.x7dao_liq_hub}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Token Burner", url=f"{chain_url}{ca.burner}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7100 Discount Authority",
-                        url=f"{chain_url}{ca.x7100_discount}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7R Discount Authority",
-                        url=f"{chain_url}{ca.x7r_discount}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7DAO Discount Authority",
-                        url=f"{chain_url}{ca.x7dao_discount}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Token Time Lock", url=f"{chain_url}{ca.time_lock}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Ecosystem Splitter",
-                        url=f"{chain_url}{ca.eco_splitter}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Treasury Splitter",
-                        url=f"{chain_url}{ca.treasury_splitter}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Profit Share Splitter",
-                        url=f"{chain_url}{ca.profit_sharing}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Lending Pool Reserve",
-                        url=f"{chain_url}{ca.lpool_reserve}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Xchange Discount Authority",
-                        url=f"{chain_url}{ca.xchange_discount}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Lending Discount Authority",
-                        url=f"{chain_url}{ca.lending_discount}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Xchange Router", url=f"{chain_url}{ca.router}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Xchange Router with Discounts",
-                        url=f"{chain_url}{ca.discount_router}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Lending Pool Contract", url=f"{chain_url}{ca.lpool}"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="X7 Xchange Factory", url=f"{chain_url}{ca.factory}"
-                    )
-                ],
-            ]
-        ),
+        reply_markup=InlineKeyboardMarkup(buttons),
     )
+
 
 
 async def splitters(update: Update, context):

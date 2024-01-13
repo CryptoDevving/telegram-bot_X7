@@ -55,9 +55,7 @@ dex_tools_opti = "https://www.dextools.io/app/optimism/pair-explorer/"
 dex_tools_base = "https://www.dextools.io/app/base/pair-explorer/"
 
 # LINKS
-ca_directory = (
-    "https://medium.com/@mikemurpher/x7-finance-contracts-directory-fe3a9fee7b3c"
-)
+ca_directory = "https://www.x7finance.org/en/docs/breakdowns/contracts"
 dac = "http://shorturl.at/ehnr9"
 dashboard = "https://www.x7finance.org/"
 discord = "https://discord.gg/x7finance"
