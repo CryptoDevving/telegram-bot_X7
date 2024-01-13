@@ -461,11 +461,12 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             i1.text(
                 (28, 36),
                 f"X7 Finance Market Cap Comparison\n\n"
-                f"Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n"
-                f'(${"{:,.2f}".format(token_market_cap)})\n\n'
+                f"{context.args[1].upper()} Market Cap:\n"
+                f'${"{:,.2f}".format(token_market_cap)}\n\n'
+                f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
                 f'${"{:,.2f}".format(token_value)}\n'
                 f'{"{:,.0f}%".format(percent)}\n'
-                f'{"{:,.0f}x".format(x)}\n\n\n\n\n\n'
+                f'{"{:,.0f}x".format(x)}\n\n\n\n\n'
                 f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                 font=myfont,
                 fill=(255, 255, 255),
@@ -474,8 +475,9 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_photo(
                 photo=open(r"media/blackhole.png", "rb"),
                 caption=f"*X7 Finance Market Cap Comparison*\n\n"
-                f"Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap\n"
-                f'(${"{:,.2f}".format(token_market_cap)})\n\n'
+                f"{context.args[1].upper()} Market Cap:\n"
+                f'${"{:,.2f}".format(token_market_cap)}\n\n'
+                f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
                 f'${"{:,.2f}".format(token_value)}\n'
                 f'{"{:,.0f}%".format(percent)}\n'
                 f'{"{:,.0f}x".format(x)}\n\n{api.get_quote()}',
