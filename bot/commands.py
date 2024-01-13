@@ -112,17 +112,33 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ath, ath_change, date = api.get_ath(coin)
         ath_change_str = f"{ath_change}"
         return ath, ath_change_str[:3], date
-
-    x7r_ath, x7r_ath_change, x7r_date = get_ath_info("x7r")
-    x7dao_ath, x7dao_ath_change, x7dao_date = get_ath_info("x7dao")
     
-    x7dao_date_object = datetime.fromisoformat(x7dao_date.replace("Z", "+00:00"))
-    x7dao_readable_date = x7dao_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7dao_mcap = x7dao_ath * ca.supply
+    try:
+        x7r_ath, x7r_ath_change, x7r_date = get_ath_info("x7r")
+        x7dao_ath, x7dao_ath_change, x7dao_date = get_ath_info("x7dao")
+        
+        x7dao_date_object = datetime.fromisoformat(x7dao_date.replace("Z", "+00:00"))
+        x7dao_readable_date = x7dao_date_object.strftime("%Y-%m-%d %H:%M:%S")
+        x7dao_mcap = x7dao_ath * ca.supply
 
-    x7r_date_object = datetime.fromisoformat(x7r_date.replace("Z", "+00:00"))
-    x7r_readable_date = x7r_date_object.strftime("%Y-%m-%d %H:%M:%S")
-    x7r_mcap = x7r_ath * api.get_x7r_supply("eth")
+        x7r_date_object = datetime.fromisoformat(x7r_date.replace("Z", "+00:00"))
+        x7r_readable_date = x7r_date_object.strftime("%Y-%m-%d %H:%M:%S")
+        x7r_mcap = x7r_ath * api.get_x7r_supply("eth")
+
+        x7r_ath = (
+            f'${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)})\n'
+            f'{x7r_ath_change}%\n'
+            f'{x7r_readable_date}'
+            )
+        x7dao_ath = (
+            f'${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)})\n'
+            f'{x7dao_ath_change}%\n'
+            f'{x7dao_readable_date}'
+            )
+    except Exception:
+        x7dao_ath = "Unavaliable"
+        x7r_ath = "Unavaliable"
+
 
     img = Image.open((random.choice(media.blackhole)))
     i1 = ImageDraw.Draw(img)
@@ -131,13 +147,9 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
         (28, 36),
         f"X7 Finance ATH Info (ETH)\n\n"
         f'X7R\n'
-        f'${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)})\n'
-        f'{x7r_ath_change}%\n'
-        f'{x7r_readable_date}\n\n'
+        f'{x7r_ath}'
         f'X7DAO\n'
-        f'${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)})\n'
-        f'{x7dao_ath_change}%\n'
-        f'{x7dao_readable_date}\n\n\n'
+        f'{x7dao_ath}\n\n'
         f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font=myfont,
         fill=(255, 255, 255),
@@ -146,13 +158,9 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     caption = (
         f"*X7 Finance ATH Info*\n\n"
         f'*X7R*\n'
-        f'${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)})\n'
-        f'{x7r_ath_change}%\n'
-        f"{x7r_readable_date}\n\n"
+        f'{x7r_ath}\n\n'
         f'*X7DAO*\n'
-        f'${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)})\n'
-        f'{x7dao_ath_change}%\n'
-        f"{x7dao_readable_date}\n\n"
+        f'{x7dao_ath}\n\n'
         f"{api.get_quote()}"
     )
     await update.message.reply_photo(
