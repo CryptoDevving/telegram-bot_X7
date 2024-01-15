@@ -4457,10 +4457,13 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         + x7105_price
     )
     percentages = [round(balance / ca.supply * 100, 2) for balance in [x7dao_balance, x7101_balance, x7102_balance, x7103_balance, x7104_balance, x7105_balance]]
-    x7r_percent = round(x7r_balance / api.get_x7r_supply(chain) * 100, 2)
-
-    pioneers = api.get_pioneer_holdings(wallet)
-    maxis = api.get_maxi_holdings(wallet)
+    print(percentages)
+    if x7r_balance == 0:
+        x7r_percent = 0
+    else:
+        x7r_percent = round(x7r_balance / api.get_x7r_supply(chain) * 100, 2)
+    pioneers = api.get_pioneer_holdings(wallet, chain)
+    maxis = api.get_maxi_holdings(wallet, chain)
     txs = api.get_daily_tx_count(wallet, chain)
     im1 = Image.open((random.choice(media.blackhole)))
     im2 = Image.open(chain_logo)

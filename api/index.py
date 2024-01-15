@@ -291,9 +291,20 @@ def get_mcap(token):
 
 # ALCHEMY
 
+alchemy_chain_mappings = {
+    "eth": f"https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_ETH')}",
+    "arb": f"https://arb-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_ARB')}",
+    "poly": f"https://polygon-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_POLY')}",
+    "bsc": "bsc",
+    "opti": f"https://opt-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_OPTI')}",
+    "base": "base",
+}
 
-def get_maxi_holdings(wallet):
-    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
+
+def get_maxi_holdings(wallet, chain):
+    if chain in alchemy_chain_mappings:
+        chain = alchemy_chain_mappings[chain]
+    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
     response_data = response.json()
@@ -301,8 +312,10 @@ def get_maxi_holdings(wallet):
     return total_count
 
 
-def get_pioneer_holdings(wallet):
-    url = f'https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv("ALCHEMY_ETH")}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
+def get_pioneer_holdings(wallet, chain):
+    if chain in alchemy_chain_mappings:
+        chain = alchemy_chain_mappings[chain]
+    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
     response_data = response.json()
