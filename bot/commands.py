@@ -5023,7 +5023,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=f"X7R Info\n\n"
-            f"{chain} before tax will cureently buy:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'`ETH:`     {"{:0,.0f}".format(eth_amount)}\n'
             f'`ARB:`     {"{:0,.0f}".format(arb_amount)}\n'
             f'`BSC:`     {"{:0,.0f}".format(bsc_amount)}\n'
@@ -5936,7 +5936,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (26, 30),
             f"X7104 Info\n\n"
-            f"{chain} before tax will cureently buy:\n\n"
+            f"{chain} before tax will currently buy:\n\n"
             f'ETH:    {"{:0,.0f}".format(eth_amount)}\n'
             f'ARB:    {"{:0,.0f}".format(arb_amount)}\n'
             f'BSC:    {"{:0,.0f}".format(bsc_amount)}\n'
