@@ -9,6 +9,7 @@ import time as t
 import subprocess
 import random
 from datetime import datetime
+from typing import Optional, Tuple
 
 import commands
 import twitter
@@ -25,6 +26,14 @@ sentry_sdk.init(
     dsn = os.getenv("SENTRY_DSN"),
     traces_sample_rate=1.0
 )
+
+
+RESTRICTIONS = {
+    'can_send_messages': False,
+    'can_send_media_messages': False,
+    'can_send_other_messages': False,
+    'can_add_web_page_previews': False,
+}
 
 
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -120,6 +129,106 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                 elif "sticker" in response:
                     await update.message.reply_sticker(sticker=response["sticker"])
+
+
+def extract_status_change(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
+
+    status_change = chat_member_update.difference().get("status")
+    old_is_member, new_is_member = chat_member_update.difference().get("is_member", (None, None))
+
+    if status_change is None:
+        return None
+
+    old_status, new_status = status_change
+    was_member = old_status in [
+        ChatMember.MEMBER,
+        ChatMember.OWNER,
+        ChatMember.ADMINISTRATOR,
+    ] or (old_status == ChatMember.RESTRICTED and old_is_member is True)
+    is_member = new_status in [
+        ChatMember.MEMBER,
+        ChatMember.OWNER,
+        ChatMember.ADMINISTRATOR,
+    ] or (new_status == ChatMember.RESTRICTED and new_is_member is True)
+
+    return was_member, is_member
+
+
+async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    result = extract_status_change(update.chat_member)
+    if result is None:
+        return
+
+    was_member, is_member = result
+    new_member = update.chat_member.new_chat_member
+    new_member_id = new_member.user.id
+    new_member_username = new_member.user.username
+
+    if not was_member and is_member:
+        previous_welcome_message_id = context.user_data.get('welcome_message_id')
+        if previous_welcome_message_id:
+            try:
+                await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=previous_welcome_message_id)
+            except Exception:
+                pass
+
+        await context.bot.restrict_chat_member(
+            chat_id=update.effective_chat.id,
+            user_id=new_member_id,
+            permissions=RESTRICTIONS,
+        )
+
+        welcome_message = await update.effective_chat.send_video(
+            video=open(media.welcome, 'rb'),
+            caption=(
+                f"Welcome {new_member_username} to X7 Finance\n\n"
+                f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n"
+                f"• Ethereum\n"
+                f"• Binance Smart Chain\n"
+                f"• Arbitrum\n"
+                f"• Optimism\n"
+                f"• Polygon\n"
+                f"• Base Chain\n\n"
+                f"Verify as human and check out the links to get started!"
+            ),
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="I am human!!",
+                            callback_data=f"unmute:{new_member_id}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Website",
+                            url={url.website},
+                        ),
+                        InlineKeyboardButton(
+                            text="Twitter",
+                            url=url.twitter,
+                        ),
+                    ],
+                ]
+            )
+        )
+
+        context.user_data['welcome_message_id'] = welcome_message.message_id
+   
+
+async def welcome_button_callback(update: Update, context: CallbackContext) -> None:
+    user_id = update.callback_query.from_user.id
+    action, _ = update.callback_query.data.split(":", 1)
+
+    if action == "unmute":
+        user_restrictions = {key: True for key in RESTRICTIONS}
+
+        await context.bot.restrict_chat_member(
+            chat_id=update.effective_chat.id,
+            user_id=user_id,
+            permissions=user_restrictions,
+        )
 
 
 async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -230,6 +339,7 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
+    application.add_handler(CallbackQueryHandler(welcome_button_callback, pattern=r"unmute:.+"))
     application.add_handler(CommandHandler("test", commands.test))
 
     ## COMANDS ##
@@ -368,4 +478,4 @@ if __name__ == "__main__":
         processes.append(process)
 
     ## RUN ##
-    application.run_polling()
+    application.run_polling(allowed_updates=Update.ALL_TYPES)

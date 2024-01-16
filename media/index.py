@@ -21,6 +21,8 @@ base_logo = os.path.join("media", "base.png")
 raffle_logo = os.path.join("media", "raffle.jpg")
 pioneer_logo = os.path.join("media", "pioneer.png")
 
+welcome = os.path.join("media", "welcome.mp4")
+
 # STICKERS
 gm = "CAACAgQAAxkBAAEGsh9jjfZUfCKtJjaLGZbNFuzVgb9VOQAC6g4AAsII4FH2AAFleY-pPhorBA"
 goat = "CAACAgQAAxkBAAEb8-ZjwE_aHjXYhuYHZ8o-zsgWrl2R1QACUg8AAjy7eFGTdK4Wetlymy0E"
