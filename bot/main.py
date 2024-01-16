@@ -224,7 +224,7 @@ async def welcome_button_callback(update: Update, context: CallbackContext) -> N
         )
 
 
-async def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
+def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
 
     status_change = chat_member_update.difference().get("status")
     old_is_member, new_is_member = chat_member_update.difference().get("is_member", (None, None))
@@ -248,7 +248,7 @@ async def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tupl
 
 
 async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    result = await welcome_member(update.chat_member)
+    result = welcome_member(update.chat_member)
     if result is None:
         return
 
