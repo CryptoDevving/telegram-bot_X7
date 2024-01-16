@@ -274,7 +274,7 @@ async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             welcome_message = await update.effective_chat.send_video(
                 video=open(media.welcomevideo, 'rb'),
                 caption=(
-                    f"Welcome {new_member_username} to X7 Finance\n\n"
+                    f"Welcome @{new_member_username} to X7 Finance\n\n"
                     f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n"
                     f"• Ethereum\n"
                     f"• Binance Smart Chain\n"
