@@ -338,6 +338,7 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
+    application.add_handler(ChatMemberHandler(welcome_message, ChatMemberHandler.CHAT_MEMBER))
     application.add_handler(CallbackQueryHandler(welcome_button_callback, pattern=r"unmute:.+"))
     application.add_handler(CommandHandler("test", commands.test))
 
