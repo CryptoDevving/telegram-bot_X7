@@ -51,7 +51,7 @@ alumni = (
     "@Zaratustra  - Defi extraordinaire and protocol prophet\n\n"
 )
 
-chain_error = f'Chain not recognised, please use "eth", "arb", "bsc", "poly" or "opti"'
+chain_error = f'Chain not recognised, please follow command with one of the following abbreviations:\n\neth\narb\nbsc\npoly\nopti\nbase'
 
 commands = (
     "/about - About X7 Finance\n"

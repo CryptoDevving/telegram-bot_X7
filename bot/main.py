@@ -285,7 +285,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["on_chain", "onchain", "message"], commands.on_chain))
     application.add_handler(CommandHandler(["pair", "pairs"], commands.pair))
     application.add_handler(CommandHandler("pfp", commands.pfp))
-    application.add_handler(CommandHandler("ping", commands.ping))
     application.add_handler(CommandHandler("pioneer", commands.pioneer))
     application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
     application.add_handler(CommandHandler(["price", "prices", "x"], commands.price))
@@ -361,12 +360,12 @@ if __name__ == "__main__":
         "scanner/opti.py",
 ##        "scanner/base.py",
     ]
-    python_executable = sys.executable
-    processes = []
-    for scanner in scanners:
-        command = [python_executable, scanner]
-        process = subprocess.Popen(command)
-        processes.append(process)
+#    python_executable = sys.executable
+#    processes = []
+#    for scanner in scanners:
+#        command = [python_executable, scanner]
+#        process = subprocess.Popen(command)
+#        processes.append(process)
 
     ## RUN ##
     application.run_polling()
