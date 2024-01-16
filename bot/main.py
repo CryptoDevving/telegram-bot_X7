@@ -360,12 +360,12 @@ if __name__ == "__main__":
         "scanner/opti.py",
 ##        "scanner/base.py",
     ]
-    python_executable = sys.executable
-    processes = []
-    for scanner in scanners:
-        command = [python_executable, scanner]
-        process = subprocess.Popen(command)
-        processes.append(process)
+#    python_executable = sys.executable
+#    processes = []
+#    for scanner in scanners:
+#        command = [python_executable, scanner]
+#        process = subprocess.Popen(command)
+#        processes.append(process)
 
     ## RUN ##
     application.run_polling()

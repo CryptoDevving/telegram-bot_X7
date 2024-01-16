@@ -4430,18 +4430,19 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, media.eth_logo, "eth"),
-        "arb": ("(ARB)", url.arb_address, media.bsc_logo, "eth"),
-        "poly": ("(POLYGON)", url.poly_address, media.poly_logo, "matic"),
-        "bsc": ("(BSC)", url.bsc_address, media.bsc_logo, "bnb"),
-        "opti": ("(OPTI)", url.opti_address, media.opti_logo, "eth"),
-        "base": ("(BASE)", url.base_address, media.base_logo, "eth"),
+        "eth": ("(ETH)", url.ether_address, media.eth_logo, "eth", ca.usdc, ca.usdt),
+        "arb": ("(ARB)", url.arb_address, media.bsc_logo, "eth", ca.ausdc, ca.ausdt),
+        "poly": ("(POLYGON)", url.poly_address, media.poly_logo, "matic", ca.pusdc, ca.pusdt),
+        "bsc": ("(BSC)", url.bsc_address, media.bsc_logo, "bnb", ca.busdc, ca.busdc),
+        "opti": ("(OPTI)", url.opti_address, media.opti_logo, "eth", ca.ousdc, ca.ousdc),
+        "base": ("(BASE)", url.base_address, media.base_logo, "eth", ca.usdbc, ca.cbusdc),
     }
     if chain in chain_mappings:
-        chain_name, chain_url, chain_logo, chain_native = chain_mappings[chain]
+        chain_name, chain_url, chain_logo, chain_native, chain_usdc, chain_usdt = chain_mappings[chain]
     else:
         await update.message.reply_text(text.chain_error)
         return
+    
     native_price = api.get_native_price(chain_native)
     eth = api.get_native_balance(wallet, chain)
     dollar = float(eth) * float(native_price)
@@ -4494,11 +4495,11 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7d_balance = 0
         x7d_price = 0
     try:
-        usdc_balance = api.get_stables_balance(wallet, ca.usdc, chain)
+        usdc_balance = api.get_stables_balance(wallet, chain_usdc, chain)
     except Exception:
         usdc_balance = 0
     try:
-        usdt_balance = api.get_stables_balance(wallet, ca.usdt, chain)
+        usdt_balance = api.get_stables_balance(wallet, chain_usdt, chain)
     except Exception:
         usdt_balance = 0
     stables = usdt_balance + usdc_balance
@@ -4529,7 +4530,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         (28, 10),
         f"X7 Finance Wallet Info {chain_name}\n\n"
         f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n"
-        f"${'{:0,.0f}'.format(stables)} USDT/C\n"
+        f"${'{:0,.0f}'.format(stables)} Stables\n"
         f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
         f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
         f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
@@ -4554,7 +4555,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
         f"`{wallet}`\n\n"
         f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n"
-        f"${'{:0,.0f}'.format(stables)} USDT/C\n\n"
+        f"${'{:0,.0f}'.format(stables)} Stables\n\n"
         f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
         f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
         f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
