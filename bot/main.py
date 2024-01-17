@@ -259,7 +259,10 @@ async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if new_member.user.username:
         new_member_username = f"@{new_member.user.username}"
     else:
-        new_member_username = f"{new_member.user.first_name} {new_member.user.last_name}"
+        if new_member.user.last_name:
+            new_member_username = f"{new_member.user.first_name} {new_member.user.last_name}"
+        else:
+            new_member_username = new_member.user.first_name
 
     if not was_member and is_member:
         previous_welcome_message_id = context.bot_data.get('welcome_message_id')
