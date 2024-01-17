@@ -256,7 +256,10 @@ async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     was_member, is_member = result
     new_member = update.chat_member.new_chat_member
     new_member_id = new_member.user.id
-    new_member_username = f"@{new_member.user.username}" or f"{new_member.user.first_name} {new_member.user.last_name}"
+    if new_member.user.username:
+        new_member_username = f"@{new_member.user.username}"
+    else:
+        new_member_username = f"{new_member.user.first_name} {new_member.user.last_name}"
 
     if not was_member and is_member:
         previous_welcome_message_id = context.bot_data.get('welcome_message_id')
