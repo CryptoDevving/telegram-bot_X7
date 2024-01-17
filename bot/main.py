@@ -258,7 +258,7 @@ async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     new_member_username = new_member.user.username
 
     if not was_member and is_member:
-        previous_welcome_message_id = context.user_data.get('welcome_message_id')
+        previous_welcome_message_id = context.bot_data.get('welcome_message_id')
         if previous_welcome_message_id:
             try:
                 await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=previous_welcome_message_id)
@@ -270,46 +270,43 @@ async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             user_id=new_member_id,
             permissions=RESTRICTIONS,
         )
-        try:
-            welcome_message = await update.effective_chat.send_video(
-                video=open(media.welcomevideo, 'rb'),
-                caption=(
-                    f"Welcome @{new_member_username} to X7 Finance\n\n"
-                    f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n"
-                    f"• Ethereum\n"
-                    f"• Binance Smart Chain\n"
-                    f"• Arbitrum\n"
-                    f"• Optimism\n"
-                    f"• Polygon\n"
-                    f"• Base Chain\n\n"
-                    f"Verify as human and check out the links to get started!"
-                ),
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
+        welcome_message = await update.effective_chat.send_video(
+            video=open(media.welcomevideo, 'rb'),
+            caption=(
+                f"Welcome @{new_member_username} to X7 Finance\n\n"
+                f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n"
+                f"• Ethereum\n"
+                f"• Binance Smart Chain\n"
+                f"• Arbitrum\n"
+                f"• Optimism\n"
+                f"• Polygon\n"
+                f"• Base Chain\n\n"
+                f"Verify as human and check out the links to get started!"
+            ),
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
                     [
-                        [
-                            InlineKeyboardButton(
-                                text="I am human!",
-                                callback_data=f"unmute:{new_member_id}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Website",
-                                url=url.website,
-                            ),
-                            InlineKeyboardButton(
-                                text="Xchange",
-                                url=url.xchange,
-                            ),
-                        ],
-                    ]
-                )
+                        InlineKeyboardButton(
+                            text="I am human!",
+                            callback_data=f"unmute:{new_member_id}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Website",
+                            url=url.website,
+                        ),
+                        InlineKeyboardButton(
+                            text="Xchange",
+                            url=url.xchange,
+                        ),
+                    ],
+                ]
             )
-        except Exception as e:
-            print(e)
+        )
 
-        context.user_data['welcome_message_id'] = welcome_message.message_id
+        context.bot_data['welcome_message_id'] = welcome_message.message_id
    
 
 async def error(update: Update, context: CallbackContext):
