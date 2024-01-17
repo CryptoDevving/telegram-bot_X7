@@ -40,7 +40,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await update.effective_chat.get_administrators()
+    chat_admins = await context.bot.get_chat_administrators(os.getenv("MAIN_TELEGRAM_CHANNEL_ID"))
     if update.effective_user in (admin.user for admin in chat_admins):
         await update.message.reply_text(
             f"{text.admin_commands}",
@@ -1205,7 +1205,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="Markdown",
             )
         if ext == "run":
-            chat_admins = await update.effective_chat.get_administrators()
+            chat_admins = await context.bot.get_chat_administrators(os.getenv("MAIN_TELEGRAM_CHANNEL_ID"))
             if update.effective_user in (admin.user for admin in chat_admins):
                 winner_entries = list(api.get_giveaway_entries())
                 winner = random.choice(winner_entries)
