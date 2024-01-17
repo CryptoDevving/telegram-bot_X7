@@ -133,6 +133,8 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global current_button_data, first_user_clicked
+    button_click_timestamp = t.time()
+    
     if context.user_data is None:
         context.user_data = {}
 
@@ -152,7 +154,6 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     if button_data == current_button_data:
         
-        button_click_timestamp = t.time()
         time_taken = button_click_timestamp - button_generation_timestamp
 
         await api.db_clicks_update(user_info, time_taken)
