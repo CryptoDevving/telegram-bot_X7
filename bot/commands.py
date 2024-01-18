@@ -3161,15 +3161,15 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 if chain == "":
                     chain = "eth"
                 chain_mappings = {
-                    "eth": url.dex_tools_eth,
-                    "bsc": url.dex_tools_bsc,
-                    "poly": url.dex_tools_poly,
-                    "opti": url.dex_tools_opti,
-                    "arb": url.dex_tools_arb,
-                    "base": url.dex_tools_base,
+                    "eth": (url.dex_tools_eth, media.eth_logo),
+                    "bsc": (url.dex_tools_bsc, media.bsc_logo),
+                    "poly": (url.dex_tools_poly, media.poly_logo),
+                    "opti": (url.dex_tools_opti, media.opti_logo),
+                    "arb": (url.dex_tools_arb, media.arb_logo),
+                    "base": (url.dex_tools_base, media.base_logo),
                 }
                 if chain in chain_mappings:
-                    dex_tools = chain_mappings[chain]
+                    dex_tools, chain_logo = chain_mappings[chain]
                 else:
                     await update.message.reply_text(text.chain_error)
                     return  
@@ -3210,7 +3210,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 formatted_mcap = "${:,.0f}".format(mcap)
                 price_change = api.get_price_change(search, chain)
                 im1 = Image.open((random.choice(media.blackhole)))
-                im2 = Image.open(media.eth_logo)
+                im2 = Image.open(chain_logo)
                 im1.paste(im2, (720, 20), im2)
                 myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
                 i1 = ImageDraw.Draw(im1)
