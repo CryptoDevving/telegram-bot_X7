@@ -61,11 +61,11 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
                     reply_markup=keyboard,
                 )
     
+    button_generation_timestamp = t.time()
     context.bot_data["button_generation_timestamp"] = button_generation_timestamp
     context.bot_data['click_me_id'] = click_me.message_id
-    button_generation_timestamp = t.time()
     
-
+    
 async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
     messages = [text.about, text.airdrop, text.ecosystem,
