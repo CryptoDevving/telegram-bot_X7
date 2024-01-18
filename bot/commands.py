@@ -2824,8 +2824,9 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:    
-        search = " ".join(context.args).lower()
+    try:
+        search = context.args[0].lower()
+        chain = context.args[1].lower()  
         token_info = api.db_token_get(search)
         for token_instance in token_info:
             if token_instance['ticker'].lower() == search:
@@ -2867,7 +2868,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
                 mcap = token_price * supply
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-                volume = "${:,.0f}".format(float(api.get_volume(token_instance['pair'], token_instance['chain'])))
+                try:
+                    volume = "${:,.0f}".format(float(api.get_volume(token_instance['pair'], token_instance['chain'])))
+                except Exception:
+                    volume = "N/A"
                 price_change = api.get_price_change(token_instance['ca'], token_instance['chain'])
                 im1 = Image.open((random.choice(media.blackhole)))
                 try:
@@ -3154,39 +3158,57 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 return
                 
             if search.startswith("0x") and len(search) == 42:
+                if chain == "":
+                    chain = "eth"
+                chain_mappings = {
+                    "eth": url.dex_tools_eth,
+                    "bsc": url.dex_tools_bsc,
+                    "poly": url.dex_tools_poly,
+                    "opti": url.dex_tools_opti,
+                    "arb": url.dex_tools_arb,
+                    "base": url.dex_tools_base,
+                }
+                if chain in chain_mappings:
+                    dex_tools = chain_mappings[chain]
+                else:
+                    await update.message.reply_text(text.chain_error)
+                    return  
                 try:
-                    scan = api.get_scan(search, "eth")
+                    scan = api.get_scan(search, chain)
                 except Exception:
                     await update.message.reply_text(
-                        f"{search} Not found",
+                        f"{search} {chain.upper()} Not found",
                         parse_mode="Markdown",
                     )
                     return
-                holders = api.get_holders(search, "eth")
+                holders = api.get_holders(search, chain)
                 pair = scan[str(search).lower()]["dex"][0]["pair"]
-                token_price = api.get_price(search, "eth")
-                volume = "${:,.0f}".format(float(api.get_volume(pair, "eth")))
+                token_price = api.get_price(search, chain)
+                try:
+                    volume = "${:,.0f}".format(float(api.get_volume(pair, chain)))
+                except Exception:
+                    volume = "N/A"
                 if "e-" in str(token_price):
                     price = "{:.8f}".format(token_price)
                 elif token_price < 1:
                     price = "{:.8f}".format(token_price) 
                 else:
                     price = "{:.2f}".format(token_price)
-                info = api.get_token_data(search, "eth")
+                info = api.get_token_data(search, chain)
                 if (
                     info[0]["decimals"] == ""
                     or info[0]["decimals"] == "0"
                     or not info[0]["decimals"]
                 ):
-                    supply = int(api.get_supply(search, "eth"))
+                    supply = int(api.get_supply(search, chain))
                 else:
-                    supply = int(api.get_supply(search, "eth")) / 10 ** int(
+                    supply = int(api.get_supply(search, chain)) / 10 ** int(
                         info[0]["decimals"]
                     )
 
                 mcap = float(price) * float(supply)
                 formatted_mcap = "${:,.0f}".format(mcap)
-                price_change = api.get_price_change(search, "eth")
+                price_change = api.get_price_change(search, chain)
                 im1 = Image.open((random.choice(media.blackhole)))
                 im2 = Image.open(media.eth_logo)
                 im1.paste(im2, (720, 20), im2)
@@ -3196,7 +3218,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 i1 = ImageDraw.Draw(im1)
                 i1.text(
                     (26, 30),
-                    f"Token Info\n\n{scan[str(search).lower()]['token_name']}\n\n"
+                    f"Token Info\n\n{scan[str(search).lower()]['token_name']} {chain.upper()}\n\n"
                     f'Price: {price}\n'
                     f"Market Cap: {formatted_mcap}\n"
                     f"24 Hour Volume: {volume}\n"
@@ -3210,7 +3232,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 im1.save(img_path)
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
-                    caption=f"*Token Info\n\n{scan[str(search).lower()]['token_name']}*\n\n"
+                    caption=f"*Token Info\n\n{scan[str(search).lower()]['token_name']} {chain.upper()}*\n\n"
                     f'Price: {price}\n'
                     f"Market Cap: {formatted_mcap}\n"
                     f"24 Hour Volume: {volume}\n"
@@ -3222,7 +3244,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             [
                                 InlineKeyboardButton(
-                                    text="Chart", url=f"{url.dex_tools_eth}{pair}"
+                                    text="Chart", url=f"{dex_tools}{pair}"
                                 )
                             ],
                             [
@@ -3352,25 +3374,47 @@ async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    token_address_title = " ".join(context.args)
-    token_address = " ".join(context.args).lower()
+    if len(context.args) == 0:
+        await update.message.reply_text(
+            f"Please provide contract address and chain")
+        return
+    
+    if len(context.args) == 1:
+        token_address = context.args[0].lower()
+        chain = "eth"
+
+    if len(context.args) == 2:
+        token_address = context.args[0].lower()
+        chain = context.args[1].lower()
+
+    chain_mappings = {
+        "eth": (f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}", url.ether_address, url.dex_tools_eth, "eth"),
+        "bsc": (random.choice(url.bsc), url.bsc_address, url.dex_tools_bsc, "bnb"),
+        "poly": (f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}", url.poly_address, url.dex_tools_poly, "matic"),
+        "opti": (f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}", url.opti_address, url.dex_tools_opti, "eth"),
+        "arb": (f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}", url.arb_address, url.dex_tools_arb, "eth"),
+        "base": ("https://mainnet.base.org", url.base_address, url.dex_tools_base, "eth"),
+    }
+    if chain in chain_mappings:
+        web3_url, scan_link, dex_tools_link, native = chain_mappings[chain]
+    else:
+        await update.message.reply_text(text.chain_error)
+        return
     if token_address == "":
         await update.message.reply_text(
-        f"Please provide Contract Address",
+        f"Please provide Contract Address and chain",
     )
         return
-    scan = api.get_scan(token_address,"eth")
+    scan = api.get_scan(token_address, chain)
     if scan == {}:
-        await update.message.reply_text(f"{token_address} not found")
+        await update.message.reply_text(f"{token_address} ({chain.upper}) not found")
         return
-    verified_check = api.get_verified(token_address, "eth")
-    alchemy_keys = os.getenv("ALCHEMY_ETH")
-    alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
-    web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
+    verified_check = api.get_verified(token_address, chain)
+    web3 = Web3(Web3.HTTPProvider(web3_url))
     if verified_check == "Yes":
         try:
             contract = web3.eth.contract(
-            address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, "eth")
+            address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, chain)
             )
             verified = "✅ Contract Verified"
         except Exception:
@@ -3462,19 +3506,19 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             creator_percent = "❓ Tokens Held By Creator Unknown"
         if "owner_percent" in scan[token_address_str]:
             if renounced == "✅ Contract Renounced":
-                owner_eth = "❓ ETH Held By Owner Unknown"
+                owner_eth = f"❓ {native.upper()} Held By Owner Unknown"
                 owner_percent = f'✅️ Owner Holds 0% of Supply'
             else:
                 owner_percent_str = float(scan[token_address_str]["owner_percent"])
                 formatted_owner_percent = "{:.4f}".format(owner_percent_str * 100)
                 owner = scan[token_address_str]["owner_address"]
-                owner_eth_str = api.get_native_balance(owner, "eth")
+                owner_eth_str = api.get_native_balance(owner, chain)
                 owner_eth = float(owner_eth_str)
                 formatted_owner_eth = "{:.5f}".format(owner_eth)
                 if owner_eth  > 1.0:
-                    owner_eth = f'✅ Owner Holds - {formatted_owner_eth} ETH'
+                    owner_eth = f'✅ Owner Holds - {formatted_owner_eth} {native.upper()}'
                 else:
-                    owner_eth = f'⚠️ Owner Holds - {formatted_owner_eth} ETH'
+                    owner_eth = f'⚠️ Owner Holds - {formatted_owner_eth} {native.upper()}'
 
                 if owner_percent_str >= 0.05:
                     owner_percent = f'⚠️ Owner Holds {formatted_owner_percent}% of Supply'
@@ -3482,7 +3526,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     owner_percent = f'✅️ Owner Holds {formatted_owner_percent}% of Supply'
         else:
             owner_percent = "❓ Tokens Held By Owner Unknown"
-            owner_eth = "❓ ETH Held By Owner Unknown"
+            owner_eth = f"❓ {native.upper()} Held By Owner Unknown"
         if "lp_holders" in scan[token_address_str]:
             locked_lp_list = [
                 lp
@@ -3522,15 +3566,15 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             liquidity = "❓ Liquidity Unknown"
         if "creator_address" in scan[token_address_str]:
             deployer = scan[token_address_str]["creator_address"]
-            deployer_eth_str = api.get_native_balance(deployer, "eth")
+            deployer_eth_str = api.get_native_balance(deployer, chain)
             deployer_eth = float(deployer_eth_str)
             formatted_deployer_eth = "{:.5f}".format(deployer_eth)
             if deployer_eth  > 1.0:
-                creator_eth = f'✅ Deployer Holds - {formatted_deployer_eth} ETH'
+                creator_eth = f'✅ Deployer Holds - {formatted_deployer_eth} {native.upper()}'
             else:
-                creator_eth = f'⚠️ Deployer Holds - {formatted_deployer_eth} ETH'
+                creator_eth = f'⚠️ Deployer Holds - {formatted_deployer_eth} {native.upper()}'
         else:
-            creator_eth = "❓ ETH Held By Deployer Unknown"
+            creator_eth = f"❓ {native.upper()} Held By Deployer Unknown"
 
     else:
         mint = "❓ Mintable - Unknown"
@@ -3542,38 +3586,36 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         owner_percent = "❓ Tokens Held By Owner Unknown"
         lock  = "❓ Liquidity Lock Unknown"
         liquidity = "❓ Liquidity Unknown"
-        creator_eth = "❓ ETH Held By Deployer Unknown"
-        owner_eth = "❓ ETH Held By Owner Unknown"
+        creator_eth = f"❓ {native.upper()} Held By Deployer Unknown"
+        owner_eth = f"❓ {native.upper()} Held By Owner Unknown"
     status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{creator_eth}\n{owner_percent}\n{owner_eth}\n{liquidity}\n{lock}"
     token_name = scan[f"{str(token_address).lower()}"]["token_name"]
 
-    try:
-        await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-            caption=f"*X7 Finance Token Scanner*\n\n{token_name}\n{token_address_title}\n\n{status}\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
+
+    await update.message.reply_photo(
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        caption=f"*X7 Finance Token Scanner*\n\n{token_name} ({chain.upper()})\n`{token_address}`\n\n{status}\n\n{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton(
-                            text=f"{token_name} Contract",
-                            url=f"{url.ether_token}{token_address}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text=f"Chart",
-                            url=f'{url.dex_tools_eth}{scan[str(token_address).lower()]["dex"][0]["pair"]})',
-                        )
-                    ],
-                    
+                    InlineKeyboardButton(
+                        text=f"{token_name} Contract",
+                        url=f"{scan_link}{token_address}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text=f"Chart",
+                        url=f'{dex_tools_link}{scan[str(token_address).lower()]["dex"][0]["pair"]}',
+                    )
+                ],
+                
 
 
-                ]
-            ),
-        )
-    except Exception:
-            await update.message.reply_text(f"{token_address} not found")
+            ]
+        ),
+    )
 
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):

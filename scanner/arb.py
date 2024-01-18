@@ -18,7 +18,7 @@ from media import index as media
 
 
 alchemy_arb = os.getenv("ALCHEMY_ARB")
-alchemy_arb_url = f"https://arb-mainnet.g.alchemy.com/v2/{alchemy_arb}"
+alchemy_arb_url = f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"
 web3 = Web3(Web3.HTTPProvider(alchemy_arb_url))
 
 factory = web3.eth.contract(address=ca.factory, abi=api.get_abi(ca.factory, "arb"))

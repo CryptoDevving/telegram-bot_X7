@@ -69,7 +69,7 @@ def get_holders(pair, chain):
         data = response.json()
         return data["data"]["holders"]
     else:
-        return None
+        return "N/A"
 
 # SCAN
 
@@ -563,35 +563,39 @@ def get_token_image(token, chain):
 
 
 def get_volume(pair, chain):
-    if chain in defined_chain_mappings:
-        chain = defined_chain_mappings[chain]
+    try:
+        if chain in defined_chain_mappings:
+            chain = defined_chain_mappings[chain]
 
-    url = "https://api.defined.fi"
+        url = "https://api.defined.fi"
 
-    headers = {
-        "content_type": "application/json",
-        "x-api-key": os.getenv("DEFINED_API_KEY")
-    }
+        headers = {
+            "content_type": "application/json",
+            "x-api-key": os.getenv("DEFINED_API_KEY")
+        }
 
-    volume = f'''
-        query {{
-        getDetailedPairStats(pairAddress: "{pair}", networkId: {chain}, bucketCount: 1, tokenOfInterest: token1) {{
-            stats_day1 {{
-            statsUsd {{
-                volume {{
-                currentValue
+        volume = f'''
+            query {{
+            getDetailedPairStats(pairAddress: "{pair}", networkId: {chain}, bucketCount: 1, tokenOfInterest: token1) {{
+                stats_day1 {{
+                statsUsd {{
+                    volume {{
+                    currentValue
+                    }}
+                }}
                 }}
             }}
             }}
-        }}
-        }}
-        '''
+            '''
 
-    response = requests.post(url, headers=headers, json={"query": volume})
-    data = response.json()
+        response = requests.post(url, headers=headers, json={"query": volume})
+        data = response.json()
 
-    current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
-    return current_value
+        current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
+        return current_value
+    except Exception as e:
+            # Handle any other unexpected errors
+            return f"Unexpected error: {str(e)}"
 
 
 # OTHER
