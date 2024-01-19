@@ -170,12 +170,10 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     clicked_buttons.add(button_data)
 
     if button_data == current_button_data:
-        
         time_taken = button_click_timestamp - button_generation_timestamp
 
         await api.db_clicks_update(user_info, time_taken)
     
-
         if not first_user_clicked:
             first_user_clicked = True
 
@@ -193,7 +191,6 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
             if api.db_clicks_check_is_fastest(time_taken) == True:
                 click_message +=  f"\n\n🎉🎉 {time_taken:.3f} seconds is the new fastest time! 🎉🎉"
-
             
             message_text = (
                 f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.3f} seconds!\n\n"
@@ -215,18 +212,19 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 #                            f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
 #                            f"{burn_message}"
 #                    )
-                
-        times.restart_time = datetime.now().timestamp()        
-        context.user_data["current_button_data"] = None
-        times.button_time = times.random_button_time()
-        job_queue.run_once(
-        auto_message_click,
-        times.button_time,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        name="Click Message",
-    )
-        context.bot_data['clicked_id'] = clicked.message_id
-        return times.button_time
+            context.bot_data['clicked_id'] = clicked.message_id
+
+            times.restart_time = datetime.now().timestamp()        
+            context.user_data["current_button_data"] = None
+            times.button_time = times.random_button_time()
+            job_queue.run_once(
+            auto_message_click,
+            times.button_time,
+            chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+            name="Click Message",
+        )
+            
+            return times.button_time
     
 
 async def welcome_button_callback(update: Update, context: CallbackContext) -> None:
