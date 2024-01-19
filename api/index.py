@@ -170,13 +170,17 @@ def get_pool_liq_balance(wallet, token, chain):
 
 
 def get_stables_balance(wallet, token, chain):
-    if chain not in chains_info:
-        raise ValueError(f"Invalid chain: {chain}")
-    chain_info = chains_info[chain]
-    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url)
-    data = response.json()
-    return int(data["result"][:-6])
+    try:
+        if chain not in chains_info:
+            raise ValueError(f"Invalid chain: {chain}")
+
+        chain_info = chains_info[chain]
+        url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
+        response = requests.get(url)
+        data = response.json()
+        return int(data["result"][:-6])
+    except Exception as e:
+        return 0
 
 
 def get_supply(token, chain):
@@ -190,13 +194,16 @@ def get_supply(token, chain):
 
 
 def get_token_balance(wallet, token, chain):
-    if chain not in chains_info:
-        raise ValueError(f"Invalid chain: {chain}")
-    chain_info = chains_info[chain]
-    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
-    response = requests.get(url)
-    data = response.json()
-    return int(data["result"][:-18])
+    try:
+        if chain not in chains_info:
+            raise ValueError(f"Invalid chain: {chain}")
+        chain_info = chains_info[chain]
+        url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
+        response = requests.get(url)
+        data = response.json()
+        return int(data["result"][:-18])
+    except Exception:
+        return 0
 
 
 def get_tx_from_hash(tx, chain):
@@ -354,14 +361,17 @@ def get_nft_holder_list(nft, chain):
 
 
 def get_price(token, chain):
-    if chain in moralis_chain_mappings:
-        chain = moralis_chain_mappings[chain]
-    api_key = os.getenv("MORALIS_API_KEY")
-    result = evm_api.token.get_token_price(
-        api_key=api_key,
-        params={"address": token, "chain": chain},
-    )
-    return result["usdPrice"]
+    try:
+        if chain in moralis_chain_mappings:
+            chain = moralis_chain_mappings[chain]
+        api_key = os.getenv("MORALIS_API_KEY")
+        result = evm_api.token.get_token_price(
+            api_key=api_key,
+            params={"address": token, "chain": chain},
+        )
+        return result["usdPrice"]
+    except Exception:
+        return  0
 
 
 def get_token_data(token: str, chain: str) -> dict:
@@ -592,10 +602,9 @@ def get_volume(pair, chain):
         data = response.json()
 
         current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
-        return current_value
+        return "${:,.0f}".format(float(current_value))
     except Exception as e:
-            # Handle any other unexpected errors
-            return f"Unexpected error: {str(e)}"
+            return "N/A"
 
 
 # OTHER

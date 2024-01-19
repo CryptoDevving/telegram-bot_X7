@@ -2825,8 +2825,12 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        search = context.args[0].lower()
-        chain = context.args[1].lower()  
+        if context.args:
+            search = context.args[0].lower()
+            chain = context.args[1].lower() if len(context.args) > 1 else ""
+        else:
+            search = ""
+            chain = ""
         token_info = api.db_token_get(search)
         for token_instance in token_info:
             if token_instance['ticker'].lower() == search:
@@ -2847,7 +2851,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 token0_address = contract.functions.token0().call()
                 token1_address = contract.functions.token1().call()
-                supply = contract.functions.totalSupply().call()
                 is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
                 is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
                 supply = int(api.get_supply(token_instance['ca'], token_instance['chain']))
@@ -2868,10 +2871,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
                 mcap = token_price * supply
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-                try:
-                    volume = "${:,.0f}".format(float(api.get_volume(token_instance['pair'], token_instance['chain'])))
-                except Exception:
-                    volume = "N/A"
+                volume = api.get_volume(token_instance['pair'], token_instance['chain'])
                 price_change = api.get_price_change(token_instance['ca'], token_instance['chain'])
                 im1 = Image.open((random.choice(media.blackhole)))
                 try:
@@ -3025,6 +3025,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     volume = f'${"{:0,.0f}".format(volume)}'
                 market_cap = f'${"{:0,.0f}".format(price * token_supply)}'
                 try:
+                    ath = api.get_ath(search)
                     ath_change = f'{api.get_ath(search)[1]}'
                     ath_value = api.get_ath(search)[0]
                     ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * token_supply)}) {ath_change[:3]}%'
@@ -3184,10 +3185,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 holders = api.get_holders(search, chain)
                 pair = scan[str(search).lower()]["dex"][0]["pair"]
                 token_price = api.get_price(search, chain)
-                try:
-                    volume = "${:,.0f}".format(float(api.get_volume(pair, chain)))
-                except Exception:
-                    volume = "N/A"
+                volume = api.get_volume(pair, chain)
                 if "e-" in str(token_price):
                     price = "{:.8f}".format(token_price)
                 elif token_price < 1:
@@ -4295,33 +4293,15 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     eco_eth = api.get_native_balance(ca.eco_splitter, chain)
     eco_dollar = float(eco_eth) * float(native_price)
     treasury_dollar = float(treasury_eth) * float(native_price)
-    try:
-        com_usdt_balance = api.get_stables_balance(chain_com_multi, ca.usdt, chain)
-    except Exception:
-        com_usdt_balance = 0
-    try:
-        com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.usdc, chain)
-    except Exception:
-        com_usdc_balance = 0
+    com_usdt_balance = api.get_stables_balance(chain_com_multi, ca.usdt, chain)
+    com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.usdc, chain)
     stables = com_usdt_balance + com_usdc_balance
-    try:
-        com_x7r_balance = api.get_token_balance(chain_com_multi, ca.x7r, chain)
-        com_x7r_price = com_x7r_balance * api.get_price(ca.x7r, chain)
-    except Exception:
-        com_x7r_balance = 0
-        com_x7r_price = 0
-    try:
-        com_x7dao_balance = api.get_token_balance(chain_com_multi, ca.x7dao, chain)
-        com_x7dao_price = com_x7dao_balance * api.get_price(ca.x7dao, chain)
-    except Exception:
-        com_x7dao_balance = 0
-        com_x7dao_price = 0
-    try:
-        com_x7d_balance = api.get_token_balance(chain_com_multi, ca.x7d, chain)
-        com_x7d_price = com_x7d_balance * api.get_native_price(chain_native)
-    except Exception:
-        com_x7d_balance = 0
-        com_x7d_price = 0
+    com_x7r_balance = api.get_token_balance(chain_com_multi, ca.x7r, chain)
+    com_x7r_price = com_x7r_balance * api.get_price(ca.x7r, chain)
+    com_x7dao_balance = api.get_token_balance(chain_com_multi, ca.x7dao, chain)
+    com_x7dao_price = com_x7dao_balance * api.get_price(ca.x7dao, chain)
+    com_x7d_balance = api.get_token_balance(chain_com_multi, ca.x7d, chain)
+    com_x7d_price = com_x7d_balance * api.get_native_price(chain_native)
     com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price + stables
     im2 = Image.open(chain_logo)
     im1 = Image.open((random.choice(media.blackhole)))
@@ -4488,62 +4468,24 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     native_price = api.get_native_price(chain_native)
     eth = api.get_native_balance(wallet, chain)
     dollar = float(eth) * float(native_price)
-    try:
-        x7r_balance = api.get_token_balance(wallet, ca.x7r, chain)
-        x7r_price = x7r_balance * api.get_price(ca.x7r, chain)
-    except Exception:
-        x7r_balance = 0
-        x7r_price = 0
-    try:
-        x7dao_balance = api.get_token_balance(wallet, ca.x7dao, chain)
-        x7dao_price = x7dao_balance * api.get_price(ca.x7dao, chain)
-    except Exception:
-        x7dao_balance = 0
-        x7dao_price = 0
-    try:
-        x7101_balance = api.get_token_balance(wallet, ca.x7101, chain)
-        x7101_price = x7101_balance * api.get_price(ca.x7101, chain)
-    except Exception:
-        x7101_balance = 0
-        x7101_price = 0
-    try:
-        x7102_balance = api.get_token_balance(wallet, ca.x7102, chain)
-        x7102_price = x7102_balance * api.get_price(ca.x7102, chain)
-    except Exception:
-        x7102_balance = 0
-        x7102_price = 0
-    try:
-        x7103_balance = api.get_token_balance(wallet, ca.x7103, chain)
-        x7103_price = x7103_balance * api.get_price(ca.x7103, chain)
-    except Exception:
-        x7103_balance = 0
-        x7103_price = 0
-    try:
-        x7104_balance = api.get_token_balance(wallet, ca.x7104, chain)
-        x7104_price = x7104_balance * api.get_price(ca.x7104, chain)
-    except Exception:
-        x7104_balance = 0
-        x7104_price = 0
-    try:
-        x7105_balance = api.get_token_balance(wallet, ca.x7105, chain)
-        x7105_price = x7105_balance * api.get_price(ca.x7105, chain)
-    except Exception:
-        x7105_balance = 0
-        x7105_price = 0
-    try:
-        x7d_balance = api.get_token_balance(wallet, ca.x7d, chain)
-        x7d_price = x7d_balance * api.get_native_price(chain_native)
-    except Exception:
-        x7d_balance = 0
-        x7d_price = 0
-    try:
-        usdc_balance = api.get_stables_balance(wallet, chain_usdc, chain)
-    except Exception:
-        usdc_balance = 0
-    try:
-        usdt_balance = api.get_stables_balance(wallet, chain_usdt, chain)
-    except Exception:
-        usdt_balance = 0
+    x7r_balance = api.get_token_balance(wallet, ca.x7r, chain)
+    x7r_price = x7r_balance * api.get_price(ca.x7r, chain)
+    x7dao_balance = api.get_token_balance(wallet, ca.x7dao, chain)
+    x7dao_price = x7dao_balance * api.get_price(ca.x7dao, chain)
+    x7101_balance = api.get_token_balance(wallet, ca.x7101, chain)
+    x7101_price = x7101_balance * api.get_price(ca.x7101, chain)
+    x7102_balance = api.get_token_balance(wallet, ca.x7102, chain)
+    x7102_price = x7102_balance * api.get_price(ca.x7102, chain)
+    x7103_balance = api.get_token_balance(wallet, ca.x7103, chain)
+    x7103_price = x7103_balance * api.get_price(ca.x7103, chain)
+    x7104_balance = api.get_token_balance(wallet, ca.x7104, chain)
+    x7104_price = x7104_balance * api.get_price(ca.x7104, chain)
+    x7105_balance = api.get_token_balance(wallet, ca.x7105, chain)
+    x7105_price = x7105_balance * api.get_price(ca.x7105, chain)
+    x7d_balance = api.get_token_balance(wallet, ca.x7d, chain)
+    x7d_price = x7d_balance * api.get_native_price(chain_native)
+    usdc_balance = api.get_stables_balance(wallet, chain_usdc, chain)
+    usdt_balance = api.get_stables_balance(wallet, chain_usdt, chain)
     stables = usdt_balance + usdc_balance
     total = (
         x7d_price
@@ -4974,11 +4916,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7dao_chain_mappings[chain]
         holders = api.get_holders(ca.x7dao, chain)
-    try:
         price = api.get_price(ca.x7dao, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7dao")
         volume = cg["x7dao"]["usd_24h_vol"]
@@ -5206,11 +5144,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7r_chain_mappings[chain]
         holders = api.get_holders(ca.x7r, chain)
-    try:
         price = api.get_price(ca.x7r, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7r")
         volume = cg["x7r"]["usd_24h_vol"]
@@ -5436,11 +5370,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7101_chain_mappings[chain]
         holders = api.get_holders(ca.x7101, chain)
-    try:
         price = api.get_price(ca.x7101, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7101")
         volume = cg["x7101"]["usd_24h_vol"]
@@ -5669,11 +5599,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7102_chain_mappings[chain]
         holders = api.get_holders(ca.x7102, chain)
-    try:
         price = api.get_price(ca.x7102, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7102")
         volume = cg["x7102"]["usd_24h_vol"]
@@ -5901,11 +5827,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7103_chain_mappings[chain]
         holders = api.get_holders(ca.x7103, chain)
-    try:
         price = api.get_price(ca.x7103, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7103")
         volume = cg["x7103"]["usd_24h_vol"]
@@ -6134,11 +6056,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7104_chain_mappings[chain]
         holders = api.get_holders(ca.x7104, chain)
-    try:
         price = api.get_price(ca.x7104, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7104")
         volume = cg["x7104"]["usd_24h_vol"]
@@ -6366,11 +6284,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = tokens.x7105_chain_mappings[chain]
         holders = api.get_holders(ca.x7105, chain)
-    try:
         price = api.get_price(ca.x7105, chain)
-
-    except Exception:
-        price = 0
     if chain == "eth":
         cg = api.get_cg_price("x7105")
         volume = cg["x7105"]["usd_24h_vol"]
