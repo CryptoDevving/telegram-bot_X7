@@ -43,9 +43,12 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
         context.bot_data = {}
 
     previous_click_me_id = context.bot_data.get('click_me_id')
+    previous_clicked_id = context.bot_data.get('clicked_id')
     if previous_click_me_id:
         try:
             await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_click_me_id)
+            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_clicked_id)
+            
         except Exception:
             pass
 
@@ -147,13 +150,6 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     
     if context.user_data is None:
         context.user_data = {}
-
-    previous_clicked_id = context.bot_data.get('clicked_id')
-    if previous_clicked_id:
-        try:
-            await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=previous_clicked_id)
-        except Exception:
-            pass
 
     current_button_data = context.bot_data.get("current_button_data")
     button_generation_timestamp = context.bot_data.get("button_generation_timestamp")
