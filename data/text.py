@@ -51,6 +51,10 @@ alumni = (
     "@Zaratustra  - Defi extraordinaire and protocol prophet\n\n"
 )
 
+burn_amount = 777
+
+burn_increment = 100
+
 chain_error = f'Chain not recognised, please follow command with one of the following abbreviations:\n\neth\narb\nbsc\npoly\nopti\nbase'
 
 commands = (

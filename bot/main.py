@@ -189,12 +189,13 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             else:
                 click_message = f"They have been the fastest Pioneer {clicks} times!"
 
-            if api.db_clicks_check_is_fastest(time_taken) == True:
+            if api.db_clicks_check_is_fastest(time_taken):
                 click_message +=  f"\n\n🎉🎉 {time_taken:.3f} seconds is the new fastest time! 🎉🎉"
             
             message_text = (
                 f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.3f} seconds!\n\n"
                 f"{click_message}\n\n"
+                f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
                 f"use `/leaderboard` to see the fastest Pioneers!\n\n"
             )
             
@@ -204,14 +205,15 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 parse_mode="Markdown",
             )
 
-#            if total_click_count % text.burn_increment == 0:
-#                burn_message = await api.burn_x7r(100)
-#                await context.bot.send_message(
-#                        chat_id=update.effective_chat.id,
-#                        text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
-#                            f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
-#                            f"{burn_message}"
-#                    )
+            if total_click_count % text.burn_increment == 0:
+                burn_message = await api.burn_x7r(text.burn_amount)
+                await context.bot.send_message(
+                        chat_id=update.effective_chat.id,
+                        text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
+                            f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
+                            f"{burn_message}"
+                    )
+
             context.bot_data['clicked_id'] = clicked.message_id
 
             times.restart_time = datetime.now().timestamp()        
