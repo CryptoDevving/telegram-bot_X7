@@ -70,6 +70,43 @@ def get_holders(pair, chain):
         return data["data"]["holders"]
     else:
         return "N/A"
+    
+
+def get_liquidity_dex(pair, chain):
+    if chain in dextools_chain_mappings:
+        dextools_chain = dextools_chain_mappings[chain]
+    url = f'https://open-api.dextools.io/free/v2/pool/{dextools_chain}/{pair}'
+    headers = {
+        'accept': 'application/json',
+        'X-BLOBR-KEY': os.getenv("DEXTOOLS_API_KEY")
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data["data"]["exchange"]["name"]
+    else:
+        return "Unknown DEX"
+    
+
+def get_liquidity_from_dextools(pair, chain):
+    if chain in dextools_chain_mappings:
+        dextools_chain = dextools_chain_mappings[chain]
+    url = f'https://open-api.dextools.io/free/v2/pool/{dextools_chain}/{pair}/liquidity'
+    headers = {
+        'accept': 'application/json',
+        'X-BLOBR-KEY': os.getenv("DEXTOOLS_API_KEY")
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data["data"]
+    else:
+        return "N/A"
+
 
 # SCAN
 
@@ -542,10 +579,22 @@ def get_price_change(address, chain):
             ((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
         seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
 
-        result = f"1H Change: {one_hour_change}%\n24H Change: {twenty_four_hours_change}%\n7D Change: {seven_days_change}%"
+        emoji_up = "📈"
+        emoji_down = "📉"
+
+        one_hour_change_str = f"{emoji_up if one_hour_change > 0 else emoji_down} 1H Change: {one_hour_change}%"
+        twenty_four_hours_change_str = f"{emoji_up if twenty_four_hours_change > 0 else emoji_down} 24H Change: {twenty_four_hours_change}%"
+        seven_days_change_str = f"{emoji_up if seven_days_change > 0 else emoji_down} 7D Change: {seven_days_change}%"
+
+        result = (
+            f"{one_hour_change_str}\n"
+            f"{twenty_four_hours_change_str}\n"
+            f"{seven_days_change_str}"
+        )
     except Exception:
         result = "1H Change: N/A\n24H Change: N/A\n7D Change: N/A"
     return result
+
 
 def get_token_image(token, chain):
     if chain in defined_chain_mappings:

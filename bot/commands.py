@@ -2870,6 +2870,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 formatted_liq = "${:,.2f}".format(liq / (10**decimals))
                 token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
                 mcap = token_price * supply
+                if "e-" in str(token_price):
+                    price = "{:.8f}".format(token_price)
+                elif token_price < 1:
+                    price = "{:.8f}".format(token_price) 
+                else:
+                    price = "{:.2f}".format(token_price)
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
                 volume = api.get_volume(token_instance['pair'], token_instance['chain'])
                 price_change = api.get_price_change(token_instance['ca'], token_instance['chain'])
@@ -2898,11 +2904,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 i1 = ImageDraw.Draw(im1)
                 i1.text(
                     (26, 30),
-                    f"Xchange Pair Info\n\n{search.upper()}\n\n"
-                    f"Liquidity: {formatted_liq}\n"
-                    f"Market Cap: {formatted_mcap}\n"
-                    f"24 Hour Volume: {volume}\n"
-                    f"Holders: {holders}\n\n"
+                    f"Xchange Pair Info\n\n💰 {search.upper()}\n\n"
+                    f"💰 Price: {price}\n"
+                    f"💎 Market Cap: {formatted_mcap}\n"
+                    f"📊 24 Hour Volume: {volume}\n"
+                    f"💦 Liquidity: {formatted_liq}\n"
+                    f"👪 Holders: {holders}\n\n"
                     f"{price_change}\n\n"
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
@@ -2914,10 +2921,11 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=f"*Xchange Pair Info\n\n{search.upper()}*\n\n"
                     f"`{token_instance['ca']}`\n\n"
-                    f"Liquidity: {formatted_liq}\n"
-                    f"Market Cap: {formatted_mcap}\n"
-                    f"24 Hour Volume: {volume}\n"
-                    f"Holders: {holders}\n\n"
+                    f"💰 Price: {price}\n"
+                    f"💎 Market Cap: {formatted_mcap}\n"
+                    f"📊 24 Hour Volume: {volume}\n"
+                    f"💦 Liquidity: {formatted_liq}\n"
+                    f"👪 Holders: {holders}\n\n"
                     f"{price_change}\n\n"
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
@@ -3182,8 +3190,17 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         parse_mode="Markdown",
                     )
                     return
+                
                 holders = api.get_holders(search, chain)
-                pair = scan[str(search).lower()]["dex"][0]["pair"]
+                if "dex" in scan[str(search)] and scan[str(search)]["dex"]:
+                    pair = scan[str(search)]["dex"][0]["pair"]
+                else:
+                    scan_holders = scan[str(search)].get("holders", [])
+                    for holder in scan_holders:
+                        if holder.get("is_contract", 0) == 1:
+                            pair = holder.get("address")
+                            break
+                dex = api.get_liquidity_dex(pair, chain)
                 token_price = api.get_price(search, chain)
                 volume = api.get_volume(pair, chain)
                 if "e-" in str(token_price):
@@ -3207,6 +3224,11 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 mcap = float(price) * float(supply)
                 formatted_mcap = "${:,.0f}".format(mcap)
                 price_change = api.get_price_change(search, chain)
+                liquidity_data = api.get_liquidity_from_dextools(pair, chain)
+                try:
+                    liq = f"${'{:0,.0f}'.format(liquidity_data['liquidity'])}"
+                except Exception:
+                    "N/A"
                 im1 = Image.open((random.choice(media.blackhole)))
                 im2 = Image.open(chain_logo)
                 im1.paste(im2, (720, 20), im2)
@@ -3216,11 +3238,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 i1 = ImageDraw.Draw(im1)
                 i1.text(
                     (26, 30),
-                    f"Token Info\n\n{scan[str(search).lower()]['token_name']} {chain.upper()}\n\n"
-                    f'Price: {price}\n'
-                    f"Market Cap: {formatted_mcap}\n"
-                    f"24 Hour Volume: {volume}\n"
-                    f"Holders: {holders}\n\n"
+                    f"💰 {scan[str(search).lower()]['token_name']} {chain.upper()}\n\n"
+                    f'💰 Price: {price}\n'
+                    f"💎 Market Cap: {formatted_mcap}\n"
+                    f"📊 24 Hour Volume: {volume}\n"
+                    f"💦 Liquidity: {liq} ({dex} pair)\n"
+                    f"👪 Holders: {holders}\n\n"
                     f"{price_change}\n\n\n"
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                     font=myfont,
@@ -3230,11 +3253,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 im1.save(img_path)
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
-                    caption=f"*Token Info\n\n{scan[str(search).lower()]['token_name']} {chain.upper()}*\n\n"
-                    f'Price: {price}\n'
-                    f"Market Cap: {formatted_mcap}\n"
-                    f"24 Hour Volume: {volume}\n"
-                    f"Holders: {holders}\n\n"
+                    caption=f"*{scan[str(search).lower()]['token_name']} {chain.upper()}*\n\n"
+                    f'💰 Price: {price}\n'
+                    f"💎 Market Cap: {formatted_mcap}\n"
+                    f"📊 24 Hour Volume: {volume}\n"
+                    f"💦 Liquidity: {liq} ({dex} pair)\n"
+                    f"👪 Holders: {holders}\n\n"
                     f"{price_change}\n\n"
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
@@ -3454,7 +3478,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if token_address_str in scan:
         if "is_mintable" in scan[token_address_str]:
             if scan[token_address_str]["is_mintable"] == "1":
-                mint = "❌ Mintable"
+                mint = "⚠️ Mintable"
             else:
                 mint = "✅️ Not Mintable"
         else:
@@ -3494,7 +3518,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
         if "creator_percent" in scan[token_address_str]:
             creator_percent_str = float(scan[token_address_str]["creator_percent"])
-            formatted_creator_percent = "{:.4f}".format(creator_percent_str * 100)
+            formatted_creator_percent = "{:.1f}".format(creator_percent_str * 100)
 
             if creator_percent_str >= 0.05:
                 creator_percent = f'⚠️ Deployer Holds {formatted_creator_percent}% of Supply'
@@ -3504,27 +3528,16 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             creator_percent = "❓ Tokens Held By Creator Unknown"
         if "owner_percent" in scan[token_address_str]:
             if renounced == "✅ Contract Renounced":
-                owner_eth = f"❓ {native.upper()} Held By Owner Unknown"
-                owner_percent = f'✅️ Owner Holds 0% of Supply'
+                owner_percent = f'✅️ Owner Holds 0.0% of Supply'
             else:
                 owner_percent_str = float(scan[token_address_str]["owner_percent"])
-                formatted_owner_percent = "{:.4f}".format(owner_percent_str * 100)
-                owner = scan[token_address_str]["owner_address"]
-                owner_eth_str = api.get_native_balance(owner, chain)
-                owner_eth = float(owner_eth_str)
-                formatted_owner_eth = "{:.5f}".format(owner_eth)
-                if owner_eth  > 1.0:
-                    owner_eth = f'✅ Owner Holds - {formatted_owner_eth} {native.upper()}'
-                else:
-                    owner_eth = f'⚠️ Owner Holds - {formatted_owner_eth} {native.upper()}'
-
+                formatted_owner_percent = "{:.1f}".format(owner_percent_str * 100)
                 if owner_percent_str >= 0.05:
                     owner_percent = f'⚠️ Owner Holds {formatted_owner_percent}% of Supply'
                 else:
                     owner_percent = f'✅️ Owner Holds {formatted_owner_percent}% of Supply'
         else:
             owner_percent = "❓ Tokens Held By Owner Unknown"
-            owner_eth = f"❓ {native.upper()} Held By Owner Unknown"
         if "lp_holders" in scan[token_address_str]:
             locked_lp_list = [
                 lp
@@ -3562,17 +3575,6 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 liquidity = f'⚠️ Liquidity - ${formatted_liq_eth}'
         else:
             liquidity = "❓ Liquidity Unknown"
-        if "creator_address" in scan[token_address_str]:
-            deployer = scan[token_address_str]["creator_address"]
-            deployer_eth_str = api.get_native_balance(deployer, chain)
-            deployer_eth = float(deployer_eth_str)
-            formatted_deployer_eth = "{:.5f}".format(deployer_eth)
-            if deployer_eth  > 1.0:
-                creator_eth = f'✅ Deployer Holds - {formatted_deployer_eth} {native.upper()}'
-            else:
-                creator_eth = f'⚠️ Deployer Holds - {formatted_deployer_eth} {native.upper()}'
-        else:
-            creator_eth = f"❓ {native.upper()} Held By Deployer Unknown"
 
     else:
         mint = "❓ Mintable - Unknown"
@@ -3584,9 +3586,8 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         owner_percent = "❓ Tokens Held By Owner Unknown"
         lock  = "❓ Liquidity Lock Unknown"
         liquidity = "❓ Liquidity Unknown"
-        creator_eth = f"❓ {native.upper()} Held By Deployer Unknown"
-        owner_eth = f"❓ {native.upper()} Held By Owner Unknown"
-    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{creator_eth}\n{owner_percent}\n{owner_eth}\n{liquidity}\n{lock}"
+
+    status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}\n{liquidity}\n{lock}"
     token_name = scan[f"{str(token_address).lower()}"]["token_name"]
 
 
@@ -5011,6 +5012,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
