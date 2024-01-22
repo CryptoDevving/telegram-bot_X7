@@ -18,6 +18,7 @@ from data import times, url, ca, text
 from api import index as api
 from media import index as media
 
+
 current_button_data = None
 clicked_buttons = set()
 first_user_clicked = False
