@@ -80,15 +80,15 @@ def clicks_get_by_name(name):
         db_connection = create_db_connection()
         cursor = db_connection.cursor()
         cursor.execute("""
-            SELECT clicks, time_taken
+            SELECT clicks, time_taken, streak
             FROM leaderboard
             WHERE name = %s
         """, (name,))
         user_data = cursor.fetchone()
         close_db_connection(db_connection, cursor)
-        return user_data if user_data else (0, 0)
+        return user_data if user_data else (0, 0, 0)
     except mysql.connector.Error:
-        return (0, 0)
+        return (0, 0, 0)
 
 
 def clicks_get_leaderboard(limit=10):
@@ -141,33 +141,55 @@ def clicks_reset():
 async def clicks_update(name, time_taken):
     db_connection = create_db_connection()
     cursor = db_connection.cursor()
+
     cursor.execute("""
-        SELECT clicks, time_taken
+        SELECT clicks, time_taken, streak
         FROM leaderboard
         WHERE name = %s
     """, (name,))
     user_data = cursor.fetchone()
+
     if user_data is None:
         cursor.execute("""
-            INSERT INTO leaderboard (name, clicks, time_taken)
-            VALUES (%s, 1, %s)
+            INSERT INTO leaderboard (name, clicks, time_taken, streak)
+            VALUES (%s, 1, %s, 1)
         """, (name, time_taken))
+
+        cursor.execute("""
+            UPDATE leaderboard
+            SET streak = CASE WHEN name = %s THEN streak + 1 ELSE 0 END
+        """, (name,))
     else:
-        clicks = user_data[0]
-        current_time_taken = user_data[1]
+        clicks, current_time_taken, current_streak = user_data
+
+        if clicks > 1:
+            current_streak += 1
+        else:
+            current_streak = 1
 
         if current_time_taken is None or time_taken < current_time_taken:
             cursor.execute("""
                 UPDATE leaderboard
-                SET clicks = %s, time_taken = %s
+                SET clicks = %s, time_taken = %s, streak = %s
                 WHERE name = %s
-            """, (clicks + 1, time_taken, name))
+            """, (clicks + 1, time_taken, current_streak, name))
+
+            cursor.execute("""
+                UPDATE leaderboard
+                SET streak = CASE WHEN name = %s THEN streak ELSE 0 END
+            """, (name,))
         else:
             cursor.execute("""
                 UPDATE leaderboard
-                SET clicks = %s, time_taken = %s
+                SET streak = CASE WHEN name = %s THEN streak ELSE 0 END
+            """, (name,))
+
+            cursor.execute("""
+                UPDATE leaderboard
+                SET clicks = %s, time_taken = %s, streak = %s
                 WHERE name = %s
-            """, (clicks + 1, current_time_taken, name))
+            """, (clicks + 1, current_time_taken, current_streak, name))
+
     db_connection.commit()
     close_db_connection(db_connection, cursor)
 

@@ -46,6 +46,7 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
 
     previous_click_me_id = context.bot_data.get('click_me_id')
     previous_clicked_id = context.bot_data.get('clicked_id')
+
     if previous_click_me_id:
         try:
             await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_click_me_id)
@@ -177,15 +178,20 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
             user_data = db.clicks_get_by_name(user_info)
             clicks = user_data[0]
+            streak = user_data[2]
+            if streak > 1:
+                streak_message = f"and on a {streak} click streak"
+            else:
+                streak_message = ""
             total_click_count = db.clicks_get_total()
             if clicks == 1:
-                click_message = "🎉🎉 This is their first button click! 🎉🎉"
+                click_message = f"🎉🎉 This is their first button click! 🎉🎉"
 
             elif clicks % 10 == 0:
-                click_message = f"🎉🎉 They been the fastest Pioneer {clicks} times! 🎉🎉"
+                click_message = f"🎉🎉 They been the fastest Pioneer {clicks} times {streak_message}! 🎉🎉"
                 
             else:
-                click_message = f"They have been the fastest Pioneer {clicks} times!"
+                click_message = f"They have been the fastest Pioneer {clicks} times {streak_message}!"
 
             if db.clicks_check_is_fastest(time_taken):
                 click_message +=  f"\n\n🎉🎉 {time_taken:.3f} seconds is the new fastest time! 🎉🎉"
@@ -485,6 +491,7 @@ if __name__ == "__main__":
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
     )
+
 
     ## SCANNERS ##
     scanners = [

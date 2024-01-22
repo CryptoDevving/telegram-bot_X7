@@ -21,4 +21,4 @@ countdown_desc = "https://app.x7.finance"
 x7m105 = datetime(2022, 8, 13, 13, 10, 17)
 migration = datetime(2022, 9, 25, 4, 0, 11)
 
-burn_increment = 50
+burn_increment = 100
