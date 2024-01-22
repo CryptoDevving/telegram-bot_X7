@@ -154,44 +154,28 @@ async def clicks_update(name, time_taken):
             INSERT INTO leaderboard (name, clicks, time_taken, streak)
             VALUES (%s, 1, %s, 1)
         """, (name, time_taken))
-
-        cursor.execute("""
-            UPDATE leaderboard
-            SET streak = CASE WHEN name = %s THEN streak + 1 ELSE 0 END
-        """, (name,))
     else:
         clicks, current_time_taken, current_streak = user_data
 
-        if clicks > 1:
-            current_streak += 1
-        else:
-            current_streak = 1
-
         if current_time_taken is None or time_taken < current_time_taken:
-            cursor.execute("""
-                UPDATE leaderboard
-                SET clicks = %s, time_taken = %s, streak = %s
-                WHERE name = %s
-            """, (clicks + 1, time_taken, current_streak, name))
-
-            cursor.execute("""
-                UPDATE leaderboard
-                SET streak = CASE WHEN name = %s THEN streak ELSE 0 END
-            """, (name,))
+            new_time = time_taken
         else:
-            cursor.execute("""
+            new_time = current_time_taken
+
+        cursor.execute("""
+            UPDATE leaderboard
+            SET clicks = %s, time_taken = %s, streak = %s
+            WHERE name = %s
+        """, (clicks + 1, new_time, current_streak + 1, name))
+
+        cursor.execute("""
                 UPDATE leaderboard
-                SET streak = CASE WHEN name = %s THEN streak ELSE 0 END
+                SET streak = 0
+                WHERE name <> %s
             """, (name,))
-
-            cursor.execute("""
-                UPDATE leaderboard
-                SET clicks = %s, time_taken = %s, streak = %s
-                WHERE name = %s
-            """, (clicks + 1, current_time_taken, current_streak, name))
-
-    db_connection.commit()
-    close_db_connection(db_connection, cursor)
+        
+        db_connection.commit()
+        close_db_connection(db_connection, cursor)
 
 
 def token_add(ticker, pair, ca, chain, image_url):
