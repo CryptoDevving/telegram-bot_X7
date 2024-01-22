@@ -2196,14 +2196,20 @@ async def me(update: Update, context: CallbackContext):
     user_data = db.clicks_get_by_name(user_info)
     clicks = user_data[0]
     fastest_time = user_data[1]
+    streak = user_data[2]
+
+    if streak != 0:
+        streak_message = f"and currently on a *{streak}* click streak!"
+    else:
+        streak_message = ""    
 
     if fastest_time is None:
         message = f"*X7 Finance Fastest Pioneer Leaderboard*\n\n" \
-                  f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times\n\n" \
+                  f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times {streak_message}\n\n" \
                   f"Your fastest time has not been logged yet\n\n{api.get_quote()}"
     else:
         message = f"*X7 Finance Fastest Pioneer Leaderboard*\n\n" \
-                  f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times\n\n" \
+                  f"{api.escape_markdown(user_info)}, You have been the Fastest Pioneer *{clicks}* times {streak_message}\n\n" \
                   f"Your fastest time is {fastest_time} seconds\n\n"
 
     await update.message.reply_text(
