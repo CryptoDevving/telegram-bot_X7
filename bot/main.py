@@ -16,6 +16,7 @@ import twitter
 
 from data import times, url, ca, text
 from api import index as api
+from api import db
 from media import index as media
 
 
@@ -169,14 +170,14 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if button_data == current_button_data:
         time_taken = button_click_timestamp - button_generation_timestamp
 
-        await api.db_clicks_update(user_info, time_taken)
+        await db.clicks_update(user_info, time_taken)
     
         if not first_user_clicked:
             first_user_clicked = True
 
-            user_data = api.db_clicks_get_by_name(user_info)
+            user_data = db.clicks_get_by_name(user_info)
             clicks = user_data[0]
-            total_click_count = api.db_clicks_get_total()
+            total_click_count = db.clicks_get_total()
             if clicks == 1:
                 click_message = "🎉🎉 This is their first button click! 🎉🎉"
 
@@ -186,13 +187,16 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             else:
                 click_message = f"They have been the fastest Pioneer {clicks} times!"
 
-            if api.db_clicks_check_is_fastest(time_taken):
+            if db.clicks_check_is_fastest(time_taken):
                 click_message +=  f"\n\n🎉🎉 {time_taken:.3f} seconds is the new fastest time! 🎉🎉"
-            
+
+            clicks_needed = times.burn_increment - (total_click_count % times.burn_increment)
+
             message_text = (
                 f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.3f} seconds!\n\n"
                 f"{click_message}\n\n"
                 f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
+                f"Clicks till next X7R Burn: *{clicks_needed}*\n\n"
                 f"use `/leaderboard` to see the fastest Pioneers!\n\n"
             )
             

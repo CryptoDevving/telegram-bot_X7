@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from data import ca, url
 from api import index as api
+from api import db
 from media import index as media
 
 
@@ -205,7 +206,7 @@ async def new_pair(event):
                 if image_url is None:
                     image_url = "N/A"
 
-                api.db_token_add(token_name[1], event["args"]["pair"], token_address, "eth", image_url)
+                db.token_add(token_name[1], event["args"]["pair"], token_address, "eth", image_url)
 
         except Exception as e:
             sentry_sdk.capture_exception(e)

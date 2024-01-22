@@ -16,7 +16,7 @@ from translate import Translator
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
-from api import dune
+from api import dune, db
 from api import index as api
 from media import index as media
 from data import ca, loans, nfts, tax, text, times, giveaway, url, dao, tokens, chains, pairs
@@ -1346,12 +1346,12 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def leaderboard(update: Update, context: CallbackContext):
-    board = api.db_clicks_get_leaderboard()
-    click_counts_total = api.db_clicks_get_total()
-    fastest = api.db_clicks_fastest_time()
+    board = db.clicks_get_leaderboard()
+    click_counts_total = db.clicks_get_total()
+    fastest = db.clicks_fastest_time()
     fastest_user = fastest[0]
     fastest_time = fastest[1]
-    slowest = api.db_clicks_slowest_time()
+    slowest = db.clicks_slowest_time()
     slowest_user = slowest[0]
     slowest_time = slowest[1]
     clicks_needed = times.burn_increment - (click_counts_total % times.burn_increment)
@@ -1361,7 +1361,7 @@ async def leaderboard(update: Update, context: CallbackContext):
             f"Total clicks: *{click_counts_total}*\n\n"
             f"Fastest Click:\n{fastest_time} seconds\nby {api.escape_markdown(fastest_user)}\n\n"
             f"Slowest Click:\n{slowest_time} seconds\nby {api.escape_markdown(slowest_user)}\n\n"
-#            f"Clicks till next X7R Burn: *{clicks_needed}*\n"
+            f"Clicks till next X7R Burn: *{clicks_needed}*\n"
         ,parse_mode="Markdown"
     )
     
@@ -2193,7 +2193,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def me(update: Update, context: CallbackContext):
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}"
-    user_data = api.db_clicks_get_by_name(user_info)
+    user_data = db.clicks_get_by_name(user_info)
     clicks = user_data[0]
     fastest_time = user_data[1]
 
@@ -2831,7 +2831,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             search = ""
             chain = ""
-        token_info = api.db_token_get(search)
+        token_info = db.token_get(search)
         for token_instance in token_info:
             if token_instance['ticker'].lower() == search:
                 if token_instance['chain'] == "eth":
@@ -3357,7 +3357,7 @@ async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        api.db_clicks_reset()
+        db.clicks_reset()
     else:
         await update.message.reply_text(f"{text.mods_only}")
 
