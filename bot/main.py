@@ -179,19 +179,15 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             user_data = db.clicks_get_by_name(user_info)
             clicks = user_data[0]
             streak = user_data[2]
-            if streak > 1:
-                streak_message = f"and on a {streak} click streak"
-            else:
-                streak_message = ""
             total_click_count = db.clicks_get_total()
             if clicks == 1:
                 click_message = f"🎉🎉 This is their first button click! 🎉🎉"
 
             elif clicks % 10 == 0:
-                click_message = f"🎉🎉 They been the fastest Pioneer {clicks} times {streak_message}! 🎉🎉"
+                click_message = f"🎉🎉 They been the fastest Pioneer {clicks} times and on a *{streak}* click streak! 🎉🎉"
                 
             else:
-                click_message = f"They have been the fastest Pioneer {clicks} times {streak_message}!"
+                click_message = f"They have been the fastest Pioneer {clicks} times and on a *{streak}* click streak!"
 
             if db.clicks_check_is_fastest(time_taken):
                 click_message +=  f"\n\n🎉🎉 {time_taken:.3f} seconds is the new fastest time! 🎉🎉"
