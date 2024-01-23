@@ -1355,13 +1355,20 @@ async def leaderboard(update: Update, context: CallbackContext):
     slowest_user = slowest[0]
     slowest_time = slowest[1]
     clicks_needed = times.burn_increment - (click_counts_total % times.burn_increment)
+    streak = db.clicks_check_highest_streak()
+    if streak:
+        streak_user, streak_value = streak
+        streak_text = f"{streak_user} is on a *{streak_value}* click streak!"
+    else:
+        streak_text = ""
     await update.message.reply_text(
         text=f"*X7 Finance Fastest Pioneer 2024 Leaderboard\n(Top 10)\n\n*"
             f"{api.escape_markdown(board)}\n"
-            f"Total clicks: *{click_counts_total}*\n\n"
+            f"Total clicks: *{click_counts_total}*\n"
+            f"Clicks till next X7R Burn: *{clicks_needed}*\n\n"
             f"Fastest Click:\n{fastest_time} seconds\nby {api.escape_markdown(fastest_user)}\n\n"
             f"Slowest Click:\n{slowest_time} seconds\nby {api.escape_markdown(slowest_user)}\n\n"
-            f"Clicks till next X7R Burn: *{clicks_needed}*\n"
+            f"{streak_text}"
         ,parse_mode="Markdown"
     )
     

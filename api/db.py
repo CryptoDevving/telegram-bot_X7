@@ -43,6 +43,23 @@ def clicks_check_is_fastest(time_to_check):
         return False
 
 
+def clicks_check_highest_streak():
+    db_connection = create_db_connection()
+    cursor = db_connection.cursor()
+
+    cursor.execute("""
+        SELECT name, streak
+        FROM leaderboard
+        WHERE streak = (SELECT MAX(streak) FROM leaderboard WHERE streak > 0)
+        LIMIT 1
+    """)
+    user_with_highest_streak = cursor.fetchone()
+
+    close_db_connection(db_connection, cursor)
+
+    return user_with_highest_streak if user_with_highest_streak else None
+
+
 def clicks_fastest_time():
     try:
         db_connection = create_db_connection()
@@ -168,14 +185,14 @@ async def clicks_update(name, time_taken):
             WHERE name = %s
         """, (clicks + 1, new_time, current_streak + 1, name))
 
-        cursor.execute("""
-                UPDATE leaderboard
-                SET streak = 0
-                WHERE name <> %s
-            """, (name,))
+    cursor.execute("""
+            UPDATE leaderboard
+            SET streak = 0
+            WHERE name <> %s
+        """, (name,))
         
-        db_connection.commit()
-        close_db_connection(db_connection, cursor)
+    db_connection.commit()
+    close_db_connection(db_connection, cursor)
 
 
 def token_add(ticker, pair, ca, chain, image_url):
