@@ -50,7 +50,7 @@ def clicks_check_highest_streak():
     cursor.execute("""
         SELECT name, streak
         FROM leaderboard
-        WHERE streak = (SELECT MAX(streak) FROM leaderboard WHERE streak > 0)
+        WHERE streak = (SELECT MAX(streak) FROM leaderboard WHERE streak > 1)
         LIMIT 1
     """)
     user_with_highest_streak = cursor.fetchone()
