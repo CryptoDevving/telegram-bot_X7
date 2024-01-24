@@ -246,8 +246,14 @@ async def welcome_button_callback(update: Update, context: CallbackContext) -> N
         )
 
 
-def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
+async def welcome_delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.delete_message(
+                chat_id=update.effective_chat.id,
+                message_id=update.effective_message.id
+            )
 
+
+async def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
     status_change = chat_member_update.difference().get("status")
     old_is_member, new_is_member = chat_member_update.difference().get("is_member", (None, None))
 
@@ -272,7 +278,7 @@ def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool
 async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     channel_id = update.effective_chat.id
     if str(channel_id) == os.getenv("MAIN_TELEGRAM_CHANNEL_ID"):
-        result = welcome_member(update.chat_member)
+        result = await welcome_member(update.chat_member)
         if result is None:
             return
 
@@ -368,6 +374,7 @@ job_queue = application.job_queue
 if __name__ == "__main__":
     application.add_error_handler(error)
     application.add_handler(ChatMemberHandler(welcome_message, ChatMemberHandler.CHAT_MEMBER))
+    application.add_handler(MessageHandler(filters.StatusUpdate._NewChatMembers(Update) | filters.StatusUpdate._LeftChatMember(Update), welcome_delete))
     application.add_handler(CallbackQueryHandler(welcome_button_callback, pattern=r"unmute:.+"))
     application.add_handler(CommandHandler("test", commands.test))
 
@@ -474,6 +481,7 @@ if __name__ == "__main__":
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(clicks_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
+
 
 #    job_queue.run_repeating(
 #        auto_message_info,
