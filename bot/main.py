@@ -195,7 +195,7 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             clicks_needed = times.burn_increment - (total_click_count % times.burn_increment)
 
             message_text = (
-                f"{api.escape_markdown(user_info)} was the fastest Pioneer in\n{time_taken:.3f} seconds!\n\n"
+                f"{api.escape_markdown(user_info)} was the fastest Pioneer in {time_taken:.3f} seconds!\n\n"
                 f"{click_message}\n\n"
                 f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
                 f"Clicks till next X7R Burn: *{clicks_needed}*\n\n"
