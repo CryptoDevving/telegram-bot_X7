@@ -247,10 +247,13 @@ async def welcome_button_callback(update: Update, context: CallbackContext) -> N
 
 
 async def welcome_delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.delete_message(
-                chat_id=update.effective_chat.id,
-                message_id=update.effective_message.id
-            )
+    try:    
+        await context.bot.delete_message(
+            chat_id=update.effective_chat.id,
+            message_id=update.effective_message.id
+        )
+    except Exception:
+        return
 
 
 async def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
