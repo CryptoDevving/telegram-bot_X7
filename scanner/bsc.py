@@ -224,7 +224,7 @@ async def new_loan(event):
         schedule2 = contract.functions.getPrincipalPaymentSchedule(
             int(event["args"]["loanID"])
         ).call()
-        schedule_str = await api.format_schedule(schedule1, schedule2, "BNB")
+        schedule_str = api.format_schedule(schedule1, schedule2, "BNB")
     except Exception as e:
         sentry_sdk.capture_exception(e)
         schedule_str = ""
