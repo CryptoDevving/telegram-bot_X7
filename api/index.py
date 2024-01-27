@@ -721,39 +721,38 @@ def format_schedule(schedule1, schedule2, native_token):
     next_payment_datetime = None
     next_payment_value = None
 
-    if len(schedule1[0]) > 0 and len(schedule1[1]) > 0:
-        for date1, value1 in zip(schedule1[0], schedule1[1]):
-            formatted_date = datetime.fromtimestamp(date1).strftime("%Y-%m-%d %H:%M:%S")
-            formatted_value = value1 / 10**18
-            if datetime.fromtimestamp(date1) > current_datetime:
-                if next_payment_datetime is None or datetime.fromtimestamp(date1) < next_payment_datetime:
-                    next_payment_datetime = datetime.fromtimestamp(date1)
-                    next_payment_value = formatted_value
+    def format_date(date):
+        return datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
 
-    if len(schedule2[0]) > 0 and len(schedule2[1]) > 0:
-        for date2, value2 in zip(schedule2[0], schedule2[1]):
-            formatted_date = datetime.fromtimestamp(date2).strftime("%Y-%m-%d %H:%M:%S")
-            formatted_value = value2 / 10**18
-            if datetime.fromtimestamp(date2) > current_datetime:
-                if next_payment_datetime is None or datetime.fromtimestamp(date2) < next_payment_datetime:
-                    next_payment_datetime = datetime.fromtimestamp(date2)
-                    next_payment_value = formatted_value
+    def calculate_time_remaining_str(time_remaining):
+        days, seconds = divmod(time_remaining.total_seconds(), 86400)
+        hours, seconds = divmod(seconds, 3600)
+        minutes, seconds = divmod(seconds, 60)
+        return f"{int(days)} days, {int(hours)} hours, {int(minutes)} minutes"
+
+    all_dates = sorted(set(schedule1[0] + schedule2[0]))
 
     schedule_list = []
 
-    for date, total_value in zip(schedule1[0] + schedule2[0], schedule1[1] + schedule2[1]):
-        formatted_date = datetime.fromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
+    for date in all_dates:
+        value1 = next((v for d, v in zip(schedule1[0], schedule1[1]) if d == date), 0)
+        value2 = next((v for d, v in zip(schedule2[0], schedule2[1]) if d == date), 0)
+
+        total_value = value1 + value2
+
+        formatted_date = format_date(date)
         formatted_value = total_value / 10**18
         sch = f"{formatted_date} - {formatted_value} {native_token}"
         schedule_list.append(sch)
 
+        if datetime.fromtimestamp(date) > current_datetime:
+            if next_payment_datetime is None or datetime.fromtimestamp(date) < next_payment_datetime:
+                next_payment_datetime = datetime.fromtimestamp(date)
+                next_payment_value = formatted_value
+
     if next_payment_datetime:
         time_until_next_payment = next_payment_datetime - current_datetime
-
-        days, seconds = divmod(time_until_next_payment.total_seconds(), 86400)
-        hours, seconds = divmod(seconds, 3600)
-        minutes, seconds = divmod(seconds, 60)
-        time_remaining_str = f"{int(days)} days, {int(hours)} hours, {int(minutes)} minutes"
+        time_remaining_str = calculate_time_remaining_str(time_until_next_payment)
 
         schedule_list.append(f"\nNext Payment Due:\n{next_payment_value} {native_token}\n{time_remaining_str}")
 
