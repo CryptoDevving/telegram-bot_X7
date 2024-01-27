@@ -1746,7 +1746,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain = context.args[1].lower()
     else:
         await update.message.reply_text(
-            f"Please use `/loan_id # chain` to see details",
+            f"Please use `/loan # chain` to see details",
             parse_mode="Markdown",
         )
         return
