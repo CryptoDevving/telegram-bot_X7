@@ -161,7 +161,7 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     button_data = update.callback_query.data
     user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}"
+    user_info = user.username or f"{user.first_name} {user.last_name}" or user.first_name
 
     if button_data in clicked_buttons:
         return
