@@ -1799,8 +1799,8 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         (
             chain_name,
-            chain_scan_url,
             chain_address_url,
+            chain_scan_url,
             chain_native,
             chain_web3,
         ) = chain_mappings[chain]
@@ -1849,7 +1849,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text=f"Borrower",
-                        url=f"{chain_scan_url}{contract.functions.loanBorrower(int(loan_id)).call()}",
+                        url=f"{chain_address_url}{contract.functions.loanBorrower(int(loan_id)).call()}",
                     )
                 ],
                 [
