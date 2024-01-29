@@ -12,7 +12,7 @@ restart_time = datetime.now().timestamp()
 button_time = None
 
 def dont_random_button_time():
-    time = random.randint(300, 302)
+    time = random.randint(3600, 172800)
     return time
 
 dont_first_button_time = dont_random_button_time()
