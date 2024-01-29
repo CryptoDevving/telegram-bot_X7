@@ -274,7 +274,7 @@ async def dont_clicks_function(update: Update, context: ContextTypes.DEFAULT_TYP
     if context.user_data is None:
         context.user_data = {}
 
-    dont_current_button_data = context.bot_data.get("dont_current_dont_button_data")
+    dont_current_button_data = context.bot_data.get("dont_current_button_data")
     if not dont_current_button_data:
         return
 
