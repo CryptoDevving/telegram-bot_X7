@@ -8,8 +8,17 @@ def random_button_time():
     return time
 
 first_button_time = random_button_time()
-button_time = None
 restart_time = datetime.now().timestamp()
+button_time = None
+
+def dont_random_button_time():
+    time = random.randint(3600, 3601)
+    return time
+
+dont_first_button_time = dont_random_button_time()
+dont_restart_time = datetime.now().timestamp()
+dont_button_time = None
+
 auto_message_time = 14400
 
 # COUNTDOWN

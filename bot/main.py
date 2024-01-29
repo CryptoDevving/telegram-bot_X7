@@ -24,6 +24,10 @@ current_button_data = None
 clicked_buttons = set()
 first_user_clicked = False
 
+dont_current_button_data = None
+dont_clicked_buttons = set()
+dont_first_user_clicked = False
+
 sentry_sdk.init(
     dsn = os.getenv("SENTRY_DSN"),
     traces_sample_rate=1.0
@@ -70,8 +74,40 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     button_generation_timestamp = t.time()
     context.bot_data["button_generation_timestamp"] = button_generation_timestamp
     context.bot_data['click_me_id'] = click_me.message_id
+
+
+async def auto_message_dont_click(context: ContextTypes.DEFAULT_TYPE) -> None:
+    global dont_current_button_data, dont_first_user_clicked
+    dont_first_user_clicked = False
+    if context.bot_data is None:
+        context.bot_data = {}
+
+    dont_previous_click_me_id = context.bot_data.get('dont_click_me_id')
+    dont_previous_clicked_id = context.bot_data.get('dont_clicked_id')
+
+    if dont_previous_click_me_id:
+        try:
+            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=dont_previous_click_me_id)
+            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=dont_previous_clicked_id)
+            
+        except Exception:
+            pass
+
+    dont_current_button_data = str(random.randint(1, 100000000))
+    context.bot_data["dont_current_button_data"] = dont_current_button_data
     
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("DONT Click Me!", callback_data=dont_current_button_data)]]
+    )
+    dont_click_me = await context.bot.send_photo(
+                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+                    reply_markup=keyboard,
+                )
     
+    context.bot_data['dont_click_me_id'] = dont_click_me.message_id   
+
+   
 async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
     messages = [text.about, text.airdrop, text.ecosystem,
@@ -230,7 +266,59 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         )
             
             return times.button_time
+
+
+async def dont_clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    global dont_current_button_data, dont_first_user_clicked
     
+    if context.user_data is None:
+        context.user_data = {}
+
+    dont_current_button_data = context.bot_data.get("dont_current_dont_button_data")
+    if not dont_current_button_data:
+        return
+
+    dont_button_data = update.callback_query.data
+    user = update.effective_user
+    user_info = user.username or f"{user.first_name} {user.last_name}" or user.first_name
+
+    if dont_button_data in dont_clicked_buttons:
+        return
+
+    dont_clicked_buttons.add(dont_button_data)
+
+    if dont_button_data == dont_current_button_data:
+        await db.clicks_remove(user_info)
+
+        if not first_user_clicked:
+            first_user_clicked = True
+
+            message_text = (
+                f"{api.escape_markdown(user_info)} clicked the DO NOT CLICK button and lost all their points on the leaderboard!\n\n"
+                "RIP You were warned, Sucks to suck!"
+            )
+            
+            dont_clicked = await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=message_text,
+                parse_mode="Markdown",
+            )
+
+
+            context.bot_data['dont_clicked_id'] = dont_clicked.message_id
+
+            times.dont_restart_time = datetime.now().timestamp()        
+            context.user_data["dont_current_button_data"] = None
+            times.dont_button_time = times.dont_random_button_time()
+            job_queue.run_once(
+            auto_message_click,
+            times.dont_button_time,
+            chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+            name="Dont Click Message",
+        )
+            
+            return times.dont_button_time
+  
 
 async def welcome_button_callback(update: Update, context: CallbackContext) -> None:
     user_id = update.callback_query.from_user.id
@@ -499,6 +587,13 @@ if __name__ == "__main__":
         times.first_button_time,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
+    )
+
+    job_queue.run_once(
+        auto_message_dont_click,
+        times.dont_first_button_time,
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        name="Dont Click Message",
     )
 
 

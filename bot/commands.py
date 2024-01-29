@@ -4644,7 +4644,18 @@ async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
         time_difference = timedelta(seconds=time_difference_seconds)
         hours, remainder = divmod(time_difference.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds")
+
+        if times.dont_button_time is not None:
+            dont_time = times.dont_button_time
+        else:    
+            dont_time = times.dont_first_button_time
+        dont_target_timestamp = times.dont_restart_time + dont_time
+        dont_time_difference_seconds = dont_target_timestamp - datetime.now().timestamp()
+        dont_time_difference = timedelta(seconds=dont_time_difference_seconds)
+        dont_hours, dont_remainder = divmod(dont_time_difference.seconds, 3600)
+        dont_minutes, dont_seconds = divmod(dont_remainder, 60)
+        await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds\n\n"
+                                        f"Next Dont Click Me:\n\n{dont_hours} hours, {dont_minutes} minutes, {dont_seconds} seconds\n\n")
     else:
         await update.message.reply_text(f"{text.mods_only}")
 

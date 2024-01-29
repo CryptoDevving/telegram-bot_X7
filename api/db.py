@@ -143,6 +143,19 @@ def clicks_get_total():
         return 0
 
 
+async def clicks_remove(name):
+    db_connection = create_db_connection()
+    cursor = db_connection.cursor()
+
+    cursor.execute("""
+        UPDATE leaderboard
+        SET clicks = 0, time_taken = NULL, streak = 0
+        WHERE name = %s
+    """, (name,))
+
+    db_connection.commit()
+    close_db_connection(db_connection, cursor)
+
 def clicks_reset():
     try:
         db_connection = create_db_connection()
