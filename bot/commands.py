@@ -39,26 +39,6 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def admin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_admins = await context.bot.get_chat_administrators(os.getenv("MAIN_TELEGRAM_CHANNEL_ID"))
-    if update.effective_user in (admin.user for admin in chat_admins):
-        await update.message.reply_text(
-            f"{text.admin_commands}",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="Rose Bot Anti-flood",
-                            url="https://missrose.org/guide/antiflood/",
-                        )
-                    ],
-                ]
-            ),
-        )
-    else:
-        await update.message.reply_text(f"{text.mods_only}")
-
-
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(sticker=media.chains)
     await update.message.reply_text(
