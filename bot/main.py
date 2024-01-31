@@ -20,9 +20,9 @@ from api import db
 from media import index as media
 
 
-current_button_data = None
-clicked_buttons = set()
-first_user_clicked = False
+CURRENT_BUTTON_DATA = None
+CLICKED_BUTTONS = set()
+FIRST_USER_CLICKED = False
 
 
 sentry_sdk.init(
@@ -32,8 +32,8 @@ sentry_sdk.init(
 
 
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
-    global current_button_data, first_user_clicked
-    first_user_clicked = False
+    global CURRENT_BUTTON_DATA, FIRST_USER_CLICKED
+    FIRST_USER_CLICKED = False
     if context.bot_data is None:
         context.bot_data = {}
 
@@ -48,11 +48,11 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
         except Exception:
             pass
 
-    current_button_data = str(random.randint(1, 100000000))
-    context.bot_data["current_button_data"] = current_button_data
+    CURRENT_BUTTON_DATA = str(random.randint(1, 100000000))
+    context.bot_data["current_button_data"] = CURRENT_BUTTON_DATA
     
     keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("Click Me!", callback_data=current_button_data)]]
+        [[InlineKeyboardButton("Click Me!", callback_data=CURRENT_BUTTON_DATA)]]
     )
     click_me = await context.bot.send_photo(
                     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
@@ -141,33 +141,33 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global current_button_data, first_user_clicked
+    global CURRENT_BUTTON_DATA, FIRST_USER_CLICKED
     button_click_timestamp = t.time()
     
     if context.user_data is None:
         context.user_data = {}
 
-    current_button_data = context.bot_data.get("current_button_data")
+    CURRENT_BUTTON_DATA = context.bot_data.get("current_button_data")
     button_generation_timestamp = context.bot_data.get("button_generation_timestamp")
-    if not current_button_data:
+    if not CURRENT_BUTTON_DATA:
         return
 
     button_data = update.callback_query.data
     user = update.effective_user
     user_info = user.username or f"{user.first_name} {user.last_name}" or user.first_name
 
-    if button_data in clicked_buttons:
+    if button_data in CLICKED_BUTTONS:
         return
 
-    clicked_buttons.add(button_data)
+    CLICKED_BUTTONS.add(button_data)
 
-    if button_data == current_button_data:
+    if button_data == CURRENT_BUTTON_DATA:
         time_taken = button_click_timestamp - button_generation_timestamp
 
         await db.clicks_update(user_info, time_taken)
     
-        if not first_user_clicked:
-            first_user_clicked = True
+        if not FIRST_USER_CLICKED:
+            FIRST_USER_CLICKED = True
 
             user_data = db.clicks_get_by_name(user_info)
             clicks = user_data[0]
