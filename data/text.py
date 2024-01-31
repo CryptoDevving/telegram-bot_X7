@@ -1,6 +1,6 @@
 from api import index as api
 
-about = (
+ABOUT = (
     "*X7 Finance - Home of Xchange*\n\n"
     "X7 Finance is an ecosystem of innovative smart contracts, and the centre of the ecosystem is the X7 Finance"
     ' Lending Pool, a pool that provides those with visionary ideas access to Initial Liquidity Loans "ILL".\n\n'
@@ -17,7 +17,7 @@ about = (
     "downside risk.`\n\n#LongLiveDefi"
 )
 
-admin_commands = (
+ADMIN_COMMANDS = (
     "To be run in main chat\n\n"
     "/settings - Open the setting menu\n"
     "/setup - Setup the portal\n"
@@ -31,7 +31,7 @@ admin_commands = (
     "BubbleBuyBot - X7103, X7104, X7105\n"
 )
 
-airdrop = (
+AIRDROP = (
     "*X7 Finance Airdrop Information*\n\nThe rollout of the Ecosystem Contracts on BNB Smart Chain, Polygon "
     "(MATIC), Arbitrum, and Optimism has begun.\n\n"
     "We will go live with Xchange, borrowing, lending, revenue "
@@ -45,19 +45,19 @@ airdrop = (
     "are released on other chains.\n\nThese airdrop snapshots will occur just prior to the token launch"
 )
 
-alumni = (
+ALUMNI = (
     "@Callmelandlord - The Godfather of the X7 Finance community, the OG, the creator - X7 God\n\n"
     "@WoxieX - Creator of the OG dashboard -  x7community.space\n\n"
     "@Zaratustra  - Defi extraordinaire and protocol prophet\n\n"
 )
 
-burn_amount = 777
 
-burn_increment = 100
 
-chain_error = f'Chain not recognised, please follow command with one of the following abbreviations:\n\neth\narb\nbsc\npoly\nopti\nbase'
+BURN_INCREMENT = 100
 
-commands = (
+CHAIN_ERROR = f'Chain not recognised, please follow command with one of the following abbreviations:\n\neth\narb\nbsc\npoly\nopti\nbase'
+
+COMMANDS = (
     "/about - About X7 Finance\n"
     "/alerts - Xchange Alerts Channel\n"
     "/airdrop - Airdrop Info\n"
@@ -145,7 +145,7 @@ commands = (
     "/xchange - Xchange Links\n"
 )
 
-delay = (
+DELAY = (
     "To ensure our code is trusted and that the release is flawless, X7's "
     "Leveraged DEX trading will not begin until we have published third party "
     "security audits. In the meantime, our Stochastic Topological Offensive "
@@ -156,7 +156,7 @@ delay = (
     "- Shigeru Miyamoto`"
 )
 
-discount = (
+DISCOUNT = (
     "20 Lucrative X7 Borrowing Incentive NFTs have been minted, granting;\n\n"
     "50% Origination fee discount\n"
     "50% Premium fee discount\n\n"
@@ -181,7 +181,7 @@ discount = (
     "origination later.\n\nThese sliding scales can be modified to ensure they have optimal market fit."
 )
 
-ecosystem = (
+ECOSYSTEM = (
     "*X7 Finance Ecosystem*\n\n• *X7R*\nX7's original launched token. Hodl as a percentage of all "
     "transaction fees are used to buy and burn tokens, reducing total supply of available tokens.\n\n"
     "• *X7DAO*\nHolders of X7DAO tokens will be able to vote on fee rates, loan terms, funding terms, "
@@ -201,8 +201,7 @@ ecosystem = (
 )
 
 
-
-endorse = (
+ENDORSE = (
     "*XChange Pairs*\n\nThe X7 Dev team or the community team will not endorse any particular token or launch on Xchange.\n\n"
     "Xchange is a permissionless swap protocol. We encourage DeFi participants to exercise the same level of "
     "caution they always should when evaluating a swap opportunity.\n\nFor new token alerts see XChange Alerts channel below"
@@ -211,10 +210,10 @@ endorse = (
 )
 
 
-mods_only = "You do not have permission to do this. #TrustNoOne"
+MODS_ONLY = "You do not have permission to do this. #TrustNoOne"
 
 
-volume = (
+VOLUME = (
     "*Driving XChange Volume*\n\nOur focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
     "*0.1% Back to the Ecosystem*\n\n"
     f"With every trade made on Xchange, '0.1%' flows back to the ecosystem. That's the power of X7 Finance.\n\n"
@@ -224,7 +223,7 @@ volume = (
     f"Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!\n\nhttps://beta.x7.finance/#/add/v2/ETH'"
 )
 
-quotes = [
+QUOTES = [
     "Ethos\n\nX7’s founding team believes that capital should be available to those with great ideas and that the "
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
     "downside risk.",
@@ -569,7 +568,7 @@ quotes = [
     "initial liquidity loans\n",
 ]
 
-x_replies = [
+X_REPLIES = [
     "Raid!",
     "LFG",
     "Send it!",

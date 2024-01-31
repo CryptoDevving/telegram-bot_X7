@@ -45,7 +45,7 @@ async def draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Congratulations, Please DM @X7_Finance on X to verify your account"
         )
     else:
-        await update.message.reply_text(f"{text.mods_only}")
+        await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
 async def raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -60,11 +60,11 @@ async def raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🚨🚨 Raid {username} 🚨🚨\n\n"
             f"{tweet[0].text}\n\n"
             f"https://twitter.com/intent/tweet?text=@X7_Finance&hashtags=LongLiveDefi&in_reply_to={tweet[0].id}\n\n"
-            f"{random.choice(text.x_replies)}",
+            f"{random.choice(text.X_REPLIES)}",
             disable_web_page_preview=True,
         )
     else:
-        await update.message.reply_text(f"{text.mods_only}")
+        await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
 async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -120,12 +120,12 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(
                 f"Latest X7 Finance X Post\n\n{tweet[0].text}\n\n"
                 f"{url.twitter}status/{tweet[0].id}\n\n"
-                f"{random.choice(text.x_replies)}"
+                f"{random.choice(text.X_REPLIES)}"
             )
         except Exception as e:
             await update.message.reply_sticker(sticker=media.twitter_sticker)
             await update.message.reply_text(
-                f"*X7 Finance X*\n\n" f"{random.choice(text.x_replies)}",
+                f"*X7 Finance X*\n\n" f"{random.choice(text.X_REPLIES)}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [
@@ -155,4 +155,4 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Retweeted {retweet_count} times, by the following members:\n\n{count}"
             )
         else:
-            await update.message.reply_text(f"{text.mods_only}")
+            await update.message.reply_text(f"{text.MODS_ONLY}")

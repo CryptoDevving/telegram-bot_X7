@@ -1,8 +1,8 @@
 from datetime import datetime
 
-name = "BUY THE X”7s”R CONTEST!!"
+NAME = "BUY THE X”7s”R CONTEST!!"
 
-text = (
+TEXT = (
     "Buy X7R in any of the following increments of 7 to enter:\n\n🔵 777 = 1 entry\n"
     "🟣 7,777 = 10 entries\n"
     "🟤 77,777 = 30 entries\n"
@@ -16,5 +16,5 @@ text = (
     "X7R: `0x70008F18Fc58928dcE982b0A69C2c21ff80Dca54`"
 )
 
-time = datetime(2023, 7, 24, 5, 00, 00)
-update = datetime(2023, 7, 21, 21, 30, 00)
+TIME = datetime(2023, 7, 24, 5, 00, 00)
+UPDATE = datetime(2023, 7, 21, 21, 30, 00)

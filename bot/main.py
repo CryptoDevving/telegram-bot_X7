@@ -1,7 +1,6 @@
 import sentry_sdk
 from telegram import *
 from telegram.ext import *
-from web3 import Web3
 
 import os
 import sys
@@ -13,8 +12,9 @@ from typing import Optional, Tuple
 
 import commands
 import twitter
+import welcome
 
-from data import times, url, ca, text
+from data import times, url, text
 from api import index as api
 from api import db
 from media import index as media
@@ -24,22 +24,11 @@ current_button_data = None
 clicked_buttons = set()
 first_user_clicked = False
 
-dont_current_button_data = None
-dont_clicked_buttons = set()
-dont_first_user_clicked = False
 
 sentry_sdk.init(
     dsn = os.getenv("SENTRY_DSN"),
     traces_sample_rate=1.0
 )
-
-
-RESTRICTIONS = {
-    'can_send_messages': False,
-    'can_send_media_messages': False,
-    'can_send_other_messages': False,
-    'can_add_web_page_previews': False,
-}
 
 
 async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -75,45 +64,13 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.bot_data["button_generation_timestamp"] = button_generation_timestamp
     context.bot_data['click_me_id'] = click_me.message_id
 
-
-async def auto_message_dont_click(context: ContextTypes.DEFAULT_TYPE) -> None:
-    global dont_current_button_data, dont_first_user_clicked
-    dont_first_user_clicked = False
-    if context.bot_data is None:
-        context.bot_data = {}
-
-    dont_previous_click_me_id = context.bot_data.get('dont_click_me_id')
-    dont_previous_clicked_id = context.bot_data.get('dont_clicked_id')
-
-    if dont_previous_click_me_id:
-        try:
-            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=dont_previous_click_me_id)
-            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=dont_previous_clicked_id)
-            
-        except Exception:
-            pass
-
-    dont_current_button_data = str(random.randint(1, 100000000))
-    context.bot_data["dont_current_button_data"] = dont_current_button_data
-    
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("DONT Click Me!", callback_data=dont_current_button_data)]]
-    )
-    dont_click_me = await context.bot.send_photo(
-                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                    chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-                    reply_markup=keyboard,
-                )
-    
-    context.bot_data['dont_click_me_id'] = dont_click_me.message_id   
-
    
 async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
-    messages = [text.about, text.airdrop, text.ecosystem,
-                text.volume, text.voting, random.choice(text.quotes)]
+    messages = [text.ABOUT, text.AIRDROP, text.ECOSYSTEM,
+                text.VOLUME, random.choice(text.QUOTES)]
     random_message = random.choice(messages)
-    if random_message in text.quotes:
+    if random_message in text.QUOTES:
         message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
     else:
         message = random_message
@@ -141,11 +98,11 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lower_message = message.lower()
     keyword_to_response = {
         "https://twitter": {
-            "text": random.choice(text.x_replies),
+            "text": random.choice(text.X_REPLIES),
             "mode": None,
         },
         "https://x.com": {
-            "text": random.choice(text.x_replies),
+            "text": random.choice(text.X_REPLIES),
             "mode": None,
         },
         "gm": {"sticker": media.gm},
@@ -228,7 +185,7 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             if db.clicks_check_is_fastest(time_taken):
                 click_message +=  f"\n\n🎉🎉 {time_taken:.3f} seconds is the new fastest time! 🎉🎉"
 
-            clicks_needed = times.burn_increment - (total_click_count % times.burn_increment)
+            clicks_needed = times.BURN_INCREMENT - (total_click_count % times.BURN_INCREMENT)
 
             message_text = (
                 f"{api.escape_markdown(user_info)} was the fastest Pioneer in {time_taken:.3f} seconds!\n\n"
@@ -244,8 +201,8 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 parse_mode="Markdown",
             )
 
-            if total_click_count % text.burn_increment == 0:
-                burn_message = await api.burn_x7r(text.burn_amount)
+            if total_click_count % times.BURN_INCREMENT == 0:
+                burn_message = await api.burn_x7r(times.BURN_AMOUNT)
                 await context.bot.send_message(
                         chat_id=update.effective_chat.id,
                         text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
@@ -255,187 +212,19 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
             context.bot_data['clicked_id'] = clicked.message_id
 
-            times.restart_time = datetime.now().timestamp()        
+            times.RESTART_TIME = datetime.now().timestamp()        
             context.user_data["current_button_data"] = None
-            times.button_time = times.random_button_time()
+            times.BUTTON_TIME = times.RANDOM_BUTTON_TIME()
             job_queue.run_once(
             auto_message_click,
-            times.button_time,
+            times.BUTTON_TIME,
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Message",
         )
             
-            return times.button_time
+            return times.BUTTON_TIME
 
-
-async def dont_clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global dont_current_button_data, dont_first_user_clicked
-    
-    if context.user_data is None:
-        context.user_data = {}
-
-    dont_current_button_data = context.bot_data.get("dont_current_button_data")
-    if not dont_current_button_data:
-        return
-
-    dont_button_data = update.callback_query.data
-    user = update.effective_user
-    user_info = user.username or f"{user.first_name} {user.last_name}" or user.first_name
-
-    if dont_button_data in dont_clicked_buttons:
-        return
-
-    dont_clicked_buttons.add(dont_button_data)
-
-    if dont_button_data == dont_current_button_data:
-        await db.clicks_remove(user_info)
-
-        if not first_user_clicked:
-            first_user_clicked = True
-
-            message_text = (
-                f"{api.escape_markdown(user_info)} clicked the DO NOT CLICK button and lost all their points on the leaderboard!\n\n"
-                "RIP You were warned, Sucks to suck!"
-            )
-            
-            dont_clicked = await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=message_text,
-                parse_mode="Markdown",
-            )
-
-
-            context.bot_data['dont_clicked_id'] = dont_clicked.message_id
-
-            times.dont_restart_time = datetime.now().timestamp()        
-            context.user_data["dont_current_button_data"] = None
-            times.dont_button_time = times.dont_random_button_time()
-            job_queue.run_once(
-            auto_message_click,
-            times.dont_button_time,
-            chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-            name="Dont Click Message",
-        )
-            
-            return times.dont_button_time
-  
-
-async def welcome_button_callback(update: Update, context: CallbackContext) -> None:
-    user_id = update.callback_query.from_user.id
-    action, _ = update.callback_query.data.split(":", 1)
-
-    if action == "unmute":
-        user_restrictions = {key: True for key in RESTRICTIONS}
-
-        await context.bot.restrict_chat_member(
-            chat_id=update.effective_chat.id,
-            user_id=user_id,
-            permissions=user_restrictions,
-        )
-
-
-async def welcome_delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:    
-        await context.bot.delete_message(
-            chat_id=update.effective_chat.id,
-            message_id=update.effective_message.id
-        )
-    except Exception:
-        return
-
-
-async def welcome_member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
-    status_change = chat_member_update.difference().get("status")
-    old_is_member, new_is_member = chat_member_update.difference().get("is_member", (None, None))
-
-    if status_change is None:
-        return None
-
-    old_status, new_status = status_change
-    was_member = old_status in [
-        ChatMember.MEMBER,
-        ChatMember.OWNER,
-        ChatMember.ADMINISTRATOR,
-    ] or (old_status == ChatMember.RESTRICTED and old_is_member is True)
-    is_member = new_status in [
-        ChatMember.MEMBER,
-        ChatMember.OWNER,
-        ChatMember.ADMINISTRATOR,
-    ] or (new_status == ChatMember.RESTRICTED and new_is_member is True)
-
-    return was_member, is_member
-
-
-async def welcome_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    channel_id = update.effective_chat.id
-    if str(channel_id) == os.getenv("MAIN_TELEGRAM_CHANNEL_ID"):
-        result = await welcome_member(update.chat_member)
-        if result is None:
-            return
-
-        was_member, is_member = result
-        new_member = update.chat_member.new_chat_member
-        new_member_id = new_member.user.id
-        if new_member.user.username:
-            new_member_username = f"@{new_member.user.username}"
-        else:
-            if new_member.user.last_name:
-                new_member_username = f"{new_member.user.first_name} {new_member.user.last_name}"
-            else:
-                new_member_username = new_member.user.first_name
-
-        if not was_member and is_member:
-            previous_welcome_message_id = context.bot_data.get('welcome_message_id')
-            if previous_welcome_message_id:
-                try:
-                    await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=previous_welcome_message_id)
-                except Exception:
-                    pass
-
-            await context.bot.restrict_chat_member(
-                chat_id=update.effective_chat.id,
-                user_id=new_member_id,
-                permissions=RESTRICTIONS,
-            )
-            welcome_message = await update.effective_chat.send_video(
-                video=open(media.welcomevideo, 'rb'),
-                caption=(
-                    f"Welcome {api.escape_markdown(new_member_username)} to X7 Finance\n\n"
-                    f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"
-                    f"• Ethereum\n"
-                    f"• Binance Smart Chain\n"
-                    f"• Arbitrum\n"
-                    f"• Optimism\n"
-                    f"• Polygon\n"
-                    f"• Base Chain\n\n"
-                    f"Verify as human and check out the links to get started!"
-                ),
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="I am human!",
-                                callback_data=f"unmute:{new_member_id}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Website",
-                                url=url.website,
-                            ),
-                            InlineKeyboardButton(
-                                text="Xchange",
-                                url=url.xchange,
-                            ),
-                        ],
-                    ]
-                )
-            )
-
-            context.bot_data['welcome_message_id'] = welcome_message.message_id
    
-
 async def error(update: Update, context: CallbackContext):
     if update is None:
         return
@@ -464,11 +253,12 @@ job_queue = application.job_queue
 
 if __name__ == "__main__":
     application.add_error_handler(error)
-    application.add_handler(ChatMemberHandler(welcome_message, ChatMemberHandler.CHAT_MEMBER))
-    application.add_handler(MessageHandler(filters.StatusUpdate._NewChatMembers(Update) | filters.StatusUpdate._LeftChatMember(Update), welcome_delete))
-    application.add_handler(CallbackQueryHandler(welcome_button_callback, pattern=r"unmute:.+"))
-    application.add_handler(CommandHandler("test", commands.test))
 
+    ## WELCOME ##
+    application.add_handler(ChatMemberHandler(welcome.message, ChatMemberHandler.CHAT_MEMBER))
+    application.add_handler(MessageHandler(filters.StatusUpdate._NewChatMembers(Update) | filters.StatusUpdate._LeftChatMember(Update), welcome.delete))
+    application.add_handler(CallbackQueryHandler(welcome.button_callback, pattern=r"unmute:.+"))
+    
     ## COMANDS ##
     application.add_handler(CommandHandler("about", commands.about))
     application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
@@ -537,6 +327,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("supply", commands.supply))
     application.add_handler(CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap))
     application.add_handler(CommandHandler(["tax", "slippage"], commands.tax_command))
+    application.add_handler(CommandHandler("test", commands.test))
     application.add_handler(CommandHandler("timestamp", commands.timestamp_command))
     application.add_handler(CommandHandler(["time", "clock"], commands.time))
     application.add_handler(CommandHandler("today", commands.today))
@@ -572,29 +363,20 @@ if __name__ == "__main__":
     application.add_handler(CallbackQueryHandler(clicks_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
 
-
 #    job_queue.run_repeating(
 #        auto_message_info,
-#        times.auto_message_time,
+#        times.AUTO_MESSAGE_TIME,
 #        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-#        first=times.auto_message_time,
+#        first=times.AUTO_MESSAGE_TIME,
 #        name="Auto Message",
 #    )
 
     job_queue.run_once(
         auto_message_click,
-        times.first_button_time,
+        times.FIRST_BUTTON_TIME,
         chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         name="Click Message",
     )
-
-    job_queue.run_once(
-        auto_message_dont_click,
-        times.dont_first_button_time,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        name="Dont Click Message",
-    )
-
 
     ## SCANNERS ##
     scanners = [

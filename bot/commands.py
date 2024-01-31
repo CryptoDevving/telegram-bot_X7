@@ -28,7 +28,7 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        f"{text.about}",
+        f"{text.ABOUT}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -42,7 +42,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(sticker=media.chains)
     await update.message.reply_text(
-        f"{text.airdrop}\n\n"
+        f"{text.AIRDROP}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
     )
@@ -64,7 +64,7 @@ async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def alumni(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-        caption=f"*X7 Finance Alumni*\n\n{text.alumni}\n\n{api.get_quote()}",
+        caption=f"*X7 Finance Alumni*\n\n{text.ALUMNI}\n\n{api.get_quote()}",
         parse_mode="Markdown",
     )
 
@@ -209,7 +209,7 @@ async def blog(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"{text.commands}")
+    await update.message.reply_text(f"{text.COMMANDS}")
 
 
 async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -227,7 +227,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     burn = api.get_token_balance(ca.dead, ca.x7r, chain)
@@ -284,7 +284,7 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     await update.message.reply_photo(
@@ -358,7 +358,7 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     if chain in chain_mappings:
         chain_url, chain_name = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     await update.message.reply_photo(
@@ -592,7 +592,7 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        duration = times.countdown_time - datetime.utcnow()
+        duration = times.COUNTDOWN_TIME - datetime.utcnow()
         days, hours, minutes = api.get_duration_days(duration)
         if duration < timedelta(0):
             await update.message.reply_photo(
@@ -603,9 +603,9 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         await update.message.reply_text(
             text=f"*X7 Finance Countdown:*\n\n"
-            f'{times.countdown_title}\n\n{times.countdown_time.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
+            f'{times.COUNTDOWN_TITLE}\n\n{times.COUNTDOWN_TIME.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
             f"{days} days, {hours} hours and {minutes} minutes\n\n"
-            f"{times.countdown_desc}\n\n{api.get_quote()}",
+            f"{times.COUNTDOWN_DESC}\n\n{api.get_quote()}",
             parse_mode="Markdown",
         )
 
@@ -772,7 +772,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        f"*X7 Finance Discount*\n\n{text.discount}",
+        f"*X7 Finance Discount*\n\n{text.DISCOUNT}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -831,7 +831,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     now = datetime.utcnow()
@@ -910,7 +910,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def ecosystem(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        f"{text.ecosystem}" f"\n\n{api.get_quote()}",
+        f"{text.ECOSYSTEM}" f"\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -1029,7 +1029,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_tx, chain_native,  = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     now = datetime.utcnow()
@@ -1117,7 +1117,7 @@ async def gas(update, context):
     if chain in chain_mappings:
         chain_name, chain_url, chain_logo = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     gas_data = api.get_gas(chain)
@@ -1154,7 +1154,7 @@ async def gas(update, context):
 
 async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = " ".join(context.args)
-    duration = giveaway.time - datetime.utcnow()
+    duration = giveaway.TIME - datetime.utcnow()
     days, hours, minutes = api.get_duration_days(duration)
     if duration < timedelta(0):
         await update.message.reply_photo(
@@ -1167,8 +1167,8 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if ext == "":
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*{giveaway.name}*\n\n{giveaway.text}\n\n"
-                f"Ends:\n\n{giveaway.time.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
+                caption=f"*{giveaway.NAME}*\n\n{giveaway.TEXT}\n\n"
+                f"Ends:\n\n{giveaway.TIME.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
                 f"{days} days, {hours} hours and {minutes} minutes\n\n"
                 f"{api.get_quote()}",
                 parse_mode="Markdown",
@@ -1177,10 +1177,10 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if ext == "entries":
             await update.message.reply_photo(
                 photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                caption=f"*{giveaway.name}*\n\n"
-                f"Entries for the {giveaway.name} are: (last 5 digits only):\n\n{api.get_giveaway_entries()}\n\n"
+                caption=f"*{giveaway.NAME}*\n\n"
+                f"Entries for the {giveaway.NAME} are: (last 5 digits only):\n\n{api.get_giveaway_entries()}\n\n"
                 f"Last updated at:\n"
-                f"{giveaway.update.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
+                f"{giveaway.UPDATE.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
                 f"{api.get_quote()}",
                 parse_mode="Markdown",
             )
@@ -1191,15 +1191,15 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 winner = random.choice(winner_entries)
                 await update.message.reply_photo(
                     photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-                    caption=f"*{giveaway.name}*\n\n"
-                    f"The winner of the {giveaway.name} is: (last 5 digits only)\n\n"
+                    caption=f"*{giveaway.NAME}*\n\n"
+                    f"The winner of the {giveaway.NAME} is: (last 5 digits only)\n\n"
                     f"{winner}\n\n"
                     f"Trust no one, trust code. Long live Defi!\n\n"
                     f"{api.get_quote()}",
                     parse_mode="Markdown",
                 )
             else:
-                await update.message.reply_text(f"{text.mods_only}")
+                await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1217,7 +1217,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_logo = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     x7dao_holders = api.get_holders(ca.x7dao, chain)
@@ -1293,13 +1293,13 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    x7m105_duration = datetime.utcnow() - times.x7m105
+    x7m105_duration = datetime.utcnow() - times.X7M105
     x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = api.get_duration_years(x7m105_duration)
-    migration_duration = datetime.utcnow() - times.migration
+    migration_duration = datetime.utcnow() - times.MIGRATION
     migration_years, migration_months, migration_weeks, migration_days = api.get_duration_years(migration_duration)
-    reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.x7m105.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
+    reply_message = f'*X7 Finance Launch Info*\n\nX7M105 Stealth Launch\n{times.X7M105.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
     reply_message += f"{x7m105_years} years, {x7m105_months} months, {x7m105_weeks} weeks, and {x7m105_days} days ago\n\n"
-    reply_message += f'V2 Migration\n{times.migration.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
+    reply_message += f'V2 Migration\n{times.MIGRATION.strftime("%A %B %d %Y %I:%M %p")} UTC\n'
     reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
     reply_message += api.get_quote()
     await update.message.reply_photo(
@@ -1334,7 +1334,7 @@ async def leaderboard(update: Update, context: CallbackContext):
     slowest = db.clicks_slowest_time()
     slowest_user = slowest[0]
     slowest_time = slowest[1]
-    clicks_needed = times.burn_increment - (click_counts_total % times.burn_increment)
+    clicks_needed = times.BURN_INCREMENT - (click_counts_total % times.BURN_INCREMENT)
     streak = db.clicks_check_highest_streak()
     streak_user, streak_value = streak
     await update.message.reply_text(
@@ -1471,7 +1471,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             *pair_addresses,
         ) = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     im2 = Image.open(chain_logo)
@@ -1683,7 +1683,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_web3 = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     contract = chain_web3.eth.contract(
@@ -1785,7 +1785,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_web3,
         ) = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     price = api.get_native_price(chain_native)
@@ -2006,7 +2006,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, web3, x7r_pair, x7dao_pair = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     def calculate_remaining_time(web3, contract, token_pair, now):
@@ -2077,7 +2077,7 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_holders = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     holders = api.get_nft_holder_count(ca.magister, chain_holders)
@@ -2119,7 +2119,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_holders = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     price = {}
@@ -2277,7 +2277,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_os, chain_native = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     chain_prices = nfts.nft_prices()
@@ -2741,7 +2741,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if chain in chain_mappings:
             chain_name, chain_url, chain_native, chain_logo, web3_url = chain_mappings[chain]
         else:
-            await update.message.reply_text(text.chain_error)
+            await update.message.reply_text(text.CHAIN_ERROR)
             return
             
         web3 = Web3(Web3.HTTPProvider(web3_url))
@@ -3180,7 +3180,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     if chain in chain_mappings:
                         dex_tools, chain_logo = chain_mappings[chain]
                     else:
-                        await update.message.reply_text(text.chain_error)
+                        await update.message.reply_text(text.CHAIN_ERROR)
                         return  
                     try:
                         scan = api.get_scan(search, chain)
@@ -3367,7 +3367,7 @@ async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
         db.clicks_reset()
     else:
-        await update.message.reply_text(f"{text.mods_only}")
+        await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
 async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -3428,7 +3428,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         web3_url, scan_link, dex_tools_link, native = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     if token_address == "":
         await update.message.reply_text(
@@ -3673,7 +3673,7 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, com_wallet, dev_wallet = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     dev_response = api.get_signers(dev_wallet)
@@ -3813,7 +3813,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         ],
     ]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     await update.message.reply_photo(
@@ -3841,7 +3841,7 @@ async def splitters(update: Update, context):
             if chain in chain_mappings:
                 chain_name, chain_url, chain_native = chain_mappings[chain]
             else:
-                await update.message.reply_text(text.chain_error)
+                await update.message.reply_text(text.CHAIN_ERROR)
                 return
             distribution = api.get_split(eth_value)
             message = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
@@ -3883,7 +3883,7 @@ async def splitters(update: Update, context):
             if chain in chain_mappings:
                 chain_name, chain_url, chain_native = chain_mappings[chain]
             else:
-                await update.message.reply_text(text.chain_error)
+                await update.message.reply_text(text.CHAIN_ERROR)
                 return
             
             treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
@@ -3932,7 +3932,7 @@ async def splitters(update: Update, context):
             if chain in chain_mappings:
                 chain_name, chain_url, chain_native = chain_mappings[chain]
             else:
-                await update.message.reply_text(text.chain_error)
+                await update.message.reply_text(text.CHAIN_ERROR)
                 return
             
             treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
@@ -4292,7 +4292,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native,
         ) = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     native_price = api.get_native_price(chain_native)
     com_eth_raw = api.get_native_balance(chain_com_multi, chain)
@@ -4471,7 +4471,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chain_mappings:
         chain_name, chain_url, chain_logo, chain_native, chain_usdc, chain_usdt = chain_mappings[chain]
     else:
-        await update.message.reply_text(text.chain_error)
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     native_price = api.get_native_price(chain_native)
@@ -4615,29 +4615,20 @@ async def wei(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        if times.button_time is not None:
-            time = times.button_time
+        if times.BUTTON_TIME is not None:
+            time = times.BUTTON_TIME
         else:    
-            time = times.first_button_time
-        target_timestamp = times.restart_time + time
+            time = times.FIRST_BUTTON_TIME
+        target_timestamp = times.RESTART_TIME + time
         time_difference_seconds = target_timestamp - datetime.now().timestamp()
         time_difference = timedelta(seconds=time_difference_seconds)
         hours, remainder = divmod(time_difference.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        if times.dont_button_time is not None:
-            dont_time = times.dont_button_time
-        else:    
-            dont_time = times.dont_first_button_time
-        dont_target_timestamp = times.dont_restart_time + dont_time
-        dont_time_difference_seconds = dont_target_timestamp - datetime.now().timestamp()
-        dont_time_difference = timedelta(seconds=dont_time_difference_seconds)
-        dont_hours, dont_remainder = divmod(dont_time_difference.seconds, 3600)
-        dont_minutes, dont_seconds = divmod(dont_remainder, 60)
         await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds\n\n"
-                                        f"Next Dont Click Me:\n\n{dont_hours} hours, {dont_minutes} minutes, {dont_seconds} seconds\n\n")
+        )
     else:
-        await update.message.reply_text(f"{text.mods_only}")
+        await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
 async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -4669,11 +4660,11 @@ async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        text=f"*X7 Finance Whitepaper Quote*\n\n{random.choice(text.quotes)}",
+        text=f"*X7 Finance Whitepaper Quote*\n\n{random.choice(text.QUOTES)}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Website", url=f"{url.dashboard}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
                 [InlineKeyboardButton(text="Full WP", url=f"{url.wp_link}")],
             ]
         ),
