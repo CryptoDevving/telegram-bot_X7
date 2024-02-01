@@ -4375,7 +4375,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        if dune.flag == False:
+        if dune.FLAG == False:
             execution_id = dune.execute_query("2972368", "medium")
             t.sleep(5)
             response = dune.get_query_results(execution_id)
@@ -4407,14 +4407,14 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]
                 ),
             )
-            dune.timestamp = datetime.utcnow().timestamp()
-            dune.flag = True
-            dune.volume = volume
+            dune.TIMESTAMP = datetime.utcnow().timestamp()
+            dune.FLAG = True
+            dune.VOLUME = volume
         else:
             await update.message.reply_photo(
             photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Trading Volume*\n\n'
-                    f'{dune.volume}\n\nLast Updated: {dune.last_date}\n\n{api.get_quote()}',
+                    f'{dune.VOLUME}\n\nLast Updated: {dune.LAST_DATE}\n\n{api.get_quote()}',
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [

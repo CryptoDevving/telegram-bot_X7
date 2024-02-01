@@ -64,83 +64,8 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
     context.bot_data["button_generation_timestamp"] = button_generation_timestamp
     context.bot_data['click_me_id'] = click_me.message_id
 
-   
-async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
-    job = context.job
-    messages = [text.ABOUT, text.AIRDROP, text.ECOSYSTEM,
-                text.VOLUME, random.choice(text.QUOTES)]
-    random_message = random.choice(messages)
-    if random_message in text.QUOTES:
-        message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
-    else:
-        message = random_message
 
-    await context.bot.send_photo(
-        chat_id=job.chat_id,
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
-    )
-
-    await context.bot.send_message(
-        chat_id=job.chat_id,
-        text=f"{message}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
-            ]
-        ),
-    )
-
-
-async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = f"{update.effective_message.text}"
-    lower_message = message.lower()
-    keyword_to_response = {
-        "https://twitter": {
-            "text": random.choice(text.X_REPLIES),
-            "mode": None,
-        },
-        "https://x.com": {
-            "text": random.choice(text.X_REPLIES),
-            "mode": None,
-        },
-        "gm": {"sticker": media.gm},
-        "gm!": {"sticker": media.gm},
-        "new on chain message": {"sticker": media.onchain},
-        "lfg": {"sticker": media.lfg},
-        "goat": {"sticker": media.goat},
-        "smashed": {"sticker": media.smashed},
-        "wagmi": {"sticker": media.wagmi},
-        "slapped": {"sticker": media.slapped},
-    }
-
-    words = lower_message.split()
-
-    for keyword, response in keyword_to_response.items():
-        if keyword.startswith("https://"):
-            if any(word.startswith(keyword) for word in words):
-                if "text" in response:
-                    await update.message.reply_text(
-                        text=response["text"], parse_mode=response["mode"]
-                    )
-                elif "sticker" in response:
-                    await update.message.reply_sticker(sticker=response["sticker"])
-        else:
-            if (
-                f" {keyword} " in f" {lower_message} "
-                or lower_message.startswith(keyword + " ")
-                or lower_message.endswith(" " + keyword)
-            ):
-                if "text" in response:
-                    await update.message.reply_text(
-                        text=response["text"], parse_mode=response["mode"]
-                    )
-                elif "sticker" in response:
-                    await update.message.reply_sticker(sticker=response["sticker"])
-
-
-async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def auto_message_click_function(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global CURRENT_BUTTON_DATA, FIRST_USER_CLICKED
     button_click_timestamp = t.time()
     
@@ -225,6 +150,81 @@ async def clicks_function(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             return times.BUTTON_TIME
 
    
+async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
+    job = context.job
+    messages = [text.ABOUT, text.AIRDROP, text.ECOSYSTEM,
+                text.VOLUME, random.choice(text.QUOTES)]
+    random_message = random.choice(messages)
+    if random_message in text.QUOTES:
+        message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
+    else:
+        message = random_message
+
+    await context.bot.send_photo(
+        chat_id=job.chat_id,
+        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+    )
+
+    await context.bot.send_message(
+        chat_id=job.chat_id,
+        text=f"{message}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
+            ]
+        ),
+    )
+
+
+async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = f"{update.effective_message.text}"
+    lower_message = message.lower()
+    keyword_to_response = {
+        "https://twitter": {
+            "text": random.choice(text.X_REPLIES),
+            "mode": None,
+        },
+        "https://x.com": {
+            "text": random.choice(text.X_REPLIES),
+            "mode": None,
+        },
+        "gm": {"sticker": media.gm},
+        "gm!": {"sticker": media.gm},
+        "new on chain message": {"sticker": media.onchain},
+        "lfg": {"sticker": media.lfg},
+        "goat": {"sticker": media.goat},
+        "smashed": {"sticker": media.smashed},
+        "wagmi": {"sticker": media.wagmi},
+        "slapped": {"sticker": media.slapped},
+    }
+
+    words = lower_message.split()
+
+    for keyword, response in keyword_to_response.items():
+        if keyword.startswith("https://"):
+            if any(word.startswith(keyword) for word in words):
+                if "text" in response:
+                    await update.message.reply_text(
+                        text=response["text"], parse_mode=response["mode"]
+                    )
+                elif "sticker" in response:
+                    await update.message.reply_sticker(sticker=response["sticker"])
+        else:
+            if (
+                f" {keyword} " in f" {lower_message} "
+                or lower_message.startswith(keyword + " ")
+                or lower_message.endswith(" " + keyword)
+            ):
+                if "text" in response:
+                    await update.message.reply_text(
+                        text=response["text"], parse_mode=response["mode"]
+                    )
+                elif "sticker" in response:
+                    await update.message.reply_sticker(sticker=response["sticker"])
+
+
 async def error(update: Update, context: CallbackContext):
     if update is None:
         return
@@ -360,7 +360,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
     ## AUTO ##
-    application.add_handler(CallbackQueryHandler(clicks_function))
+    application.add_handler(CallbackQueryHandler(auto_message_click_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
 
 #    job_queue.run_repeating(
