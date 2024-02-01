@@ -5465,7 +5465,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"CONTRACT ADDRESS:\N`{ca.X7101}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7101}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
