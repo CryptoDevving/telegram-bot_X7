@@ -69,7 +69,7 @@ contract_mappings = {
     "DEX Maxi": (("function setMintFeeDestination()\n"
                   "function setBaseURI()\n"
                   "function setMintPrice()"
-                  ), ca.dex),
+                  ), ca.DEX),
     "Ecosystem Maxi": (("function setMintFeeDestination()\n"
                         "function setBaseURI()\n"
                         "function setMintPrice()"
