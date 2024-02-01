@@ -56,7 +56,7 @@ dextools_chain_mappings = {
 def get_holders(pair, chain):
     if chain in dextools_chain_mappings:
         dextools_chain = dextools_chain_mappings[chain]
-    url = f'https://open-api.dextools.io/free/v2/token/{dextools_chain}/{pair}/info'
+    url = f'https://open-api.dextools.io/trial/v2/token/{dextools_chain}/{pair}/info'
     headers = {
         'accept': 'application/json',
         'X-BLOBR-KEY': os.getenv("DEXTOOLS_API_KEY")
@@ -74,7 +74,7 @@ def get_holders(pair, chain):
 def get_liquidity_dex(pair, chain):
     if chain in dextools_chain_mappings:
         dextools_chain = dextools_chain_mappings[chain]
-    url = f'https://open-api.dextools.io/free/v2/pool/{dextools_chain}/{pair}'
+    url = f'https://open-api.dextools.io/trial/v2/pool/{dextools_chain}/{pair}'
     headers = {
         'accept': 'application/json',
         'X-BLOBR-KEY': os.getenv("DEXTOOLS_API_KEY")
@@ -92,7 +92,7 @@ def get_liquidity_dex(pair, chain):
 def get_liquidity_from_dextools(pair, chain):
     if chain in dextools_chain_mappings:
         dextools_chain = dextools_chain_mappings[chain]
-    url = f'https://open-api.dextools.io/free/v2/pool/{dextools_chain}/{pair}/liquidity'
+    url = f'https://open-api.dextools.io/trial/v2/pool/{dextools_chain}/{pair}/liquidity'
     headers = {
         'accept': 'application/json',
         'X-BLOBR-KEY': os.getenv("DEXTOOLS_API_KEY")
