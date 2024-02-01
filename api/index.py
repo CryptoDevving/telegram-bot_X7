@@ -283,10 +283,10 @@ def get_x7r_supply(chain):
     if chain not in chains_info:
         raise ValueError(f"Invalid chain: {chain}")
     chain_info = chains_info[chain]
-    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={ca.x7r}&address={ca.dead}&tag=latest{chain_info.key}"
+    url = f"{chain_info.url}?module=account&action=tokenbalance&contractaddress={ca.X7R}&address={ca.DEAD}&tag=latest{chain_info.key}"
     response = requests.get(url)
     data = response.json()
-    supply = ca.supply - int(data["result"][:-18])
+    supply = ca.SUPPLY - int(data["result"][:-18])
     return supply
 
 
@@ -347,7 +347,7 @@ alchemy_chain_mappings = {
 def get_maxi_holdings(wallet, chain):
     if chain in alchemy_chain_mappings:
         chain = alchemy_chain_mappings[chain]
-    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.borrow}&contractAddresses[]={ca.liq}&contractAddresses[]={ca.dex}&contractAddresses[]={ca.eco}&withMetadata=false&pageSize=100'
+    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.BORROW}&contractAddresses[]={ca.LIQ}&contractAddresses[]={ca.DEX}&contractAddresses[]={ca.ECO}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
     response_data = response.json()
@@ -358,7 +358,7 @@ def get_maxi_holdings(wallet, chain):
 def get_pioneer_holdings(wallet, chain):
     if chain in alchemy_chain_mappings:
         chain = alchemy_chain_mappings[chain]
-    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.pioneer}&withMetadata=false&pageSize=100'
+    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.PIONEER}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
     response_data = response.json()
@@ -663,8 +663,8 @@ async def burn_x7r(amount):
         alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
         w3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
         sender_address = os.getenv("BURN_WALLET")
-        recipient_address = ca.dead
-        token_contract_address = ca.x7r
+        recipient_address = ca.DEAD
+        token_contract_address = ca.X7R
         sender_private_key = os.getenv("BURN_WALLET_PRIVATE_KEY")
         decimals = 18  
         amount_to_send_wei = amount * (10 ** decimals)
