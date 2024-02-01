@@ -21,7 +21,7 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     status = api.twitter.get_status(tweet_id)
     retweet_count = status.retweet_count
     rt_names = "\n".join(f"{p}" for p in response.data)
-    await update.message.reply_sticker(sticker=media.twitter_sticker)
+    await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
     await update.message.reply_text(
         f"Reposted {retweet_count} times, by the following members:\n\n{rt_names}"
     )
@@ -38,7 +38,7 @@ async def draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
         status = api.twitter.get_status(tweet_id)
         retweet_count = status.retweet_count
         rt_names = "\n".join(f"{p}" for p in response.data)
-        await update.message.reply_sticker(sticker=media.twitter_sticker)
+        await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
         await update.message.reply_text(f"{retweet_count} Entries:\n\n{rt_names}")
         await update.message.reply_text(
             f"The Winner is....\n\n{random.choice(response.data)}\n\n"
@@ -55,7 +55,7 @@ async def raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
         tweet = api.twitter.user_timeline(
             screen_name=username, count=1, include_rts="false", exclude_replies="true"
         )
-        await update.message.reply_sticker(sticker=media.twitter_sticker)
+        await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
         await update.message.reply_text(
             f"🚨🚨 Raid {username} 🚨🚨\n\n"
             f"{tweet[0].text}\n\n"
@@ -96,7 +96,7 @@ async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
         then = parser.parse(space["scheduled_start"]).astimezone(pytz.utc)
         duration = then - datetime.utcnow()
         days, hours, minutes = api.get_duration_days(duration)
-        await update.message.reply_sticker(sticker=media.twitter_sticker)
+        await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
         await update.message.reply_text(
             text=f"Next X7 Finance X space:\n\n"
             f'{space["title"]}\n\n'
@@ -116,14 +116,14 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
             tweet = api.twitter.user_timeline(
                 screen_name=username, count=1, exclude_replies=True, include_rts=False
             )
-            await update.message.reply_sticker(sticker=media.twitter_sticker)
+            await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
             await update.message.reply_text(
                 f"Latest X7 Finance X Post\n\n{tweet[0].text}\n\n"
                 f"{url.TWITTER}status/{tweet[0].id}\n\n"
                 f"{random.choice(text.X_REPLIES)}"
             )
         except Exception as e:
-            await update.message.reply_sticker(sticker=media.twitter_sticker)
+            await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
             await update.message.reply_text(
                 f"*X7 Finance X*\n\n" f"{random.choice(text.X_REPLIES)}",
                 parse_mode="Markdown",
@@ -148,7 +148,7 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
             status = api.twitter.get_status(tweet[0].id)
             retweet_count = status.retweet_count
             count = "\n".join(f"{p}" for p in response.data)
-            await update.message.reply_sticker(sticker=media.twitter_sticker)
+            await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
             await update.message.reply_text(
                 f"Latest X7 Finance Tweet\n\n{tweet[0].text}\n\n"
                 f"{url.TWITTER}status/{tweet[0].id}\n\n"

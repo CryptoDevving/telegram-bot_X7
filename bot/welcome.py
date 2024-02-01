@@ -95,7 +95,7 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 permissions=RESTRICTIONS,
             )
             welcome_message = await update.effective_chat.send_video(
-                video=open(media.welcomevideo, 'rb'),
+                video=open(media.WELCOMEVIDEO, 'rb'),
                 caption=(
                     f"Welcome {api.escape_markdown(new_member_username)} to X7 Finance\n\n"
                     f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"

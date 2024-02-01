@@ -40,7 +40,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_sticker(sticker=media.chains)
+    await update.message.reply_sticker(sticker=media.CHAINS)
     await update.message.reply_text(
         f"{text.AIRDROP}\n\n"
         f"{api.get_quote()}",
@@ -120,7 +120,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_ath = "Unavaliable"
 
 
-    img = Image.open((random.choice(media.blackhole)))
+    img = Image.open((random.choice(media.BLACKHOLE)))
     i1 = ImageDraw.Draw(img)
     myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
     i1.text(
@@ -217,12 +217,12 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_TOKEN, "eth", media.eth_logo),
-        "bsc": ("(BSC)", url.BSC_TOKEN, "bnb", media.bsc_logo),
-        "poly": ("(POLYGON)", url.POLY_TOKEN, "matic", media.poly_logo),
-        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "eth", media.opti_logo),
-        "arb": ("(ARB)", url.ARB_TOKEN, "eth", media.arb_logo),
-        "base": ("(BASE)", url.BASE_TOKEN, "eth", media.base_logo),
+        "eth": ("(ETH)", url.ETHER_TOKEN, "eth", media.ETH_LOGO),
+        "bsc": ("(BSC)", url.BSC_TOKEN, "bnb", media.BSC_LOGO),
+        "poly": ("(POLYGON)", url.POLY_TOKEN, "matic", media.POLY_LOGO),
+        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "eth", media.OPTI_LOGO),
+        "arb": ("(ARB)", url.ARB_TOKEN, "eth", media.ARB_LOGO),
+        "base": ("(BASE)", url.BASE_TOKEN, "eth", media.BASE_LOGO),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
@@ -235,7 +235,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     burn_dollar = api.get_price(ca.X7R, chain) * float(burn)
     im2 = Image.open(chain_logo)
     native = f"{str(burn_dollar / api.get_native_price(chain_native))[:5]} {chain_native.upper()}"
-    im1 = Image.open((random.choice(media.blackhole)))
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
     im1.paste(im2, (720, 20), im2)
     i1 = ImageDraw.Draw(im1)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
@@ -404,13 +404,13 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         token_names = {
-            "x7r": {"contract": ca.X7R, "image": media.x7r_logo},
-            "x7dao": {"contract": ca.X7DAO, "image": media.x7dao_logo},
-            "x7101": {"contract": ca.X7101, "image": media.x7101_logo},
-            "x7102": {"contract": ca.X7102, "image": media.x7102_logo},
-            "x7103": {"symbol": ca.X7103, "image": media.x7103_logo},
-            "x7104": {"contract": ca.X7104, "image": media.x7104_logo},
-            "x7105": {"contract": ca.X7105, "image": media.x7105_logo},
+            "x7r": {"contract": ca.X7R, "image": media.X7R_LOGO},
+            "x7dao": {"contract": ca.X7DAO, "image": media.X7DAO_LOGO},
+            "x7101": {"contract": ca.X7101, "image": media.X7101_LOGO},
+            "x7102": {"contract": ca.X7102, "image": media.X7102_LOGO},
+            "x7103": {"symbol": ca.X7103, "image": media.X7103_LOGO},
+            "x7104": {"contract": ca.X7104, "image": media.X7104_LOGO},
+            "x7105": {"contract": ca.X7105, "image": media.X7105_LOGO},
         }
 
         x7token = context.args[0].lower()
@@ -442,7 +442,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             img = Image.open(requests.get(thumb, stream=True).raw)
             result = img.convert("RGBA")
             result.save(r"media/cgtokenlogo.png")
-            im1 = Image.open((random.choice(media.blackhole)))
+            im1 = Image.open((random.choice(media.BLACKHOLE)))
             im2 = Image.open(r"media/cgtokenlogo.png")
             im2_resized = im2.resize((200, 200))
             im3 = Image.open(image)
@@ -517,7 +517,7 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if price["x7105"]["usd_24h_change"] is None:
         price["x7105"]["usd_24h_change"] = 0
     if chain == "":
-        img = Image.open((random.choice(media.blackhole)))
+        img = Image.open((random.choice(media.BLACKHOLE)))
         i1 = ImageDraw.Draw(img)
         myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 20)
         i1.text(
@@ -821,12 +821,12 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.eth_logo),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.bsc_logo),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.poly_logo),
-        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.opti_logo),
-        "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.arb_logo),
-        "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.base_logo),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.ETH_LOGO),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.BSC_LOGO),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.POLY_LOGO),
+        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.OPTI_LOGO),
+        "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.ARB_LOGO),
+        "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.BASE_LOGO),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
@@ -1109,10 +1109,10 @@ async def gas(update, context):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", "https://etherscan.io/gastracker", media.eth_logo),
-        "bsc": ("(BSC)", "https://bscscan.com/gastracker", media.bsc_logo),
-        "poly": ("(POLYGON)", "https://polygonscan.com/gastracker", media.poly_logo),
-        "base": ("(BASE)", "https://basescan.org/gastracker", media.base_logo),
+        "eth": ("(ETH)", "https://etherscan.io/gastracker", media.ETH_LOGO),
+        "bsc": ("(BSC)", "https://bscscan.com/gastracker", media.BSC_LOGO),
+        "poly": ("(POLYGON)", "https://polygonscan.com/gastracker", media.POLY_LOGO),
+        "base": ("(BASE)", "https://basescan.org/gastracker", media.BASE_LOGO),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_logo = chain_mappings[chain]
@@ -1122,7 +1122,7 @@ async def gas(update, context):
     
     gas_data = api.get_gas(chain)
     im2 = Image.open(chain_logo)
-    im1 = Image.open(random.choice(media.blackhole))
+    im1 = Image.open(random.choice(media.BLACKHOLE))
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
@@ -1207,12 +1207,12 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", media.eth_logo),
-        "arb": ("(ARB)", media.arb_logo),
-        "opti": ("(OPTIMISM)", media.opti_logo),
-        "bsc": ("(BSC)", media.bsc_logo),
-        "poly": ("(POLYGON)", media.poly_logo),
-        "base": ("(BASE)", media.base_logo),
+        "eth": ("(ETH)", media.ETH_LOGO),
+        "arb": ("(ARB)", media.ARB_LOGO),
+        "opti": ("(OPTIMISM)", media.OPTI_LOGO),
+        "bsc": ("(BSC)", media.BSC_LOGO),
+        "poly": ("(POLYGON)", media.POLY_LOGO),
+        "base": ("(BASE)", media.BASE_LOGO),
     }
     if chain in chain_mappings:
         chain_name, chain_logo = chain_mappings[chain]
@@ -1224,7 +1224,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7r_holders = api.get_holders(ca.X7R, chain)
     x7d_holders = api.get_holders(ca.X7D, chain)
     
-    im1 = Image.open(random.choice(media.blackhole))
+    im1 = Image.open(random.choice(media.BLACKHOLE))
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
@@ -1254,7 +1254,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = " ".join(context.args)
-    img = Image.open((random.choice(media.blackhole)))
+    img = Image.open((random.choice(media.BLACKHOLE)))
     i1 = ImageDraw.Draw(img)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
     wrapper = textwrap.TextWrapper(width=50)
@@ -1387,7 +1387,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(ETH)",
             url.ETHER_ADDRESS,
             "eth",
-            media.eth_logo,
+            media.ETH_LOGO,
             ca.X7R_PAIR_ETH,
             ca.X7DAO_PAIR_ETH,
             ca.X7101_PAIR_ETH,
@@ -1400,7 +1400,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(BSC)",
             url.BSC_ADDRESS,
             "bnb",
-            media.bsc_logo,
+            media.BSC_LOGO,
             ca.X7DAO_PAIR_BSC,
             ca.X7R_PAIR_BSC,
             ca.X7101_PAIR_BSC,
@@ -1413,7 +1413,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(POLYGON)",
             url.POLY_ADDRESS,
             "matic",
-            media.poly_logo,
+            media.POLY_LOGO,
             ca.X7DAO_PAIR_POLY,
             ca.X7R_PAIR_POLY,
             ca.X7101_PAIR_POLY,
@@ -1426,7 +1426,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(OPTIMISM)",
             url.OPTI_ADDRESS,
             "eth",
-            media.opti_logo,
+            media.OPTI_LOGO,
             ca.X7DAO_PAIR_OPTI,
             ca.X7R_PAIR_OPTI,
             ca.X7101_PAIR_OPTI,
@@ -1439,7 +1439,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(ARB)",
             url.ARB_ADDRESS,
             "eth",
-            media.arb_logo,
+            media.ARB_LOGO,
             ca.X7DAO_PAIR_ARB,
             ca.X7R_PAIR_ARB,
             ca.X7101_PAIR_ARB,
@@ -1452,7 +1452,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(BASE)",
             url.BASE_ADDRESS,
             "eth",
-            media.base_logo,
+            media.BASE_LOGO,
             ca.X7DAO_PAIR_BASE,
             ca.X7R_PAIR_BASE,
             ca.X7101_PAIR_BASE,
@@ -1509,7 +1509,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7dao_token_dollar = token_dollars[1]
         x7dao_weth_dollar = weth_dollars[1]
 
-        im1 = Image.open((random.choice(media.blackhole)))
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 20)
@@ -1572,7 +1572,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cons_dollar = (
             float(cons_amount) * float(api.get_native_price(chain_native)) / 1**18
         )
-        im1 = Image.open((random.choice(media.blackhole)))
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
@@ -2146,8 +2146,8 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caps[token] = price[token] * ca.SUPPLY
     cons_cap = sum(caps.values()) - caps[ca.X7R] - caps[ca.X7DAO]
     total_cap = sum(caps.values())
-    im1 = Image.open(random.choice(media.blackhole))
-    im2 = Image.open(media.eth_logo)
+    im1 = Image.open(random.choice(media.BLACKHOLE))
+    im2 = Image.open(media.ETH_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 22)
     i1 = ImageDraw.Draw(im1)
@@ -2532,7 +2532,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         each_dollar = float(each) * float(api.get_native_price("eth")) / 1**18
         total_dollar = float(pioneer_pool) * float(api.get_native_price("eth")) / 1**18
         if pioneer_id == "":
-            img = Image.open(random.choice(media.blackhole))
+            img = Image.open(random.choice(media.BLACKHOLE))
             i1 = ImageDraw.Draw(img)
             myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
             i1.text(
@@ -2689,8 +2689,8 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         total_dollar = poly_dollar + bsc_dollar + opti_dollar + arb_dollar + eth_dollar + base_dollar
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7d_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7D_LOGO)
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
@@ -2729,12 +2729,12 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         chain_mappings = {
-            "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.eth_logo, f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"),
-            "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.bsc_logo, f"{random.choice(url.BSC)}"),
-            "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.poly_logo, f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}"),
-            "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.opti_logo, f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}"),
-            "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.arb_logo, f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"),
-            "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.base_logo),
+            "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.ETH_LOGO, f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"),
+            "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.BSC_LOGO, f"{random.choice(url.BSC)}"),
+            "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.POLY_LOGO, f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}"),
+            "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.OPTI_LOGO, f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}"),
+            "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.ARB_LOGO, f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"),
+            "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.BASE_LOGO),
         }
 
         
@@ -2769,7 +2769,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
 
         im2 = Image.open(chain_logo)
-        im1 = Image.open((random.choice(media.blackhole)))
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
@@ -2879,7 +2879,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
                     volume = api.get_volume(token_instance['pair'], token_instance['chain'])
                     price_change = api.get_price_change(token_instance['ca'], token_instance['chain'])
-                    im1 = Image.open((random.choice(media.blackhole)))
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
                     try:
                         image = token_instance['image_url']
                         img = Image.open(requests.get(image, stream=True).raw)
@@ -2889,15 +2889,15 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         im2 = Image.open(r"media/tokenlogo.png")
                     except Exception:
                         if token_instance['chain'] == "eth":
-                            im2 = Image.open(media.eth_logo)
+                            im2 = Image.open(media.ETH_LOGO)
                         if token_instance['chain'] == "bsc":
-                            im2 = Image.open(media.bsc_logo)
+                            im2 = Image.open(media.BSC_LOGO)
                         if token_instance['chain'] == "poly":
-                            im2 = Image.open(media.poly_logo)
+                            im2 = Image.open(media.POLY_LOGO)
                         if token_instance['chain'] == "arb":
-                            im2 = Image.open(media.arb_logo)
+                            im2 = Image.open(media.ARB_LOGO)
                         if token_instance['chain'] == "opti":
-                            im2 = Image.open(media.opti_logo)
+                            im2 = Image.open(media.OPTI_LOGO)
 
                     im1.paste(im2, (720, 20), im2)
                     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
@@ -2960,7 +2960,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     else:
                         x7dao_change = round(price["x7dao"]["usd_24h_change"], 2)
 
-                    im1 = Image.open((random.choice(media.blackhole)))
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
                     im2 = Image.open(r"media/logo.png")
                     im1.paste(im2, (740, 20), im2)
                     i1 = ImageDraw.Draw(im1)
@@ -3008,13 +3008,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                     return
                 x7_token_mappings = {
-                    "x7r": ("X7R", api.get_x7r_supply("eth"), media.x7r_logo, ca.X7R, ca.X7R_PAIR_ETH),
-                    "x7dao": ("X7DAO", ca.SUPPLY, media.x7dao_logo, ca.X7DAO, ca.X7DAO_PAIR_ETH),
-                    "x7101": ("X7101", ca.SUPPLY, media.x7101_logo, ca.X7101, ca.X7101_PAIR_ETH),
-                    "x7102": ("X7102", ca.SUPPLY, media.x7102_logo, ca.X7102, ca.X7102_PAIR_ETH),
-                    "x7103": ("X7103", ca.SUPPLY, media.x7103_logo, ca.X7103, ca.X7103_PAIR_ETH),
-                    "x7104": ("X7104", ca.SUPPLY, media.x7104_logo, ca.X7104, ca.X7104_PAIR_ETH),
-                    "x7105": ("X7105", ca.SUPPLY, media.x7105_logo, ca.X7105, ca.X7105_PAIR_ETH),
+                    "x7r": ("X7R", api.get_x7r_supply("eth"), media.X7R_LOGO, ca.X7R, ca.X7R_PAIR_ETH),
+                    "x7dao": ("X7DAO", ca.SUPPLY, media.X7DAO_LOGO, ca.X7DAO, ca.X7DAO_PAIR_ETH),
+                    "x7101": ("X7101", ca.SUPPLY, media.X7101_LOGO, ca.X7101, ca.X7101_PAIR_ETH),
+                    "x7102": ("X7102", ca.SUPPLY, media.X7102_LOGO, ca.X7102, ca.X7102_PAIR_ETH),
+                    "x7103": ("X7103", ca.SUPPLY, media.X7103_LOGO, ca.X7103, ca.X7103_PAIR_ETH),
+                    "x7104": ("X7104", ca.SUPPLY, media.X7104_LOGO, ca.X7104, ca.X7104_PAIR_ETH),
+                    "x7105": ("X7105", ca.SUPPLY, media.X7105_LOGO, ca.X7105, ca.X7105_PAIR_ETH),
                 }
                 if search in x7_token_mappings:
                     token_name, token_supply, token_logo, token_ca, token_pair = x7_token_mappings[search]
@@ -3053,7 +3053,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         f'{x7_weth:.0f} {token_name} (${"{:0,.0f}".format(x7_weth_dollar)})\n'
                         f"Total Liquidity ${float(x7_weth_dollar + x7_token_dollar):,.0f}"
                     )
-                    im1 = Image.open((random.choice(media.blackhole)))
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
                     im2 = Image.open(token_logo)
                     im1.paste(im2, (720, 20), im2)
                     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
@@ -3117,7 +3117,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     price_change = token_price[cg_name]["usd_24h_change"]
                     if price_change is None:
                         price_change = 0
-                    im1 = Image.open((random.choice(media.blackhole)))
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
                     im1.paste(im2, (680, 20), im2)
                     i1 = ImageDraw.Draw(im1)
                     myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
@@ -3170,12 +3170,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     if chain == "":
                         chain = "eth"
                     chain_mappings = {
-                        "eth": (url.DEX_TOOLS_ETH, media.eth_logo),
-                        "bsc": (url.DEX_TOOLS_BSC, media.bsc_logo),
-                        "poly": (url.DEX_TOOLS_POLY, media.poly_logo),
-                        "opti": (url.DEX_TOOLS_OPTI, media.opti_logo),
-                        "arb": (url.DEX_TOOLS_ARB, media.arb_logo),
-                        "base": (url.DEX_TOOLS_BASE, media.base_logo),
+                        "eth": (url.DEX_TOOLS_ETH, media.ETH_LOGO),
+                        "bsc": (url.DEX_TOOLS_BSC, media.BSC_LOGO),
+                        "poly": (url.DEX_TOOLS_POLY, media.POLY_LOGO),
+                        "opti": (url.DEX_TOOLS_OPTI, media.OPTI_LOGO),
+                        "arb": (url.DEX_TOOLS_ARB, media.ARB_LOGO),
+                        "base": (url.DEX_TOOLS_BASE, media.BASE_LOGO),
                     }
                     if chain in chain_mappings:
                         dex_tools, chain_logo = chain_mappings[chain]
@@ -3229,7 +3229,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         liq = f"${'{:0,.0f}'.format(liquidity_data['liquidity'])}"
                     except Exception:
                         "N/A"
-                    im1 = Image.open((random.choice(media.blackhole)))
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
                     im2 = Image.open(chain_logo)
                     im1.paste(im2, (720, 20), im2)
                     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
@@ -3310,7 +3310,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     img = Image.open(requests.get(thumb, stream=True).raw)
                     result = img.convert("RGBA")
                     result.save(r"media/cgtokenlogo.png")
-                    im1 = Image.open((random.choice(media.blackhole)))
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
                     im2 = Image.open(r"media/cgtokenlogo.png")
                     im1.paste(im2, (680, 20), im2)
                     myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
@@ -4042,7 +4042,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "dollar_value": dollar_value,
             "percent": percent,
         }
-    img = Image.open((random.choice(media.blackhole)))
+    img = Image.open((random.choice(media.BLACKHOLE)))
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype("media/FreeMonoBold.ttf", 20)
     caption_lines = []
@@ -4068,7 +4068,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(
-        sticker=media.swap,
+        sticker=media.SWAP,
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text="Xchange", url=f"{url.XCHANGE}")],
@@ -4243,42 +4243,42 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "eth": (
             "(ETH)",
             url.ETHER_ADDRESS,
-            media.eth_logo,
+            media.ETH_LOGO,
             ca.COM_MULTI_ETH,
             "eth",
         ),
         "arb": (
             "(ARB)",
             url.ARB_ADDRESS,
-            media.bsc_logo,
+            media.BSC_LOGO,
             ca.COM_MULTI_ARB,
             "eth",
         ),
         "poly": (
             "(POLYGON)",
             url.POLY_ADDRESS,
-            media.poly_logo,
+            media.POLY_LOGO,
             ca.COM_MULTI_POLY,
             "matic",
         ),
         "bsc": (
             "(BSC)",
             url.BSC_ADDRESS,
-            media.bsc_logo,
+            media.BSC_LOGO,
             ca.COM_MULTI_BSC,
             "bnb",
         ),
         "opti": (
             "(OP)",
             url.OPTI_ADDRESS,
-            media.opti_logo,
+            media.OPTI_LOGO,
             ca.COM_MULTI_OPTI,
             "eth",
         ),
         "base": (
             "(BASE)",
             url.BASE_ADDRESS,
-            media.base_logo,
+            media.BASE_LOGO,
             ca.COM_MULTI_BASE,
             "eth",
         ),
@@ -4313,7 +4313,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     com_x7d_price = com_x7d_balance * api.get_native_price(chain_native)
     com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price + stables
     im2 = Image.open(chain_logo)
-    im1 = Image.open((random.choice(media.blackhole)))
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
     i1 = ImageDraw.Draw(im1)
@@ -4461,12 +4461,12 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, media.eth_logo, "eth", ca.USDC, ca.USDT),
-        "arb": ("(ARB)", url.ARB_ADDRESS, media.bsc_logo, "eth", ca.AUSDC, ca.AUSDT),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, media.poly_logo, "matic", ca.PUSDC, ca.PUSDT),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, media.bsc_logo, "bnb", ca.BUSDC, ca.BUSDC),
-        "opti": ("(OPTI)", url.OPTI_ADDRESS, media.opti_logo, "eth", ca.OUSDC, ca.OUSDC),
-        "base": ("(BASE)", url.BASE_ADDRESS, media.base_logo, "eth", ca.USDBC, ca.CBUSDC),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, media.ETH_LOGO, "eth", ca.USDC, ca.USDT),
+        "arb": ("(ARB)", url.ARB_ADDRESS, media.BSC_LOGO, "eth", ca.AUSDC, ca.AUSDT),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, media.POLY_LOGO, "matic", ca.PUSDC, ca.PUSDT),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, media.BSC_LOGO, "bnb", ca.BUSDC, ca.BUSDC),
+        "opti": ("(OPTI)", url.OPTI_ADDRESS, media.OPTI_LOGO, "eth", ca.OUSDC, ca.OUSDC),
+        "base": ("(BASE)", url.BASE_ADDRESS, media.BASE_LOGO, "eth", ca.USDBC, ca.CBUSDC),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_logo, chain_native, chain_usdc, chain_usdt = chain_mappings[chain]
@@ -4514,7 +4514,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     pioneers = api.get_pioneer_holdings(wallet, chain)
     maxis = api.get_maxi_holdings(wallet, chain)
     txs = api.get_daily_tx_count(wallet, chain)
-    im1 = Image.open((random.choice(media.blackhole)))
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
     im2 = Image.open(chain_logo)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 24)
@@ -4690,8 +4690,8 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         lpool_rounded = round(float(lpool), 2)
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
         holders = api.get_holders(ca.X7D, chain)
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7d_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7D_LOGO)
     im1.paste(im2, (720, 20), im2)
     i1 = ImageDraw.Draw(im1)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 28)
@@ -4759,8 +4759,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7dao_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7DAO_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -4820,8 +4820,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7dao_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7DAO_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -4880,8 +4880,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7dao_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7DAO_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -4976,8 +4976,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7dao_token_dollar = 0
         liquidity = f'{x7dao_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7dao_weth_dollar)})'
         ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7dao_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7DAO_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)
@@ -5050,8 +5050,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7r_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7R_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5109,8 +5109,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7r_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7R_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5203,8 +5203,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_token_dollar = 0
         liquidity = f'{x7r_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7r_weth_dollar)})'
     ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7r_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7R_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)
@@ -5277,8 +5277,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7101_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7101_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5335,8 +5335,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7101_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7101_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5432,8 +5432,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7101_token_dollar = 0
         liquidity = f'{x7101_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7101_weth_dollar)})'
     ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7101_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7101_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)
@@ -5506,8 +5506,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7102_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7102_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5564,8 +5564,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7102_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7102_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5660,8 +5660,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7102_token_dollar = 0
         liquidity = f'{x7102_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7102_weth_dollar)})'
     ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7102_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7102_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)
@@ -5734,8 +5734,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7103_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7103_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5792,8 +5792,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7103_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7103_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -5889,8 +5889,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7103_token_dollar = 0
         liquidity = f'{x7103_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7103_weth_dollar)})'
     ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7103_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7103_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)
@@ -5963,8 +5963,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7104_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7104_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -6021,8 +6021,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7104_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7104_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -6117,8 +6117,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7104_token_dollar = 0
         liquidity = f'{x7104_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7104_weth_dollar)})'
     ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7104_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7104_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)
@@ -6191,8 +6191,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7105_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7105_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -6249,8 +6249,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             poly_amount = 0
             opti_amount = 0
             base_amount = 0
-        im1 = Image.open((random.choice(media.blackhole)))
-        im2 = Image.open(media.x7105_logo)
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(media.X7105_LOGO)
         im1.paste(im2, (720, 20), im2)
         myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
         i1 = ImageDraw.Draw(im1)
@@ -6346,8 +6346,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7105_token_dollar = 0
         liquidity = f'{x7105_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7105_weth_dollar)})'
     ###
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.x7105_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.X7105_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
     i1 = ImageDraw.Draw(im1)

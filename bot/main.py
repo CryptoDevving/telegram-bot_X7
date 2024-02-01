@@ -190,14 +190,14 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "text": random.choice(text.X_REPLIES),
             "mode": None,
         },
-        "gm": {"sticker": media.gm},
-        "gm!": {"sticker": media.gm},
-        "new on chain message": {"sticker": media.onchain},
-        "lfg": {"sticker": media.lfg},
-        "goat": {"sticker": media.goat},
-        "smashed": {"sticker": media.smashed},
-        "wagmi": {"sticker": media.wagmi},
-        "slapped": {"sticker": media.slapped},
+        "gm": {"sticker": media.GM},
+        "gm!": {"sticker": media.GM},
+        "new on chain message": {"sticker": media.ONCHAIN},
+        "lfg": {"sticker": media.LFG},
+        "goat": {"sticker": media.GOAT},
+        "smashed": {"sticker": media.SMASHED},
+        "wagmi": {"sticker": media.WAGMI},
+        "slapped": {"sticker": media.SLAPPED},
     }
 
     words = lower_message.split()

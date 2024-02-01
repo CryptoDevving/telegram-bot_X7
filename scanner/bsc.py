@@ -146,8 +146,8 @@ async def new_pair(event):
             f'{pool} BNB (${"{:0,.0f}".format(pool_dollar)})\n'
             f'Total Liquidity: ${"{:0,.0f}".format(pool_dollar * 2)}'
         )
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.bsc_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.BSC_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
@@ -230,8 +230,8 @@ async def new_loan(event):
         schedule_str = ""
         amount = ""
     cost = int(tx["result"]["value"], 0) / 10**18
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.bsc_logo)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(media.BSC_LOGO)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
