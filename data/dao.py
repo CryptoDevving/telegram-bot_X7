@@ -16,7 +16,7 @@ contract_mappings = {
                              "function freezeLendingPoolTarget()\n"
                              "function freezeBalanceThreshold()\n"
                              "function freezeLiquidityBalanceThreshold()"
-                             ), ca.x7100_liq_hub),
+                             ), ca.X7100_LIQ_HUB),
     "X7DAO Liquidity Hub": (("function setShares()\n"
                              "function setRouter()\n"
                              "function setOffRampPair()\n"
@@ -30,7 +30,7 @@ contract_mappings = {
                              "function freezeDistributeTarget()\n"
                              "function freezeAuxiliaryTarget()\n"
                              "function freezeBalanceThreshold()"
-                             ), ca.x7dao_liq_hub),
+                             ), ca.X7DAO_LIQ_HUB),
     "X7R Liquidity Hub": (("function setShares()\n"
                            "function setRouter()\n"
                            "function setOffRampPair()\n"
@@ -42,30 +42,30 @@ contract_mappings = {
                            "function freezeTreasuryTarget()\n"
                            "function freezeDistributeTarget()\n"
                            "function freezeBalanceThreshold()"
-                           ), ca.x7r_liq_hub),
+                           ), ca.X7R_LIQ_HUB),
     "X7D": (("function setAuthorizedMinter()\n"
              "function setAuthorizedRedeemer()\n"
              "function setRecoveredTokenRecipient()\n"
              "function setRecoveredETHRecipient()"
-             ), ca.x7d),
+             ), ca.X7D),
     "Ecosystem Splitter": (("function setWETH()\n"
                             "function setOutlet()\n"
                             "function freezeOutletChange()\n"
                             "function setShares()\n"
-                            ), ca.eco_splitter),
+                            ), ca.ECO_SPLITTER),
     "Treasury Splitter": (("function freezeOutlet()\n"
                            "function setOutletRecipient()\n"
                            "function setSlotShares()"
-                           ), ca.treasury_splitter),
+                           ), ca.TREASURY_SPLITTER),
     "Factory": (("function setFeeTo()\n"
                  "function setDiscountAuthority()\n"
                  "function setTrusted()\n"
                  "function setFailsafeLiquidator()"
-                 ), ca.factory),
+                 ), ca.FACTORY),
     "Borrowing Maxi": (("function setMintFeeDestination()\n"
                         "function setBaseURI()\n"
                         "function setMintPrice()"
-                        ), ca.borrow),
+                        ), ca.BORROW),
     "DEX Maxi": (("function setMintFeeDestination()\n"
                   "function setBaseURI()\n"
                   "function setMintPrice()"
@@ -73,20 +73,20 @@ contract_mappings = {
     "Ecosystem Maxi": (("function setMintFeeDestination()\n"
                         "function setBaseURI()\n"
                         "function setMintPrice()"
-                        ), ca.eco),
+                        ), ca.ECO),
     "Liquidity Maxi": (("function setMintFeeDestination()\n"
                         "function setBaseURI()\n"
                         "function setMintPrice()"
-                        ), ca.liq),
+                        ), ca.LIQ),
     "Magister": (("function setMintFeeDestination()\n"
                   "function setBaseURI()\n"
                   "function setMintPrice()"
-                  ), ca.magister),
+                  ), ca.MAGISTER),
     "Pioneer": (("function setTransferUnlockFeeDestination()\n"
                  "function setBaseURI()\n"
                  "function setTransferUnlockFee()\n"
                  "function SetAllowTokenOwnerVariantSelection()"
-                 ), ca.pioneer),
+                 ), ca.PIONEER),
     "Lending Pool": (("function setEcosystemRecipientAddress()\n"
                       "function setRouter()\n"
                       "function setWETH()\n"
@@ -95,42 +95,42 @@ contract_mappings = {
                       "function setLiquidationReward()\n"
                       "function setOriginationShares()\n"
                       "function setPremiumShares()"
-                      ), ca.lpool),
+                      ), ca.LPOOL),
     "Lending Pool Reserve": (("function setLendingPool()\n"
                               "function setEcosystemRecipientAddress()\n"
                               "function setX7D()\n"
                               "function setEcosystemPayer()\n"
                               "function fundLendingPool()\n"
                               "function setRecoveredTokenRecipient()"
-                              ), ca.lpool_reserve),
+                              ), ca.LPOOL_RESERVE),
     "Loans": (("function setLoanAuthority()\n"
                "function setBaseURI()\n"
                "function setUseBaseURIOnly()\n"
                "function setLoanLengthLimits()\n"
                "function setLoanAmountLimits()"
-               ), ca.ill001),
+               ), ca.ILL001),
     "Token Time Lock": (("function setWETH()\n"
                          "function setGlobalUnlockTimestamp()\n"
                          "function extendGlobalUnlockTimestamp()\n"
                          "function setTokenUnlockTimestamp()\n"
                          "function extendTokenUnlockTimestamp()\n"
                          "function setTokenOwner()"
-                         ), ca.time_lock),
+                         ), ca.TIME_LOCK),
     "Token Burner": (("function setRouter()\n"
                       "function setTargetToken()"
-                      ), ca.burner),
+                      ), ca.BURNER),
     "X7100 Discount Authority": (("function setEcosystemMaxiNFT()\n"
                                   "function setLiquidityMaxiNFT()\n"
                                   "function setMagisterNFT()\n"
                                   "function setX7DAO()\n"
-                                  ), ca.x7100_discount),
+                                  ), ca.X7100_DISCOUNT),
     "X7DAO Discount Authority": (("function setEcosystemMaxiNFT()\n"
                                   "function setLiquidityMaxiNFT()\n"
-                                  ), ca.x7dao_discount),
+                                  ), ca.X7DAO_DISCOUNT),
     "X7R Discount Authority": (("function setEcosystemMaxiNFT()\n"
                                 "function setLiquidityMaxiNFT()\n"
                                 "function setMagisterNFT()\n"
-                                ), ca.x7r_discount),
+                                ), ca.X7R_DISCOUNT),
     "Lending Discount Authority": (("function setAuthorizedConsumer()\n"
                                     "function setTimeBasedDiscount()\n"
                                     "function setAmountBasedDiscount()\n"
@@ -138,7 +138,7 @@ contract_mappings = {
                                     "function setConsumableDiscountNFT()\n"
                                     "function setDiscountNFTDiscounts()\n"
                                     "function setConsumableDiscountNFTDiscounts()"
-                                    ), ca.lending_discount),
+                                    ), ca.LENDING_DISCOUNT),
     "Xchange Discount Authority": (("function setDEXMaxiNFT()"
-                                    ), ca.xchange_discount),
+                                    ), ca.XCHANGE_DISCOUNT),
 }

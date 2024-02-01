@@ -99,7 +99,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         x7dao_date_object = datetime.fromisoformat(x7dao_date.replace("Z", "+00:00"))
         x7dao_readable_date = x7dao_date_object.strftime("%Y-%m-%d %H:%M:%S")
-        x7dao_mcap = x7dao_ath * ca.supply
+        x7dao_mcap = x7dao_ath * ca.SUPPLY
 
         x7r_date_object = datetime.fromisoformat(x7r_date.replace("Z", "+00:00"))
         x7r_readable_date = x7r_date_object.strftime("%Y-%m-%d %H:%M:%S")
@@ -230,9 +230,9 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
 
-    burn = api.get_token_balance(ca.dead, ca.x7r, chain)
-    percent = round(burn / ca.supply * 100, 2)
-    burn_dollar = api.get_price(ca.x7r, chain) * float(burn)
+    burn = api.get_token_balance(ca.DEAD, ca.X7R, chain)
+    percent = round(burn / ca.SUPPLY * 100, 2)
+    burn_dollar = api.get_price(ca.X7R, chain) * float(burn)
     im2 = Image.open(chain_logo)
     native = f"{str(burn_dollar / api.get_native_price(chain_native))[:5]} {chain_native.upper()}"
     im1 = Image.open((random.choice(media.blackhole)))
@@ -261,7 +261,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Burn Wallet",
-                        url=f"{chain_url}{ca.x7r}?a={ca.dead}",
+                        url=f"{chain_url}{ca.X7R}?a={ca.DEAD}",
                     )
                 ],
             ]
@@ -296,12 +296,12 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 [
                     InlineKeyboardButton(
-                        text="X7R - Rewards Token", url=f"{chain_url}{ca.x7r}"
+                        text="X7R - Rewards Token", url=f"{chain_url}{ca.X7R}"
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        text="X7DAO - Governance Token", url=f"{chain_url}{ca.x7dao}"
+                        text="X7DAO - Governance Token", url=f"{chain_url}{ca.X7DAO}"
                     )
                 ],
             ]
@@ -370,13 +370,13 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             [
                 [
                     InlineKeyboardButton(
-                        text="X7R - Rewards Token", url=f"{chain_url}{ca.x7r}"
+                        text="X7R - Rewards Token", url=f"{chain_url}{ca.X7R}"
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="X7DAO - Governance Token",
-                        url=f"{chain_url}{ca.x7dao}",
+                        url=f"{chain_url}{ca.X7DAO}",
                     )
                 ],
             ]
@@ -404,13 +404,13 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         token_names = {
-            "x7r": {"contract": ca.x7r, "image": media.x7r_logo},
-            "x7dao": {"contract": ca.x7dao, "image": media.x7dao_logo},
-            "x7101": {"contract": ca.x7101, "image": media.x7101_logo},
-            "x7102": {"contract": ca.x7102, "image": media.x7102_logo},
-            "x7103": {"symbol": ca.x7103, "image": media.x7103_logo},
-            "x7104": {"contract": ca.x7104, "image": media.x7104_logo},
-            "x7105": {"contract": ca.x7105, "image": media.x7105_logo},
+            "x7r": {"contract": ca.X7R, "image": media.x7r_logo},
+            "x7dao": {"contract": ca.X7DAO, "image": media.x7dao_logo},
+            "x7101": {"contract": ca.X7101, "image": media.x7101_logo},
+            "x7102": {"contract": ca.X7102, "image": media.x7102_logo},
+            "x7103": {"symbol": ca.X7103, "image": media.x7103_logo},
+            "x7104": {"contract": ca.X7104, "image": media.x7104_logo},
+            "x7105": {"contract": ca.X7105, "image": media.x7105_logo},
         }
 
         x7token = context.args[0].lower()
@@ -431,10 +431,10 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"No Market Cap data found for {token2.upper()}\n\n{api.get_quote()}",
                     parse_mode="Markdown",
                 )
-            if x7token == ca.x7r:
+            if x7token == ca.X7R:
                 x7_supply = api.get_x7r_supply("eth")
             else:
-                x7_supply = ca.supply
+                x7_supply = ca.SUPPLY
             x7_market_cap = x7_price * x7_supply
             percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
             x = (token_market_cap - x7_market_cap) / x7_market_cap
@@ -500,11 +500,11 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     price = api.get_cg_price("x7101, x7102, x7103, x7104, x7105")
-    x7101mc = price["x7101"]["usd"] * ca.supply
-    x7102mc = price["x7102"]["usd"] * ca.supply
-    x7103mc = price["x7103"]["usd"] * ca.supply
-    x7104mc = price["x7104"]["usd"] * ca.supply
-    x7105mc = price["x7105"]["usd"] * ca.supply
+    x7101mc = price["x7101"]["usd"] * ca.SUPPLY
+    x7102mc = price["x7102"]["usd"] * ca.SUPPLY
+    x7103mc = price["x7103"]["usd"] * ca.SUPPLY
+    x7104mc = price["x7104"]["usd"] * ca.SUPPLY
+    x7105mc = price["x7105"]["usd"] * ca.SUPPLY
     const_mc = x7101mc + x7102mc + x7103mc + x7104mc + x7105mc
     if price["x7101"]["usd_24h_change"] is None:
         price["x7101"]["usd_24h_change"] = 0
@@ -556,23 +556,23 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'X7101:      ${price["x7101"]["usd"]}\n'
             f'24 Hour Change: {round(price["x7101"]["usd_24h_change"], 1)}%\n'
             f'Market Cap:  ${"{:0,.0f}".format(x7101mc)}\n'
-            f"CA: `{ca.x7101}\n\n`"
+            f"CA: `{ca.X7101}\n\n`"
             f'X7102:      ${price["x7102"]["usd"]}\n'
             f'24 Hour Change: {round(price["x7102"]["usd_24h_change"], 1)}%\n'
             f'Market Cap:  ${"{:0,.0f}".format(x7102mc)}\n'
-            f"CA: `{ca.x7102}\n\n`"
+            f"CA: `{ca.X7102}\n\n`"
             f'X7103:      ${price["x7103"]["usd"]}\n'
             f'24 Hour Change: {round(price["x7103"]["usd_24h_change"], 1)}%\n'
             f'Market Cap:  ${"{:0,.0f}".format(x7103mc)}\n'
-            f"CA: `{ca.x7103}\n\n`"
+            f"CA: `{ca.X7103}\n\n`"
             f'X7104:      ${price["x7104"]["usd"]}\n'
             f'24 Hour Change: {round(price["x7104"]["usd_24h_change"], 1)}%\n'
             f'Market Cap:  ${"{:0,.0f}".format(x7104mc)}\n'
-            f"CA: `{ca.x7104}\n\n`"
+            f"CA: `{ca.X7104}\n\n`"
             f'X7105:      ${price["x7105"]["usd"]}\n'
             f'24 Hour Change: {round(price["x7105"]["usd_24h_change"], 1)}%\n'
             f'Market Cap:  ${"{:0,.0f}".format(x7105mc)}\n'
-            f"CA: `{ca.x7105}\n\n`"
+            f"CA: `{ca.X7105}\n\n`"
             f'Combined Market Cap: ${"{:0,.0f}".format(const_mc)}\n\n'
             f"{api.get_quote()}",
             parse_mode="Markdown",
@@ -583,8 +583,8 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Contract Addresses for all chains*\n\n"
-        f"*X7R - Rewards Token *\n`{ca.x7r}`\n\n"
-        f"*X7DAO - Governance Token*\n`{ca.x7dao}`\n\n"
+        f"*X7R - Rewards Token *\n`{ca.X7R}`\n\n"
+        f"*X7DAO - Governance Token*\n`{ca.X7DAO}`\n\n"
         f"For advanced trading and arbitrage opportunities see `/constellations`\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -707,7 +707,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    tx = api.get_tx(ca.deployer, "eth")
+    tx = api.get_tx(ca.DEPLOYER, "eth")
     time = datetime.utcfromtimestamp(int(tx["result"][0]["timeStamp"]))
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
@@ -779,7 +779,7 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7 Lending Discount Contract",
-                        url=f"{url.ETHER_ADDRESS}{ca.lending_discount}#code",
+                        url=f"{url.ETHER_ADDRESS}{ca.LENDING_DISCOUNT}#code",
                     )
                 ],
             ]
@@ -856,7 +856,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_days,
         x7r_hours,
         x7r_minutes,
-    ) = get_liquidity_data(ca.x7r_liq_hub)
+    ) = get_liquidity_data(ca.X7R_LIQ_HUB)
     (
         x7dao_value,
         x7dao_dollar,
@@ -864,7 +864,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7dao_days,
         x7dao_hours,
         x7dao_minutes,
-    ) = get_liquidity_data(ca.x7dao_liq_hub)
+    ) = get_liquidity_data(ca.X7DAO_LIQ_HUB)
     (
         x7100_value,
         x7100_dollar,
@@ -872,7 +872,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7100_days,
         x7100_hours,
         x7100_minutes,
-    ) = get_liquidity_data(ca.x7100_liq_hub)
+    ) = get_liquidity_data(ca.X7100_LIQ_HUB)
     await update.message.reply_photo(
         photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Liquidity Hubs {chain_name}*\nUse `/ebb [chain-name]` for other chains\n\n"
@@ -888,19 +888,19 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 [
                     InlineKeyboardButton(
-                        text="X7R Liquidity Hub", url=f"{chain_url}{ca.x7r_liq_hub}"
+                        text="X7R Liquidity Hub", url=f"{chain_url}{ca.X7R_LIQ_HUB}"
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="X7DAO Liquidity Hub",
-                        url=f"{chain_url}{ca.x7dao_liq_hub}",
+                        url=f"{chain_url}{ca.X7DAO_LIQ_HUB}",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="X7100 Liquidity Hub",
-                        url=f"{chain_url}{ca.x7100_liq_hub}",
+                        url=f"{chain_url}{ca.X7100_LIQ_HUB}",
                     )
                 ],
             ]
@@ -932,16 +932,16 @@ async def fact(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def factory(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.factory}"),
-            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.factory}"),
+            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.FACTORY}"),
         ],
         [
-            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.factory}"),
-            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.factory}"),
+            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.FACTORY}"),
         ],
         [
-            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.factory}"),
-            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.factory}"),
+            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.FACTORY}"),
         ],
     ]
 
@@ -1033,8 +1033,8 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     now = datetime.utcnow()
-    tx = api.get_tx(ca.fee_to, chain)
-    filter = [d for d in tx["result"] if d["to"] in f"{ca.eco_splitter}".lower() and d.get("functionName", "") != "pushAll()"]
+    tx = api.get_tx(ca.FEE_TO, chain)
+    filter = [d for d in tx["result"] if d["to"] in f"{ca.ECO_SPLITTER}".lower() and d.get("functionName", "") != "pushAll()"]
     value_raw = int(filter[0]["value"]) / 10**18
     hash = filter[0]["hash"]
     value = round(value_raw, 3) 
@@ -1220,9 +1220,9 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     
-    x7dao_holders = api.get_holders(ca.x7dao, chain)
-    x7r_holders = api.get_holders(ca.x7r, chain)
-    x7d_holders = api.get_holders(ca.x7d, chain)
+    x7dao_holders = api.get_holders(ca.X7DAO, chain)
+    x7r_holders = api.get_holders(ca.X7R, chain)
+    x7d_holders = api.get_holders(ca.X7D, chain)
     
     im1 = Image.open(random.choice(media.blackhole))
     im1.paste(im2, (720, 20), im2)
@@ -1381,85 +1381,85 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    contract_addresses = [ca.x7r, ca.x7dao, ca.x7101, ca.x7102, ca.x7103, ca.x7104, ca.x7105]
+    contract_addresses = [ca.X7R, ca.X7DAO, ca.X7101, ca.X7102, ca.X7103, ca.X7104, ca.X7105]
     chain_mappings = {
         "eth": (
             "(ETH)",
             url.ETHER_ADDRESS,
             "eth",
             media.eth_logo,
-            ca.x7r_pair_eth,
-            ca.x7dao_pair_eth,
-            ca.x7101_pair_eth,
-            ca.x7102_pair_eth,
-            ca.x7103_pair_eth,
-            ca.x7104_pair_eth,
-            ca.x7105_pair_eth,
+            ca.X7R_PAIR_ETH,
+            ca.X7DAO_PAIR_ETH,
+            ca.X7101_PAIR_ETH,
+            ca.X7102_PAIR_ETH,
+            ca.X7103_PAIR_ETH,
+            ca.X7104_PAIR_ETH,
+            ca.X7105_PAIR_ETH,
         ),
         "bsc": (
             "(BSC)",
             url.BSC_ADDRESS,
             "bnb",
             media.bsc_logo,
-            ca.x7dao_pair_bsc,
-            ca.x7r_pair_bsc,
-            ca.x7101_pair_bsc,
-            ca.x7102_pair_bsc,
-            ca.x7103_pair_bsc,
-            ca.x7104_pair_bsc,
-            ca.x7105_pair_bsc,
+            ca.X7DAO_PAIR_BSC,
+            ca.X7R_PAIR_BSC,
+            ca.X7101_PAIR_BSC,
+            ca.X7102_PAIR_BSC,
+            ca.X7103_PAIR_BSC,
+            ca.X7104_PAIR_BSC,
+            ca.X7105_PAIR_BSC,
         ),
         "poly": (
             "(POLYGON)",
             url.POLY_ADDRESS,
             "matic",
             media.poly_logo,
-            ca.x7dao_pair_poly,
-            ca.x7r_pair_poly,
-            ca.x7101_pair_poly,
-            ca.x7102_pair_poly,
-            ca.x7103_pair_poly,
-            ca.x7104_pair_poly,
-            ca.x7105_pair_poly,
+            ca.X7DAO_PAIR_POLY,
+            ca.X7R_PAIR_POLY,
+            ca.X7101_PAIR_POLY,
+            ca.X7102_PAIR_POLY,
+            ca.X7103_PAIR_POLY,
+            ca.X7104_PAIR_POLY,
+            ca.X7105_PAIR_POLY,
         ),
         "opti": (
             "(OPTIMISM)",
             url.OPTI_ADDRESS,
             "eth",
             media.opti_logo,
-            ca.x7dao_pair_opti,
-            ca.x7r_pair_opti,
-            ca.x7101_pair_opti,
-            ca.x7102_pair_opti,
-            ca.x7103_pair_opti,
-            ca.x7104_pair_opti,
-            ca.x7105_pair_opti,
+            ca.X7DAO_PAIR_OPTI,
+            ca.X7R_PAIR_OPTI,
+            ca.X7101_PAIR_OPTI,
+            ca.X7102_PAIR_OPTI,
+            ca.X7103_PAIR_OPTI,
+            ca.X7104_PAIR_OPTI,
+            ca.X7105_PAIR_OPTI,
         ),
         "arb": (
             "(ARB)",
             url.ARB_ADDRESS,
             "eth",
             media.arb_logo,
-            ca.x7dao_pair_arb,
-            ca.x7r_pair_arb,
-            ca.x7101_pair_arb,
-            ca.x7102_pair_arb,
-            ca.x7103_pair_arb,
-            ca.x7104_pair_arb,
-            ca.x7105_pair_arb,
+            ca.X7DAO_PAIR_ARB,
+            ca.X7R_PAIR_ARB,
+            ca.X7101_PAIR_ARB,
+            ca.X7102_PAIR_ARB,
+            ca.X7103_PAIR_ARB,
+            ca.X7104_PAIR_ARB,
+            ca.X7105_PAIR_ARB,
         ),
         "base": (
             "(BASE)",
             url.BASE_ADDRESS,
             "eth",
             media.base_logo,
-            ca.x7dao_pair_base,
-            ca.x7r_pair_base,
-            ca.x7101_pair_base,
-            ca.x7102_pair_base,
-            ca.x7103_pair_base,
-            ca.x7104_pair_base,
-            ca.x7105_pair_base,
+            ca.X7DAO_PAIR_BASE,
+            ca.X7R_PAIR_BASE,
+            ca.X7101_PAIR_BASE,
+            ca.X7102_PAIR_BASE,
+            ca.X7103_PAIR_BASE,
+            ca.X7104_PAIR_BASE,
+            ca.X7105_PAIR_BASE,
         ),
     }
     if chain in chain_mappings:
@@ -1560,9 +1560,9 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AFTER MIGRATION
     else:
-        x7r_amount = api.get_native_balance(ca.x7r_liq_lock, chain)
-        x7dao_amount = api.get_native_balance(ca.x7dao_liq_lock, chain)
-        cons_amount = api.get_native_balance(ca.cons_liq_lock, chain)
+        x7r_amount = api.get_native_balance(ca.X7R_LIQ_LOCK, chain)
+        x7dao_amount = api.get_native_balance(ca.X7DAO_LIQ_LOCK, chain)
+        cons_amount = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         x7dao_dollar = (
             float(x7dao_amount) * float(api.get_native_price(chain_native)) / 1**18
         )
@@ -1600,19 +1600,19 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="X7R Initial Liquidity",
-                            url=f"{chain_url}{ca.x7r_liq_lock}",
+                            url=f"{chain_url}{ca.X7R_LIQ_LOCK}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="X7DAO Initial Liquidity",
-                            url=f"{chain_url}{ca.x7dao_liq_lock}",
+                            url=f"{chain_url}{ca.X7DAO_LIQ_LOCK}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="X7100 Initial Liquidity",
-                            url=f"{chain_url}{ca.cons_liq_lock}",
+                            url=f"{chain_url}{ca.CONS_LIQ_LOCK}",
                         )
                     ],
                 ]
@@ -1687,7 +1687,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     contract = chain_web3.eth.contract(
-        address=Web3.to_checksum_address(ca.lpool), abi=api.get_abi(ca.lpool, chain)
+        address=Web3.to_checksum_address(ca.LPOOL), abi=api.get_abi(ca.LPOOL, chain)
     )
     num_loans = contract.functions.nextLoanID().call()
     liquidatable_loans = 0
@@ -1712,7 +1712,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Lending Pool Contract",
-                        url=f"{chain_url}{ca.lpool}#writeContract",
+                        url=f"{chain_url}{ca.LPOOL}#writeContract",
                     )
                 ],
             ]
@@ -1790,8 +1790,8 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     price = api.get_native_price(chain_native)
     web3 = Web3(Web3.HTTPProvider(chain_web3))
-    address = to_checksum_address(ca.lpool)
-    contract = web3.eth.contract(address=address, abi=api.get_abi(ca.lpool, chain))
+    address = to_checksum_address(ca.LPOOL)
+    contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
     liquidation_status = ""
     try:
         liquidation = contract.functions.canLiquidate(int(loan_id)).call()
@@ -1835,7 +1835,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text=f"X7 Lending Pool Contract",
-                        url=f"{chain_address_url}{ca.lpool}#code",
+                        url=f"{chain_address_url}{ca.LPOOL}#code",
                     )
                 ],
             ]
@@ -1862,9 +1862,9 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     else:
         loan_types = {
-            "ill001": (loans.ill001_name, loans.ill001_terms, ca.ill001),
-            "ill002": (loans.ill002_name, loans.ill002_terms, ca.ill002),
-            "ill003": (loans.ill003_name, loans.ill003_terms, ca.ill003),
+            "ill001": (loans.ill001_name, loans.ill001_terms, ca.ILL001),
+            "ill002": (loans.ill002_name, loans.ill002_terms, ca.ILL002),
+            "ill003": (loans.ill003_name, loans.ill003_terms, ca.ILL003),
         }
         if loan_type in loan_types:
             loan_name, loan_terms, loan_ca = loan_types[loan_type]
@@ -1911,8 +1911,8 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for network, web3_url in networks.items():
             web3 = Web3(Web3.HTTPProvider(web3_url))
             contract = web3.eth.contract(
-                address=to_checksum_address(ca.lpool),
-                abi=api.get_abi(ca.lpool, contract_networks[network]),
+                address=to_checksum_address(ca.LPOOL),
+                abi=api.get_abi(ca.LPOOL, contract_networks[network]),
             )
             amount = contract.functions.nextLoanID().call() - 1
             contract_instances[network] = amount
@@ -1944,8 +1944,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
                 )
             ),
-            ca.x7r_pair_eth,
-            ca.x7dao_pair_eth,
+            ca.X7R_PAIR_ETH,
+            ca.X7DAO_PAIR_ETH,
         ),
     "bsc": (
         "(BSC)",
@@ -1955,8 +1955,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "https://bsc-dataseed.binance.org/",
             )
         ),
-            ca.x7r_pair_bsc,
-            ca.x7dao_pair_bsc,
+            ca.X7R_PAIR_BSC,
+            ca.X7DAO_PAIR_BSC,
     ),
     "poly": (
         "(POLYGON)",
@@ -1966,8 +1966,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
             )
         ),
-            ca.x7r_pair_poly,
-            ca.x7dao_pair_poly,
+            ca.X7R_PAIR_POLY,
+            ca.X7DAO_PAIR_POLY,
     ),
     "opti": (
         "(OPTIMISM)",
@@ -1988,8 +1988,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
             )
         ),
-            ca.x7r_pair_arb,
-            ca.x7dao_pair_arb,
+            ca.X7R_PAIR_ARB,
+            ca.X7DAO_PAIR_ARB,
     ),
     "base": (
         "(BASE)",
@@ -1999,8 +1999,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"https://mainnet.base.org",
             )
         ),
-            ca.x7r_pair_base,
-            ca.x7dao_pair_base,
+            ca.X7R_PAIR_BASE,
+            ca.X7DAO_PAIR_BASE,
     ),
     }
     if chain in chain_mappings:
@@ -2034,8 +2034,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return remaining_time_str, unlock_datetime_str
         
-    address = to_checksum_address(ca.time_lock)
-    contract = web3.eth.contract(address=address, abi=api.get_abi(ca.time_lock, chain))
+    address = to_checksum_address(ca.TIME_LOCK)
+    contract = web3.eth.contract(address=address, abi=api.get_abi(ca.TIME_LOCK, chain))
     now = datetime.utcnow()
 
     x7r_remaining_time_str, x7r_unlock_datetime_str = calculate_remaining_time(web3, contract, x7r_pair, now)
@@ -2055,7 +2055,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Token Time Lock Contract",
-                        url=f"{chain_url}{ca.time_lock}#readContract",
+                        url=f"{chain_url}{ca.TIME_LOCK}#readContract",
                     )
                 ],
             ]
@@ -2080,8 +2080,8 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
 
-    holders = api.get_nft_holder_count(ca.magister, chain_holders)
-    response = api.get_nft_holder_list(ca.magister, chain)
+    holders = api.get_nft_holder_count(ca.MAGISTER, chain_holders)
+    response = api.get_nft_holder_list(ca.MAGISTER, chain)
     magisters = [holder["owner_of"] for holder in response["result"]]
     address = "\n\n".join(map(lambda x: f"`{x}`", magisters))
     await update.message.reply_photo(
@@ -2096,7 +2096,7 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Magister Holder List",
-                        url=f"{chain_url}{ca.magister}#balances",
+                        url=f"{chain_url}{ca.MAGISTER}#balances",
                     )
                 ],
             ]
@@ -2124,27 +2124,27 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     price = {}
     token_names = {
-        ca.x7r: "X7R",
-        ca.x7dao: "X7DAO",
-        ca.x7101: "X7101",
-        ca.x7102: "X7102",
-        ca.x7103: "X7103",
-        ca.x7104: "X7104",
-        ca.x7105: "X7105",
+        ca.X7R: "X7R",
+        ca.X7DAO: "X7DAO",
+        ca.X7101: "X7101",
+        ca.X7102: "X7102",
+        ca.X7103: "X7103",
+        ca.X7104: "X7104",
+        ca.X7105: "X7105",
     }
-    for token in ca.tokens:
+    for token in ca.TOKENS:
         token_name = token_names.get(token, "Unknown Token")
         price[token] = api.get_price(token, chain)
 
     x7r_supply = api.get_x7r_supply(chain)
 
     caps = {}
-    for token in ca.tokens:
-        if token == ca.x7r:
+    for token in ca.TOKENS:
+        if token == ca.X7R:
             caps[token] = price[token] * x7r_supply
         else:
-            caps[token] = price[token] * ca.supply
-    cons_cap = sum(caps.values()) - caps[ca.x7r] - caps[ca.x7dao]
+            caps[token] = price[token] * ca.SUPPLY
+    cons_cap = sum(caps.values()) - caps[ca.X7R] - caps[ca.X7DAO]
     total_cap = sum(caps.values())
     im1 = Image.open(random.choice(media.blackhole))
     im2 = Image.open(media.eth_logo)
@@ -2152,9 +2152,9 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 22)
     i1 = ImageDraw.Draw(im1)
     market_cap_info = f"X7 Finance Market Cap Info {chain_name}\n\n"
-    market_cap_info += f'X7R:     ${"{:0,.0f}".format(caps[ca.x7r])}\n'
-    for token in ca.tokens:
-        if token == ca.x7r:
+    market_cap_info += f'X7R:     ${"{:0,.0f}".format(caps[ca.X7R])}\n'
+    for token in ca.TOKENS:
+        if token == ca.X7R:
             continue
         market_cap_info += f'{token_name}:   ${"{:0,.0f}".format(caps[token])}\n'
     market_cap_info += f'\nConstellations Combined:\n${"{:0,.0f}".format(cons_cap)}\n\n'
@@ -2167,13 +2167,13 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=f"*X7 Finance Market Cap Info {chain_name}*\n\n"
-        f'`X7R: `            ${"{:0,.0f}".format(caps[ca.x7r])}\n'
-        f'`X7DAO:`         ${"{:0,.0f}".format(caps[ca.x7dao])}\n'
-        f'`X7101:`         ${"{:0,.0f}".format(caps[ca.x7101])}\n'
-        f'`X7102:`         ${"{:0,.0f}".format(caps[ca.x7102])}\n'
-        f'`X7103:`         ${"{:0,.0f}".format(caps[ca.x7103])}\n'
-        f'`X7104:`         ${"{:0,.0f}".format(caps[ca.x7104])}\n'
-        f'`X7105:`         ${"{:0,.0f}".format(caps[ca.x7105])}\n\n'
+        f'`X7R: `            ${"{:0,.0f}".format(caps[ca.X7R])}\n'
+        f'`X7DAO:`         ${"{:0,.0f}".format(caps[ca.X7DAO])}\n'
+        f'`X7101:`         ${"{:0,.0f}".format(caps[ca.X7101])}\n'
+        f'`X7102:`         ${"{:0,.0f}".format(caps[ca.X7102])}\n'
+        f'`X7103:`         ${"{:0,.0f}".format(caps[ca.X7103])}\n'
+        f'`X7104:`         ${"{:0,.0f}".format(caps[ca.X7104])}\n'
+        f'`X7105:`         ${"{:0,.0f}".format(caps[ca.X7105])}\n\n'
         f"`Constellations Combined:`\n"
         f'${"{:0,.0f}".format(cons_cap)}\n\n'
         f"`Total Token Market Cap:`\n"
@@ -2369,21 +2369,21 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    tx_deployer = api.get_tx(ca.deployer, "eth")
-    tx_magister_6 = api.get_tx(ca.magister_6, "eth")
+    tx_deployer = api.get_tx(ca.DEPLOYER, "eth")
+    tx_magister_6 = api.get_tx(ca.MAGISTER_6, "eth")
 
-    tx_filter_deployer = [d for d in tx_deployer["result"] if d["to"] in f"{ca.dead}".lower()]
-    tx_filter_magister_6 = [d for d in tx_magister_6["result"] if d["to"] in f"{ca.dead}".lower()]
+    tx_filter_deployer = [d for d in tx_deployer["result"] if d["to"] in f"{ca.DEAD}".lower()]
+    tx_filter_magister_6 = [d for d in tx_magister_6["result"] if d["to"] in f"{ca.DEAD}".lower()]
 
     recent_tx_deployer = max(tx_filter_deployer, key=lambda tx: int(tx["timeStamp"]), default=None)
     recent_tx_magister_6 = max(tx_filter_magister_6, key=lambda tx: int(tx["timeStamp"]), default=None)
 
     if recent_tx_deployer and (not recent_tx_magister_6 or int(recent_tx_deployer["timeStamp"]) > int(recent_tx_magister_6["timeStamp"])):
         recent_tx = recent_tx_deployer
-        address = ca.deployer
+        address = ca.DEPLOYER
     elif recent_tx_magister_6:
         recent_tx = recent_tx_magister_6
-        address = ca.magister_6
+        address = ca.MAGISTER_6
     message = bytes.fromhex(recent_tx["input"][2:]).decode("utf-8")
     time = datetime.utcfromtimestamp(int(recent_tx["timeStamp"]))
     duration = datetime.utcnow() - time
@@ -2467,8 +2467,8 @@ async def pair(update: Update, context: CallbackContext):
     for network, web3_url in networks.items():
         web3 = Web3(Web3.HTTPProvider(web3_url))
         contract = web3.eth.contract(
-            address=to_checksum_address(ca.factory),
-            abi=api.get_abi(ca.factory, contract_networks[network]),
+            address=to_checksum_address(ca.FACTORY),
+            abi=api.get_abi(ca.FACTORY, contract_networks[network]),
         )
         amount = contract.functions.allPairsLength().call()
         contract_instances[network] = amount
@@ -2520,14 +2520,14 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     try:
         pioneer_id = " ".join(context.args)
         data = api.get_os_nft_collection("/x7-pioneer")
-        floor = api.get_nft_floor(ca.pioneer, "eth")
+        floor = api.get_nft_floor(ca.PIONEER, "eth")
         if floor != "N/A":
             floor_round = round(floor, 2)
             floor_dollar = floor * float(api.get_native_price("eth")) / 1**18
         else:
             floor_round = "N/A"
             floor_dollar = 0 
-        pioneer_pool = api.get_native_balance(ca.pioneer, "eth")
+        pioneer_pool = api.get_native_balance(ca.PIONEER, "eth")
         each = float(pioneer_pool) / 639
         each_dollar = float(each) * float(api.get_native_price("eth")) / 1**18
         total_dollar = float(pioneer_pool) * float(api.get_native_price("eth")) / 1**18
@@ -2572,7 +2572,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 ),
             )
         else:
-            data = api.get_os_nft_id(ca.pioneer, pioneer_id)
+            data = api.get_os_nft_id(ca.PIONEER, pioneer_id)
             status = data["nft"]["traits"][0]["value"]
             image_url = data["nft"]["image_url"]
             await update.message.reply_photo(
@@ -2592,7 +2592,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                         [
                             InlineKeyboardButton(
                                 text="Opensea",
-                                url=f"https://pro.opensea.io/nft/ethereum/{ca.pioneer}/{pioneer_id}",
+                                url=f"https://pro.opensea.io/nft/ethereum/{ca.PIONEER}/{pioneer_id}",
                             )
                         ],
                     ]
@@ -2605,66 +2605,66 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        eth_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "eth")
+        eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "eth")
         eth_lpool_reserve_dollar = (
             float(eth_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
         )
-        eth_lpool = api.get_native_balance(ca.lpool, "eth")
+        eth_lpool = api.get_native_balance(ca.LPOOL, "eth")
         eth_lpool_dollar = (
             float(eth_lpool) * float(api.get_native_price("eth")) / 1**18
         )
         eth_pool = round(float(eth_lpool_reserve) + float(eth_lpool), 2)
         eth_dollar = eth_lpool_reserve_dollar + eth_lpool_dollar
 
-        bsc_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "bsc")
+        bsc_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "bsc")
         bsc_lpool_reserve_dollar = (
             float(bsc_lpool_reserve) * float(api.get_native_price("bnb")) / 1**18
         )
-        bsc_lpool = api.get_native_balance(ca.lpool, "bsc")
+        bsc_lpool = api.get_native_balance(ca.LPOOL, "bsc")
         bsc_lpool_dollar = (
             float(bsc_lpool) * float(api.get_native_price("bnb")) / 1**18
         )
         bsc_pool = round(float(bsc_lpool_reserve) + float(bsc_lpool), 2)
         bsc_dollar = bsc_lpool_reserve_dollar + bsc_lpool_dollar
 
-        poly_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "poly")
+        poly_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "poly")
         poly_lpool_reserve_dollar = (
             float(poly_lpool_reserve) * float(api.get_native_price("matic")) / 1**18
         )
-        poly_lpool = api.get_native_balance(ca.lpool, "poly")
+        poly_lpool = api.get_native_balance(ca.LPOOL, "poly")
         poly_lpool_dollar = (
             float(poly_lpool) * float(api.get_native_price("matic")) / 1**18
         )
         poly_pool = round(float(poly_lpool_reserve) + float(poly_lpool), 2)
         poly_dollar = poly_lpool_reserve_dollar + poly_lpool_dollar
 
-        arb_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "arb")
+        arb_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "arb")
         arb_lpool_reserve_dollar = (
             float(arb_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
         )
-        arb_lpool = api.get_native_balance(ca.lpool, "arb")
+        arb_lpool = api.get_native_balance(ca.LPOOL, "arb")
         arb_lpool_dollar = (
             float(arb_lpool) * float(api.get_native_price("eth")) / 1**18
         )
         arb_pool = round(float(arb_lpool_reserve) + float(arb_lpool), 2)
         arb_dollar = arb_lpool_reserve_dollar + arb_lpool_dollar
 
-        opti_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "opti")
+        opti_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "opti")
         opti_lpool_reserve_dollar = (
             float(opti_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
         )
-        opti_lpool = api.get_native_balance(ca.lpool, "opti")
+        opti_lpool = api.get_native_balance(ca.LPOOL, "opti")
         opti_lpool_dollar = (
             float(opti_lpool) * float(api.get_native_price("eth")) / 1**18
         )
         opti_pool = round(float(opti_lpool_reserve) + float(opti_lpool), 2)
         opti_dollar = opti_lpool_reserve_dollar + opti_lpool_dollar
 
-        base_lpool_reserve = api.get_native_balance(ca.lpool_reserve, "base")
+        base_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "base")
         base_lpool_reserve_dollar = (
             float(base_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
         )
-        base_lpool = api.get_native_balance(ca.lpool, "base")
+        base_lpool = api.get_native_balance(ca.LPOOL, "base")
         base_lpool_dollar = (
             float(base_lpool) * float(api.get_native_price("eth")) / 1**18
         )
@@ -2745,17 +2745,17 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
             
         web3 = Web3(Web3.HTTPProvider(web3_url))
-        address = to_checksum_address(ca.lpool)
-        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.lpool, chain))
+        address = to_checksum_address(ca.LPOOL)
+        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
         available = (contract.functions.availableCapital().call() / 10**18)
 
-        lpool_reserve = api.get_native_balance(ca.lpool_reserve, chain)
+        lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
         lpool_reserve_dollar = (
             float(lpool_reserve)
             * float(api.get_native_price(chain_native))
             / 1**18
         )
-        lpool = float(api.get_native_balance(ca.lpool, chain))
+        lpool = float(api.get_native_balance(ca.LPOOL, chain))
         lpool_dollar = (
             float(lpool) * float(api.get_native_price(chain_native)) / 1**18
         )
@@ -2808,13 +2808,13 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="Lending Pool Contract",
-                            url=f"{chain_url}{ca.lpool}",
+                            url=f"{chain_url}{ca.LPOOL}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Lending Pool Reserve Contract",
-                            url=f"{chain_url}{ca.lpool_reserve}",
+                            url=f"{chain_url}{ca.LPOOL_RESERVE}",
                         )
                     ],
                 ]
@@ -2994,13 +2994,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 [
                                     InlineKeyboardButton(
                                         text="X7R Chart - Rewards Token",
-                                        url=f"{url.DEX_TOOLS_ETH}{ca.x7r_pair_eth}",
+                                        url=f"{url.DEX_TOOLS_ETH}{ca.X7R_PAIR_ETH}",
                                     )
                                 ],
                                 [
                                     InlineKeyboardButton(
                                         text="X7DAO Chart - Governance Token",
-                                        url=f"{url.DEX_TOOLS_ETH}{ca.x7dao_pair_eth}",
+                                        url=f"{url.DEX_TOOLS_ETH}{ca.X7DAO_PAIR_ETH}",
                                     )
                                 ],
                             ]
@@ -3008,13 +3008,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                     return
                 x7_token_mappings = {
-                    "x7r": ("X7R", api.get_x7r_supply("eth"), media.x7r_logo, ca.x7r, ca.x7r_pair_eth),
-                    "x7dao": ("X7DAO", ca.supply, media.x7dao_logo, ca.x7dao, ca.x7dao_pair_eth),
-                    "x7101": ("X7101", ca.supply, media.x7101_logo, ca.x7101, ca.x7101_pair_eth),
-                    "x7102": ("X7102", ca.supply, media.x7102_logo, ca.x7102, ca.x7102_pair_eth),
-                    "x7103": ("X7103", ca.supply, media.x7103_logo, ca.x7103, ca.x7103_pair_eth),
-                    "x7104": ("X7104", ca.supply, media.x7104_logo, ca.x7104, ca.x7104_pair_eth),
-                    "x7105": ("X7105", ca.supply, media.x7105_logo, ca.x7105, ca.x7105_pair_eth),
+                    "x7r": ("X7R", api.get_x7r_supply("eth"), media.x7r_logo, ca.X7R, ca.X7R_PAIR_ETH),
+                    "x7dao": ("X7DAO", ca.SUPPLY, media.x7dao_logo, ca.X7DAO, ca.X7DAO_PAIR_ETH),
+                    "x7101": ("X7101", ca.SUPPLY, media.x7101_logo, ca.X7101, ca.X7101_PAIR_ETH),
+                    "x7102": ("X7102", ca.SUPPLY, media.x7102_logo, ca.X7102, ca.X7102_PAIR_ETH),
+                    "x7103": ("X7103", ca.SUPPLY, media.x7103_logo, ca.X7103, ca.X7103_PAIR_ETH),
+                    "x7104": ("X7104", ca.SUPPLY, media.x7104_logo, ca.X7104, ca.X7104_PAIR_ETH),
+                    "x7105": ("X7105", ca.SUPPLY, media.x7105_logo, ca.X7105, ca.X7105_PAIR_ETH),
                 }
                 if search in x7_token_mappings:
                     token_name, token_supply, token_logo, token_ca, token_pair = x7_token_mappings[search]
@@ -3373,16 +3373,16 @@ async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.router}"),
-            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.router}"),
+            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.ROUTER}"),
         ],
         [
-            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.router}"),
-            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.router}"),
+            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.ROUTER}"),
         ],
         [
-            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.router}"),
-            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.router}"),
+            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.ROUTER}"),
         ],
     ]
 
@@ -3663,12 +3663,12 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, ca.com_multi_eth, ca.dev_multi_eth),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, ca.com_multi_bsc, ca.dev_multi_bsc),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, ca.com_multi_poly, ca.dev_multi_poly),
-        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, ca.com_multi_opti, ca.dev_multi_opti),
-        "arb": ("(ARB)", url.ARB_ADDRESS, ca.com_multi_arb, ca.dev_multi_arb),
-        "base": ("(BASE)", url.BASE_ADDRESS, ca.com_multi_base, ca.dev_multi_base),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, ca.COM_MULTI_ETH, ca.DEV_MULTI_ETH),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, ca.COM_MULTI_BSC, ca.DEV_MULTI_BSC),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, ca.COM_MULTI_POLY, ca.DEV_MULTI_POLY),
+        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, ca.COM_MULTI_OPTI, ca.DEV_MULTI_OPTI),
+        "arb": ("(ARB)", url.ARB_ADDRESS, ca.COM_MULTI_ARB, ca.DEV_MULTI_ARB),
+        "base": ("(BASE)", url.BASE_ADDRESS, ca.COM_MULTI_BASE, ca.DEV_MULTI_BASE),
     }
     if chain in chain_mappings:
         chain_name, chain_url, com_wallet, dev_wallet = chain_mappings[chain]
@@ -3731,84 +3731,84 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         ],
         [
             InlineKeyboardButton(
-                text="X7100 Liquidity Hub", url=f"{chain_url}{ca.x7100_liq_hub}"
+                text="X7100 Liquidity Hub", url=f"{chain_url}{ca.X7100_LIQ_HUB}"
             ),
             InlineKeyboardButton(
-                text="X7R Liquidity Hub", url=f"{chain_url}{ca.x7r_liq_hub}"
+                text="X7R Liquidity Hub", url=f"{chain_url}{ca.X7R_LIQ_HUB}"
             ),
         ],
         [
             InlineKeyboardButton(
-                text="X7DAO Liquidity Hub", url=f"{chain_url}{ca.x7dao_liq_hub}"
+                text="X7DAO Liquidity Hub", url=f"{chain_url}{ca.X7DAO_LIQ_HUB}"
             ),
             InlineKeyboardButton(
-                text="X7 Token Burner", url=f"{chain_url}{ca.burner}"
+                text="X7 Token Burner", url=f"{chain_url}{ca.BURNER}"
             ),
         ],
         [
             InlineKeyboardButton(
                 text="X7100 Discount Authority",
-                url=f"{chain_url}{ca.x7100_discount}",
+                url=f"{chain_url}{ca.X7100_DISCOUNT}",
             ),
             InlineKeyboardButton(
                 text="X7R Discount Authority",
-                url=f"{chain_url}{ca.x7r_discount}",
+                url=f"{chain_url}{ca.X7R_DISCOUNT}",
             ),
         ],
         [
             InlineKeyboardButton(
                 text="X7DAO Discount Authority",
-                url=f"{chain_url}{ca.x7dao_discount}",
+                url=f"{chain_url}{ca.X7DAO_DISCOUNT}",
             ),
             InlineKeyboardButton(
-                text="X7 Token Time Lock", url=f"{chain_url}{ca.time_lock}"
+                text="X7 Token Time Lock", url=f"{chain_url}{ca.TIME_LOCK}"
             ),
         ],
         [
             InlineKeyboardButton(
                 text="X7 Ecosystem Splitter",
-                url=f"{chain_url}{ca.eco_splitter}",
+                url=f"{chain_url}{ca.ECO_SPLITTER}",
             ),
             InlineKeyboardButton(
                 text="X7 Treasury Splitter",
-                url=f"{chain_url}{ca.treasury_splitter}",
+                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
             ),
         ],
         [
             InlineKeyboardButton(
                 text="X7 Profit Share Splitter",
-                url=f"{chain_url}{ca.profit_sharing}",
+                url=f"{chain_url}{ca.PROFIT_SHARING}",
             ),
             InlineKeyboardButton(
                 text="X7 Lending Pool Reserve",
-                url=f"{chain_url}{ca.lpool_reserve}",
+                url=f"{chain_url}{ca.LPOOL_RESERVE}",
             ),
         ],
         [
             InlineKeyboardButton(
                 text="X7 Xchange Discount Authority",
-                url=f"{chain_url}{ca.xchange_discount}",
+                url=f"{chain_url}{ca.XCHANGE_DISCOUNT}",
             ),
             InlineKeyboardButton(
                 text="X7 Lending Discount Authority",
-                url=f"{chain_url}{ca.lending_discount}",
+                url=f"{chain_url}{ca.LENDING_DISCOUNT}",
             ),
         ],
         [
             InlineKeyboardButton(
-                text="X7 Xchange Router", url=f"{chain_url}{ca.router}"
+                text="X7 Xchange Router", url=f"{chain_url}{ca.ROUTER}"
             ),
             InlineKeyboardButton(
                 text="X7 Xchange Router with Discounts",
-                url=f"{chain_url}{ca.discount_router}",
+                url=f"{chain_url}{ca.DISCOUNT_ROUTER}",
             ),
         ],
         [
             InlineKeyboardButton(
-                text="X7 Lending Pool Contract", url=f"{chain_url}{ca.lpool}"
+                text="X7 Lending Pool Contract", url=f"{chain_url}{ca.LPOOL}"
             ),
             InlineKeyboardButton(
-                text="X7 Xchange Factory", url=f"{chain_url}{ca.factory}"
+                text="X7 Xchange Factory", url=f"{chain_url}{ca.FACTORY}"
             ),
         ],
     ]
@@ -3860,19 +3860,19 @@ async def splitters(update: Update, context):
                         [
                             InlineKeyboardButton(
                                 text="Ecosystem Splitter",
-                                url=f"{chain_url}{ca.eco_splitter}",
+                                url=f"{chain_url}{ca.ECO_SPLITTER}",
                             )
                         ],
                         [
                             InlineKeyboardButton(
                                 text="Treasury Splitter",
-                                url=f"{chain_url}{ca.treasury_splitter}",
+                                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
                             )
                         ],
                         [
                             InlineKeyboardButton(
                                 text="Profit Share Splitter",
-                                url=f"{chain_url}{ca.profit_sharing}",
+                                url=f"{chain_url}{ca.PROFIT_SHARING}",
                             )
                         ],
                     ]
@@ -3886,9 +3886,9 @@ async def splitters(update: Update, context):
                 await update.message.reply_text(text.CHAIN_ERROR)
                 return
             
-            treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
-            eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
-            profit_eth_raw = api.get_native_balance(ca.profit_sharing, chain)
+            treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
+            eco_eth_raw = api.get_native_balance(ca.ECO_SPLITTER, chain)
+            profit_eth_raw = api.get_native_balance(ca.PROFIT_SHARING, chain)
             treasury_eth = round(float(treasury_eth_raw), 2)
             eco_eth = round(float(eco_eth_raw), 2)
             profit_eth = round(float(profit_eth_raw), 2)
@@ -3909,19 +3909,19 @@ async def splitters(update: Update, context):
                         [
                             InlineKeyboardButton(
                                 text="Ecosystem Splitter",
-                                url=f"{chain_url}{ca.eco_splitter}",
+                                url=f"{chain_url}{ca.ECO_SPLITTER}",
                             )
                         ],
                         [
                         InlineKeyboardButton(
                             text="Profit Share Splitter",
-                            url=f"{chain_url}{ca.profit_sharing}",
+                            url=f"{chain_url}{ca.PROFIT_SHARING}",
                         )
                         ],
                         [
                             InlineKeyboardButton(
                                 text="Treasury Splitter",
-                                url=f"{chain_url}{ca.treasury_splitter}",
+                                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
                             )
                         ],
                     ]
@@ -3935,9 +3935,9 @@ async def splitters(update: Update, context):
                 await update.message.reply_text(text.CHAIN_ERROR)
                 return
             
-            treasury_eth_raw = api.get_native_balance(ca.treasury_splitter, chain)
-            eco_eth_raw = api.get_native_balance(ca.eco_splitter, chain)
-            profit_eth_raw = api.get_native_balance(ca.profit_sharing, chain)
+            treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
+            eco_eth_raw = api.get_native_balance(ca.ECO_SPLITTER, chain)
+            profit_eth_raw = api.get_native_balance(ca.PROFIT_SHARING, chain)
             treasury_eth = round(float(treasury_eth_raw), 2)
             eco_eth = round(float(eco_eth_raw), 2)
             profit_eth = round(float(profit_eth_raw), 2)
@@ -3958,19 +3958,19 @@ async def splitters(update: Update, context):
                         [
                             InlineKeyboardButton(
                                 text="Ecosystem Splitter",
-                                url=f"{chain_url}{ca.eco_splitter}",
+                                url=f"{chain_url}{ca.ECO_SPLITTER}",
                             )
                         ],
                         [
                         InlineKeyboardButton(
                             text="Profit Share Splitter",
-                            url=f"{chain_url}{ca.profit_sharing}",
+                            url=f"{chain_url}{ca.PROFIT_SHARING}",
                         )
                         ],
                         [
                             InlineKeyboardButton(
                                 text="Treasury Splitter",
-                                url=f"{chain_url}{ca.treasury_splitter}",
+                                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
                             )
                         ],
                     ]
@@ -4023,20 +4023,20 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     token_pairs = {
-        "x7r": (ca.x7r_pair_eth, ca.x7r),
-        "x7dao": (ca.x7dao_pair_eth, ca.x7dao),
-        "x7101": (ca.x7101_pair_eth, ca.x7101),
-        "x7102": (ca.x7102_pair_eth, ca.x7102),
-        "x7103": (ca.x7103_pair_eth, ca.x7103),
-        "x7104": (ca.x7104_pair_eth, ca.x7104),
-        "x7105": (ca.x7105_pair_eth, ca.x7105),
+        "x7r": (ca.X7R_PAIR_ETH, ca.X7R),
+        "x7dao": (ca.X7DAO_PAIR_ETH, ca.X7DAO),
+        "x7101": (ca.X7101_PAIR_ETH, ca.X7101),
+        "x7102": (ca.X7102_PAIR_ETH, ca.X7102),
+        "x7103": (ca.X7103_PAIR_ETH, ca.X7103),
+        "x7104": (ca.X7104_PAIR_ETH, ca.X7104),
+        "x7105": (ca.X7105_PAIR_ETH, ca.X7105),
     }
     prices = api.get_cg_price("x7r, x7dao, x7101, x7102, x7103, x7104, x7105")
     supply_info = {}
     for token, (pair, contract) in token_pairs.items():
         balance = api.get_token_balance(pair, contract, "eth")
         dollar_value = balance * prices[token]["usd"]
-        percent = round(balance / ca.supply * 100, 2)
+        percent = round(balance / ca.SUPPLY * 100, 2)
         supply_info[token] = {
             "balance": balance,
             "dollar_value": dollar_value,
@@ -4244,42 +4244,42 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "(ETH)",
             url.ETHER_ADDRESS,
             media.eth_logo,
-            ca.com_multi_eth,
+            ca.COM_MULTI_ETH,
             "eth",
         ),
         "arb": (
             "(ARB)",
             url.ARB_ADDRESS,
             media.bsc_logo,
-            ca.com_multi_arb,
+            ca.COM_MULTI_ARB,
             "eth",
         ),
         "poly": (
             "(POLYGON)",
             url.POLY_ADDRESS,
             media.poly_logo,
-            ca.com_multi_poly,
+            ca.COM_MULTI_POLY,
             "matic",
         ),
         "bsc": (
             "(BSC)",
             url.BSC_ADDRESS,
             media.bsc_logo,
-            ca.com_multi_bsc,
+            ca.COM_MULTI_BSC,
             "bnb",
         ),
         "opti": (
             "(OP)",
             url.OPTI_ADDRESS,
             media.opti_logo,
-            ca.com_multi_opti,
+            ca.COM_MULTI_OPTI,
             "eth",
         ),
         "base": (
             "(BASE)",
             url.BASE_ADDRESS,
             media.base_logo,
-            ca.com_multi_base,
+            ca.COM_MULTI_BASE,
             "eth",
         ),
     }
@@ -4298,18 +4298,18 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     com_eth_raw = api.get_native_balance(chain_com_multi, chain)
     com_eth = round(float(com_eth_raw), 2)
     com_dollar = float(com_eth) * float(native_price)
-    treasury_eth = api.get_native_balance(ca.treasury_splitter, chain)
-    eco_eth = api.get_native_balance(ca.eco_splitter, chain)
+    treasury_eth = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
+    eco_eth = api.get_native_balance(ca.ECO_SPLITTER, chain)
     eco_dollar = float(eco_eth) * float(native_price)
     treasury_dollar = float(treasury_eth) * float(native_price)
-    com_usdt_balance = api.get_stables_balance(chain_com_multi, ca.usdt, chain)
-    com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.usdc, chain)
+    com_usdt_balance = api.get_stables_balance(chain_com_multi, ca.USDT, chain)
+    com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.USDC, chain)
     stables = com_usdt_balance + com_usdc_balance
-    com_x7r_balance = api.get_token_balance(chain_com_multi, ca.x7r, chain)
-    com_x7r_price = com_x7r_balance * api.get_price(ca.x7r, chain)
-    com_x7dao_balance = api.get_token_balance(chain_com_multi, ca.x7dao, chain)
-    com_x7dao_price = com_x7dao_balance * api.get_price(ca.x7dao, chain)
-    com_x7d_balance = api.get_token_balance(chain_com_multi, ca.x7d, chain)
+    com_x7r_balance = api.get_token_balance(chain_com_multi, ca.X7R, chain)
+    com_x7r_price = com_x7r_balance * api.get_price(ca.X7R, chain)
+    com_x7dao_balance = api.get_token_balance(chain_com_multi, ca.X7DAO, chain)
+    com_x7dao_price = com_x7dao_balance * api.get_price(ca.X7DAO, chain)
+    com_x7d_balance = api.get_token_balance(chain_com_multi, ca.X7D, chain)
     com_x7d_price = com_x7d_balance * api.get_native_price(chain_native)
     com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price + stables
     im2 = Image.open(chain_logo)
@@ -4359,13 +4359,13 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Ecosystem Splitter Contract",
-                        url=f"{chain_url}{ca.eco_splitter}",
+                        url=f"{chain_url}{ca.ECO_SPLITTER}",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="Treasury Splitter Contract",
-                        url=f"{chain_url}{ca.treasury_splitter}",
+                        url=f"{chain_url}{ca.TREASURY_SPLITTER}",
                     )
                 ],
             ]
@@ -4461,12 +4461,12 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, media.eth_logo, "eth", ca.usdc, ca.usdt),
-        "arb": ("(ARB)", url.ARB_ADDRESS, media.bsc_logo, "eth", ca.ausdc, ca.ausdt),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, media.poly_logo, "matic", ca.pusdc, ca.pusdt),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, media.bsc_logo, "bnb", ca.busdc, ca.busdc),
-        "opti": ("(OPTI)", url.OPTI_ADDRESS, media.opti_logo, "eth", ca.ousdc, ca.ousdc),
-        "base": ("(BASE)", url.BASE_ADDRESS, media.base_logo, "eth", ca.usdbc, ca.cbusdc),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, media.eth_logo, "eth", ca.USDC, ca.USDT),
+        "arb": ("(ARB)", url.ARB_ADDRESS, media.bsc_logo, "eth", ca.AUSDC, ca.AUSDT),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, media.poly_logo, "matic", ca.PUSDC, ca.PUSDT),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, media.bsc_logo, "bnb", ca.BUSDC, ca.BUSDC),
+        "opti": ("(OPTI)", url.OPTI_ADDRESS, media.opti_logo, "eth", ca.OUSDC, ca.OUSDC),
+        "base": ("(BASE)", url.BASE_ADDRESS, media.base_logo, "eth", ca.USDBC, ca.CBUSDC),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_logo, chain_native, chain_usdc, chain_usdt = chain_mappings[chain]
@@ -4477,21 +4477,21 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     native_price = api.get_native_price(chain_native)
     eth = api.get_native_balance(wallet, chain)
     dollar = float(eth) * float(native_price)
-    x7r_balance = api.get_token_balance(wallet, ca.x7r, chain)
-    x7r_price = x7r_balance * api.get_price(ca.x7r, chain)
-    x7dao_balance = api.get_token_balance(wallet, ca.x7dao, chain)
-    x7dao_price = x7dao_balance * api.get_price(ca.x7dao, chain)
-    x7101_balance = api.get_token_balance(wallet, ca.x7101, chain)
-    x7101_price = x7101_balance * api.get_price(ca.x7101, chain)
-    x7102_balance = api.get_token_balance(wallet, ca.x7102, chain)
-    x7102_price = x7102_balance * api.get_price(ca.x7102, chain)
-    x7103_balance = api.get_token_balance(wallet, ca.x7103, chain)
-    x7103_price = x7103_balance * api.get_price(ca.x7103, chain)
-    x7104_balance = api.get_token_balance(wallet, ca.x7104, chain)
-    x7104_price = x7104_balance * api.get_price(ca.x7104, chain)
-    x7105_balance = api.get_token_balance(wallet, ca.x7105, chain)
-    x7105_price = x7105_balance * api.get_price(ca.x7105, chain)
-    x7d_balance = api.get_token_balance(wallet, ca.x7d, chain)
+    x7r_balance = api.get_token_balance(wallet, ca.X7R, chain)
+    x7r_price = x7r_balance * api.get_price(ca.X7R, chain)
+    x7dao_balance = api.get_token_balance(wallet, ca.X7DAO, chain)
+    x7dao_price = x7dao_balance * api.get_price(ca.X7DAO, chain)
+    x7101_balance = api.get_token_balance(wallet, ca.X7101, chain)
+    x7101_price = x7101_balance * api.get_price(ca.X7101, chain)
+    x7102_balance = api.get_token_balance(wallet, ca.X7102, chain)
+    x7102_price = x7102_balance * api.get_price(ca.X7102, chain)
+    x7103_balance = api.get_token_balance(wallet, ca.X7103, chain)
+    x7103_price = x7103_balance * api.get_price(ca.X7103, chain)
+    x7104_balance = api.get_token_balance(wallet, ca.X7104, chain)
+    x7104_price = x7104_balance * api.get_price(ca.X7104, chain)
+    x7105_balance = api.get_token_balance(wallet, ca.X7105, chain)
+    x7105_price = x7105_balance * api.get_price(ca.X7105, chain)
+    x7d_balance = api.get_token_balance(wallet, ca.X7D, chain)
     x7d_price = x7d_balance * api.get_native_price(chain_native)
     usdc_balance = api.get_stables_balance(wallet, chain_usdc, chain)
     usdt_balance = api.get_stables_balance(wallet, chain_usdt, chain)
@@ -4506,7 +4506,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         + x7104_price
         + x7105_price
     )
-    percentages = [round(balance / ca.supply * 100, 2) for balance in [x7dao_balance, x7101_balance, x7102_balance, x7103_balance, x7104_balance, x7105_balance]]
+    percentages = [round(balance / ca.SUPPLY * 100, 2) for balance in [x7dao_balance, x7101_balance, x7102_balance, x7103_balance, x7104_balance, x7105_balance]]
     if x7r_balance == 0:
         x7r_percent = 0
     else:
@@ -4677,11 +4677,11 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain = "eth"
     if chain in tokens.x7d_chain_mappings:
         chain_name, chain_url, chain_native = tokens.x7d_chain_mappings[chain]
-        lpool_reserve = api.get_native_balance(ca.lpool_reserve, chain)
+        lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
         lpool_reserve_dollar = (
             float(lpool_reserve) * float(api.get_native_price(chain_native)) / 1**18
         )
-        lpool = api.get_native_balance(ca.lpool, chain)
+        lpool = api.get_native_balance(ca.LPOOL, chain)
         lpool_dollar = (
             float(lpool) * float(api.get_native_price(chain_native)) / 1**18
         )
@@ -4689,7 +4689,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
-        holders = api.get_holders(ca.x7d, chain)
+        holders = api.get_holders(ca.X7D, chain)
     im1 = Image.open((random.choice(media.blackhole)))
     im2 = Image.open(media.x7d_logo)
     im1.paste(im2, (720, 20), im2)
@@ -4736,14 +4736,14 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain.startswith("$"):
-        eth_price = api.get_price(ca.x7dao, "eth")
+        eth_price = api.get_price(ca.X7DAO, "eth")
         eth_amount = float(chain[1:]) / float(eth_price)
         try:
-            bsc_price = api.get_price(ca.x7dao, "bsc")
-            arb_price = api.get_price(ca.x7dao, "arb")
-            poly_price = api.get_price(ca.x7dao, "poly")
-            opti_price = api.get_price(ca.x7dao, "opti")
-            opti_price = api.get_price(ca.x7dao, "base")
+            bsc_price = api.get_price(ca.X7DAO, "bsc")
+            arb_price = api.get_price(ca.X7DAO, "arb")
+            poly_price = api.get_price(ca.X7DAO, "poly")
+            opti_price = api.get_price(ca.X7DAO, "opti")
+            opti_price = api.get_price(ca.X7DAO, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -4796,14 +4796,14 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "proposal":
         chain = "500000"
     if chain == "500000":
-        eth_price = api.get_price(ca.x7dao, "eth")
+        eth_price = api.get_price(ca.X7DAO, "eth")
         eth_amount = float(chain) * float(eth_price)
         try:
-            bsc_price = api.get_price(ca.x7dao, "bsc")
-            arb_price = api.get_price(ca.x7dao, "arb")
-            poly_price = api.get_price(ca.x7dao, "poly")
-            opti_price = api.get_price(ca.x7dao, "opti")
-            base_price = api.get_price(ca.x7dao, "base")
+            bsc_price = api.get_price(ca.X7DAO, "bsc")
+            arb_price = api.get_price(ca.X7DAO, "arb")
+            poly_price = api.get_price(ca.X7DAO, "poly")
+            opti_price = api.get_price(ca.X7DAO, "opti")
+            base_price = api.get_price(ca.X7DAO, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -4857,14 +4857,14 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7dao, "eth")
+        eth_price = api.get_price(ca.X7DAO, "eth")
         eth_amount = float(chain) * float(eth_price)
         try:
-            bsc_price = api.get_price(ca.x7dao, "bsc")
-            arb_price = api.get_price(ca.x7dao, "arb")
-            poly_price = api.get_price(ca.x7dao, "poly")
-            opti_price = api.get_price(ca.x7dao, "opti")
-            base_price = api.get_price(ca.x7dao, "base")
+            bsc_price = api.get_price(ca.X7DAO, "bsc")
+            arb_price = api.get_price(ca.X7DAO, "arb")
+            poly_price = api.get_price(ca.X7DAO, "poly")
+            opti_price = api.get_price(ca.X7DAO, "opti")
+            base_price = api.get_price(ca.X7DAO, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -4926,8 +4926,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7dao_chain_mappings[chain]
-        holders = api.get_holders(ca.x7dao, chain)
-        price = api.get_price(ca.x7dao, chain)
+        holders = api.get_holders(ca.X7DAO, chain)
+        price = api.get_price(ca.X7DAO, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7dao")
         volume = cg["x7dao"]["usd_24h_vol"]
@@ -4940,11 +4940,11 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
             ath_change = f'{api.get_ath("x7dao")[1]}'
             ath_value = api.get_ath("x7dao")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"     
     else:
@@ -4970,7 +4970,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         ### REMOVE AT MIGRATION ###
     except Exception:
-        x7dao_weth = api.get_native_balance(ca.x7dao_liq_lock, chain)
+        x7dao_weth = api.get_native_balance(ca.X7DAO_LIQ_LOCK, chain)
         x7dao_weth_dollar = float(x7dao_weth) * api.get_native_price(chain_native)
         x7dao_token = 0
         x7dao_token_dollar = 0
@@ -5003,19 +5003,19 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7DAO Info {chain_name}\n\n"
         f"X7DAO Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7dao}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7DAO}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7dao}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7DAO}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7dao}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7DAO}")],
             ]
         ),
     )
@@ -5030,11 +5030,11 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         eth_price = api.get_price(ca.x7r, "eth")
         eth_amount = float(chain[1:]) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7r, "bsc")
-            arb_price = api.get_price(ca.x7r, "arb")
-            poly_price = api.get_price(ca.x7r, "poly")
-            opti_price = api.get_price(ca.x7r, "opti")
-            base_price = api.get_price(ca.x7r, "base")
+            bsc_price = api.get_price(ca.X7R, "bsc")
+            arb_price = api.get_price(ca.X7R, "arb")
+            poly_price = api.get_price(ca.X7R, "poly")
+            opti_price = api.get_price(ca.X7R, "opti")
+            base_price = api.get_price(ca.X7R, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -5085,14 +5085,14 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7r, "eth")
+        eth_price = api.get_price(ca.X7R, "eth")
         eth_amount = float(chain) * float(eth_price)
         try:
-            bsc_price = api.get_price(ca.x7r, "bsc")
-            arb_price = api.get_price(ca.x7r, "arb")
-            poly_price = api.get_price(ca.x7r, "poly")
-            opti_price = api.get_price(ca.x7r, "opti")
-            base_price = api.get_price(ca.x7r, "base")
+            bsc_price = api.get_price(ca.X7R, "bsc")
+            arb_price = api.get_price(ca.X7R, "arb")
+            poly_price = api.get_price(ca.X7R, "poly")
+            opti_price = api.get_price(ca.X7R, "opti")
+            base_price = api.get_price(ca.X7R, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -5155,8 +5155,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7r_chain_mappings[chain]
-        holders = api.get_holders(ca.x7r, chain)
-        price = api.get_price(ca.x7r, chain)
+        holders = api.get_holders(ca.X7R, chain)
+        price = api.get_price(ca.X7R, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7r")
         volume = cg["x7r"]["usd_24h_vol"]
@@ -5197,7 +5197,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AT MIGRATION ###
     except Exception:
-        x7r_weth = api.get_native_balance(ca.x7r_liq_lock, chain)
+        x7r_weth = api.get_native_balance(ca.X7R_LIQ_LOCK, chain)
         x7r_weth_dollar = float(x7r_weth) * api.get_native_price(chain_native)
         x7r_token = 0
         x7r_token_dollar = 0
@@ -5236,13 +5236,13 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7r}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7R}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7r}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7R}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7r}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7R}")],
             ]
         ),
     )
@@ -5253,14 +5253,14 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain.startswith("$"):
-        eth_price = api.get_price(ca.x7101, "eth")
+        eth_price = api.get_price(ca.X7101, "eth")
         eth_amount = float(chain[1:]) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7101, "bsc")
-            arb_price = api.get_price(ca.x7101, "arb")
-            poly_price = api.get_price(ca.x7101, "poly")
-            opti_price = api.get_price(ca.x7101, "opti")
-            base_price = api.get_price(ca.x7101, "base")
+            bsc_price = api.get_price(ca.X7101, "bsc")
+            arb_price = api.get_price(ca.X7101, "arb")
+            poly_price = api.get_price(ca.X7101, "poly")
+            opti_price = api.get_price(ca.X7101, "opti")
+            base_price = api.get_price(ca.X7101, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -5311,14 +5311,14 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7101, "eth")
+        eth_price = api.get_price(ca.X7101, "eth")
         eth_amount = float(chain) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7101, "bsc")
-            arb_price = api.get_price(ca.x7101, "arb")
-            poly_price = api.get_price(ca.x7101, "poly")
-            opti_price = api.get_price(ca.x7101, "opti")
-            base_price = api.get_price(ca.x7101, "base")
+            bsc_price = api.get_price(ca.X7101, "bsc")
+            arb_price = api.get_price(ca.X7101, "arb")
+            poly_price = api.get_price(ca.X7101, "poly")
+            opti_price = api.get_price(ca.X7101, "opti")
+            base_price = api.get_price(ca.X7101, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -5381,8 +5381,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7101_chain_mappings[chain]
-        holders = api.get_holders(ca.x7101, chain)
-        price = api.get_price(ca.x7101, chain)
+        holders = api.get_holders(ca.X7101, chain)
+        price = api.get_price(ca.X7101, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7101")
         volume = cg["x7101"]["usd_24h_vol"]
@@ -5396,11 +5396,11 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
             ath_change = f'{api.get_ath("x7101")[1]}'
             ath_value = api.get_ath("x7101")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"     
     else:
@@ -5426,7 +5426,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AT MIGRATION ###
     except Exception:
-        x7101_weth = api.get_native_balance(ca.cons_liq_lock, chain)
+        x7101_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         x7101_weth_dollar = float(x7101_weth) * api.get_native_price(chain_native)
         x7101_token = 0
         x7101_token_dollar = 0
@@ -5459,19 +5459,19 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7101 Info {chain_name}\n\n"
         f"X7101 Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7101}`\n\n{api.get_quote()}",
+        F"CONTRACT ADDRESS:\N`{ca.X7101}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7101}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7101}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7101}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7101}")],
             ]
         ),
     )
@@ -5482,14 +5482,14 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain.startswith("$"):
-        eth_price = api.get_price(ca.x7102, "eth")
+        eth_price = api.get_price(ca.X7102, "eth")
         eth_amount = float(chain[1:]) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7102, "bsc")
-            arb_price = api.get_price(ca.x7102, "arb")
-            poly_price = api.get_price(ca.x7102, "poly")
-            opti_price = api.get_price(ca.x7102, "opti")
-            base_price = api.get_price(ca.x7102, "base")
+            bsc_price = api.get_price(ca.X7102, "bsc")
+            arb_price = api.get_price(ca.X7102, "arb")
+            poly_price = api.get_price(ca.X7102, "poly")
+            opti_price = api.get_price(ca.X7102, "opti")
+            base_price = api.get_price(ca.X7102, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -5540,14 +5540,14 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7102, "eth")
+        eth_price = api.get_price(ca.X7102, "eth")
         eth_amount = float(chain) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7102, "bsc")
-            arb_price = api.get_price(ca.x7102, "arb")
-            poly_price = api.get_price(ca.x7102, "poly")
-            opti_price = api.get_price(ca.x7102, "opti")
-            base_price = api.get_price(ca.x7102, "base")
+            bsc_price = api.get_price(ca.X7102, "bsc")
+            arb_price = api.get_price(ca.X7102, "arb")
+            poly_price = api.get_price(ca.X7102, "poly")
+            opti_price = api.get_price(ca.X7102, "opti")
+            base_price = api.get_price(ca.X7102, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -5610,8 +5610,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7102_chain_mappings[chain]
-        holders = api.get_holders(ca.x7102, chain)
-        price = api.get_price(ca.x7102, chain)
+        holders = api.get_holders(ca.X7102, chain)
+        price = api.get_price(ca.X7102, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7102")
         volume = cg["x7102"]["usd_24h_vol"]
@@ -5624,11 +5624,11 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
             ath_change = f'{api.get_ath("x7102")[1]}'
             ath_value = api.get_ath("x7102")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"  
     else:
@@ -5654,7 +5654,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AT MIGRATION ###
     except Exception:
-        x7102_weth = api.get_native_balance(ca.cons_liq_lock, chain)
+        x7102_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         x7102_weth_dollar = float(x7102_weth) * api.get_native_price(chain_native)
         x7102_token = 0
         x7102_token_dollar = 0
@@ -5687,19 +5687,19 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7102 Info {chain_name}\n\n"
         f"X7102 Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7102}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7102}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7102}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7102}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7102}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7102}")],
             ]
         ),
     )
@@ -5710,14 +5710,14 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain.startswith("$"):
-        eth_price = api.get_price(ca.x7103, "eth")
+        eth_price = api.get_price(ca.X7103, "eth")
         eth_amount = float(chain[1:]) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7103, "bsc")
-            arb_price = api.get_price(ca.x7103, "arb")
-            poly_price = api.get_price(ca.x7103, "poly")
-            opti_price = api.get_price(ca.x7103, "opti")
-            base_price = api.get_price(ca.x7103, "base")
+            bsc_price = api.get_price(ca.X7103, "bsc")
+            arb_price = api.get_price(ca.X7103, "arb")
+            poly_price = api.get_price(ca.X7103, "poly")
+            opti_price = api.get_price(ca.X7103, "opti")
+            base_price = api.get_price(ca.X7103, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -5768,14 +5768,14 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7103, "eth")
+        eth_price = api.get_price(ca.X7103, "eth")
         eth_amount = float(chain) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7103, "bsc")
-            arb_price = api.get_price(ca.x7103, "arb")
-            poly_price = api.get_price(ca.x7103, "poly")
-            opti_price = api.get_price(ca.x7103, "opti")
-            base_price = api.get_price(ca.x7103, "base")
+            bsc_price = api.get_price(ca.X7103, "bsc")
+            arb_price = api.get_price(ca.X7103, "arb")
+            poly_price = api.get_price(ca.X7103, "poly")
+            opti_price = api.get_price(ca.X7103, "opti")
+            base_price = api.get_price(ca.X7103, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -5838,8 +5838,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7103_chain_mappings[chain]
-        holders = api.get_holders(ca.x7103, chain)
-        price = api.get_price(ca.x7103, chain)
+        holders = api.get_holders(ca.X7103, chain)
+        price = api.get_price(ca.X7103, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7103")
         volume = cg["x7103"]["usd_24h_vol"]
@@ -5853,11 +5853,11 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
             ath_change = f'{api.get_ath("x7103")[1]}'
             ath_value = api.get_ath("x7103")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"
     else:
@@ -5883,7 +5883,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AT MIGRATION ###
     except Exception:
-        x7103_weth = api.get_native_balance(ca.cons_liq_lock, chain)
+        x7103_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         x7103_weth_dollar = float(x7103_weth) * api.get_native_price(chain_native)
         x7103_token = 0
         x7103_token_dollar = 0
@@ -5916,19 +5916,19 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7103 Info {chain_name}\n\n"
         f"X7103 Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7103}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7103}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7103}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7103}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7103}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7103}")],
             ]
         ),
     )
@@ -5939,14 +5939,14 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain.startswith("$"):
-        eth_price = api.get_price(ca.x7104, "eth")
+        eth_price = api.get_price(ca.X7104, "eth")
         eth_amount = float(chain[1:]) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7104, "bsc")
-            arb_price = api.get_price(ca.x7104, "arb")
-            poly_price = api.get_price(ca.x7104, "poly")
-            opti_price = api.get_price(ca.x7104, "opti")
-            base_price = api.get_price(ca.x7104, "base")
+            bsc_price = api.get_price(ca.X7104, "bsc")
+            arb_price = api.get_price(ca.X7104, "arb")
+            poly_price = api.get_price(ca.X7104, "poly")
+            opti_price = api.get_price(ca.X7104, "opti")
+            base_price = api.get_price(ca.X7104, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -5997,14 +5997,14 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7104, "eth")
+        eth_price = api.get_price(ca.X7104, "eth")
         eth_amount = float(chain) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7104, "bsc")
-            arb_price = api.get_price(ca.x7104, "arb")
-            poly_price = api.get_price(ca.x7104, "poly")
-            opti_price = api.get_price(ca.x7104, "opti")
-            base_price = api.get_price(ca.x7104, "base")
+            bsc_price = api.get_price(ca.X7104, "bsc")
+            arb_price = api.get_price(ca.X7104, "arb")
+            poly_price = api.get_price(ca.X7104, "poly")
+            opti_price = api.get_price(ca.X7104, "opti")
+            base_price = api.get_price(ca.X7104, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -6067,8 +6067,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7104_chain_mappings[chain]
-        holders = api.get_holders(ca.x7104, chain)
-        price = api.get_price(ca.x7104, chain)
+        holders = api.get_holders(ca.X7104, chain)
+        price = api.get_price(ca.X7104, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7104")
         volume = cg["x7104"]["usd_24h_vol"]
@@ -6081,11 +6081,11 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
             ath_change = f'{api.get_ath("x7104")[1]}'
             ath_value = api.get_ath("x7104")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"
     else:
@@ -6111,7 +6111,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AT MIGRATION ###
     except Exception:
-        x7104_weth = api.get_native_balance(ca.cons_liq_lock, chain)
+        x7104_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         x7104_weth_dollar = float(x7104_weth) * api.get_native_price(chain_native)
         x7104_token = 0
         x7104_token_dollar = 0
@@ -6144,19 +6144,19 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7104 Info {chain_name}\n\n"
         f"X7104 Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7104}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7104}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7104}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7104}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7104}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7104}")],
             ]
         ),
     )
@@ -6167,14 +6167,14 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain.startswith("$"):
-        eth_price = api.get_price(ca.x7105, "eth")
+        eth_price = api.get_price(ca.X7105, "eth")
         eth_amount = float(chain[1:]) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7105, "bsc")
-            arb_price = api.get_price(ca.x7105, "arb")
-            poly_price = api.get_price(ca.x7105, "poly")
-            opti_price = api.get_price(ca.x7105, "opti")
-            base_price = api.get_price(ca.x7105, "base")
+            bsc_price = api.get_price(ca.X7105, "bsc")
+            arb_price = api.get_price(ca.X7105, "arb")
+            poly_price = api.get_price(ca.X7105, "poly")
+            opti_price = api.get_price(ca.X7105, "opti")
+            base_price = api.get_price(ca.X7105, "base")
             bsc_amount = float(chain[1:]) / bsc_price
             arb_amount = float(chain[1:]) / arb_price
             poly_amount = float(chain[1:]) / poly_price
@@ -6225,14 +6225,14 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     if chain.isdigit():
-        eth_price = api.get_price(ca.x7105, "eth")
+        eth_price = api.get_price(ca.X7105, "eth")
         eth_amount = float(chain) / eth_price
         try:
-            bsc_price = api.get_price(ca.x7105, "bsc")
-            arb_price = api.get_price(ca.x7105, "arb")
-            poly_price = api.get_price(ca.x7105, "poly")
-            opti_price = api.get_price(ca.x7105, "opti")
-            base_price = api.get_price(ca.x7105, "base")
+            bsc_price = api.get_price(ca.X7105, "bsc")
+            arb_price = api.get_price(ca.X7105, "arb")
+            poly_price = api.get_price(ca.X7105, "poly")
+            opti_price = api.get_price(ca.X7105, "opti")
+            base_price = api.get_price(ca.X7105, "base")
             bsc_amount = float(chain) * bsc_price
             arb_amount = float(chain) * arb_price
             poly_amount = float(chain) * poly_price
@@ -6295,8 +6295,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = tokens.x7105_chain_mappings[chain]
-        holders = api.get_holders(ca.x7105, chain)
-        price = api.get_price(ca.x7105, chain)
+        holders = api.get_holders(ca.X7105, chain)
+        price = api.get_price(ca.X7105, chain)
     if chain == "eth":
         cg = api.get_cg_price("x7105")
         volume = cg["x7105"]["usd_24h_vol"]
@@ -6309,11 +6309,11 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = 0
         else:
             volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.supply)}'
+        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
             ath_change = f'{api.get_ath("x7105")[1]}'
             ath_value = api.get_ath("x7105")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.supply)}) {ath_change[:3]}%'
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"
         
@@ -6340,7 +6340,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ### REMOVE AT MIGRATION ###
     except Exception:
-        x7105_weth = api.get_native_balance(ca.cons_liq_lock, chain)
+        x7105_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         x7105_weth_dollar = float(x7105_weth) * api.get_native_price(chain_native)
         x7105_token = 0
         x7105_token_dollar = 0
@@ -6373,19 +6373,19 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=f"X7105 Info {chain_name}\n\n"
         f"X7105 Price: ${round(price, 8)}\n"
         f"24 Hour Change: {change}%\n"
-        f'Market Cap:  ${"{:0,.0f}".format(price * ca.supply)}\n'
+        f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
         f"24 Hour Volume: {volume}\n"
         f"ATH: {ath}\n"
         f"Holders: {holders}\n\n"
         f"Liquidity:\n"
         f"{liquidity}\n\n"
-        f"Contract Address:\n`{ca.x7105}`\n\n{api.get_quote()}",
+        f"Contract Address:\n`{ca.X7105}`\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.x7105}")],
+                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7105}")],
                 [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.x7105}")],
+                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7105}")],
             ]
         ),
     )

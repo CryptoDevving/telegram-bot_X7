@@ -20,10 +20,10 @@ from media import index as media
 web3 = Web3(Web3.HTTPProvider("https://mainnet.base.org"))
 
 
-factory = web3.eth.contract(address=ca.factory, abi=api.get_abi(ca.factory, "base"))
-ill001 = web3.eth.contract(address=ca.ill001, abi=api.get_abi(ca.ill001, "base"))
-ill002 = web3.eth.contract(address=ca.ill002, abi=api.get_abi(ca.ill002, "base"))
-ill003 = web3.eth.contract(address=ca.ill003, abi=api.get_abi(ca.ill003, "base"))
+factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, "base"))
+ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, "base"))
+ill002 = web3.eth.contract(address=ca.ILL002, abi=api.get_abi(ca.ILL002, "base"))
+ill003 = web3.eth.contract(address=ca.ILL003, abi=api.get_abi(ca.ILL003, "base"))
 
 pair_filter = factory.events.PairCreated.create_filter(fromBlock="latest")
 ill001_filter = ill001.events.LoanOriginated.create_filter(fromBlock="latest")
@@ -47,19 +47,19 @@ async def restart_script():
 
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "base")
-    if event["args"]["token0"] == ca.cbeth:
+    if event["args"]["token0"] == ca.CBETH:
         native = api.get_token_name(event["args"]["token0"], "base")
         token_name = api.get_token_name(event["args"]["token1"], "base")
         token_address = event["args"]["token1"]
-    elif event["args"]["token1"] == ca.cbeth:
+    elif event["args"]["token1"] == ca.CBETH:
         native = api.get_token_name(event["args"]["token1"], "base")
         token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
-    elif event["args"]["token0"] in ca.stables:
+    elif event["args"]["token0"] in ca.STABLES:
         native = api.get_token_name(event["args"]["token0"], "base")
         token_name = api.get_token_name(event["args"]["token1"], "base")
         token_address = event["args"]["token1"]
-    elif event["args"]["token1"] in ca.stables:
+    elif event["args"]["token1"] in ca.STABLES:
         native = api.get_token_name(event["args"]["token1"], "base")
         token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
@@ -205,8 +205,8 @@ async def new_pair(event):
 async def new_loan(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
     try:
-        address = to_checksum_address(ca.lpool)
-        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.lpool, "base"))
+        address = to_checksum_address(ca.LPOOL)
+        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, "base"))
         amount = (
             contract.functions.getRemainingLiability(
                 int(event["args"]["loanID"])
