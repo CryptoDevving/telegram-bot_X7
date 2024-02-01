@@ -71,7 +71,7 @@ async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
     response = api.twitter_v2.get_spaces(user_ids=1561721566689386496)
     if response[0] is None:
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"X7 Finance X space\n\nPlease check back for more details"
             f"\n\n{api.get_quote()}",
             parse_mode="Markdown",
@@ -119,7 +119,7 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_sticker(sticker=media.twitter_sticker)
             await update.message.reply_text(
                 f"Latest X7 Finance X Post\n\n{tweet[0].text}\n\n"
-                f"{url.twitter}status/{tweet[0].id}\n\n"
+                f"{url.TWITTER}status/{tweet[0].id}\n\n"
                 f"{random.choice(text.X_REPLIES)}"
             )
         except Exception as e:
@@ -132,7 +132,7 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             InlineKeyboardButton(
                                 text="X7 Finance X",
-                                url=f"{url.twitter}",
+                                url=f"{url.TWITTER}",
                             )
                         ],
                     ]
@@ -151,7 +151,7 @@ async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_sticker(sticker=media.twitter_sticker)
             await update.message.reply_text(
                 f"Latest X7 Finance Tweet\n\n{tweet[0].text}\n\n"
-                f"{url.twitter}status/{tweet[0].id}\n\n"
+                f"{url.TWITTER}status/{tweet[0].id}\n\n"
                 f"Retweeted {retweet_count} times, by the following members:\n\n{count}"
             )
         else:

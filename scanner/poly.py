@@ -179,25 +179,25 @@ async def new_pair(event):
                     [
                         InlineKeyboardButton(
                             text=f"Buy On Xchange",
-                            url=f"{url.xchange_buy_poly}{token_address}",
+                            url=f"{url.XCHANGE_BUY_POLY}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Chart",
-                            url=f"{url.dex_tools_poly}{event['args']['pool']}",
+                            url=f"{url.DEX_TOOLS_POLY}{event['args']['pool']}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Token Contract",
-                            url=f"{url.poly_address}{token_address}",
+                            url=f"{url.POLY_ADDRESS}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Deployer TX",
-                            url=f"{url.poly_tx}{event['transactionHash'].hex()}",
+                            url=f"{url.POLY_TX}{event['transactionHash'].hex()}",
                         )
                     ],
                 ]
@@ -261,7 +261,7 @@ async def new_loan(event):
                 [
                     InlineKeyboardButton(
                         text=f"Loan TX",
-                        url=f"{url.poly_tx}{event['transactionHash'].hex()}",
+                        url=f"{url.POLY_TX}{event['transactionHash'].hex()}",
                     )
                 ],
             ]

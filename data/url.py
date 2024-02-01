@@ -1,86 +1,86 @@
 # URLS
 
 # XCHANGE
-xchange = "https://app.x7.finance/"
-xchange_buy_eth = "https://app.x7.finance/#/swap?outputCurrency="
-xchange_buy_bsc = "https://app.x7.finance/#/swap?outputCurrency="
-xchange_buy_poly = "https://app.x7.finance/#/swap?outputCurrency="
-xchange_buy_arb = "https://app.x7.finance/#/swap?outputCurrency="
-xchange_buy_opti = "https://app.x7.finance/#/swap?outputCurrency="
-xchange_buy_base = "https://app.x7.finance/#/swap?outputCurrency="
-xchange_fund = "https://app.x7.finance/#/fund"
+XCHANGE = "https://app.x7.finance/"
+XCHANGE_BUY_ETH = "https://app.x7.finance/#/swap?outputCurrency="
+XCHANGE_BUY_BSC = "https://app.x7.finance/#/swap?outputCurrency="
+XCHANGE_BUY_POLY = "https://app.x7.finance/#/swap?outputCurrency="
+XCHANGE_BUY_ARB = "https://app.x7.finance/#/swap?outputCurrency="
+XCHANGE_BUY_OPTI = "https://app.x7.finance/#/swap?outputCurrency="
+XCHANGE_BUY_BASE = "https://app.x7.finance/#/swap?outputCurrency="
+XCHANGE_FUND = "https://app.x7.finance/#/fund"
 
 # TG
-tg_main = "t.me/x7m105portal"
-tg_alerts = "t.me/xchange_alerts"
-tg_announcements = "t.me/x7announcements"
-tg_dao = "https://telegram.me/collablandbot?start=VFBDI1RFTCNDT01NIy0xMDAyMTM5MTc4NTQx"
+TG_MAIN = "t.me/x7m105portal"
+TG_ALERTS = "t.me/xchange_alerts"
+TG_ANNOUNCEMENTS = "t.me/x7announcements"
+TG_DAO = "https://telegram.me/collablandbot?start=VFBDI1RFTCNDT01NIy0xMDAyMTM5MTc4NTQx"
 
 # ETHERSCAN
-ether_token = "https://etherscan.io/token/"
-ether_address = "https://etherscan.io/address/"
-ether_tx = "https://etherscan.io/tx/"
+ETHER_TOKEN = "https://etherscan.io/token/"
+ETHER_ADDRESS = "https://etherscan.io/address/"
+ETHER_TX = "https://etherscan.io/tx/"
 
 # BSCSCAN
-bsc_token = "https://bscscan.com/token/"
-bsc_address = "https://bscscan.com/address/"
-bsc_tx = "https://bscscan.com/tx/"
+BSC_TOKEN = "https://bscscan.com/token/"
+BSC_ADDRESS = "https://bscscan.com/address/"
+BSC_TX = "https://bscscan.com/tx/"
 
 # POLYGONSCAN
-poly_token = "https://polygonscan.com/token/"
-poly_address = "https://polygonscan.com/address/"
-poly_tx = "https://polygonscan.com/tx/"
+POLY_TOKEN = "https://polygonscan.com/token/"
+POLY_ADDRESS = "https://polygonscan.com/address/"
+POLY_TX = "https://polygonscan.com/tx/"
 
 # ARBISCAN
-arb_token = "https://arbiscan.io/token/"
-arb_address = "https://arbiscan.io/address/"
-arb_tx = "https://arbiscan.io/tx/"
+ARB_TOKEN = "https://arbiscan.io/token/"
+ARB_ADDRESS = "https://arbiscan.io/address/"
+ARB_TX = "https://arbiscan.io/tx/"
 
 # OPTIMISTIC
-opti_token = "https://optimistic.etherscan.io/token/"
-opti_address = "https://optimistic.etherscan.io/address/"
-opti_tx = "https://optimistic.etherscan.io/tx/"
+OPTI_TOKEN = "https://optimistic.etherscan.io/token/"
+OPTI_ADDRESS = "https://optimistic.etherscan.io/address/"
+OPTI_TX = "https://optimistic.etherscan.io/tx/"
 
 # BASESCAN
-base_token = "https://basescan.org/token/"
-base_address = "https://basescan.org/address/"
-base_tx = "https://basescan.org/tx/"
+BASE_TOKEN = "https://basescan.org/token/"
+BASE_ADDRESS = "https://basescan.org/address/"
+BASE_TX = "https://basescan.org/tx/"
 
 # DEXTOOLS
-dex_tools_eth = "https://www.dextools.io/app/ether/pair-explorer/"
-dex_tools_bsc = "https://www.dextools.io/app/bnb/pair-explorer/"
-dex_tools_poly = "https://www.dextools.io/app/polygon/pair-explorer/"
-dex_tools_arb = "https://www.dextools.io/app/arbitrum/pair-explorer/"
-dex_tools_opti = "https://www.dextools.io/app/optimism/pair-explorer/"
-dex_tools_base = "https://www.dextools.io/app/base/pair-explorer/"
+DEX_TOOLS_ETH = "https://www.dextools.io/app/ether/pair-explorer/"
+DEX_TOOLS_BSC = "https://www.dextools.io/app/bnb/pair-explorer/"
+DEX_TOOLS_POLY = "https://www.dextools.io/app/polygon/pair-explorer/"
+DEX_TOOLS_ARB = "https://www.dextools.io/app/arbitrum/pair-explorer/"
+DEX_TOOLS_OPTI = "https://www.dextools.io/app/optimism/pair-explorer/"
+DEX_TOOLS_BASE = "https://www.dextools.io/app/base/pair-explorer/"
 
 # LINKS
-ca_directory = "https://www.x7finance.org/en/docs/breakdowns/contracts"
+CA_DIRECTORY = "https://www.x7finance.org/en/docs/breakdowns/contracts"
 
-discord = "https://discord.gg/x7finance"
-dune = "https://dune.com/mike_x7f/x7finance"
-github = "https://github.com/x7finance/"
-medium = "https://medium.com/@X7Finance"
-pioneers = "https://img.x7.finance/pioneers/"
-reddit = "https://www.reddit.com/r/x7finance"
-referral = "https://docs.google.com/forms/d/e/1FAIpQLSf5h3ngT_swsq2My5BfY1W_ZWv3jni9JeWEfgkWFgorNLknQg/viewform"
-short_wp_link = "https://x7community.space/wp-short.pdf"
-snapshot = "https://snapshot.org/#/x7community.eth"
-twitter = "https://twitter.com/x7_finance/"
-website = "https://www.x7finance.org/"
-website_dev = "https://x7.finance/"
-wp_link = "https://x7.finance/whitepaper"
-youtube = "https://www.youtube.com/@X7Finance"
+DISCORD = "https://discord.gg/x7finance"
+DUNE = "https://dune.com/mike_x7f/x7finance"
+GITHUB = "https://github.com/x7finance/"
+MEDIUM = "https://medium.com/@X7Finance"
+PIONEERS = "https://img.x7.finance/pioneers/"
+REDDIT = "https://www.reddit.com/r/x7finance"
+REFERRAL = "https://docs.google.com/forms/d/e/1FAIpQLSf5h3ngT_swsq2My5BfY1W_ZWv3jni9JeWEfgkWFgorNLknQg/viewform"
+SHORT_WP_LINK = "https://x7community.space/wp-short.pdf"
+SNAPSHOT = "https://snapshot.org/#/x7community.eth"
+TWITTER = "https://twitter.com/x7_finance/"
+WEBSITE = "https://www.x7finance.org/"
+WEBSITE_DEV = "https://x7.finance/"
+WP_LINK = "https://x7.finance/whitepaper"
+YOUTUBE = "https://www.youtube.com/@X7Finance"
 
 # OPENSEA
-os_eco = "https://pro.opensea.io/collection/x7-ecosystem-maxi"
-os_liq = "https://pro.opensea.io/collection/x7-liquidity-maxi"
-os_dex = "https://pro.opensea.io/collection/x7-dex-maxi"
-os_borrow = "https://pro.opensea.io/collection/x7-borrowing-maxi"
-os_magister = "https://pro.opensea.io/collection/x7-magister"
-os_pioneer = "https://pro.opensea.io/collection/x7-pioneer"
+OS_ECO = "https://pro.opensea.io/collection/x7-ecosystem-maxi"
+OS_LIQ = "https://pro.opensea.io/collection/x7-liquidity-maxi"
+OS_DEX = "https://pro.opensea.io/collection/x7-dex-maxi"
+OS_BORROW = "https://pro.opensea.io/collection/x7-borrowing-maxi"
+OS_MAGISTER = "https://pro.opensea.io/collection/x7-magister"
+OS_PIONEER = "https://pro.opensea.io/collection/x7-pioneer"
 
-bsc = [
+BSC = [
     "https://bsc-dataseed.binance.org/",
     "https://bsc-dataseed1.ninicoin.io/",
     "https://bsc-dataseed1.defibit.io/",

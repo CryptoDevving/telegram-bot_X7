@@ -693,7 +693,7 @@ async def burn_x7r(amount):
 
         signed_transaction = w3.eth.account.sign_transaction(transaction, sender_private_key)
         tx_hash = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
-        return f"{amount} X7R Burnt\n\n{url.ether_tx}{tx_hash.hex()}"
+        return f"{amount} X7R Burnt\n\n{url.ETHER_TX}{tx_hash.hex()}"
     except Exception as e:
         return f'Error burning X7R: {e}'
 

@@ -55,7 +55,7 @@ async def auto_message_click(context: ContextTypes.DEFAULT_TYPE) -> None:
         [[InlineKeyboardButton("Click Me!", callback_data=CURRENT_BUTTON_DATA)]]
     )
     click_me = await context.bot.send_photo(
-                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                     chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
                     reply_markup=keyboard,
                 )
@@ -162,7 +162,7 @@ async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await context.bot.send_photo(
         chat_id=job.chat_id,
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
     )
 
     await context.bot.send_message(
@@ -171,8 +171,8 @@ async def auto_message_info(context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
+                [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
             ]
         ),
     )

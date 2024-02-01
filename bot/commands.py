@@ -32,8 +32,8 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
+                [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
             ]
         ),
     )
@@ -50,12 +50,12 @@ async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"Check out the link below for the Xchange Alerts channel\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="XChange Alerts", url=f"{url.tg_alerts}")],
+                [InlineKeyboardButton(text="XChange Alerts", url=f"{url.TG_ALERTS}")],
             ]
         ),
     )
@@ -63,7 +63,7 @@ async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def alumni(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Alumni*\n\n{text.ALUMNI}\n\n{api.get_quote()}",
         parse_mode="Markdown",
     )
@@ -71,7 +71,7 @@ async def alumni(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def announcements(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption="Check out the link below for the announcement channel",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -152,7 +152,7 @@ async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     input = " ".join(context.args)
     if not input:
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance DAO*\n\n"
                 "Follow the /bio command with a few sentences about yourself to be uploaded to x7finance.org/community/meetthedao\n\n"
                 "No more than 230 characters\n\nNew entries will be uploaded every 3/4 days\n\n"
@@ -182,7 +182,7 @@ async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     blocks = {block_type: api.get_block(block_type, time) for block_type in block_types}
     blocks_text = "\n".join([f"{block_type.upper()}: {block}" for block_type, block in blocks.items()])
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=
         f"*Latest Blocks*\n\n"
         f"{blocks_text}\n\n"
@@ -193,14 +193,14 @@ async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def blog(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Blog*\n\nCentralizing the best content on decentralized finance in one place.\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        text="X7 Finance Blog", url=f"{url.website}blog"
+                        text="X7 Finance Blog", url=f"{url.WEBSITE}blog"
                     )
                 ],
             ]
@@ -217,12 +217,12 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_token, "eth", media.eth_logo),
-        "bsc": ("(BSC)", url.bsc_token, "bnb", media.bsc_logo),
-        "poly": ("(POLYGON)", url.poly_token, "matic", media.poly_logo),
-        "opti": ("(OPTIMISM)", url.opti_token, "eth", media.opti_logo),
-        "arb": ("(ARB)", url.arb_token, "eth", media.arb_logo),
-        "base": ("(BASE)", url.base_token, "eth", media.base_logo),
+        "eth": ("(ETH)", url.ETHER_TOKEN, "eth", media.eth_logo),
+        "bsc": ("(BSC)", url.BSC_TOKEN, "bnb", media.bsc_logo),
+        "poly": ("(POLYGON)", url.POLY_TOKEN, "matic", media.poly_logo),
+        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "eth", media.opti_logo),
+        "arb": ("(ARB)", url.ARB_TOKEN, "eth", media.arb_logo),
+        "base": ("(BASE)", url.BASE_TOKEN, "eth", media.base_logo),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
@@ -274,12 +274,12 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.xchange_buy_eth),
-        "bsc": ("(BSC)", url.xchange_buy_bsc),
-        "poly": ("(POLYGON)", url.xchange_buy_poly),
-        "opti": ("(OPTIMISM)", url.xchange_buy_opti),
-        "arb": ("(ARB)", url.xchange_buy_arb),
-        "base": ("(BASE)", url.xchange_buy_base),
+        "eth": ("(ETH)", url.XCHANGE_BUY_ETH),
+        "bsc": ("(BSC)", url.XCHANGE_BUY_BSC),
+        "poly": ("(POLYGON)", url.XCHANGE_BUY_POLY),
+        "opti": ("(OPTIMISM)", url.XCHANGE_BUY_OPTI),
+        "arb": ("(ARB)", url.XCHANGE_BUY_ARB),
+        "base": ("(BASE)", url.XCHANGE_BUY_BASE),
     }
     if chain in chain_mappings:
         chain_name, chain_url = chain_mappings[chain]
@@ -288,7 +288,7 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Buy Links {chain_name}*\nUse `/buy [chain-name]` for other chains\n"
         f"Use `/constellations` for constellations\n\n{api.get_quote()}",
         parse_mode="Markdown",
@@ -321,7 +321,7 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
         [
             InlineKeyboardButton(
-                text="DAO Proposers Chat", url=f"{url.tg_dao}",
+                text="DAO Proposers Chat", url=f"{url.TG_DAO}",
             ),
             InlineKeyboardButton(
                 text="Xchange Alerts", url="https://t.me/x7_alerts"
@@ -335,7 +335,7 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Community TG Channels*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -347,13 +347,13 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "": (url.dex_tools_eth, "(ETH)"),
-        "eth": (url.dex_tools_eth, "(ETH)"),
-        "bsc": (url.dex_tools_bsc, "(BSC)"),
-        "poly": (url.dex_tools_poly, "(POLYGON)"),
-        "opti": (url.dex_tools_opti, "(OPTI)"),
-        "arb": (url.dex_tools_arb, "(ARB)"),
-        "base": (url.dex_tools_base, "(BASE)"),
+        "": (url.DEX_TOOLS_ETH, "(ETH)"),
+        "eth": (url.DEX_TOOLS_ETH, "(ETH)"),
+        "bsc": (url.DEX_TOOLS_BSC, "(BSC)"),
+        "poly": (url.DEX_TOOLS_POLY, "(POLYGON)"),
+        "opti": (url.DEX_TOOLS_OPTI, "(OPTI)"),
+        "arb": (url.DEX_TOOLS_ARB, "(ARB)"),
+        "base": (url.DEX_TOOLS_BASE, "(BASE)"),
     }
     if chain in chain_mappings:
         chain_url, chain_name = chain_mappings[chain]
@@ -362,7 +362,7 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         return
     
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Chart Links* {chain_name}\nUse `/chart [chain-name]` for other chains\n"
         f"Use `/constellations` for constellations\n\n{api.get_quote()}",
         parse_mode="Markdown",
@@ -392,7 +392,7 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         reply = "❌ Inputs do not match"
     await update.message.reply_photo(
-        photo = f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo = f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption = f"*X7 Finance Input Checker*\n\n"
         f"First:\n{first}\n\n"
         f"Second:\n{second}\n\n"
@@ -426,7 +426,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             token_market_cap = api.get_mcap(token_id)
             if token_market_cap == 0:
                 await update.message.reply_photo(
-                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                     caption=f"*X7 Finance Market Cap Comparison*\n\n"
                     f"No Market Cap data found for {token2.upper()}\n\n{api.get_quote()}",
                     parse_mode="Markdown",
@@ -487,7 +487,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         else:
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Market Cap Comparison*\n\n"
                 f"Please enter X7 token first followed by token to compare\n\n"
                 f"ie. `/compare x7r uni`\n\n{api.get_quote()}",
@@ -581,7 +581,7 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Contract Addresses for all chains*\n\n"
         f"*X7R - Rewards Token *\n`{ca.x7r}`\n\n"
         f"*X7DAO - Governance Token*\n`{ca.x7dao}`\n\n"
@@ -596,7 +596,7 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
         days, hours, minutes = api.get_duration_days(duration)
         if duration < timedelta(0):
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Countdown*\n\nNo countdown set, Please check back for more details\n\n{api.get_quote()}",
                 parse_mode="Markdown",
             )
@@ -616,7 +616,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     formatted_contract_names = '\n'.join(contract_names)
     if input_contract == "list":
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance DAO*\n\nUse `/dao contract-name` for a list of DAO callable functions\n\n"
                     f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
             parse_mode="Markdown",
@@ -640,7 +640,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             countdown = f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes"
             caption = "Vote"
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance DAO*\n\n"
                 f'use `/dao list` for a list of call callable contracts\n\n'
                 f'*Latest Proposal:*\n\n'
@@ -660,14 +660,14 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text=f"{caption} Here",
-                            url=f"{url.snapshot}/proposal/"
+                            url=f"{url.SNAPSHOT}/proposal/"
                             f'{snapshot["data"]["proposals"][0]["id"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text=f"DAO Proposers Chat",
-                            url=f"{url.tg_dao}",
+                            url=f"{url.TG_DAO}",
                         )
                     ],
                 ]
@@ -683,7 +683,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if matching_contract:
         contract_text, contract_ca = dao.contract_mappings[contract]
         await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance DAO Functions*\n"
                 f"{contract}\n\n"
                 f"The following functions can be called on the {contract} contract:\n\n"
@@ -691,7 +691,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Contract", url=f"{url.ether_address}{contract_ca}")],
+                [InlineKeyboardButton(text="Contract", url=f"{url.ETHER_ADDRESS}{contract_ca}")],
             ]
         ),
     )
@@ -699,7 +699,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         contract_names = list(dao.contract_mappings.keys())
         formatted_contract_names = '\n'.join(contract_names)
         await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance DAO Functions*\n\n"
                 f"'{input_contract}' not found\nPlease choose from the following\n\n"
                 f"*Contract Names:*\n\n{formatted_contract_names}",
@@ -726,13 +726,13 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{url.ether_tx}{tx["result"][0]["hash"]}',
+                            url=f'{url.ETHER_TX}{tx["result"][0]["hash"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="View all on chains",
-                            url=f"{url.website}docs/onchains",
+                            url=f"{url.WEBSITE}docs/onchains",
                         )
                     ],
                 ]
@@ -743,7 +743,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if name == "":
             name = f'Transfer to:\n{tx["result"][0]["to"]}'
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"*Deployer Wallet last TX*\n\n{time} UTC\n"
             f"{days} days, {hours} hours and {minutes} minutes ago:\n\n"
             f"`{name}`\n\n"
@@ -756,13 +756,13 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{url.ether_tx}{tx["result"][0]["hash"]}',
+                            url=f'{url.ETHER_TX}{tx["result"][0]["hash"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="View all on chains",
-                            url=f"{url.website}docs/onchains",
+                            url=f"{url.WEBSITE}docs/onchains",
                         )
                     ],
                 ]
@@ -779,7 +779,7 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7 Lending Discount Contract",
-                        url=f"{url.ether_address}{ca.lending_discount}#code",
+                        url=f"{url.ETHER_ADDRESS}{ca.lending_discount}#code",
                     )
                 ],
             ]
@@ -790,26 +790,26 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Get Started", url=f"{url.website}getstarted/")
+            InlineKeyboardButton(text="Get Started", url=f"{url.WEBSITE}getstarted/")
         ],
         [
-            InlineKeyboardButton(text="Trader", url=f"{url.website}docs/guides/trade/"),
+            InlineKeyboardButton(text="Trader", url=f"{url.WEBSITE}docs/guides/trade/"),
             InlineKeyboardButton(
-                text="Project Launcher", url=f"{url.website}docs/guides/launch/"
+                text="Project Launcher", url=f"{url.WEBSITE}docs/guides/launch/"
             ),
         ],
         [
             InlineKeyboardButton(
-                text="Project Engineer", url=f"{url.website}docs/guides/integrate/"
+                text="Project Engineer", url=f"{url.WEBSITE}docs/guides/integrate/"
             ),
             InlineKeyboardButton(
-                text="Capital Allocator", url=f"{url.website}docs/guides/lending/"
+                text="Capital Allocator", url=f"{url.WEBSITE}docs/guides/lending/"
             ),
         ],
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Documents*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -821,12 +821,12 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, "eth", media.eth_logo),
-        "bsc": ("(BSC)", url.bsc_address, "bnb", media.bsc_logo),
-        "poly": ("(POLYGON)", url.poly_address, "matic", media.poly_logo),
-        "opti": ("(OPTIMISM)", url.opti_address, "eth", media.opti_logo),
-        "arb": ("(ARB)", url.arb_address, "eth", media.arb_logo),
-        "base": ("(BASE)", url.base_address, "eth", media.base_logo),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.eth_logo),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.bsc_logo),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.poly_logo),
+        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.opti_logo),
+        "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.arb_logo),
+        "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.base_logo),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
@@ -874,7 +874,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7100_minutes,
     ) = get_liquidity_data(ca.x7100_liq_hub)
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Liquidity Hubs {chain_name}*\nUse `/ebb [chain-name]` for other chains\n\n"
         f'Last X7R Buy Back: {x7r_time} UTC\n{x7r_value} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n'
         f"{x7r_days} days, {x7r_hours} hours and {x7r_minutes} minutes ago\n\n"
@@ -914,8 +914,8 @@ async def ecosystem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
+                [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
             ]
         ),
     )
@@ -923,7 +923,7 @@ async def ecosystem(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def fact(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*Fact!*\n\n{api.get_fact()}",
         parse_mode="Markdown",
     )
@@ -932,21 +932,21 @@ async def fact(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def factory(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="ETH", url=f"{url.ether_address}{ca.factory}"),
-            InlineKeyboardButton(text="BSC", url=f"{url.bsc_address}{ca.factory}"),
+            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.factory}"),
+            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.factory}"),
         ],
         [
-            InlineKeyboardButton(text="Polygon", url=f"{url.poly_address}{ca.factory}"),
-            InlineKeyboardButton(text="Arbitrum", url=f"{url.arb_address}{ca.factory}"),
+            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.factory}"),
+            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.factory}"),
         ],
         [
-            InlineKeyboardButton(text="Optimism", url=f"{url.opti_address}{ca.factory}"),
-            InlineKeyboardButton(text="Base", url=f"{url.base_address}{ca.factory}"),
+            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.factory}"),
+            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.factory}"),
         ],
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Factories*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -1007,7 +1007,7 @@ async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance FAQ*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -1019,12 +1019,12 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, url.ether_tx, "eth"),
-        "bsc": ("(BSC)", url.bsc_address, url.bsc_tx, "bnb"),
-        "poly": ("(POLYGON)", url.poly_address, url.poly_tx, "matic"),
-        "opti": ("(OPTIMISM)", url.opti_address, url.opti_tx, "eth"),
-        "arb": ("(ARB)", url.arb_address, url.arb_tx, "eth"),
-        "base": ("(BASE)", url.base_address, url.base_tx, "eth"),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, url.ETHER_TX, "eth"),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, url.BSC_TX, "bnb"),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, url.POLY_TX, "matic"),
+        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, url.OPTI_TX, "eth"),
+        "arb": ("(ARB)", url.ARB_ADDRESS, url.ARB_TX, "eth"),
+        "base": ("(BASE)", url.BASE_ADDRESS, url.BASE_TX, "eth"),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_tx, chain_native,  = chain_mappings[chain]
@@ -1045,7 +1045,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     hours, remainder = divmod(duration.seconds, 3600)
     minutes = (remainder % 3600) // 60
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Xchange Fee Liquidation {chain_name}*\nUse `/fees [chain-name]` for other chains\n\n"
         f'Last Liquidation: {time} UTC\n{value} {chain_native.upper()} (${"{:0,.0f}".format(dollar)})\n\n'
         f"{days} days, {hours} hours and {minutes} minutes ago\n\n"
@@ -1158,7 +1158,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     days, hours, minutes = api.get_duration_days(duration)
     if duration < timedelta(0):
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"X7 Finance Giveaway is now closed\n\nPlease check back for more details"
             f"\n\n{api.get_quote()}",
             parse_mode="Markdown",
@@ -1166,7 +1166,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         if ext == "":
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*{giveaway.NAME}*\n\n{giveaway.TEXT}\n\n"
                 f"Ends:\n\n{giveaway.TIME.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
                 f"{days} days, {hours} hours and {minutes} minutes\n\n"
@@ -1176,7 +1176,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if ext == "entries":
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*{giveaway.NAME}*\n\n"
                 f"Entries for the {giveaway.NAME} are: (last 5 digits only):\n\n{api.get_giveaway_entries()}\n\n"
                 f"Last updated at:\n"
@@ -1190,7 +1190,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 winner_entries = list(api.get_giveaway_entries())
                 winner = random.choice(winner_entries)
                 await update.message.reply_photo(
-                    photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                    photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                     caption=f"*{giveaway.NAME}*\n\n"
                     f"The winner of the {giveaway.NAME} is: (last 5 digits only)\n\n"
                     f"{winner}\n\n"
@@ -1280,13 +1280,13 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
     joke = joke_response.json()
     if joke["type"] == "single":
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f'`{joke["joke"]}`',
             parse_mode="Markdown",
         )
     else:
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f'`{joke["setup"]}\n\n{joke["delivery"]}`',
             parse_mode="Markdown",
         )
@@ -1303,7 +1303,7 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_message += f"{migration_years} years, {migration_months} months, {migration_weeks} weeks, and {migration_days} days ago\n\n"
     reply_message += api.get_quote()
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=reply_message,
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -1311,13 +1311,13 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7M105 Launch TX",
-                        url=f"{url.ether_tx}0x11ff5b6a860170eaac5b33930680bf79dbf0656292cac039805dbcf34e8abdbf",
+                        url=f"{url.ETHER_TX}0x11ff5b6a860170eaac5b33930680bf79dbf0656292cac039805dbcf34e8abdbf",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="Migration Go Live TX",
-                        url=f"{url.ether_tx}0x13e8ed59bcf97c5948837c8069f1d61e3b0f817d6912015427e468a77056fe41",
+                        url=f"{url.ETHER_TX}0x13e8ed59bcf97c5948837c8069f1d61e3b0f817d6912015427e468a77056fe41",
                     )
                 ],
             ]
@@ -1352,25 +1352,25 @@ async def leaderboard(update: Update, context: CallbackContext):
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Xchange App", url=f"{url.xchange}"),
-            InlineKeyboardButton(text="Website", url=f"{url.website}"),
+            InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}"),
+            InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}"),
         ],
         [
-            InlineKeyboardButton(text="Snapshot", url=f"{url.snapshot}"),
-            InlineKeyboardButton(text="Twitter", url=f"{url.twitter}"),
+            InlineKeyboardButton(text="Snapshot", url=f"{url.SNAPSHOT}"),
+            InlineKeyboardButton(text="Twitter", url=f"{url.TWITTER}"),
         ],
         [
-            InlineKeyboardButton(text="Reddit", url=f"{url.reddit}"),
-            InlineKeyboardButton(text="Youtube", url=f"{url.youtube}"),
+            InlineKeyboardButton(text="Reddit", url=f"{url.REDDIT}"),
+            InlineKeyboardButton(text="Youtube", url=f"{url.YOUTUBE}"),
         ],
         [
-            InlineKeyboardButton(text="Github", url=f"{url.github}"),
-            InlineKeyboardButton(text="Dune", url=f"{url.dune}"),
+            InlineKeyboardButton(text="Github", url=f"{url.GITHUB}"),
+            InlineKeyboardButton(text="Dune", url=f"{url.DUNE}"),
         ],
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Links*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -1385,7 +1385,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain_mappings = {
         "eth": (
             "(ETH)",
-            url.ether_address,
+            url.ETHER_ADDRESS,
             "eth",
             media.eth_logo,
             ca.x7r_pair_eth,
@@ -1398,7 +1398,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "bsc": (
             "(BSC)",
-            url.bsc_address,
+            url.BSC_ADDRESS,
             "bnb",
             media.bsc_logo,
             ca.x7dao_pair_bsc,
@@ -1411,7 +1411,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "poly": (
             "(POLYGON)",
-            url.poly_address,
+            url.POLY_ADDRESS,
             "matic",
             media.poly_logo,
             ca.x7dao_pair_poly,
@@ -1424,7 +1424,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "opti": (
             "(OPTIMISM)",
-            url.opti_address,
+            url.OPTI_ADDRESS,
             "eth",
             media.opti_logo,
             ca.x7dao_pair_opti,
@@ -1437,7 +1437,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "arb": (
             "(ARB)",
-            url.arb_address,
+            url.ARB_ADDRESS,
             "eth",
             media.arb_logo,
             ca.x7dao_pair_arb,
@@ -1450,7 +1450,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "base": (
             "(BASE)",
-            url.base_address,
+            url.BASE_ADDRESS,
             "eth",
             media.base_logo,
             ca.x7dao_pair_base,
@@ -1627,7 +1627,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain_mappings = {
         "eth": (
             "(ETH)",
-            url.ether_address,
+            url.ETHER_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
@@ -1636,7 +1636,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "bsc": (
             "(BSC)",
-            url.bsc_address,
+            url.BSC_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     "https://bsc-dataseed.binance.org/",
@@ -1645,7 +1645,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "poly": (
             "(POLYGON)",
-            url.poly_address,
+            url.POLY_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
@@ -1654,7 +1654,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "opti": (
             "(OPTIMISM)",
-            url.opti_address,
+            url.OPTI_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
@@ -1663,7 +1663,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "arb": (
             "(ARB)",
-            url.arb_address,
+            url.ARB_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
@@ -1672,7 +1672,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
         "base": (
             "(BASE)",
-            url.base_address,
+            url.BASE_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     f"https://mainnet.base.org",
@@ -1704,7 +1704,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     liquidatable_loans_text = f"Total liquidatable loans: {liquidatable_loans}"
     output = "\n".join([liquidatable_loans_text] + results)
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Loan Liquidations {chain_name}*\nfor other chains use `/liquidate [chain-name]`\n\n{output}\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -1735,43 +1735,43 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain_mappings = {
         "eth": (
             "(ETH)",
-            url.ether_address,
-            url.ether_token,
+            url.ETHER_ADDRESS,
+            url.ETHER_TOKEN,
             "eth",
             f"https://mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}",
         ),
         "bsc": (
             "(BSC)",
-            url.bsc_address,
-            url.bsc_token,
+            url.BSC_ADDRESS,
+            url.BSC_TOKEN,
             "bnb",
             f"https://bsc-dataseed.binance.org/",
         ),
         "poly": (
             "(POLYGON)",
-            url.poly_address,
-            url.poly_token,
+            url.POLY_ADDRESS,
+            url.POLY_TOKEN,
             "matic",
             f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
         ),
         "opti": (
             "(OPTIMISM)",
-            url.opti_address,
-            url.opti_token,
+            url.OPTI_ADDRESS,
+            url.OPTI_TOKEN,
             "eth",
             f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
         ),
         "arb": (
             "(ARB)",
-            url.arb_address,
-            url.arb_token,
+            url.ARB_ADDRESS,
+            url.ARB_TOKEN,
             "eth",
             f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
         ),
         "base": (
             "(BASE)",
-            url.base_address,
-            url.base_token,
+            url.BASE_ADDRESS,
+            url.BASE_TOKEN,
             "eth",
             f"https://mainnet.base.org",
         ),
@@ -1812,7 +1812,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     schedule_str = api.format_schedule(schedule1, schedule2, chain_native.upper())
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Initial Liquidity Loan - {loan_id} {chain_name}*\n\n"
         f"Payment Schedule UTC:\n{schedule_str}\n\n"
         f"{remaining}"
@@ -1853,7 +1853,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     [
                         InlineKeyboardButton(
-                            text="X7 Finance Whitepaper", url=f"{url.wp_link}"
+                            text="X7 Finance Whitepaper", url=f"{url.WP_LINK}"
                         )
                     ],
                 ]
@@ -1870,21 +1870,21 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             loan_name, loan_terms, loan_ca = loan_types[loan_type]
             buttons = [
                 [
-                    InlineKeyboardButton(text="Ethereum", url=f"{url.ether_address}{loan_ca}"),
-                    InlineKeyboardButton(text="BSC", url=f"{url.bsc_address}{loan_ca}"),
+                    InlineKeyboardButton(text="Ethereum", url=f"{url.ETHER_ADDRESS}{loan_ca}"),
+                    InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{loan_ca}"),
                 ],
                 [
-                    InlineKeyboardButton(text="Polygon", url=f"{url.poly_address}{loan_ca}"),
-                    InlineKeyboardButton(text="Arbitrum", url=f"{url.arb_address}{loan_ca}"),
+                    InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{loan_ca}"),
+                    InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{loan_ca}"),
                 ],
                 [
-                    InlineKeyboardButton(text="Optimism", url=f"{url.opti_address}{loan_ca}"),
-                    InlineKeyboardButton(text="Base", url=f"{url.base_address}{loan_ca}"),
+                    InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{loan_ca}"),
+                    InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{loan_ca}"),
                 ],
             ]
 
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"{loan_name}\n\n{loan_terms.generate_terms()}\n\n",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(buttons),
@@ -1917,7 +1917,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             amount = contract.functions.nextLoanID().call() - 1
             contract_instances[network] = amount
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"*X7 Finance Loan Count*\n\n"
             f'`ETH:`       {contract_instances["ETH"]}\n'
             f'`BSC:`       {contract_instances["BSC"]}\n'
@@ -1938,7 +1938,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain_mappings = {
     "eth": (
             "(ETH)",
-            url.ether_address,
+            url.ETHER_ADDRESS,
             Web3(
                 Web3.HTTPProvider(
                     f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
@@ -1949,7 +1949,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
     "bsc": (
         "(BSC)",
-        url.bsc_address,
+        url.BSC_ADDRESS,
         Web3(
             Web3.HTTPProvider(
                 "https://bsc-dataseed.binance.org/",
@@ -1960,7 +1960,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ),
     "poly": (
         "(POLYGON)",
-        url.poly_address,
+        url.POLY_ADDRESS,
         Web3(
             Web3.HTTPProvider(
                 f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
@@ -1971,7 +1971,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ),
     "opti": (
         "(OPTIMISM)",
-        url.opti_address,
+        url.OPTI_ADDRESS,
         Web3(
             Web3.HTTPProvider(
                 f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
@@ -1982,7 +1982,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ),
     "arb": (
         "(ARB)",
-        url.arb_address,
+        url.ARB_ADDRESS,
         Web3(
             Web3.HTTPProvider(
                 f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
@@ -1993,7 +1993,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ),
     "base": (
         "(BASE)",
-        url.base_address,
+        url.BASE_ADDRESS,
         Web3(
             Web3.HTTPProvider(
                 f"https://mainnet.base.org",
@@ -2042,7 +2042,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7dao_remaining_time_str, x7dao_unlock_datetime_str = calculate_remaining_time(web3, contract, x7dao_pair, now)
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Liquidity Locks* {chain_name}\nfor other chains use `/locks [chain-name]`\n\n"
         f"*X7R Unlock Date:*\n{x7r_unlock_datetime_str}\n"
         f"{x7r_remaining_time_str}\n\n"
@@ -2068,11 +2068,11 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_token, "eth-main"),
-        "bsc": ("(BSC)", url.bsc_token, ""),
-        "poly": ("(POLYGON)", url.poly_token, "poly-main"),
-        "opti": ("(OPTIMISM)", url.opti_token, "optimism-main"),
-        "arb": ("(ARB)", url.arb_token, "arbitrum-main"),
+        "eth": ("(ETH)", url.ETHER_TOKEN, "eth-main"),
+        "bsc": ("(BSC)", url.BSC_TOKEN, ""),
+        "poly": ("(POLYGON)", url.POLY_TOKEN, "poly-main"),
+        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "optimism-main"),
+        "arb": ("(ARB)", url.ARB_TOKEN, "arbitrum-main"),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_holders = chain_mappings[chain]
@@ -2085,7 +2085,7 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     magisters = [holder["owner_of"] for holder in response["result"]]
     address = "\n\n".join(map(lambda x: f"`{x}`", magisters))
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Magister Holders {chain_name}*\n"
         f"Use `/magisters [chain-name]` or other chains\n\n"
         f"Holders - {holders}\n\n"
@@ -2109,12 +2109,12 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_token, "?chain=eth-main"),
-        "bsc": ("(BSC)", url.bsc_token, ""),
-        "poly": ("(POLYGON)", url.poly_token, "?chain=poly-main"),
-        "opti": ("(OPTIMISM)", url.opti_token, "?chain=optimism-main"),
-        "arb": ("(ARB)", url.arb_token, "?chain=arbitrum-main"),
-        "base": ("(BASE)", url.base_token, "?chain=base-main"),
+        "eth": ("(ETH)", url.ETHER_TOKEN, "?chain=eth-main"),
+        "bsc": ("(BSC)", url.BSC_TOKEN, ""),
+        "poly": ("(POLYGON)", url.POLY_TOKEN, "?chain=poly-main"),
+        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "?chain=optimism-main"),
+        "arb": ("(ARB)", url.ARB_TOKEN, "?chain=arbitrum-main"),
+        "base": ("(BASE)", url.BASE_TOKEN, "?chain=base-main"),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_holders = chain_mappings[chain]
@@ -2255,7 +2255,7 @@ async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Media Links*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -2333,20 +2333,20 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
             InlineKeyboardButton(text="Mint Here", url="https://x7.finance/x/nft/mint"),
-            InlineKeyboardButton(text="OS - Ecosystem Maxi", url=f"{url.os_eco}{chain_os}"),
+            InlineKeyboardButton(text="OS - Ecosystem Maxi", url=f"{url.OS_ECO}{chain_os}"),
         ],
         [
-            InlineKeyboardButton(text="OS - Liquidity Maxi", url=f"{url.os_liq}{chain_os}"),
-            InlineKeyboardButton(text="OS - DEX Maxi", url=f"{url.os_dex}{chain_os}"),
+            InlineKeyboardButton(text="OS - Liquidity Maxi", url=f"{url.OS_LIQ}{chain_os}"),
+            InlineKeyboardButton(text="OS - DEX Maxi", url=f"{url.OS_DEX}{chain_os}"),
         ],
         [
-            InlineKeyboardButton(text="OS - Borrowing Maxi", url=f"{url.os_borrow}{chain_os}"),
-            InlineKeyboardButton(text="OS - Magister", url=f"{url.os_magister}{chain_os}"),
+            InlineKeyboardButton(text="OS - Borrowing Maxi", url=f"{url.OS_BORROW}{chain_os}"),
+            InlineKeyboardButton(text="OS - Magister", url=f"{url.OS_MAGISTER}{chain_os}"),
         ],
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*NFT Info {chain_name}*\nUse `/nft [chain-name]` for other chains\n\n"
         f"*Ecosystem Maxi*\n{eco_price}\n"
         f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native}\n"
@@ -2399,12 +2399,12 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{url.ether_tx}{recent_tx["hash"]}',
+                            url=f'{url.ETHER_TX}{recent_tx["hash"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
-                            text="View all on chains", url=f"{url.website}docs/onchains"
+                            text="View all on chains", url=f"{url.WEBSITE}docs/onchains"
                         )
                     ],
                 ]
@@ -2432,12 +2432,12 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             InlineKeyboardButton(
                                 text="View on chain",
-                                url=f'{url.ether_tx}{recent_tx["hash"]}',
+                                url=f'{url.ETHER_TX}{recent_tx["hash"]}',
                             )
                         ],
                         [
                             InlineKeyboardButton(
-                                text="View all on chains", url=f"{url.website}docs/onchains"
+                                text="View all on chains", url=f"{url.WEBSITE}docs/onchains"
                             )
                         ],
                     ]
@@ -2473,7 +2473,7 @@ async def pair(update: Update, context: CallbackContext):
         amount = contract.functions.allPairsLength().call()
         contract_instances[network] = amount
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Pair Count*\n\n"
         f'`ETH:`       {contract_instances["ETH"]}\n'
         f'`BSC:`       {contract_instances["BSC"]}\n'
@@ -2502,7 +2502,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text == "":
         await update.message.reply_text("Please follow the command with desired name")
     else:
-        img = Image.open(requests.get(f"{url.pioneers}{api.get_random_pioneer_number()}.png", stream=True).raw)
+        img = Image.open(requests.get(f"{url.PIONEERS}{api.get_random_pioneer_number()}.png", stream=True).raw)
         i1 = ImageDraw.Draw(img)
         myfont = ImageFont.truetype(r"media/Bartomes.otf", 34)
         letter_spacing = 7
@@ -2565,7 +2565,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                         [
                             InlineKeyboardButton(
                                 text="Opensea",
-                                url=f"{url.os_pioneer}",
+                                url=f"{url.OS_PIONEER}",
                             )
                         ],
                     ]
@@ -2729,12 +2729,12 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         chain_mappings = {
-            "eth": ("(ETH)", url.ether_address, "eth", media.eth_logo, f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"),
-            "bsc": ("(BSC)", url.bsc_address, "bnb", media.bsc_logo, f"{random.choice(url.bsc)}"),
-            "poly": ("(POLYGON)", url.poly_address, "matic", media.poly_logo, f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}"),
-            "opti": ("(OPTIMISM)", url.opti_address, "eth", media.opti_logo, f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}"),
-            "arb": ("(ARB)", url.arb_address, "eth", media.arb_logo, f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"),
-            "base": ("(BASE)", url.base_address, "eth", media.base_logo),
+            "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.eth_logo, f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"),
+            "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.bsc_logo, f"{random.choice(url.BSC)}"),
+            "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.poly_logo, f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}"),
+            "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.opti_logo, f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}"),
+            "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.arb_logo, f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"),
+            "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.base_logo),
         }
 
         
@@ -2939,7 +2939,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 [
                                     InlineKeyboardButton(
                                         text="Buy",
-                                        url=f"{url.xchange}/#/swap?outputCurrency={token_instance['ca']}",
+                                        url=f"{url.XCHANGE}/#/swap?outputCurrency={token_instance['ca']}",
                                     )
                                 ],
                             ]
@@ -2994,13 +2994,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 [
                                     InlineKeyboardButton(
                                         text="X7R Chart - Rewards Token",
-                                        url=f"{url.dex_tools_eth}{ca.x7r_pair_eth}",
+                                        url=f"{url.DEX_TOOLS_ETH}{ca.x7r_pair_eth}",
                                     )
                                 ],
                                 [
                                     InlineKeyboardButton(
                                         text="X7DAO Chart - Governance Token",
-                                        url=f"{url.dex_tools_eth}{ca.x7dao_pair_eth}",
+                                        url=f"{url.DEX_TOOLS_ETH}{ca.x7dao_pair_eth}",
                                     )
                                 ],
                             ]
@@ -3090,8 +3090,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         parse_mode="Markdown",
                         reply_markup=InlineKeyboardMarkup(
                             [
-                                [InlineKeyboardButton(text="Chart", url=f"{url.dex_tools_eth}{token_pair}")],
-                                [InlineKeyboardButton(text="Buy", url=f"{url.xchange_buy_eth}{token_ca}")],
+                                [InlineKeyboardButton(text="Chart", url=f"{url.DEX_TOOLS_ETH}{token_pair}")],
+                                [InlineKeyboardButton(text="Buy", url=f"{url.XCHANGE_BUY_ETH}{token_ca}")],
                             ]
                         ),
                     )
@@ -3158,7 +3158,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 [
                                     InlineKeyboardButton(
                                         text="Buy",
-                                        url=f"{url.xchange}/#/swap?outputCurrency={token_id}",
+                                        url=f"{url.XCHANGE}/#/swap?outputCurrency={token_id}",
                                     )
                                 ],
                             ]
@@ -3170,12 +3170,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     if chain == "":
                         chain = "eth"
                     chain_mappings = {
-                        "eth": (url.dex_tools_eth, media.eth_logo),
-                        "bsc": (url.dex_tools_bsc, media.bsc_logo),
-                        "poly": (url.dex_tools_poly, media.poly_logo),
-                        "opti": (url.dex_tools_opti, media.opti_logo),
-                        "arb": (url.dex_tools_arb, media.arb_logo),
-                        "base": (url.dex_tools_base, media.base_logo),
+                        "eth": (url.DEX_TOOLS_ETH, media.eth_logo),
+                        "bsc": (url.DEX_TOOLS_BSC, media.bsc_logo),
+                        "poly": (url.DEX_TOOLS_POLY, media.poly_logo),
+                        "opti": (url.DEX_TOOLS_OPTI, media.opti_logo),
+                        "arb": (url.DEX_TOOLS_ARB, media.arb_logo),
+                        "base": (url.DEX_TOOLS_BASE, media.base_logo),
                     }
                     if chain in chain_mappings:
                         dex_tools, chain_logo = chain_mappings[chain]
@@ -3272,7 +3272,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                 [
                                     InlineKeyboardButton(
                                         text="Buy",
-                                        url=f"{url.xchange}/#/swap?outputCurrency={search}",
+                                        url=f"{url.XCHANGE}/#/swap?outputCurrency={search}",
                                     )
                                 ],
                             ]
@@ -3356,7 +3356,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"{api.get_quote()}",
         parse_mode="Markdown",
     )
@@ -3373,21 +3373,21 @@ async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="ETH", url=f"{url.ether_address}{ca.router}"),
-            InlineKeyboardButton(text="BSC", url=f"{url.bsc_address}{ca.router}"),
+            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.router}"),
+            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.router}"),
         ],
         [
-            InlineKeyboardButton(text="Polygon", url=f"{url.poly_address}{ca.router}"),
-            InlineKeyboardButton(text="Arbitrum", url=f"{url.arb_address}{ca.router}"),
+            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.router}"),
+            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.router}"),
         ],
         [
-            InlineKeyboardButton(text="Optimism", url=f"{url.opti_address}{ca.router}"),
-            InlineKeyboardButton(text="Base", url=f"{url.base_address}{ca.router}"),
+            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.router}"),
+            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.router}"),
         ],
     ]
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Routers*\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -3418,12 +3418,12 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain = context.args[1].lower()
 
     chain_mappings = {
-        "eth": (f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}", url.ether_address, url.dex_tools_eth, "eth"),
-        "bsc": (random.choice(url.bsc), url.bsc_address, url.dex_tools_bsc, "bnb"),
-        "poly": (f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}", url.poly_address, url.dex_tools_poly, "matic"),
-        "opti": (f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}", url.opti_address, url.dex_tools_opti, "eth"),
-        "arb": (f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}", url.arb_address, url.dex_tools_arb, "eth"),
-        "base": ("https://mainnet.base.org", url.base_address, url.dex_tools_base, "eth"),
+        "eth": (f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}", url.ETHER_ADDRESS, url.DEX_TOOLS_ETH, "eth"),
+        "bsc": (random.choice(url.BSC), url.BSC_ADDRESS, url.DEX_TOOLS_BSC, "bnb"),
+        "poly": (f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}", url.POLY_ADDRESS, url.DEX_TOOLS_POLY, "matic"),
+        "opti": (f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}", url.OPTI_ADDRESS, url.DEX_TOOLS_OPTI, "eth"),
+        "arb": (f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}", url.ARB_ADDRESS, url.DEX_TOOLS_ARB, "eth"),
+        "base": ("https://mainnet.base.org", url.BASE_ADDRESS, url.DEX_TOOLS_BASE, "eth"),
     }
     if chain in chain_mappings:
         web3_url, scan_link, dex_tools_link, native = chain_mappings[chain]
@@ -3600,7 +3600,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Token Scanner*\n\n{token_name} ({chain.upper()})\n`{token_address}`\n\n{status}\n\n{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -3631,12 +3631,12 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
     page_py = wiki.page(keyword)
     if keyword == "":
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption="Please follow the command with your search",
         )
     if page_py.exists():
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"Your search: {page_py.title}\n\n"
             f"{(page_py.summary[0:800])}"
             f"....[continue reading on wiki]({page_py.fullurl})\n\n"
@@ -3648,7 +3648,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"Your search: {keyword}\n\nNo description available\n\n"
             f"[Google](https://www.google.com/search?q={keyword})\n"
             f"[X](https://twitter.com/search?q={keyword}&src=typed_query)\n"
@@ -3663,12 +3663,12 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, ca.com_multi_eth, ca.dev_multi_eth),
-        "bsc": ("(BSC)", url.bsc_address, ca.com_multi_bsc, ca.dev_multi_bsc),
-        "poly": ("(POLYGON)", url.poly_address, ca.com_multi_poly, ca.dev_multi_poly),
-        "opti": ("(OPTIMISM)", url.opti_address, ca.com_multi_opti, ca.dev_multi_opti),
-        "arb": ("(ARB)", url.arb_address, ca.com_multi_arb, ca.dev_multi_arb),
-        "base": ("(BASE)", url.base_address, ca.com_multi_base, ca.dev_multi_base),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, ca.com_multi_eth, ca.dev_multi_eth),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, ca.com_multi_bsc, ca.dev_multi_bsc),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, ca.com_multi_poly, ca.dev_multi_poly),
+        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, ca.com_multi_opti, ca.dev_multi_opti),
+        "arb": ("(ARB)", url.ARB_ADDRESS, ca.com_multi_arb, ca.dev_multi_arb),
+        "base": ("(BASE)", url.BASE_ADDRESS, ca.com_multi_base, ca.dev_multi_base),
     }
     if chain in chain_mappings:
         chain_name, chain_url, com_wallet, dev_wallet = chain_mappings[chain]
@@ -3683,7 +3683,7 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     com_list = com_response["owners"]
     com_address = "\n\n".join(map(lambda x: f"`{x}`", com_list))
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Multi-Sig Signers {chain_name}*\n"
         f"Use `/signers [chain-name]` or other chains\n\n"
         f"*Developer Signers*\n{dev_address}\n\n*Community Signers*\n{com_address}\n\n"
@@ -3713,12 +3713,12 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_address),
-        "arb": ("(ARB)", url.arb_address),
-        "poly": ("(POLYGON)", url.poly_address),
-        "bsc": ("(BSC)", url.bsc_address),
-        "opti": ("(OPTI)", url.opti_address),
-        "base": ("(BASE)", url.base_address),
+        "eth": ("(ETH)", url.ETHER_ADDRESS),
+        "arb": ("(ARB)", url.ARB_ADDRESS),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS),
+        "bsc": ("(BSC)", url.BSC_ADDRESS),
+        "opti": ("(OPTI)", url.OPTI_ADDRESS),
+        "base": ("(BASE)", url.BASE_ADDRESS),
     }
     if chain in chain_mappings:
         chain_name, chain_url = chain_mappings[chain]
@@ -3726,7 +3726,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         [
             InlineKeyboardButton(
                 text="Contracts Directory",
-                url=f"{url.ca_directory}",
+                url=f"{url.CA_DIRECTORY}",
             ),
         ],
         [
@@ -3817,7 +3817,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         return
 
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"*X7 Finance Smart Contracts {chain_name}*\nUse `/smart [chain-name]` or other chains\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -3828,12 +3828,12 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 async def splitters(update: Update, context):
     try:
         chain_mappings = {
-            "eth": ("(ETH)", url.ether_address, "eth"),
-            "arb": ("(ARB)", url.arb_address, "eth"),
-            "poly": ("(POLYGON)", url.poly_address, "matic"),
-            "bsc": ("(BSC)", url.bsc_address, "bnb"),
-            "opti": ("(OPTI)", url.opti_address, "eth"),
-            "base": ("(BASE)", url.base_address, "eth"),
+            "eth": ("(ETH)", url.ETHER_ADDRESS, "eth"),
+            "arb": ("(ARB)", url.ARB_ADDRESS, "eth"),
+            "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic"),
+            "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb"),
+            "opti": ("(OPTI)", url.OPTI_ADDRESS, "eth"),
+            "base": ("(BASE)", url.BASE_ADDRESS, "eth"),
         }
         if len(context.args) > 1:
             eth_value = float(context.args[1])
@@ -3852,7 +3852,7 @@ async def splitters(update: Update, context):
                     message += f"{location}: {share:.2f} {chain_native.upper()}\n"
 
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"{message}\n\n{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
@@ -3897,7 +3897,7 @@ async def splitters(update: Update, context):
             profit_dollar = float(profit_eth) * float(native_price)
             treasury_dollar = float(treasury_eth) * float(native_price)
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
                 f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
                 f"Profit Share Splitter: {profit_eth} {chain_native.upper()} (${'{:0,.0f}'.format(profit_dollar)})\n"
@@ -3946,7 +3946,7 @@ async def splitters(update: Update, context):
             profit_dollar = float(profit_eth) * float(native_price)
             treasury_dollar = float(treasury_eth) * float(native_price)
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Ecosystem Splitters {chain_name}*\n\n"
                 f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
                 f"Profit Share Splitter: {profit_eth} {chain_native.upper()} (${'{:0,.0f}'.format(profit_dollar)})\n"
@@ -4002,7 +4002,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for contributor in contributors:
         contributor_info += f'{contributor["login"]}, Contributions: {contributor["contributions"]}\n'
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f'*X7 Finance Telegram Bot Stats*\n\n'
                 f'Language: {repo_info["language"]}\n'
                 f'Stars: {repo_info["stargazers_count"]}\n'
@@ -4071,7 +4071,7 @@ async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         sticker=media.swap,
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange", url=f"{url.xchange}")],
+                [InlineKeyboardButton(text="Xchange", url=f"{url.XCHANGE}")],
             ]
         ),
     )
@@ -4087,7 +4087,7 @@ async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption = f"{tax_info}"
     caption = f"{chain.upper()}:\n{caption}\n\n{api.get_quote()}"
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=caption,
         parse_mode="Markdown",
     )
@@ -4117,7 +4117,7 @@ async def timestamp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             hours, remainder = divmod(time_difference.seconds, 3600)
             minutes = remainder // 60
             await update.message.reply_photo(
-                photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+                photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
                 caption=f"*X7 Finance Timestamp Conversion*\n\n"
                         f"{stamp}\n{time} UTC\n\n"
                         f"{years} years, {months} months, {days} days, "
@@ -4199,7 +4199,7 @@ async def today(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data = api.get_today()
     today = random.choice(data["data"]["Events"])
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f'On this day in {today["year"]}:\n\n{today["text"]}',
         parse_mode="Markdown",
     )
@@ -4242,42 +4242,42 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain_mappings = {
         "eth": (
             "(ETH)",
-            url.ether_address,
+            url.ETHER_ADDRESS,
             media.eth_logo,
             ca.com_multi_eth,
             "eth",
         ),
         "arb": (
             "(ARB)",
-            url.arb_address,
+            url.ARB_ADDRESS,
             media.bsc_logo,
             ca.com_multi_arb,
             "eth",
         ),
         "poly": (
             "(POLYGON)",
-            url.poly_address,
+            url.POLY_ADDRESS,
             media.poly_logo,
             ca.com_multi_poly,
             "matic",
         ),
         "bsc": (
             "(BSC)",
-            url.bsc_address,
+            url.BSC_ADDRESS,
             media.bsc_logo,
             ca.com_multi_bsc,
             "bnb",
         ),
         "opti": (
             "(OP)",
-            url.opti_address,
+            url.OPTI_ADDRESS,
             media.opti_logo,
             ca.com_multi_opti,
             "eth",
         ),
         "base": (
             "(BASE)",
-            url.base_address,
+            url.BASE_ADDRESS,
             media.base_logo,
             ca.com_multi_base,
             "eth",
@@ -4394,14 +4394,14 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
 
             await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f"*Xchange Trading Volume*\n\n{volume}\n\n{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [
                             InlineKeyboardButton(
-                                text="X7 Dune Dashboard", url=f"{url.dune}"
+                                text="X7 Dune Dashboard", url=f"{url.DUNE}"
                             )
                         ],
                     ]
@@ -4412,7 +4412,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             dune.VOLUME = volume
         else:
             await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=f'*Xchange Trading Volume*\n\n'
                     f'{dune.VOLUME}\n\nLast Updated: {dune.LAST_DATE}\n\n{api.get_quote()}',
                 parse_mode="Markdown",
@@ -4420,7 +4420,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         [
                             InlineKeyboardButton(
-                                text="X7 Dune Dashboard", url=f"{url.dune}"
+                                text="X7 Dune Dashboard", url=f"{url.DUNE}"
                             )
                         ],
                     ]
@@ -4428,7 +4428,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
     except Exception:
         await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f'*Xchange Volume*\n\n'
                 f'Unable to refresh Dune data, please use the link below\n\n{api.get_quote()}',
             parse_mode="Markdown",
@@ -4436,7 +4436,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     [
                         InlineKeyboardButton(
-                            text="X7 Dune Dashboard", url=f"{url.dune}"
+                            text="X7 Dune Dashboard", url=f"{url.DUNE}"
                         )
                     ],
                 ]
@@ -4461,12 +4461,12 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     chain_mappings = {
-        "eth": ("(ETH)", url.ether_address, media.eth_logo, "eth", ca.usdc, ca.usdt),
-        "arb": ("(ARB)", url.arb_address, media.bsc_logo, "eth", ca.ausdc, ca.ausdt),
-        "poly": ("(POLYGON)", url.poly_address, media.poly_logo, "matic", ca.pusdc, ca.pusdt),
-        "bsc": ("(BSC)", url.bsc_address, media.bsc_logo, "bnb", ca.busdc, ca.busdc),
-        "opti": ("(OPTI)", url.opti_address, media.opti_logo, "eth", ca.ousdc, ca.ousdc),
-        "base": ("(BASE)", url.base_address, media.base_logo, "eth", ca.usdbc, ca.cbusdc),
+        "eth": ("(ETH)", url.ETHER_ADDRESS, media.eth_logo, "eth", ca.usdc, ca.usdt),
+        "arb": ("(ARB)", url.ARB_ADDRESS, media.bsc_logo, "eth", ca.ausdc, ca.ausdt),
+        "poly": ("(POLYGON)", url.POLY_ADDRESS, media.poly_logo, "matic", ca.pusdc, ca.pusdt),
+        "bsc": ("(BSC)", url.BSC_ADDRESS, media.bsc_logo, "bnb", ca.busdc, ca.busdc),
+        "opti": ("(OPTI)", url.OPTI_ADDRESS, media.opti_logo, "eth", ca.ousdc, ca.ousdc),
+        "base": ("(BASE)", url.BASE_ADDRESS, media.base_logo, "eth", ca.usdbc, ca.cbusdc),
     }
     if chain in chain_mappings:
         chain_name, chain_url, chain_logo, chain_native, chain_usdc, chain_usdt = chain_mappings[chain]
@@ -4578,22 +4578,22 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def website(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
         caption=f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange", url=f"{url.xchange}")],
+                [InlineKeyboardButton(text="Xchange", url=f"{url.XCHANGE}")],
                 [
                     InlineKeyboardButton(
                         text="X7.Finance",
-                        url=f"{url.website_dev}",
+                        url=f"{url.WEBSITE_DEV}",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="X7Finance.org",
-                        url=f"{url.website}",
+                        url=f"{url.WEBSITE}",
                     )
                 ],
             ]
@@ -4649,7 +4649,7 @@ async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         
         await update.message.reply_photo(
-            photo=f"{url.pioneers}{api.get_random_pioneer_number()}.png",
+            photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
             caption=caption,
             parse_mode="Markdown",
             reply_markup=keyboard_markup,
@@ -4664,8 +4664,8 @@ async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Website", url=f"{url.website}")],
-                [InlineKeyboardButton(text="Full WP", url=f"{url.wp_link}")],
+                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
+                [InlineKeyboardButton(text="Full WP", url=f"{url.WP_LINK}")],
             ]
         ),
     )
@@ -4723,7 +4723,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7D Funding Dashboard",
-                        url=f"{url.xchange_fund}",
+                        url=f"{url.XCHANGE_FUND}",
                     )
                 ],
             ]

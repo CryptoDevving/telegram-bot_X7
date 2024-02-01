@@ -119,11 +119,11 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         [
                             InlineKeyboardButton(
                                 text="Website",
-                                url=url.website,
+                                url=url.WEBSITE,
                             ),
                             InlineKeyboardButton(
                                 text="Xchange",
-                                url=url.xchange,
+                                url=url.XCHANGE,
                             ),
                         ],
                     ]

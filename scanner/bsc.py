@@ -17,7 +17,7 @@ from api import index as api
 from media import index as media
 
 
-web3_url = random.choice(url.bsc)
+web3_url = random.choice(url.BSC)
 web3 = Web3(Web3.HTTPProvider(web3_url))
 
 factory = web3.eth.contract(address=ca.factory, abi=api.get_abi(ca.factory, "bsc"))
@@ -181,25 +181,25 @@ async def new_pair(event):
                 [
                     [
                         InlineKeyboardButton(
-                            text=f"Buy On Xchange", url=f"{url.xchange_buy_bsc}"
+                            text=f"Buy On Xchange", url=f"{url.XCHANGE_BUY_BSC}"
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Chart",
-                            url=f"{url.dex_tools_bsc}{event['args']['pair']}",
+                            url=f"{url.DEX_TOOLS_BSC}{event['args']['pair']}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Token Contract",
-                            url=f"{url.bsc_address}{token_address}",
+                            url=f"{url.BSC_ADDRESS}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Deployer TX",
-                            url=f"{url.bsc_tx}{event['transactionHash'].hex()}",
+                            url=f"{url.BSC_TX}{event['transactionHash'].hex()}",
                         )
                     ],
                 ]
@@ -261,7 +261,7 @@ async def new_loan(event):
                 [
                     InlineKeyboardButton(
                         text=f"Loan TX",
-                        url=f"{url.bsc_tx}{event['transactionHash'].hex()}",
+                        url=f"{url.BSC_TX}{event['transactionHash'].hex()}",
                     )
                 ],
             ]
