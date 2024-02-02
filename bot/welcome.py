@@ -6,7 +6,7 @@ import os
 from typing import Optional, Tuple
 
 from constants import url
-from api import index as api
+from hooks import api
 from media import index as media
 
 

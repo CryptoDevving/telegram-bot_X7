@@ -1,6 +1,6 @@
 # NFTS
 
-from api import index as api
+from hooks import api
 from constants import ca
 
 

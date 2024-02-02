@@ -8,16 +8,15 @@ import time as t
 import subprocess
 import random
 from datetime import datetime
-from typing import Optional, Tuple
 
 import commands
 import twitter
 import welcome
 
-from constants import times, url, text
-from api import index as api
-from api import db
+from constants import url
+from hooks import api, db
 from media import index as media
+from variables import times, text
 
 
 CURRENT_BUTTON_DATA = None

@@ -13,7 +13,7 @@ from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
 from constants import ca, url
-from api import index as api
+from hooks import api
 from media import index as media
 
 

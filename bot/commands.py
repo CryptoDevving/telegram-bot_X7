@@ -16,10 +16,10 @@ from translate import Translator
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
-from api import dune, db
-from api import index as api
+from hooks import dune, db, api
 from media import index as media
-from constants import ca, loans, nfts, tax, text, times, giveaway, url, dao, token_mappings, chains, pairs
+from constants import ca, loans, nfts, tax, url, dao, mappings
+from variables import times, giveaway, text
 
 
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -216,7 +216,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7R:
+    if chain in mappings.X7R:
         (
             chain_name,
             chain_url,
@@ -225,7 +225,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7R[chain]
+        ) = mappings.X7R[chain]
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -2843,11 +2843,11 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     else:
                         token = "eth"
                     holders = api.get_holders(token_instance['ca'], token_instance['chain'])
-                    scan = chains[token_instance['chain']].scan
-                    dext = chains[token_instance['chain']].dext
-                    w3 = chains[token_instance['chain']].w3
+                    scan = mappings.CHAINS[token_instance['chain']].scan
+                    dext = mappings.CHAINS[token_instance['chain']].dext
+                    w3 = mappings.CHAINS[token_instance['chain']].w3
                     contract = w3.eth.contract(
-                        address=Web3.to_checksum_address(token_instance['pair']), abi=pairs
+                        address=Web3.to_checksum_address(token_instance['pair']), abi=mappings.PAIRS
                     )
                     token0_address = contract.functions.token0().call()
                     token1_address = contract.functions.token1().call()
@@ -4675,8 +4675,8 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7D:
-        chain_name, chain_url, chain_native = token_mappings.X7D[chain]
+    if chain in mappings.X7D:
+        chain_name, chain_url, chain_native = mappings.X7D[chain]
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
         lpool_reserve_dollar = (
             float(lpool_reserve) * float(api.get_native_price(chain_native)) / 1**18
@@ -4916,7 +4916,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7DAO:
+    if chain in mappings.X7DAO:
         (
             chain_name,
             chain_url,
@@ -4925,7 +4925,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7DAO[chain]
+        ) = mappings.X7DAO[chain]
         holders = api.get_holders(ca.X7DAO, chain)
         price = api.get_price(ca.X7DAO, chain)
     if chain == "eth":
@@ -5145,7 +5145,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7R:
+    if chain in mappings.X7R:
         (
             chain_name,
             chain_url,
@@ -5154,7 +5154,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7R[chain]
+        ) = mappings.X7R[chain]
         holders = api.get_holders(ca.X7R, chain)
         price = api.get_price(ca.X7R, chain)
     if chain == "eth":
@@ -5371,7 +5371,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7101:
+    if chain in mappings.X7101:
         (
             chain_name,
             chain_url,
@@ -5380,7 +5380,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7101[chain]
+        ) = mappings.X7101[chain]
         holders = api.get_holders(ca.X7101, chain)
         price = api.get_price(ca.X7101, chain)
     if chain == "eth":
@@ -5600,7 +5600,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7102:
+    if chain in mappings.X7102:
         (
             chain_name,
             chain_url,
@@ -5609,7 +5609,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7102[chain]
+        ) = mappings.X7102[chain]
         holders = api.get_holders(ca.X7102, chain)
         price = api.get_price(ca.X7102, chain)
     if chain == "eth":
@@ -5828,7 +5828,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7103:
+    if chain in mappings.X7103:
         (
             chain_name,
             chain_url,
@@ -5837,7 +5837,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7103[chain]
+        ) = mappings.X7103[chain]
         holders = api.get_holders(ca.X7103, chain)
         price = api.get_price(ca.X7103, chain)
     if chain == "eth":
@@ -6057,7 +6057,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7104:
+    if chain in mappings.X7104:
         (
             chain_name,
             chain_url,
@@ -6066,7 +6066,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7104[chain]
+        ) = mappings.X7104[chain]
         holders = api.get_holders(ca.X7104, chain)
         price = api.get_price(ca.X7104, chain)
     if chain == "eth":
@@ -6285,7 +6285,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    if chain in token_mappings.X7105:
+    if chain in mappings.X7105:
         (
             chain_name,
             chain_url,
@@ -6294,7 +6294,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_xchange,
             chain_scan,
             chain_native,
-        ) = token_mappings.X7105[chain]
+        ) = mappings.X7105[chain]
         holders = api.get_holders(ca.X7105, chain)
         price = api.get_price(ca.X7105, chain)
     if chain == "eth":

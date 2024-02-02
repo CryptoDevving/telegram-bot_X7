@@ -7,9 +7,10 @@ from datetime import datetime
 import pytz
 from dateutil import parser
 
-from constants import  text, url
+from constants import url
+from variables import text
 from media import index as media
-from api import index as api
+from hooks import api
 
 
 async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
