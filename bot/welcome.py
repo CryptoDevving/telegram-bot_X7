@@ -17,6 +17,7 @@ RESTRICTIONS = {
     'can_add_web_page_previews': False,
 }
 
+
 async def button_callback(update: Update, context: CallbackContext) -> None:
     user_id = update.callback_query.from_user.id
     action, _ = update.callback_query.data.split(":", 1)
@@ -41,7 +42,7 @@ async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
 
-async def member_status(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
+async def member(chat_member_update: ChatMemberUpdated) -> Optional[Tuple[bool, bool]]:
     status_change = chat_member_update.difference().get("status")
     old_is_member, new_is_member = chat_member_update.difference().get("is_member", (None, None))
 
@@ -66,7 +67,7 @@ async def member_status(chat_member_update: ChatMemberUpdated) -> Optional[Tuple
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     channel_id = update.effective_chat.id
     if str(channel_id) == os.getenv("MAIN_TELEGRAM_CHANNEL_ID"):
-        result = await member_status(update.chat_member)
+        result = await member(update.chat_member)
         if result is None:
             return
 
