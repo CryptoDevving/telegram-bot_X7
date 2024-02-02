@@ -12,7 +12,7 @@ from telegram.ext import *
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
-from data import ca, url
+from constants import ca, url
 from api import index as api
 from api import db
 from media import index as media

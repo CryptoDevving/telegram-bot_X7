@@ -1,6 +1,6 @@
 # LOANS
 
-overview = (
+OVERVIEW = (
     "*X7 Finance Loan Terms*\n\n"
     "Use `/loans ill001 - ill003` for more details on individual loan contracts\n\n"
     "Loan terms are defined by standalone smart contracts that provide the following:\n\n"
@@ -16,9 +16,9 @@ overview = (
     "process by which new loan terms may be invented, provided they implement the proper interface."
 )
 
-ill001_name = "X7 Initial Liquidity Loan Term (001) - X7ILL001"
-ill002_name = "X7 Initial Liquidity Loan Term (002) - X7ILL002"
-ill003_name = "X7 Initial Liquidity Loan Term (003) - X7ILL003"
+ILL001_NAME = "X7 Initial Liquidity Loan Term (001) - X7ILL001"
+ILL002_NAME = "X7 Initial Liquidity Loan Term (002) - X7ILL002"
+ILL003_NAME = "X7 Initial Liquidity Loan Term (003) - X7ILL003"
 
 
 class LoanTerm:
@@ -52,7 +52,7 @@ class LoanTerm:
         self.liquidation_conditions = liquidation_conditions
         self.liquidator_reward = liquidator_reward
 
-    def generate_terms(self):
+    def GENERATE_TERMS(self):
         return f"""
     > Min Loan: {self.min_loan} ETH
     > Max Loan: {self.max_loan} ETH
@@ -69,7 +69,7 @@ class LoanTerm:
     """
 
 
-ill001_terms = LoanTerm(
+ILL001_TERMS = LoanTerm(
     "X7 Initial Liquidity Loan Term (001) - X7ILL001",
     0.5,
     5,
@@ -85,7 +85,7 @@ ill001_terms = LoanTerm(
     "5%",
 )
 
-ill002_terms = LoanTerm(
+ILL002_TERMS = LoanTerm(
     "X7 Initial Liquidity Loan Term (002) - X7ILL002",
     0.5,
     5,
@@ -101,7 +101,7 @@ ill002_terms = LoanTerm(
     "5%",
 )
 
-ill003_terms = LoanTerm(
+ILL003_TERMS = LoanTerm(
     "X7 Initial Liquidity Loan Term (003) - X7ILL003",
     0.5,
     5,

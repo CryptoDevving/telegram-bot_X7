@@ -1,6 +1,6 @@
 # TAX
 
-info = {
+INFO = {
     "eth": {
         "x7r": 3,
         "x7dao": 3,
@@ -69,8 +69,8 @@ info = {
 }
 
 
-def generate_info(network):
-    network_info = info.get(network)
+def GENERATE_INFO(network):
+    network_info = INFO.get(network)
     if network_info:
         x7r = network_info["x7r"]
         x7dao = network_info["x7dao"]

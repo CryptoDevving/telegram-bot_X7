@@ -14,7 +14,7 @@ import commands
 import twitter
 import welcome
 
-from data import times, url, text
+from constants import times, url, text
 from api import index as api
 from api import db
 from media import index as media

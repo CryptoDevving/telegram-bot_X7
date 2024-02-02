@@ -1,16 +1,41 @@
-from data import url, ca
+from constants import url, ca
+from media import index as media
 
-x7d_chain_mappings = {
-    "eth": ("(ETH)", url.ETHER_ADDRESS, "eth"),
-    "arb": ("(ARB)", url.ARB_ADDRESS, "eth"),
-    "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic"),
-    "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb"),
-    "opti": ("(OPTI)", url.OPTI_ADDRESS, "eth"),
-    "base": ("(BASE)", url.BASE_ADDRESS, "eth"),
-}
+X7D = {
+        "eth": (
+            "(ETH)",
+            url.ETHER_ADDRESS,
+            "eth",    
+        ),
+        "arb": (
+            "(ARB)",
+            url.ARB_ADDRESS,
+            "eth",
+        ),
+        "poly": (
+            "(POLYGON)",
+            url.POLY_ADDRESS,
+            "matic",
+        ),
+        "bsc": (
+            "(BSC)",
+            url.BSC_ADDRESS,
+            "bnb",
+        ),
+        "opti": (
+            "(OPTI)",
+            url.OPTI_ADDRESS,
+            "eth",
+        ),
+        "base": (
+            "(BASE)",
+            url.BASE_ADDRESS,
+            "eth",
+        ),
+    }
 
 
-x7dao_chain_mappings = {
+X7DAO = {
         "eth": (
             "(ETH)",
             url.ETHER_TOKEN,
@@ -68,7 +93,7 @@ x7dao_chain_mappings = {
     }
 
 
-x7r_chain_mappings = {
+X7R = {
         "eth": (
             "(ETH)",
             url.ETHER_TOKEN,
@@ -126,7 +151,7 @@ x7r_chain_mappings = {
     }
 
 
-x7101_chain_mappings = {
+X7101 = {
     "eth": (
         "(ETH)",
         url.ETHER_TOKEN,
@@ -184,7 +209,7 @@ x7101_chain_mappings = {
 }
 
 
-x7102_chain_mappings = {
+X7102 = {
         "eth": (
             "(ETH)",
             url.ETHER_TOKEN,
@@ -242,7 +267,7 @@ x7102_chain_mappings = {
     }
 
 
-x7103_chain_mappings = {
+X7103 = {
         "eth": (
             "(ETH)",
             url.ETHER_TOKEN,
@@ -300,7 +325,7 @@ x7103_chain_mappings = {
     }
 
 
-x7104_chain_mappings = {
+X7104 = {
         "eth": (
             "(ETH)",
             url.ETHER_TOKEN,
@@ -358,7 +383,7 @@ x7104_chain_mappings = {
     }
 
 
-x7105_chain_mappings = {
+X7105 = {
         "eth": (
             "(ETH)",
             url.ETHER_TOKEN,

@@ -5,7 +5,7 @@ from telegram.ext import *
 import os
 from typing import Optional, Tuple
 
-from data import url
+from constants import url
 from api import index as api
 from media import index as media
 

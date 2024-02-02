@@ -1,6 +1,6 @@
-from data import ca
+from constants import ca
 
-contract_mappings = {
+CONTRACT_MAPPINGS = {
     "X7100 Liquidity Hub": (("function setShares()\n"
                              "function setRouter()\n"
                              "function setOffRampPair()\n"

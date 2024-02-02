@@ -11,7 +11,7 @@ from web3 import Web3
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 
-from data import ca, url
+from constants import ca, url
 
 
 bsc = os.getenv("BSC")

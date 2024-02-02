@@ -7,7 +7,7 @@ from datetime import datetime
 import pytz
 from dateutil import parser
 
-from data import  text, url
+from constants import  text, url
 from media import index as media
 from api import index as api
 

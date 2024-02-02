@@ -1,10 +1,10 @@
 # NFTS
 
 from api import index as api
-from data import ca
+from constants import ca
 
 
-def nft_prices():
+def NFT_PRICES():
     return {
         "eth": {
             "eco": "0.3 ETH - 500 Supply",
@@ -51,7 +51,7 @@ def nft_prices():
     }
 
 
-def nft_floors():
+def NFT_FLOORS():
     return {
         "eth": {
             "eco": api.get_nft_floor(ca.ECO, "eth") or 0,
@@ -98,7 +98,7 @@ def nft_floors():
     }
 
 
-def nft_counts():
+def NFT_COUNTS():
     return {
         "eth": {
             "eco": int(api.get_nft_holder_count(ca.ECO, "eth")) or 0,
@@ -138,7 +138,7 @@ def nft_counts():
     }
 
 
-def nft_discount():
+def NFT_DISCOUNTS():
     return {
         "eco": {
             "X7R": 10,
