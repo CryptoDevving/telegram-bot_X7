@@ -17,7 +17,7 @@ from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
 from hooks import dune, db, api
-from media import index as media
+import media
 from constants import ca, loans, nfts, tax, url, dao, mappings
 from variables import times, giveaway, text
 

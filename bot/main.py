@@ -15,7 +15,7 @@ import welcome
 
 from constants import url
 from hooks import api, db
-from media import index as media
+import media
 from variables import times, text
 
 

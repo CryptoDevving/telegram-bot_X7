@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from constants import ca, url
 from hooks import api, db
-from media import index as media
+import media
 
 
 alchemy_keys = os.getenv("ALCHEMY_ETH")

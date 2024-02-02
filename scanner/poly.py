@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from constants import ca, url
 from hooks import api
-from media import index as media
+import media
 
 
 alchemy_poly = os.getenv("ALCHEMY_POLY")

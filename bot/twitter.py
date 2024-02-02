@@ -9,7 +9,7 @@ from dateutil import parser
 
 from constants import url
 from variables import text
-from media import index as media
+import media
 from hooks import api
 
 

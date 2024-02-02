@@ -7,7 +7,7 @@ from typing import Optional, Tuple
 
 from constants import url
 from hooks import api
-from media import index as media
+import media
 
 
 RESTRICTIONS = {
