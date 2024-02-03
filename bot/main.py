@@ -2,12 +2,13 @@ import sentry_sdk
 from telegram import *
 from telegram.ext import *
 
-import os, sys, subprocess, random, datetime, time as t
+import os, sys, subprocess, random, time as t
 
 import commands, twitter, welcome, media
 from variables import times, text
 from constants import url
 from hooks import api, db
+from datetime import datetime
 
 
 sentry_sdk.init(
