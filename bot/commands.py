@@ -22,10 +22,6 @@ from constants import ca, loans, nfts, tax, url, dao, mappings
 from variables import times, giveaway, text
 
 
-async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    return
-
-
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"{text.ABOUT}",
@@ -1885,7 +1881,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             await update.message.reply_photo(
                 photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
-                caption=f"{loan_name}\n\n{loan_terms.generate_terms()}\n\n",
+                caption=f"{loan_name}\n{loan_terms.generate_terms()}\n\n",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(buttons),
             )
@@ -2847,8 +2843,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     dext = mappings.CHAINS[token_instance['chain']].dext
                     w3 = mappings.CHAINS[token_instance['chain']].w3
                     contract = w3.eth.contract(
-                        address=Web3.to_checksum_address(token_instance['pair']), abi=mappings.PAIRS
-                    )
+                        address=Web3.to_checksum_address(token_instance['pair']), abi=ca.PAIRS_ABI)
                     token0_address = contract.functions.token0().call()
                     token1_address = contract.functions.token1().call()
                     is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
