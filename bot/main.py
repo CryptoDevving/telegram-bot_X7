@@ -158,7 +158,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("wei", commands.wei))
     application.add_handler(CommandHandler("wallet", commands.wallet))
     application.add_handler(CommandHandler(["website", "site"], commands.website))
-    application.add_handler(CommandHandler("wen", commands.wen))
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
@@ -169,6 +168,10 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("raid", twitter.raid))
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
+    ## ADMIN ##
+    application.add_handler(CommandHandler("click_me", commands.click_me))
+    application.add_handler(CommandHandler("wen", commands.wen))
+    
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(auto.click_me_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
