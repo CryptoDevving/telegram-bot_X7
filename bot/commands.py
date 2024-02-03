@@ -17,8 +17,7 @@ from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
 from hooks import dune, db, api
-import media, auto
-from main import job_queue
+import media
 from constants import ca, loans, nfts, tax, url, dao, mappings
 from variables import times, giveaway, text
 
@@ -396,19 +395,6 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{reply}\n\n"
         f"{api.get_quote()}",
         parse_mode="Markdown")
-
-
-async def click_me(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        job_queue.run_once(
-        auto.click_me,
-        1,
-        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-        name="Click Me")
-    else:
-        await update.message.reply_text(f"{text.MODS_ONLY}")
-
 
 
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
