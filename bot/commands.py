@@ -2539,10 +2539,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                     decimals = contract.functions.decimals().call()
                     eth_in_wei = int(eth)
-                    token_res_in_wei = int(token_res)
                     liq = api.get_native_price(token) * eth_in_wei * 2
                     formatted_liq = "${:,.2f}".format(liq / (10**decimals))
-                    token_price = (eth_in_wei / 10**decimals) / (token_res_in_wei / 10**decimals) * api.get_native_price(token)
+                    token_price = api.get_price(token_instance['ca'], token_instance['chain'])
                     mcap = token_price * supply
                     if "e-" in str(token_price):
                         price = "{:.8f}".format(token_price)
