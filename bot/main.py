@@ -6,7 +6,7 @@ import os, sys, subprocess, random, time as t
 
 import commands, twitter, welcome
 from variables import times, text
-import media
+import media, admin
 from constants import url
 from hooks import api, db
 from datetime import datetime
@@ -359,7 +359,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["x7105", "105"], commands.x7105))
     application.add_handler(CommandHandler(["volume", "dune"], commands.volume))
     application.add_handler(CommandHandler("wei", commands.wei))
-    application.add_handler(CommandHandler("wen", commands.wen))
     application.add_handler(CommandHandler("wallet", commands.wallet))
     application.add_handler(CommandHandler(["website", "site"], commands.website))
     application.add_handler(CommandHandler("word", commands.word))
@@ -371,6 +370,10 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("draw", twitter.draw))
     application.add_handler(CommandHandler("raid", twitter.raid))
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
+
+    ## ADMIN ##
+    application.add_handler(CommandHandler("wen", admin.wen))
+    application.add_handler(CommandHandler("add", admin.add))
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(click_me_function))
