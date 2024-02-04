@@ -524,11 +524,11 @@ def get_price_change(address, chain):
     if chain in defined_chain_mappings:
         chain = defined_chain_mappings[chain]
 
-    url = "https://api.defined.fi"
+    url = "https://graph.defined.fi/graphql"
 
     headers = {
         "content_type": "application/json",
-        "x-api-key": os.getenv("DEFINED_API_KEY")
+        "Authorization": os.getenv("DEFINED_API_KEY")
     }
 
     current_timestamp = int(datetime.now().timestamp()) - 300
@@ -590,7 +590,7 @@ def get_price_change(address, chain):
             f"{twenty_four_hours_change_str}\n"
             f"{seven_days_change_str}"
         )
-    except Exception:
+    except Exception as e:
         result = "  1H Change: N/A\n  24H Change: N/A\n  7D Change: N/A"
     return result
 
@@ -599,11 +599,11 @@ def get_token_image(token, chain):
     if chain in defined_chain_mappings:
         chain = defined_chain_mappings[chain]
 
-    url = "https://api.defined.fi"
+    url = "https://graph.defined.fi/graphql"
 
     headers = {
         "content_type": "application/json",
-        "x-api-key": os.getenv("DEFINED_API_KEY")
+        "Authorization": os.getenv("DEFINED_API_KEY")
     }
 
     image = f'''
@@ -625,11 +625,11 @@ def get_volume(pair, chain):
         if chain in defined_chain_mappings:
             chain = defined_chain_mappings[chain]
 
-        url = "https://api.defined.fi"
+        url = "https://graph.defined.fi/graphql"
 
         headers = {
             "content_type": "application/json",
-            "x-api-key": os.getenv("DEFINED_API_KEY")
+            "Authorization": os.getenv("DEFINED_API_KEY")
         }
 
         volume = f'''

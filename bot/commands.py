@@ -2681,164 +2681,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         ),
                     )
                     return
-                x7_token_mappings = {
-                    "x7r": ("X7R", api.get_x7r_supply("eth"), media.X7R_LOGO, ca.X7R, ca.X7R_PAIR_ETH),
-                    "x7dao": ("X7DAO", ca.SUPPLY, media.X7DAO_LOGO, ca.X7DAO, ca.X7DAO_PAIR_ETH),
-                    "x7101": ("X7101", ca.SUPPLY, media.X7101_LOGO, ca.X7101, ca.X7101_PAIR_ETH),
-                    "x7102": ("X7102", ca.SUPPLY, media.X7102_LOGO, ca.X7102, ca.X7102_PAIR_ETH),
-                    "x7103": ("X7103", ca.SUPPLY, media.X7103_LOGO, ca.X7103, ca.X7103_PAIR_ETH),
-                    "x7104": ("X7104", ca.SUPPLY, media.X7104_LOGO, ca.X7104, ca.X7104_PAIR_ETH),
-                    "x7105": ("X7105", ca.SUPPLY, media.X7105_LOGO, ca.X7105, ca.X7105_PAIR_ETH),
-                }
-                if search in x7_token_mappings:
-                    token_name, token_supply, token_logo, token_ca, token_pair = x7_token_mappings[search]
-                    price = api.get_price(token_ca, "eth")
-                    cg = api.get_cg_price(search)
-                    volume = cg[search]["usd_24h_vol"]
-                    change = cg[search]["usd_24h_change"]
-                    holders = api.get_holders(token_ca, "eth")
-                    if change == None or 0:
-                        change = 0
-                    else: 
-                        change = round(cg[search]["usd_24h_change"], 2)
-                    if volume == None or 0:
-                        volume = 0
-                    else:
-                        volume = f'${"{:0,.0f}".format(volume)}'
-                    market_cap = f'${"{:0,.0f}".format(price * token_supply)}'
-                    try:
-                        ath = api.get_ath(search)
-                        ath_change = f'{api.get_ath(search)[1]}'
-                        ath_value = api.get_ath(search)[0]
-                        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * token_supply)}) {ath_change[:3]}%'
-                    except Exception:
-                        ath  = "unavailable"
-
-                    x7 = api.get_liquidity(token_pair, "eth")
-                    x7_token = float(x7["reserve0"]) / 10**18
-                    x7_weth = float(x7["reserve1"]) / 10**18
-                    x7_token_dollar = float(price) * float(x7_token)
-                    x7_weth_dollar = float(x7_weth) * float(
-                        api.get_native_price("eth")
-                    )
-
-                    liquidity = (
-                        f'{"{:0,.0f}".format(x7_token)[:4]}M {token_name} (${"{:0,.0f}".format(x7_token_dollar)})\n'
-                        f'{x7_weth:.0f} {token_name} (${"{:0,.0f}".format(x7_weth_dollar)})\n'
-                        f"Total Liquidity ${float(x7_weth_dollar + x7_token_dollar):,.0f}"
-                    )
-                    im1 = Image.open((random.choice(media.BLACKHOLE)))
-                    im2 = Image.open(token_logo)
-                    im1.paste(im2, (720, 20), im2)
-                    myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
-                    i1 = ImageDraw.Draw(im1)
-                    i1.text(
-                        (28, 36),
-                        f"{token_name} Info\n\n"
-                        f"Price: ${round(price, 8)}\n"
-                        f"24 Hour Change: {change}%\n"
-                        f"Market Cap: {market_cap}\n"
-                        f"24 Hour Volume: {volume}\n"
-                        f"ATH: {ath}\n"
-                        f"Holders: {holders}\n\n"
-                        f"Liquidity:\n"
-                        f"{liquidity}\n\n"
-                        f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-                        font=myfont,
-                        fill=(255, 255, 255),
-                    )
-                    img_path = os.path.join("media", "blackhole.png")
-                    im1.save(img_path)
-                    await update.message.reply_photo(
-                        photo=open(r"media/blackhole.png", "rb"),
-                        caption=f"{token_name} Info\n\n"
-                        f"Price: ${round(price, 8)}\n"
-                        f"24 Hour Change: {change}%\n"
-                        f'Market Cap:  {market_cap}\n'
-                        f"24 Hour Volume: {volume}\n"
-                        f"ATH: {ath}\n"
-                        f"Holders: {holders}\n\n"
-                        f"Liquidity:\n"
-                        f"{liquidity}\n\n"
-                        f"Contract Address:\n`{token_ca}`\n\n{api.get_quote()}",
-                        parse_mode="Markdown",
-                        reply_markup=InlineKeyboardMarkup(
-                            [
-                                [InlineKeyboardButton(text="Chart", url=f"{url.DEX_TOOLS_ETH}{token_pair}")],
-                                [InlineKeyboardButton(text="Buy", url=f"{url.XCHANGE_BUY_ETH}{token_ca}")],
-                            ]
-                        ),
-                    )
-                    return
-
-                gas_token_mappings = {
-                    "eth": ("ETH", "ethereum", "eth"),
-                    "bnb": ("BNB", "binancecoin", "bnb"),
-                    "matic": ("MATIC", "matic-network", "poly"),
-                }
-
-                if search in gas_token_mappings:
-
-                    token = api.get_cg_search(search)
-                    token_id = token["coins"][0]["api_symbol"]
-                    symbol = token["coins"][0]["symbol"]
-                    thumb = token["coins"][0]["large"]
-                    token_price = api.get_cg_price(token_id)  
-                    token_name, cg_name, chain = gas_token_mappings[search]
-                    gas_data = api.get_gas(chain)
-                    im2 = Image.open(requests.get(thumb, stream=True).raw)
-                    price = api.get_cg_price(cg_name)
-                    price_change = token_price[cg_name]["usd_24h_change"]
-                    if price_change is None:
-                        price_change = 0
-                    im1 = Image.open((random.choice(media.BLACKHOLE)))
-                    im1.paste(im2, (680, 20), im2)
-                    i1 = ImageDraw.Draw(im1)
-                    myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
-                    i1.text(
-                        (28, 36),
-                        f"{symbol} price\n\n"
-                        f'Price: ${price[cg_name]["usd"]}\n'
-                        f"24 Hour Change: {round(price_change, 1)}%\n\n"
-                        f"Gas Prices:\n"
-                        f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
-                        f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
-                        f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n\n\n'
-                        f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-                        font=myfont,
-                        fill=(255, 255, 255),
-                    )
-                    img_path = os.path.join("media", "blackhole.png")
-                    im1.save(img_path)
-                    await update.message.reply_photo(
-                        photo=open(r"media/blackhole.png", "rb"),
-                        caption=f"*{symbol} price*\n\n"
-                        f'Price: ${price[cg_name]["usd"]}\n'
-                        f'24 Hour Change: {round(price[cg_name]["usd_24h_change"], 1)}%\n\n'
-                        f"Gas Prices:\n"
-                        f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
-                        f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
-                        f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n'
-                        f"{api.get_quote()}",
-                        parse_mode="Markdown",
-                        reply_markup=InlineKeyboardMarkup(
-                            [
-                                [
-                                    InlineKeyboardButton(
-                                        text="Chart",
-                                        url=f"https://www.coingecko.com/en/coins/{cg_name}",
-                                    )
-                                ],
-                                [
-                                    InlineKeyboardButton(
-                                        text="Buy",
-                                        url=f"{url.XCHANGE}/#/swap?outputCurrency={token_id}",
-                                    )
-                                ],
-                            ]
-                        ),
-                    )
-                    return
                     
                 if search.startswith("0x") and len(search) == 42:
                     if chain == "":
@@ -2896,12 +2738,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     try:
                         liq = f"${'{:0,.0f}'.format(liquidity_data['liquidity'])}"
                     except Exception:
-                        "N/A"
+                        liq = "N/A"
                     im1 = Image.open((random.choice(media.BLACKHOLE)))
                     im2 = Image.open(chain_logo)
                     im1.paste(im2, (720, 20), im2)
-                    myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 25)
-                    i1 = ImageDraw.Draw(im1)
                     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
                     i1 = ImageDraw.Draw(im1)
                     i1.text(
