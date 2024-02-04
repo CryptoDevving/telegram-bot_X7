@@ -786,21 +786,17 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Get Started", url=f"{url.WEBSITE}getstarted/")
-        ],
-        [
+            InlineKeyboardButton(text="Get Started", url=f"{url.WEBSITE}getstarted/"),
             InlineKeyboardButton(text="Trader", url=f"{url.WEBSITE}docs/guides/trade/"),
-            InlineKeyboardButton(
-                text="Project Launcher", url=f"{url.WEBSITE}docs/guides/launch/"
-            ),
         ],
         [
-            InlineKeyboardButton(
-                text="Project Engineer", url=f"{url.WEBSITE}docs/guides/integrate/"
-            ),
-            InlineKeyboardButton(
-                text="Capital Allocator", url=f"{url.WEBSITE}docs/guides/lending/"
-            ),
+            InlineKeyboardButton(text="Liquidity Provider", url=f"{url.WEBSITE}docs/guides/liquidity-provider/"),
+            InlineKeyboardButton(text="Capital Allocator", url=f"{url.WEBSITE}docs/guides/lending/"),
+        ],
+        [
+            InlineKeyboardButton(text="Project Engineer", url=f"{url.WEBSITE}docs/guides/integrate-ui/"),
+            InlineKeyboardButton(text="Project Launcher", url=f"{url.WEBSITE}docs/guides/launch/"),
+
         ],
     ]
 
