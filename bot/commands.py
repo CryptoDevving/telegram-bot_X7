@@ -422,9 +422,9 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             token_value = token_market_cap / x7_supply
             img = Image.open(requests.get(thumb, stream=True).raw)
             result = img.convert("RGBA")
-            result.save(r"media/cgtokenlogo.png")
+            result.save(r"media/tokenlogo.png")
             im1 = Image.open((random.choice(media.BLACKHOLE)))
-            im2 = Image.open(r"media/cgtokenlogo.png")
+            im2 = Image.open(r"media/tokenlogo.png")
             im2_resized = im2.resize((200, 200))
             im3 = Image.open(image)
             im1.paste(im2_resized, (680, 20), im2_resized)
@@ -2740,13 +2740,21 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     except Exception:
                         liq = "N/A"
                     im1 = Image.open((random.choice(media.BLACKHOLE)))
-                    im2 = Image.open(chain_logo)
-                    im1.paste(im2, (720, 20), im2)
+                    logo = api.get_token_image(search, chain)
+                    if logo:
+                        img = Image.open(requests.get(logo, stream=True).raw)
+                        result = img.convert("RGBA")
+                        result.save(r"media/tokenlogo.png")
+                        im2 = Image.open(r"media/tokenlogo.png")
+                    else:
+                        im2 = Image.open(chain_logo)
+                    im1 = Image.open((random.choice(media.BLACKHOLE)))
+                    im1.paste(im2, (700, 20), im2)
                     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
                     i1 = ImageDraw.Draw(im1)
                     i1.text(
                         (26, 30),
-                        f"💰 {scan[str(search).lower()]['token_name']} {chain.upper()}\n\n"
+                        f"💰 {scan[str(search).lower()]['token_name']} ({chain.upper()})\n\n"
                         f'💰 Price: {price}\n'
                         f"💎 Market Cap: {formatted_mcap}\n"
                         f"📊 24 Hour Volume: {volume}\n"
@@ -2761,7 +2769,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     im1.save(img_path)
                     await update.message.reply_photo(
                         photo=open(r"media/blackhole.png", "rb"),
-                        caption=f"*{scan[str(search).lower()]['token_name']} {chain.upper()}*\n\n"
+                        caption=f"*{scan[str(search).lower()]['token_name']} ({chain.upper()})*\n\n"
                         f'💰 Price: {price}\n'
                         f"💎 Market Cap: {formatted_mcap}\n"
                         f"📊 24 Hour Volume: {volume}\n"
@@ -2817,9 +2825,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         market_cap_formatted = "${:0,.0f}".format(float(market_cap))
                     img = Image.open(requests.get(thumb, stream=True).raw)
                     result = img.convert("RGBA")
-                    result.save(r"media/cgtokenlogo.png")
+                    result.save(r"media/tokenlogo.png")
                     im1 = Image.open((random.choice(media.BLACKHOLE)))
-                    im2 = Image.open(r"media/cgtokenlogo.png")
+                    im2 = Image.open(r"media/tokenlogo.png")
                     im1.paste(im2, (680, 20), im2)
                     myfont = ImageFont.truetype(R"media/FreeMonoBold.ttf", 28)
                     i1 = ImageDraw.Draw(im1)
