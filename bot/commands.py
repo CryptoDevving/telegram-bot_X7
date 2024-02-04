@@ -2529,14 +2529,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
                     supply = int(api.get_supply(token_instance['ca'], token_instance['chain']))
                     eth = ""
-                    token_res = ""
                     if is_reserve_token0:
                         eth = contract.functions.getReserves().call()[1]
-                        token_res = contract.functions.getReserves().call()[0]
                     elif is_reserve_token1:
                         eth = contract.functions.getReserves().call()[0]
-                        token_res = contract.functions.getReserves().call()[1]
-
                     decimals = contract.functions.decimals().call()
                     eth_in_wei = int(eth)
                     liq = api.get_native_price(token) * eth_in_wei * 2
