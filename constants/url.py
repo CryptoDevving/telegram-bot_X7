@@ -20,16 +20,19 @@ TG_DAO = "https://telegram.me/collablandbot?start=VFBDI1RFTCNDT01NIy0xMDAyMTM5MT
 ETHER_TOKEN = "https://etherscan.io/token/"
 ETHER_ADDRESS = "https://etherscan.io/address/"
 ETHER_TX = "https://etherscan.io/tx/"
+ETHER_GAS = "https://etherscan.io/gastracker/"
 
 # BSCSCAN
 BSC_TOKEN = "https://bscscan.com/token/"
 BSC_ADDRESS = "https://bscscan.com/address/"
 BSC_TX = "https://bscscan.com/tx/"
+BSC_GAS = "https://bscscan.com/gastracker/"
 
 # POLYGONSCAN
 POLY_TOKEN = "https://polygonscan.com/token/"
 POLY_ADDRESS = "https://polygonscan.com/address/"
 POLY_TX = "https://polygonscan.com/tx/"
+POLY_GAS = "https://polygonscan.com/gastracker/"
 
 # ARBISCAN
 ARB_TOKEN = "https://arbiscan.io/token/"

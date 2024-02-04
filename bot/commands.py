@@ -269,16 +269,9 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.XCHANGE_BUY_ETH),
-        "bsc": ("(BSC)", url.XCHANGE_BUY_BSC),
-        "poly": ("(POLYGON)", url.XCHANGE_BUY_POLY),
-        "opti": ("(OPTIMISM)", url.XCHANGE_BUY_OPTI),
-        "arb": ("(ARB)", url.XCHANGE_BUY_ARB),
-        "base": ("(BASE)", url.XCHANGE_BUY_BASE),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].xchange
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -342,17 +335,9 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "": (url.DEX_TOOLS_ETH, "(ETH)"),
-        "eth": (url.DEX_TOOLS_ETH, "(ETH)"),
-        "bsc": (url.DEX_TOOLS_BSC, "(BSC)"),
-        "poly": (url.DEX_TOOLS_POLY, "(POLYGON)"),
-        "opti": (url.DEX_TOOLS_OPTI, "(OPTI)"),
-        "arb": (url.DEX_TOOLS_ARB, "(ARB)"),
-        "base": (url.DEX_TOOLS_BASE, "(BASE)"),
-    }
-    if chain in chain_mappings:
-        chain_url, chain_name = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].dext
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -812,16 +797,10 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.ETH_LOGO),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.BSC_LOGO),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.POLY_LOGO),
-        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.OPTI_LOGO),
-        "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.ARB_LOGO),
-        "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.BASE_LOGO),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_native, chain_logo = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        chain_native = mappings.CHAINS[chain].token
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -1010,16 +989,11 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, url.ETHER_TX, "eth"),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, url.BSC_TX, "bnb"),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, url.POLY_TX, "matic"),
-        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, url.OPTI_TX, "eth"),
-        "arb": ("(ARB)", url.ARB_ADDRESS, url.ARB_TX, "eth"),
-        "base": ("(BASE)", url.BASE_ADDRESS, url.BASE_TX, "eth"),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_tx, chain_native,  = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        chain_native = mappings.CHAINS[chain].token
+        chain_tx = mappings.CHAINS[chain].scan_tx
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -1100,14 +1074,10 @@ async def gas(update, context):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", "https://etherscan.io/gastracker", media.ETH_LOGO),
-        "bsc": ("(BSC)", "https://bscscan.com/gastracker", media.BSC_LOGO),
-        "poly": ("(POLYGON)", "https://polygonscan.com/gastracker", media.POLY_LOGO),
-        "base": ("(BASE)", "https://basescan.org/gastracker", media.BASE_LOGO),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_logo = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].gas
+        chain_logo = mappings.CHAINS[chain].logo
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -1198,16 +1168,9 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", media.ETH_LOGO),
-        "arb": ("(ARB)", media.ARB_LOGO),
-        "opti": ("(OPTIMISM)", media.OPTI_LOGO),
-        "bsc": ("(BSC)", media.BSC_LOGO),
-        "poly": ("(POLYGON)", media.POLY_LOGO),
-        "base": ("(BASE)", media.BASE_LOGO),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_logo = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_logo = mappings.CHAINS[chain].logo
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -1217,16 +1180,17 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7d_holders = api.get_holders(ca.X7D, chain)
     
     im1 = Image.open(random.choice(media.BLACKHOLE))
+    im2 = Image.open(chain_logo)
     im1.paste(im2, (720, 20), im2)
     myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
-    im2 = Image.open(chain_logo)
+
     i1.text(
         (28, 36),
         f"X7 Finance Token Holders {chain_name}\n\n"
         f"X7R:   {x7r_holders}\n"
         f"X7DAO: {x7dao_holders}\n"
-        f"X7D:   {x7d_holders}\n\n\n\n"
+        f"X7D:   {x7d_holders}\n\n\n\n\n\n\n\n\n"
         f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font=myfont,
         fill=(255, 255, 255),
@@ -1373,95 +1337,12 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    contract_addresses = [ca.X7R, ca.X7DAO, ca.X7101, ca.X7102, ca.X7103, ca.X7104, ca.X7105]
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ETHER_ADDRESS,
-            "eth",
-            media.ETH_LOGO,
-            ca.X7R_PAIR_ETH,
-            ca.X7DAO_PAIR_ETH,
-            ca.X7101_PAIR_ETH,
-            ca.X7102_PAIR_ETH,
-            ca.X7103_PAIR_ETH,
-            ca.X7104_PAIR_ETH,
-            ca.X7105_PAIR_ETH,
-        ),
-        "bsc": (
-            "(BSC)",
-            url.BSC_ADDRESS,
-            "bnb",
-            media.BSC_LOGO,
-            ca.X7DAO_PAIR_BSC,
-            ca.X7R_PAIR_BSC,
-            ca.X7101_PAIR_BSC,
-            ca.X7102_PAIR_BSC,
-            ca.X7103_PAIR_BSC,
-            ca.X7104_PAIR_BSC,
-            ca.X7105_PAIR_BSC,
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.POLY_ADDRESS,
-            "matic",
-            media.POLY_LOGO,
-            ca.X7DAO_PAIR_POLY,
-            ca.X7R_PAIR_POLY,
-            ca.X7101_PAIR_POLY,
-            ca.X7102_PAIR_POLY,
-            ca.X7103_PAIR_POLY,
-            ca.X7104_PAIR_POLY,
-            ca.X7105_PAIR_POLY,
-        ),
-        "opti": (
-            "(OPTIMISM)",
-            url.OPTI_ADDRESS,
-            "eth",
-            media.OPTI_LOGO,
-            ca.X7DAO_PAIR_OPTI,
-            ca.X7R_PAIR_OPTI,
-            ca.X7101_PAIR_OPTI,
-            ca.X7102_PAIR_OPTI,
-            ca.X7103_PAIR_OPTI,
-            ca.X7104_PAIR_OPTI,
-            ca.X7105_PAIR_OPTI,
-        ),
-        "arb": (
-            "(ARB)",
-            url.ARB_ADDRESS,
-            "eth",
-            media.ARB_LOGO,
-            ca.X7DAO_PAIR_ARB,
-            ca.X7R_PAIR_ARB,
-            ca.X7101_PAIR_ARB,
-            ca.X7102_PAIR_ARB,
-            ca.X7103_PAIR_ARB,
-            ca.X7104_PAIR_ARB,
-            ca.X7105_PAIR_ARB,
-        ),
-        "base": (
-            "(BASE)",
-            url.BASE_ADDRESS,
-            "eth",
-            media.BASE_LOGO,
-            ca.X7DAO_PAIR_BASE,
-            ca.X7R_PAIR_BASE,
-            ca.X7101_PAIR_BASE,
-            ca.X7102_PAIR_BASE,
-            ca.X7103_PAIR_BASE,
-            ca.X7104_PAIR_BASE,
-            ca.X7105_PAIR_BASE,
-        ),
-    }
-    if chain in chain_mappings:
-        (
-            chain_name,
-            chain_url,
-            chain_native,
-            chain_logo,
-            *pair_addresses,
-        ) = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        chain_native = mappings.CHAINS[chain].token
+        chain_logo = mappings.CHAINS[chain].logo
+        pair_addresses = mappings.CHAINS[chain].pairs
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -1473,7 +1354,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         token_dollars = []
         weth_dollars = []
 
-        for contract_address, pair in zip(contract_addresses, pair_addresses):
+        for contract_address, pair in zip(ca.TOKENS, pair_addresses):
             token_price = api.get_price(contract_address, chain)
             liquidity_data = api.get_liquidity(pair, chain)
             token_liq = float(liquidity_data["reserve0"])
@@ -1616,64 +1497,10 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ETHER_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
-                )
-            ),
-        ),
-        "bsc": (
-            "(BSC)",
-            url.BSC_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    "https://bsc-dataseed.binance.org/",
-                )
-            ),
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.POLY_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
-                )
-            ),
-        ),
-        "opti": (
-            "(OPTIMISM)",
-            url.OPTI_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
-                )
-            ),
-        ),
-        "arb": (
-            "(ARB)",
-            url.ARB_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
-                )
-            ),
-        ),
-        "base": (
-            "(BASE)",
-            url.BASE_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    f"https://mainnet.base.org",
-                )
-            ),
-        ),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_web3 = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        chain_web3 = mappings.CHAINS[chain].w3
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -1724,66 +1551,19 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ETHER_ADDRESS,
-            url.ETHER_TOKEN,
-            "eth",
-            f"https://mainnet.infura.io/v3/{os.getenv('INFURA_API_KEY')}",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.BSC_ADDRESS,
-            url.BSC_TOKEN,
-            "bnb",
-            f"https://bsc-dataseed.binance.org/",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.POLY_ADDRESS,
-            url.POLY_TOKEN,
-            "matic",
-            f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
-        ),
-        "opti": (
-            "(OPTIMISM)",
-            url.OPTI_ADDRESS,
-            url.OPTI_TOKEN,
-            "eth",
-            f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
-        ),
-        "arb": (
-            "(ARB)",
-            url.ARB_ADDRESS,
-            url.ARB_TOKEN,
-            "eth",
-            f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
-        ),
-        "base": (
-            "(BASE)",
-            url.BASE_ADDRESS,
-            url.BASE_TOKEN,
-            "eth",
-            f"https://mainnet.base.org",
-        ),
-    }
-    if chain in chain_mappings:
-        (
-            chain_name,
-            chain_address_url,
-            chain_scan_url,
-            chain_native,
-            chain_web3,
-        ) = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_address_url = mappings.CHAINS[chain].scan_address
+        chain_scan_url = mappings.CHAINS[chain].scan_token
+        chain_native = mappings.CHAINS[chain].token
+        chain_web3 = mappings.CHAINS[chain].w3
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     price = api.get_native_price(chain_native)
-    web3 = Web3(Web3.HTTPProvider(chain_web3))
     address = to_checksum_address(ca.LPOOL)
-    contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
+    contract = chain_web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
     liquidation_status = ""
     try:
         liquidation = contract.functions.canLiquidate(int(loan_id)).call()
@@ -1927,76 +1707,13 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-    "eth": (
-            "(ETH)",
-            url.ETHER_ADDRESS,
-            Web3(
-                Web3.HTTPProvider(
-                    f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
-                )
-            ),
-            ca.X7R_PAIR_ETH,
-            ca.X7DAO_PAIR_ETH,
-        ),
-    "bsc": (
-        "(BSC)",
-        url.BSC_ADDRESS,
-        Web3(
-            Web3.HTTPProvider(
-                "https://bsc-dataseed.binance.org/",
-            )
-        ),
-            ca.X7R_PAIR_BSC,
-            ca.X7DAO_PAIR_BSC,
-    ),
-    "poly": (
-        "(POLYGON)",
-        url.POLY_ADDRESS,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
-            )
-        ),
-            ca.X7R_PAIR_POLY,
-            ca.X7DAO_PAIR_POLY,
-    ),
-    "opti": (
-        "(OPTIMISM)",
-        url.OPTI_ADDRESS,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
-            )
-        ),
-            ca.x7r_pair_opti,
-            ca.x7dao_pair_opti,
-    ),
-    "arb": (
-        "(ARB)",
-        url.ARB_ADDRESS,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
-            )
-        ),
-            ca.X7R_PAIR_ARB,
-            ca.X7DAO_PAIR_ARB,
-    ),
-    "base": (
-        "(BASE)",
-        url.BASE_ADDRESS,
-        Web3(
-            Web3.HTTPProvider(
-                f"https://mainnet.base.org",
-            )
-        ),
-            ca.X7R_PAIR_BASE,
-            ca.X7DAO_PAIR_BASE,
-    ),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, web3, x7r_pair, x7dao_pair = chain_mappings[chain]
+
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        web3 = mappings.CHAINS[chain].w3
+        x7r_pair = mappings.CHAINS[chain].pairs[0]
+        x7dao_pair = mappings.CHAINS[chain].pairs[1]
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -2059,15 +1776,10 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_TOKEN, "eth-main"),
-        "bsc": ("(BSC)", url.BSC_TOKEN, ""),
-        "poly": ("(POLYGON)", url.POLY_TOKEN, "poly-main"),
-        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "optimism-main"),
-        "arb": ("(ARB)", url.ARB_TOKEN, "arbitrum-main"),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_holders = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_holders = mappings.CHAINS[chain].nft_holders
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -2100,16 +1812,8 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_TOKEN, "?chain=eth-main"),
-        "bsc": ("(BSC)", url.BSC_TOKEN, ""),
-        "poly": ("(POLYGON)", url.POLY_TOKEN, "?chain=poly-main"),
-        "opti": ("(OPTIMISM)", url.OPTI_TOKEN, "?chain=optimism-main"),
-        "arb": ("(ARB)", url.ARB_TOKEN, "?chain=arbitrum-main"),
-        "base": ("(BASE)", url.BASE_TOKEN, "?chain=base-main"),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_holders = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -2258,16 +1962,10 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", "", "ETH"),
-        "bsc": ("(BSC)", "-binance", "BNB"),
-        "poly": ("(POLYGON)", "-polygon", "MATIC"),
-        "opti": ("(OPTIMISM)", "-optimism", "ETH"),
-        "arb": ("(ARB)", "-arbitrum", "ETH"),
-        "base": ("(BASE)", "-base", "ETH"),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_os, chain_native = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_os = mappings.CHAINS[chain].opensea
+        chain_native = mappings.CHAINS[chain].token
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -2275,7 +1973,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain_prices = nfts.NFT_PRICES()
     chain_counts = nfts.NFT_COUNTS()
     chain_floors = nfts.NFT_FLOORS()
-    chain_discount = nfts.NFT_DISCOUNT()
+    chain_discount = nfts.NFT_DISCOUNTS()
 
     eco_price = chain_prices.get(chain, {}).get("eco")
     liq_price = chain_prices.get(chain, {}).get("liq")
@@ -2720,25 +2418,18 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     else:
-        chain_mappings = {
-            "eth": ("(ETH)", url.ETHER_ADDRESS, "eth", media.ETH_LOGO, f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"),
-            "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb", media.BSC_LOGO, f"{random.choice(url.BSC)}"),
-            "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic", media.POLY_LOGO, f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}"),
-            "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, "eth", media.OPTI_LOGO, f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}"),
-            "arb": ("(ARB)", url.ARB_ADDRESS, "eth", media.ARB_LOGO, f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"),
-            "base": ("(BASE)", url.BASE_ADDRESS, "eth", media.BASE_LOGO),
-        }
-
-        
-        if chain in chain_mappings:
-            chain_name, chain_url, chain_native, chain_logo, web3_url = chain_mappings[chain]
+        if chain in mappings.CHAINS:
+            chain_name = mappings.CHAINS[chain].name
+            chain_url = mappings.CHAINS[chain].scan_address
+            chain_native = mappings.CHAINS[chain].token
+            chain_logo = mappings.CHAINS[chain].logo
+            web3_url = mappings.CHAINS[chain].w3
         else:
             await update.message.reply_text(text.CHAIN_ERROR)
             return
-            
-        web3 = Web3(Web3.HTTPProvider(web3_url))
+
         address = to_checksum_address(ca.LPOOL)
-        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
+        contract = web3_url.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
         available = (contract.functions.availableCapital().call() / 10**18)
 
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
@@ -2826,18 +2517,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             token_info = db.token_get(search)
             for token_instance in token_info:
                 if token_instance['ticker'].lower() == search:
-                    if token_instance['chain'] == "eth":
-                        token = "eth"
-                    elif token_instance['chain'] == "poly":
-                        token = "matic"
-                    elif token_instance['chain'] == "bsc":
-                        token = "bnb"
-                    else:
-                        token = "eth"
                     holders = api.get_holders(token_instance['ca'], token_instance['chain'])
-                    scan = mappings.CHAINS[token_instance['chain']].scan
                     dext = mappings.CHAINS[token_instance['chain']].dext
                     w3 = mappings.CHAINS[token_instance['chain']].w3
+                    token = mappings.CHAINS[token_instance['chain']].token
                     contract = w3.eth.contract(
                         address=Web3.to_checksum_address(token_instance['pair']), abi=ca.PAIRS_ABI)
                     token0_address = contract.functions.token0().call()
@@ -3160,16 +2843,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 if search.startswith("0x") and len(search) == 42:
                     if chain == "":
                         chain = "eth"
-                    chain_mappings = {
-                        "eth": (url.DEX_TOOLS_ETH, media.ETH_LOGO),
-                        "bsc": (url.DEX_TOOLS_BSC, media.BSC_LOGO),
-                        "poly": (url.DEX_TOOLS_POLY, media.POLY_LOGO),
-                        "opti": (url.DEX_TOOLS_OPTI, media.OPTI_LOGO),
-                        "arb": (url.DEX_TOOLS_ARB, media.ARB_LOGO),
-                        "base": (url.DEX_TOOLS_BASE, media.BASE_LOGO),
-                    }
-                    if chain in chain_mappings:
-                        dex_tools, chain_logo = chain_mappings[chain]
+                    
+                    if chain in mappings.CHAINS:
+                        chain_logo = mappings.CHAINS[chain].logo
+                        dex_tools = mappings.CHAINS[chain].dext
                     else:
                         await update.message.reply_text(text.CHAIN_ERROR)
                         return  
@@ -3408,16 +3085,11 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         token_address = context.args[0].lower()
         chain = context.args[1].lower()
 
-    chain_mappings = {
-        "eth": (f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}", url.ETHER_ADDRESS, url.DEX_TOOLS_ETH, "eth"),
-        "bsc": (random.choice(url.BSC), url.BSC_ADDRESS, url.DEX_TOOLS_BSC, "bnb"),
-        "poly": (f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}", url.POLY_ADDRESS, url.DEX_TOOLS_POLY, "matic"),
-        "opti": (f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}", url.OPTI_ADDRESS, url.DEX_TOOLS_OPTI, "eth"),
-        "arb": (f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}", url.ARB_ADDRESS, url.DEX_TOOLS_ARB, "eth"),
-        "base": ("https://mainnet.base.org", url.BASE_ADDRESS, url.DEX_TOOLS_BASE, "eth"),
-    }
-    if chain in chain_mappings:
-        web3_url, scan_link, dex_tools_link, native = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        web3_url = mappings.CHAINS[chain].w3
+        scan_link = mappings.CHAINS[chain].scan_address
+        dex_tools_link = mappings.CHAINS[chain].dext
+
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -3653,16 +3325,11 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, ca.COM_MULTI_ETH, ca.DEV_MULTI_ETH),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, ca.COM_MULTI_BSC, ca.DEV_MULTI_BSC),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, ca.COM_MULTI_POLY, ca.DEV_MULTI_POLY),
-        "opti": ("(OPTIMISM)", url.OPTI_ADDRESS, ca.COM_MULTI_OPTI, ca.DEV_MULTI_OPTI),
-        "arb": ("(ARB)", url.ARB_ADDRESS, ca.COM_MULTI_ARB, ca.DEV_MULTI_ARB),
-        "base": ("(BASE)", url.BASE_ADDRESS, ca.COM_MULTI_BASE, ca.DEV_MULTI_BASE),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, com_wallet, dev_wallet = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        com_wallet = mappings.CHAINS[chain].com_multi
+        dev_wallet = mappings.CHAINS[chain].dev_multi
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -3703,16 +3370,9 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS),
-        "arb": ("(ARB)", url.ARB_ADDRESS),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS),
-        "bsc": ("(BSC)", url.BSC_ADDRESS),
-        "opti": ("(OPTI)", url.OPTI_ADDRESS),
-        "base": ("(BASE)", url.BASE_ADDRESS),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
         buttons = [
         [
             InlineKeyboardButton(
@@ -3818,19 +3478,13 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 async def splitters(update: Update, context):
     try:
-        chain_mappings = {
-            "eth": ("(ETH)", url.ETHER_ADDRESS, "eth"),
-            "arb": ("(ARB)", url.ARB_ADDRESS, "eth"),
-            "poly": ("(POLYGON)", url.POLY_ADDRESS, "matic"),
-            "bsc": ("(BSC)", url.BSC_ADDRESS, "bnb"),
-            "opti": ("(OPTI)", url.OPTI_ADDRESS, "eth"),
-            "base": ("(BASE)", url.BASE_ADDRESS, "eth"),
-        }
         if len(context.args) > 1:
             eth_value = float(context.args[1])
             chain = context.args[0].lower()
-            if chain in chain_mappings:
-                chain_name, chain_url, chain_native = chain_mappings[chain]
+            if chain in mappings.CHAINS:
+                chain_name = mappings.CHAINS[chain].name
+                chain_url = mappings.CHAINS[chain].scan_address
+                chain_native = mappings.CHAINS[chain].token
             else:
                 await update.message.reply_text(text.CHAIN_ERROR)
                 return
@@ -3871,8 +3525,10 @@ async def splitters(update: Update, context):
             )
         elif len(context.args) == 1:
             chain = context.args[0].lower()
-            if chain in chain_mappings:
-                chain_name, chain_url, chain_native = chain_mappings[chain]
+            if chain in mappings.CHAINS:
+                chain_name = mappings.CHAINS[chain].name
+                chain_url = mappings.CHAINS[chain].scan_address
+                chain_native = mappings.CHAINS[chain].token
             else:
                 await update.message.reply_text(text.CHAIN_ERROR)
                 return
@@ -3920,8 +3576,10 @@ async def splitters(update: Update, context):
             )
         else:
             chain = "eth"
-            if chain in chain_mappings:
-                chain_name, chain_url, chain_native = chain_mappings[chain]
+            if chain in mappings.CHAINS:
+                chain_name = mappings.CHAINS[chain].name
+                chain_url = mappings.CHAINS[chain].scan_address
+                chain_native = mappings.CHAINS[chain].token
             else:
                 await update.message.reply_text(text.CHAIN_ERROR)
                 return
@@ -4230,58 +3888,12 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": (
-            "(ETH)",
-            url.ETHER_ADDRESS,
-            media.ETH_LOGO,
-            ca.COM_MULTI_ETH,
-            "eth",
-        ),
-        "arb": (
-            "(ARB)",
-            url.ARB_ADDRESS,
-            media.BSC_LOGO,
-            ca.COM_MULTI_ARB,
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            url.POLY_ADDRESS,
-            media.POLY_LOGO,
-            ca.COM_MULTI_POLY,
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            url.BSC_ADDRESS,
-            media.BSC_LOGO,
-            ca.COM_MULTI_BSC,
-            "bnb",
-        ),
-        "opti": (
-            "(OP)",
-            url.OPTI_ADDRESS,
-            media.OPTI_LOGO,
-            ca.COM_MULTI_OPTI,
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            url.BASE_ADDRESS,
-            media.BASE_LOGO,
-            ca.COM_MULTI_BASE,
-            "eth",
-        ),
-    }
-    if chain in chain_mappings:
-        (
-            chain_name,
-            chain_url,
-            chain_logo,
-            chain_com_multi,
-            chain_native,
-        ) = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+                chain_name = mappings.CHAINS[chain].name
+                chain_url = mappings.CHAINS[chain].scan_address
+                chain_native = mappings.CHAINS[chain].token
+                chain_com_multi = mappings.CHAINS[chain].com_multi
+                chain_logo = mappings.CHAINS[chain].logo
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -4451,16 +4063,11 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if chain == "":
         chain = "eth"
-    chain_mappings = {
-        "eth": ("(ETH)", url.ETHER_ADDRESS, media.ETH_LOGO, "eth", ca.USDC, ca.USDT),
-        "arb": ("(ARB)", url.ARB_ADDRESS, media.BSC_LOGO, "eth", ca.AUSDC, ca.AUSDT),
-        "poly": ("(POLYGON)", url.POLY_ADDRESS, media.POLY_LOGO, "matic", ca.PUSDC, ca.PUSDT),
-        "bsc": ("(BSC)", url.BSC_ADDRESS, media.BSC_LOGO, "bnb", ca.BUSDC, ca.BUSDC),
-        "opti": ("(OPTI)", url.OPTI_ADDRESS, media.OPTI_LOGO, "eth", ca.OUSDC, ca.OUSDC),
-        "base": ("(BASE)", url.BASE_ADDRESS, media.BASE_LOGO, "eth", ca.USDBC, ca.CBUSDC),
-    }
-    if chain in chain_mappings:
-        chain_name, chain_url, chain_logo, chain_native, chain_usdc, chain_usdt = chain_mappings[chain]
+    if chain in mappings.CHAINS:
+                chain_name = mappings.CHAINS[chain].name
+                chain_url = mappings.CHAINS[chain].scan_address
+                chain_native = mappings.CHAINS[chain].token
+                chain_logo = mappings.CHAINS[chain].logo
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -4484,9 +4091,6 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7105_price = x7105_balance * api.get_price(ca.X7105, chain)
     x7d_balance = api.get_token_balance(wallet, ca.X7D, chain)
     x7d_price = x7d_balance * api.get_native_price(chain_native)
-    usdc_balance = api.get_stables_balance(wallet, chain_usdc, chain)
-    usdt_balance = api.get_stables_balance(wallet, chain_usdt, chain)
-    stables = usdt_balance + usdc_balance
     total = (
         x7d_price
         + x7r_price
@@ -4513,8 +4117,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     i1.text(
         (28, 10),
         f"X7 Finance Wallet Info {chain_name}\n\n"
-        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n"
-        f"${'{:0,.0f}'.format(stables)} Stables\n"
+        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
         f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
         f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
         f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
@@ -4526,7 +4129,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{pioneers} Pioneer NFTs\n"
         f"{maxis} Maxi NFTs\n"
         f"{txs} tx's in the last 24 hours\n\n"
-        f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
+        f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n\n"
         f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
         font=myfont,
         fill=(255, 255, 255),
@@ -4538,8 +4141,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=open(r"media/blackhole.png", "rb"),
         caption=f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
         f"`{wallet}`\n\n"
-        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n"
-        f"${'{:0,.0f}'.format(stables)} Stables\n\n"
+        f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
         f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
         f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
         f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
