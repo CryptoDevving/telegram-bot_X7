@@ -146,17 +146,16 @@ async def new_pair(event):
     im1 = Image.open((random.choice(media.blackhole)))
     im2 = Image.open(media.poly_logo)
     im1.paste(im2, (720, 20), im2)
-    myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
     i1.text(
         (26, 30),
-        f"New Pair Created (POLYGON)\n\n"
-        f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
-        f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
-        f"{pool_text}\n\n"
-        f"{status}",
-        font=myfont,
-        fill=(255, 255, 255),
+            f"New Pair Created (POLYGON)\n\n"
+            f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
+            f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
+            f"{pool_text}\n\n"
+            f"{status}",
+        font = ImageFont.truetype(media.FONT, 26),
+        fill = (255, 255, 255),
     )
     im1.save(r"media/blackhole.png")
     channel_chat_ids = [
@@ -167,12 +166,13 @@ async def new_pair(event):
         await application.bot.send_photo(
             chat_id,
             photo=open(r"media/blackhole.png", "rb"),
-            caption=f"*New Pair Created (POLYGON)*\n\n"
-            f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
-            f"Token Address:\n`{token_address}`\n\n"
-            f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
-            f"{pool_text}\n\n"
-            f"{status}",
+            caption=
+                f"*New Pair Created (POLYGON)*\n\n"
+                f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
+                f"Token Address:\n`{token_address}`\n\n"
+                f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
+                f"{pool_text}\n\n"
+                f"{status}",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -242,30 +242,30 @@ async def new_loan(event):
     im1 = Image.open((random.choice(media.BLACKHOLE)))
     im2 = Image.open(media.POLY_LOGO)
     im1.paste(im2, (720, 20), im2)
-    myfont = ImageFont.truetype(r"media/FreeMonoBold.ttf", 26)
     i1 = ImageDraw.Draw(im1)
     i1.text(
         (26, 30),
-        f"*New Loan Originated (POLYGON)*\n\n"
-        f"Loan ID: {event['args']['loanID']}\n"
-        f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} MATIC "
-        f'(${"{:0,.0f}".format(api.get_native_price("matic") * cost)})\n\n'
-        f"Payment Schedule (UTC):\n{schedule_str}\n\n"
-        f'Total: {amount} MATIC (${"{:0,.0f}".format(api.get_native_price("matic") * amount)}',
-        font=myfont,
-        fill=(255, 255, 255),
+            f"*New Loan Originated (POLYGON)*\n\n"
+            f"Loan ID: {event['args']['loanID']}\n"
+            f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} MATIC "
+            f'(${"{:0,.0f}".format(api.get_native_price("matic") * cost)})\n\n'
+            f"Payment Schedule (UTC):\n{schedule_str}\n\n"
+            f'Total: {amount} MATIC (${"{:0,.0f}".format(api.get_native_price("matic") * amount)}',
+        font = ImageFont.truetype(media.FONT, 26),
+        fill = (255, 255, 255),
     )
     im1.save(r"media/blackhole.png")
     await application.bot.send_photo(
         os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
         photo=open(r"media/blackhole.png", "rb"),
-        caption=f"*New Loan Originated (POLYGON)*\n\n"
-        f"Loan ID: {event['args']['loanID']}\n"
-        f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} MATIC "
-        f'(${"{:0,.0f}".format(api.get_native_price("matic") * cost)})\n\n'
-        f"Payment Schedule (UTC):\n{schedule_str}\n\n"
-        f'Total: {amount} MATIC (${"{:0,.0f}".format(api.get_native_price("matic") * amount)})',
-        parse_mode="Markdown",
+        caption=
+            f"*New Loan Originated (POLYGON)*\n\n"
+            f"Loan ID: {event['args']['loanID']}\n"
+            f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} MATIC "
+            f'(${"{:0,.0f}".format(api.get_native_price("matic") * cost)})\n\n'
+            f"Payment Schedule (UTC):\n{schedule_str}\n\n"
+            f'Total: {amount} MATIC (${"{:0,.0f}".format(api.get_native_price("matic") * amount)})',
+            parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
                 [

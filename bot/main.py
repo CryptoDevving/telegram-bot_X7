@@ -51,7 +51,7 @@ async def click_me(context: ContextTypes.DEFAULT_TYPE) -> None:
         [[InlineKeyboardButton("Click Me!", callback_data=CURRENT_BUTTON_DATA)]]
     )
     click_me = await context.bot.send_photo(
-                    photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
+                    photo=api.get_random_pioneer(),
                     chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
                     reply_markup=keyboard,
                 )
@@ -126,7 +126,8 @@ async def click_me_function(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 burn_message = await api.burn_x7r(times.BURN_AMOUNT)
                 await context.bot.send_message(
                         chat_id=update.effective_chat.id,
-                        text=f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
+                        text=
+                            f"🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
                             f"The button has been clicked a total of {total_click_count} times by all Pioneers!\n\n"
                             f"{burn_message}"
                     )
@@ -158,7 +159,7 @@ async def auto_info(context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await context.bot.send_photo(
         chat_id=job.chat_id,
-        photo=f"{url.PIONEERS}{api.get_random_pioneer_number()}.png",
+        photo=api.get_random_pioneer(),
     )
 
     await context.bot.send_message(

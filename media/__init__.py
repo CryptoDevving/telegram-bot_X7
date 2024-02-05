@@ -2,6 +2,7 @@ import os
 
 # MEDIA
 BLACKHOLE = [os.path.abspath(f"media/blackhole{i}.jpg") for i in range(1, 8)]
+FONT = "media/FreeMonoBold.ttf"
 
 X7R_LOGO = os.path.join("media", "X7R_LOGO_black_back_200_x_200_px.png")
 X7D_LOGO = os.path.join("media", "X7D_LOGO_black_back_200_x_200_px.png")

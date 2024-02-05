@@ -821,8 +821,9 @@ def get_quote():
     return f'`"{quote_text}"\n\n-{quote_author}`'
 
 
-def get_random_pioneer_number():
-    return f"{random.randint(1, 4480)}".zfill(4)
+def get_random_pioneer():
+    number = f"{random.randint(1, 4480)}".zfill(4)
+    return f"{url.PIONEERS}{number}.png"
 
 
 def get_random_word(variable):
