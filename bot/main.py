@@ -374,6 +374,7 @@ if __name__ == "__main__":
     ## ADMIN ##
     application.add_handler(CommandHandler("wen", admin.wen))
     application.add_handler(CommandHandler("add", admin.add))
+    application.add_handler(CommandHandler("delete", admin.delete))
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(click_me_function))

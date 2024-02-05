@@ -13,7 +13,7 @@ from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
 from constants import ca, url
-from hooks import api
+from hooks import api, db
 import media
 
 
@@ -205,6 +205,16 @@ async def new_pair(event):
                 ]
             ),
         )
+        try:
+            if event["args"]["token0"] == ca.WBNB or event["args"]["token1"] == ca.WBNB:
+                image_url = api.get_token_image(token_address, "bsc")
+                if image_url is None:
+                    image_url = "N/A"
+
+                db.token_add(token_name[1], event["args"]["pair"], token_address, "bsc", image_url)
+
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
 
 
 async def new_loan(event):

@@ -2510,13 +2510,12 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             if context.args:
                 search = context.args[0].lower()
-                chain = context.args[1].lower() if len(context.args) > 1 else ""
+                chain = context.args[1].lower() if len(context.args) > 1 else "eth"
             else:
                 search = ""
                 chain = ""
-            token_info = db.token_get(search)
+            token_info = db.token_get(search, chain)
             for token_instance in token_info:
-                if token_instance['ticker'].lower() == search:
                     holders = api.get_holders(token_instance['ca'], token_instance['chain'])
                     dext = mappings.CHAINS[token_instance['chain']].dext
                     w3 = mappings.CHAINS[token_instance['chain']].w3

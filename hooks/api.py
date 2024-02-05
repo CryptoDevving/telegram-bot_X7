@@ -66,7 +66,11 @@ def get_holders(pair, chain):
 
     if response.status_code == 200:
         data = response.json()
-        return data["data"]["holders"]
+
+        if data and "data" in data and data["data"]:
+            return data["data"]["holders"]
+        else:
+            return "N/A"
     else:
         return "N/A"
     
@@ -616,9 +620,16 @@ def get_token_image(token, chain):
 
     response = requests.post(url, headers=headers, json={"query": image})
     data = response.json()
-    image_url = data['data']['getTokenInfo']['imageLargeUrl']
-    return image_url
+    if 'data' in data and 'getTokenInfo' in data['data']:
+            token_info = data['data']['getTokenInfo']
 
+            if token_info and 'imageLargeUrl' in token_info:
+                image_url = token_info['imageLargeUrl']
+                return image_url
+            else:
+                return "N/A"
+    else:
+        return "N/A"
 
 def get_volume(pair, chain):
     try:

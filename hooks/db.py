@@ -211,41 +211,62 @@ async def clicks_update(name, time_taken):
 def token_add(ticker, pair, ca, chain, image_url):
     db_connection = create_db_connection()
     cursor = db_connection.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tokens (
-            ticker VARCHAR(255) PRIMARY KEY,
-            pair VARCHAR(255),
-            ca VARCHAR(255),
-            chain VARCHAR(255),
-            image_url VARCHAR(255)
-        )
-    """)
-    db_connection.commit()
-
-    cursor.execute("SELECT ticker FROM tokens WHERE ticker = %s", (ticker,))
-    existing_token = cursor.fetchone()
-
-    if existing_token:
+    try:
         cursor.execute("""
-            UPDATE tokens 
-            SET pair = %s, ca = %s, chain = %s, image_url = %s
-            WHERE ticker = %s
-        """, (pair, ca, chain, image_url, ticker))
+            CREATE TABLE IF NOT EXISTS tokens (
+                ticker VARCHAR(255),
+                pair VARCHAR(255),
+                ca VARCHAR(255),
+                chain VARCHAR(255),
+                image_url VARCHAR(255),
+                PRIMARY KEY (ticker, chain)
+            )
+        """)
         db_connection.commit()
-    else:
-        cursor.execute("""
-            INSERT INTO tokens (ticker, pair, ca, chain, image_url)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (ticker, pair, ca, chain, image_url))
+
+        cursor.execute("SELECT ticker FROM tokens WHERE ticker = %s AND chain = %s", (ticker, chain))
+        existing_entry = cursor.fetchone()
+
+        if existing_entry:
+            cursor.execute("""
+                UPDATE tokens 
+                SET pair = %s, ca = %s, image_url = %s
+                WHERE ticker = %s AND chain = %s
+            """, (pair, ca, image_url, ticker, chain))
+        else:
+            cursor.execute("""
+                INSERT INTO tokens (ticker, pair, ca, chain, image_url)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (ticker, pair, ca, chain, image_url))
+
         db_connection.commit()
-    close_db_connection(db_connection, cursor)
+    except Exception as e:
+        db_connection.rollback()
+    finally:
+        close_db_connection(db_connection, cursor)
 
 
+def token_delete(ticker, chain):
+    try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
+        delete_query = "DELETE FROM tokens WHERE ticker = %s AND chain = %s"
+        cursor.execute(delete_query, (ticker, chain))
+        db_connection.commit()
+        return f"Entry {ticker} for chain {chain} deleted successfully."
+    
+    except Exception as e:
+        db_connection.rollback()
+        return f"Error deleting {ticker} for chain {chain}: {e}"
+    finally:
+        cursor.close()
+        db_connection.close()
 
-def token_get(ticker):
+
+def token_get(ticker, chain):
     db_connection = create_db_connection()
     cursor = db_connection.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM tokens WHERE ticker = %s", (ticker.lower(),))
+    cursor.execute("SELECT * FROM tokens WHERE ticker = %s AND chain = %s", (ticker.lower(), chain))
     matching_data = cursor.fetchall()
     close_db_connection(db_connection, cursor)
 

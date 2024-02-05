@@ -45,7 +45,23 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             await update.message.reply_text(f"use /add [ticker] [pair] [ca] [chain]")
 
+    else:
+        await update.message.reply_text(f"{text.MODS_ONLY}")
 
+
+async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        if len(context.args) == 2:
+            ticker = context.args[0]
+            chain = context.args[1]
+            try:
+                db.token_delete(ticker, chain)
+                await update.message.reply_text(f"{ticker.upper()} ({chain.upper()}) Sucessfully deleted from @X7Finance_bot")
+            except Exception:
+                await update.message.reply_text(f"Error deleteing {ticker.upper()} ({chain.upper()}) Please try again.")
+        else:
+            await update.message.reply_text(f"use /add [ticker] [chain]")
     else:
         await update.message.reply_text(f"{text.MODS_ONLY}")
 
