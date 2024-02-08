@@ -30,6 +30,11 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
             user_id=user_id,
             permissions=user_restrictions,
         )
+        try:
+            previous_welcome_message_id = context.bot_data.get('welcome_message_id')
+            await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=previous_welcome_message_id)
+        except Exception:
+            pass
 
 
 async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
