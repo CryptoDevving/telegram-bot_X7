@@ -48,7 +48,7 @@ dextools_chain_mappings = {
     "eth": "ether",
     "arb": "arbitrum",
     "poly": "polygon",
-    "bsc": "bnb",
+    "bsc": "bsc",
     "opti": "optimism",
     "base": "base",
 }
