@@ -2967,26 +2967,10 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if scan == {}:
         await update.message.reply_text(f"{token_address} ({chain.upper}) not found")
         return
-    verified_check = api.get_verified(token_address, chain)
-    web3 = Web3(Web3.HTTPProvider(web3_url))
-    if verified_check == "Yes":
-        try:
-            contract = web3.eth.contract(
-            address=Web3.to_checksum_address(token_address), abi=api.get_abi(token_address, chain)
-            )
-            verified = "✅ Contract Verified"
-        except Exception:
-            verified = "⚠️ Contract Unverified"
-        try:
-            owner = contract.functions.owner().call()
-            if owner == "0x0000000000000000000000000000000000000000":
-                renounced = "✅ Contract Renounced"
-            else:
-                renounced = "⚠️ Contract Not Renounced"
-        except Exception:
-            renounced = "⚠️ Contract Not Renounced"
+    if api.get_verified(search, chain):
+        verified = "✅ Contract Verified"
     else:
-        verified = "⚠️ Contract Unverified"
+        "⚠️ Contract Unverified"
     if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
         try:
             if (
@@ -3012,6 +2996,11 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         tax = f"❓ Tax - Unknown"
     token_address_str = str(token_address)
     if token_address_str in scan:
+        if "owner_address" in scan[token_address_str]:
+            if scan[token_address_str]["owner_address"] == "0x0000000000000000000000000000000000000000":
+                renounced = "✅ Contract Renounced"
+            else:
+                renounced = "⚠️ Contract Not Renounced"
         if "is_mintable" in scan[token_address_str]:
             if scan[token_address_str]["is_mintable"] == "1":
                 mint = "⚠️ Mintable"

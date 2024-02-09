@@ -280,7 +280,7 @@ def get_verified(contract, chain):
     url = f"{chain_info.url}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
     response = requests.get(url)
     data = response.json()
-    return "Yes" if "SourceCode" in data["result"][0] else "No"
+    return True if "SourceCode" in data["result"][0] else False
 
 
 def get_x7r_supply(chain):

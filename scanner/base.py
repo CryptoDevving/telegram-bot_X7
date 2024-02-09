@@ -67,8 +67,11 @@ async def new_pair(event):
         native = api.get_token_name(event["args"]["token1"], "base")
         token_name = api.get_token_name(event["args"]["token0"], "base")
         token_address = event["args"]["token0"]
-    verified_check = api.get_verified(token_address, "base")
     info = api.get_token_data(token_address, "base")
+    if api.get_verified(token_address, "base"):
+        verified = "✅ Contract Verified"
+    else:
+        "⚠️ Contract Unverified"
     if (
         info[0]["decimals"] == ""
         or info[0]["decimals"] == "0"
@@ -82,27 +85,13 @@ async def new_pair(event):
     status = ""
     renounced = ""
     tax = ""
-    verified = ""
-    if verified_check == "Yes":
-        try:
-            contract = web3.eth.contract(
-                address=token_address, abi=api.get_abi(token_address, "base")
-            )
-            verified = "✅ Contract Verified"
-        except Exception:
-            verified = "⚠️ Contract Unverified"
-        try:
-            owner = contract.functions.owner().call()
-            if owner == "0x0000000000000000000000000000000000000000":
+    try:
+        scan = api.get_scan(token_address, "base")
+        if "owner_address" in scan[f"{str(token_address).lower()}"]:
+            if scan[f"{str(token_address).lower()}"]["owner_address"] == "0x0000000000000000000000000000000000000000":
                 renounced = "✅ Contract Renounced"
             else:
                 renounced = "⚠️ Contract Not Renounced"
-        except (Exception, TimeoutError, ValueError, StopAsyncIteration):
-            renounced = "⚠️ Contract Not Renounced"
-    else:
-        verified = "⚠️ Contract Unverified"
-    try:
-        scan = api.get_scan(token_address, "base")
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
             try:
                 if (

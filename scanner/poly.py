@@ -49,7 +49,6 @@ async def restart_script():
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "poly")
     if event["args"]["token0"] == ca.WMATIC:
-        weth_address = event["args"]["token0"]
         native = api.get_token_name(event["args"]["token0"], "poly")
         token_name = api.get_token_name(event["args"]["token1"], "poly")
         token_address = event["args"]["token1"]
@@ -58,22 +57,22 @@ async def new_pair(event):
         token_name = api.get_token_name(event["args"]["token0"], "poly")
         token_address = event["args"]["token0"]
     elif event["args"]["token0"] in ca.STABLES:
-        weth_address = event["args"]["token0"]
         native = api.get_token_name(event["args"]["token0"], "poly")
         token_name = api.get_token_name(event["args"]["token1"], "poly")
         token_address = event["args"]["token1"]
     elif event["args"]["token1"] in ca.STABLES:
-        weth_address = event["args"]["token1"]
         native = api.get_token_name(event["args"]["token1"], "poly")
         token_name = api.get_token_name(event["args"]["token0"], "poly")
         token_address = event["args"]["token0"]
     else:
-        weth_address = event["args"]["token1"]
         native = api.get_token_name(event["args"]["token1"], "poly")
         token_name = api.get_token_name(event["args"]["token0"], "poly")
         token_address = event["args"]["token0"]
-    verified_check = api.get_verified(token_address, "poly")
     info = api.get_token_data(token_address, "poly")
+    if api.get_verified(token_address, "poly"):
+        verified = "✅ Contract Verified"
+    else:
+        "⚠️ Contract Unverified"
     if (
         info[0]["decimals"] == ""
         or info[0]["decimals"] == "0"
@@ -87,27 +86,13 @@ async def new_pair(event):
     status = ""
     tax = ""
     renounced = ""
-    verified = ""
-    if verified_check == "Yes":
-        try:
-            contract = web3.eth.contract(
-                address=token_address, abi=api.get_abi(token_address, "poly")
-            )
-            verified = "✅ Contract Verified"
-        except Exception:
-            verified = "⚠️ Contract Unverified"
-        try:
-            owner = contract.functions.owner().call()
-            if owner == "0x0000000000000000000000000000000000000000":
+    try:
+        scan = api.get_scan(token_address, "poly")
+        if "owner_address" in scan[f"{str(token_address).lower()}"]:
+            if scan[f"{str(token_address).lower()}"]["owner_address"] == "0x0000000000000000000000000000000000000000":
                 renounced = "✅ Contract Renounced"
             else:
                 renounced = "⚠️ Contract Not Renounced"
-        except Exception:
-            renounced = "⚠️ Contract Not Renounced"
-    else:
-        verified = "⚠️ Contract Unverified"
-    try:
-        scan = api.get_scan(token_address, "poly")
         if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
             try:
                 if (
