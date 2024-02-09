@@ -330,7 +330,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
     application.add_handler(CommandHandler(["price", "prices", "x"], commands.price))
     application.add_handler(CommandHandler("quote", commands.quote))
-    application.add_handler(CommandHandler("reset_leaderboard", commands.reset_leaderboard))
     application.add_handler(CommandHandler("router", commands.router))
     application.add_handler(CommandHandler("say", commands.say))
     application.add_handler(CommandHandler("scan", commands.scan))
@@ -376,6 +375,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("wen", admin.wen))
     application.add_handler(CommandHandler("add", admin.add))
     application.add_handler(CommandHandler("delete", admin.delete))
+    application.add_handler(CommandHandler("reset_leaderboard", admin.reset_leaderboard))
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(click_me_function))

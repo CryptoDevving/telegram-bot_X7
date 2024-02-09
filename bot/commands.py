@@ -86,6 +86,7 @@ async def announcements(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def get_ath_info(coin):
         ath, ath_change, date = api.get_ath(coin)
         ath_change_str = f"{ath_change}"
@@ -160,6 +161,7 @@ async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     time = round(t.time())
     block_types = ["eth", "arb", "bsc", "poly", "opti", "base"]
     blocks = {block_type: api.get_block(block_type, time) for block_type in block_types}
@@ -196,6 +198,7 @@ async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -376,6 +379,7 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         token_names = {
             "x7r": {"contract": ca.X7R, "image": media.X7R_LOGO},
@@ -477,6 +481,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     price = api.get_cg_price("x7101, x7102, x7103, x7104, x7105")
     x7101mc = price["x7101"]["usd"] * ca.SUPPLY
@@ -694,6 +699,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     tx = api.get_tx(ca.DEPLOYER, "eth")
     time = datetime.utcfromtimestamp(int(tx["result"][0]["timeStamp"]))
     duration = datetime.utcnow() - time
@@ -801,6 +807,7 @@ async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -996,6 +1003,7 @@ async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1180,6 +1188,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1223,6 +1232,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "upload_photo")
     text = " ".join(context.args)
     img = Image.open((random.choice(media.BLACKHOLE)))
     i1 = ImageDraw.Draw(img)
@@ -1262,6 +1272,7 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     x7m105_duration = datetime.utcnow() - times.X7M105
     x7m105_years, x7m105_months, x7m105_weeks, x7m105_days = api.get_duration_years(x7m105_duration)
     migration_duration = datetime.utcnow() - times.MIGRATION
@@ -1348,6 +1359,7 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1509,6 +1521,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1558,6 +1571,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) >= 2:
         loan_id = context.args[0]
         chain = context.args[1].lower()
@@ -1636,6 +1650,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     loan_type = " ".join(context.args).lower()
     if loan_type == "":
         await update.message.reply_text(
@@ -1725,6 +1740,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1833,6 +1849,7 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1983,6 +2000,7 @@ async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -2084,6 +2102,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     tx_deployer = api.get_tx(ca.DEPLOYER, "eth")
     tx_magister_6 = api.get_tx(ca.MAGISTER_6, "eth")
 
@@ -2160,8 +2179,8 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
 
-
 async def pair(update: Update, context: CallbackContext):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     networks = {
         "ETH": f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
         "ARB": f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
@@ -2214,6 +2233,7 @@ async def pair(update: Update, context: CallbackContext):
 
 
 async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "upload_photo")
     text = " ".join(context.args)
     if text == "":
         await update.message.reply_text("Please follow the command with desired name")
@@ -2232,6 +2252,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         pioneer_id = " ".join(context.args)
         data = api.get_os_nft_collection("/x7-pioneer")
@@ -2319,6 +2340,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 
 async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "eth")
@@ -2532,6 +2554,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         if context.args:
             search = context.args[0].lower()
@@ -2895,14 +2918,6 @@ async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        db.clicks_reset()
-    else:
-        await update.message.reply_text(f"{text.MODS_ONLY}")
-
-
 async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
@@ -2928,6 +2943,7 @@ async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "upload_audio")
     if not context.args:
         await update.message.reply_text("Please provide some words to convert to speech.")
         return
@@ -2937,6 +2953,7 @@ async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) == 0:
         await update.message.reply_text(
             f"Please provide contract address and chain")
@@ -3147,6 +3164,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     wiki = wikipediaapi.Wikipedia("en")
     keyword = " ".join(context.args)
     page_py = wiki.page(keyword)
@@ -3339,6 +3357,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 
 async def splitters(update: Update, context):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         if len(context.args) > 1:
             eth_value = float(context.args[1])
@@ -3541,6 +3560,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     token_pairs = {
         "x7r": (ca.X7R_PAIR_ETH, ca.X7R),
         "x7dao": (ca.X7DAO_PAIR_ETH, ca.X7DAO),
@@ -3842,6 +3862,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         if dune.FLAG == False:
             execution_id = dune.execute_query("2972368", "medium")
@@ -3919,6 +3940,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) >= 2:
         chain = context.args[1].lower()
         wallet = context.args[0]
@@ -4136,6 +4158,7 @@ async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -4196,6 +4219,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -4489,7 +4513,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -4718,6 +4742,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -4949,6 +4974,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -5179,6 +5205,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -5410,6 +5437,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -5640,6 +5668,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"

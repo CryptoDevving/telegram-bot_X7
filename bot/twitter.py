@@ -14,6 +14,7 @@ from hooks import api
 
 
 async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     tweet = context.args[0]
     start = tweet.index("status/")
     end = tweet.index("?", start + 1)
@@ -29,6 +30,7 @@ async def count(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chat_admins = await update.effective_chat.get_administrators()
     if update.effective_user in (admin.user for admin in chat_admins):
         tweet = context.args[0]
@@ -50,6 +52,7 @@ async def draw(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chat_admins = await update.effective_chat.get_administrators()
     if update.effective_user in (admin.user for admin in chat_admins):
         username = random.choice(text.usernamelist)
@@ -69,6 +72,7 @@ async def raid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     response = api.twitter_v2.get_spaces(user_ids=1561721566689386496)
     if response[0] is None:
         await update.message.reply_photo(
@@ -110,6 +114,7 @@ async def spaces(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def tweet(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     ext = " ".join(context.args)
     username = "@x7_finance"
     if ext == "":

@@ -66,6 +66,14 @@ async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
+async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        db.clicks_reset()
+    else:
+        await update.message.reply_text(f"{text.MODS_ONLY}")
+
+
 async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
