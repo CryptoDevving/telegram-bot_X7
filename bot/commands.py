@@ -3068,9 +3068,12 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 lp
                 for lp in scan[token_address_str]["lp_holders"]
                 if lp["is_locked"] == 1
-                and lp["address"]
-                != "0x0000000000000000000000000000000000000000"
             ]
+            if locked_lp_list[0]["address"] == "0x000000000000000000000000000000000000dead":
+                lock_word = "🔥 Liquidity Burnt"
+            else:
+                lock_word = "✅ Liquidity Locked"
+            
             lock = ""
             if locked_lp_list:
                 lp_with_locked_detail = [
@@ -3079,13 +3082,13 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 if lp_with_locked_detail:
                     percent = float(locked_lp_list[0]['percent'])
                     lock = (
-                        f"✅ Liquidity Locked - {locked_lp_list[0]['tag']} - {percent * 100:.2f}%\n"
+                        f"{lock_word} - {locked_lp_list[0]['tag']} - {percent * 100:.2f}%\n"
                         f"⏰ Unlock - {locked_lp_list[0]['locked_detail'][0]['end_time'][:10]}"
                     )
                 else:
                     percent = float(locked_lp_list[0]['percent'])
                     lock = (
-                        f"✅ Liquidity Locked - {percent * 100:.2f}%"
+                        f"{lock_word} - {percent * 100:.2f}%"
                     )
         else:
             lock = ""
