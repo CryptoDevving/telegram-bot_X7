@@ -5,17 +5,6 @@ import media
 from web3 import Web3
 
 
-alchemy_eth = os.getenv("ALCHEMY_ETH")
-alchemy_arb = os.getenv("ALCHEMY_ARB")
-alchemy_poly = os.getenv("ALCHEMY_POLY")
-alchemy_opti = os.getenv("ALCHEMY_OPTI")
-key_bsc = os.getenv("BSC")
-key_arb = os.getenv("ARB")
-key_poly = os.getenv("POLY")
-key_opti = os.getenv("OPTI")
-key_ether = os.getenv("ETHER")
-key_base = os.getenv("BASE")
-
 
 class TokensInfo:
     def __init__(
@@ -62,9 +51,9 @@ CHAINS = {
         url.DEX_TOOLS_ETH,
         "",
         "eth-main",
-        Web3(Web3.HTTPProvider(f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_eth}")),
+        Web3(Web3.HTTPProvider(f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}")),
         "https://api.etherscan.io/api",
-        key_ether,
+        os.getenv('ETH'),
         ca.COM_MULTI_ETH,
         ca.DEV_MULTI_ETH,
         [ca.X7R_PAIR_ETH,
@@ -89,7 +78,7 @@ CHAINS = {
         "",
         Web3(Web3.HTTPProvider("https://bsc-dataseed.binance.org/")),
         "https://api.bscscan.com/api",
-        key_bsc,
+        os.getenv('BSC'),
         ca.COM_MULTI_BSC,
         ca.DEV_MULTI_BSC,
         [ca.X7R_PAIR_BSC,
@@ -112,9 +101,9 @@ CHAINS = {
         url.DEX_TOOLS_ARB,
         "-arbitrum",
         "arbitrum-main",
-        Web3(Web3.HTTPProvider(f"https://arb-mainnet.g.alchemy.com/v2/{alchemy_arb}")),
+        Web3(Web3.HTTPProvider(f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}")),
         "https://api.arbiscan.io/api",
-        key_arb,
+        os.getenv('ARB'),
         ca.COM_MULTI_ARB,
         ca.DEV_MULTI_ARB,
         [ca.X7R_PAIR_ARB,
@@ -138,9 +127,9 @@ CHAINS = {
         url.DEX_TOOLS_OPTI,
         "-optimism",
         "optimism-main",
-        Web3(Web3.HTTPProvider(f"https://opt-mainnet.g.alchemy.com/v2/{alchemy_opti}")),
+        Web3(Web3.HTTPProvider(f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}")),
         "https://api-optimistic.etherscan.io/api",
-        key_opti,
+        os.getenv('OPTI'),
         ca.COM_MULTI_OPTI,
         ca.DEV_MULTI_OPTI,
         [ca.X7R_PAIR_OPTI,
@@ -163,9 +152,9 @@ CHAINS = {
         url.DEX_TOOLS_POLY,
         "-polygon",
         "poly-main",
-        Web3(Web3.HTTPProvider(f"https://polygon-mainnet.g.alchemy.com/v2/{alchemy_poly}")),
+        Web3(Web3.HTTPProvider(f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}")),
         "https://api.polygonscan.com/api",
-        key_poly,
+        os.getenv('ALCHEMY_POLY'),
         ca.COM_MULTI_POLY,
         ca.DEV_MULTI_POLY,
         [ca.X7R_PAIR_POLY,
@@ -190,7 +179,7 @@ CHAINS = {
         "base-main",
         Web3(Web3.HTTPProvider(f"https://mainnet.base.org")),
         "https://api.basescan.org/api",
-        key_base,
+        os.getenv('ALCHEMY_BASE'),
         ca.COM_MULTI_BASE,
         ca.DEV_MULTI_BASE,
         [ca.X7R_PAIR_BASE,
