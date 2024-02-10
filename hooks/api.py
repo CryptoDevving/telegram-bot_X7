@@ -339,7 +339,7 @@ def get_pioneer_holdings(wallet, chain):
 
 
 def get_liquidity(pair, chain):
-    if chain in mappings.MOARLIS_CHAINS:
+    if chain in mappings.MORALIS_CHAINS:
         chain = mappings.MORALIS_CHAINS[chain]
     return evm_api.defi.get_pair_reserves(
         api_key=os.getenv("MORALIS_API_KEY"),
@@ -348,7 +348,7 @@ def get_liquidity(pair, chain):
 
 
 def get_nft_holder_list(nft, chain):
-    if chain in mappings.MOARLIS_CHAINS:
+    if chain in mappings.MORALIS_CHAINS:
         chain = mappings.MORALIS_CHAINS[chain]
     return evm_api.nft.get_nft_owners(
         api_key=os.getenv("MORALIS_API_KEY"),
@@ -358,7 +358,7 @@ def get_nft_holder_list(nft, chain):
 
 def get_price(token, chain):
     try:
-        if chain in mappings.MOARLIS_CHAINS:
+        if chain in mappings.MORALIS_CHAINS:
             chain = mappings.MORALIS_CHAINS[chain]
         api_key = os.getenv("MORALIS_API_KEY")
         result = evm_api.token.get_token_price(
@@ -371,7 +371,7 @@ def get_price(token, chain):
 
 
 def get_token_data(token: str, chain: str) -> dict:
-    if chain in mappings.MOARLIS_CHAINS:
+    if chain in mappings.MORALIS_CHAINS:
         chain = mappings.MORALIS_CHAINS[chain]
     result = evm_api.token.get_token_metadata(
         api_key=os.getenv("MORALIS_API_KEY"),
