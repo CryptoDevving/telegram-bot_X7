@@ -53,7 +53,7 @@ CHAINS = {
         "eth-main",
         Web3(Web3.HTTPProvider(f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}")),
         "https://api.etherscan.io/api",
-        os.getenv('ETH'),
+        os.getenv('ETHER'),
         ca.COM_MULTI_ETH,
         ca.DEV_MULTI_ETH,
         [ca.X7R_PAIR_ETH,
