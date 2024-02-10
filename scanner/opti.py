@@ -224,6 +224,7 @@ async def new_loan(event):
         schedule_str = ""
         amount = ""
     cost = int(tx["result"]["value"], 0) / 10**18
+    native_price = api.get_native_price("eth")
     im1 = Image.open((random.choice(media.BLACKHOLE)))
     im2 = Image.open(media.OPTI_LOGO)
     im1.paste(im2, (720, 20), im2)
@@ -233,9 +234,9 @@ async def new_loan(event):
             f"*New Loan Originated (OPTIMISM)*\n\n"
             f"Loan ID: {event['args']['loanID']}\n"
             f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} ETH "
-            f'(${"{:0,.0f}".format(api.get_native_price("eth") * cost)})\n\n'
+            f'(${"{:0,.0f}".format(native_price * cost)})\n\n'
             f"Payment Schedule (UTC):\n{schedule_str}\n\n"
-            f'Total: {amount} ETH (${"{:0,.0f}".format(api.get_native_price("eth") * amount)}',
+            f'Total: {amount} ETH (${"{:0,.0f}".format(native_price * amount)}',
         font = ImageFont.truetype(media.FONT, 26),
         fill = (255, 255, 255),
     )
@@ -247,9 +248,9 @@ async def new_loan(event):
             f"*New Loan Originated (OPTIMISM)*\n\n"
             f"Loan ID: {event['args']['loanID']}\n"
             f"Initial Cost: {int(tx['result']['value'], 0) / 10 ** 18} ETH "
-            f'(${"{:0,.0f}".format(api.get_native_price("eth") * cost)})\n\n'
+            f'(${"{:0,.0f}".format(api.native_price * cost)})\n\n'
             f"Payment Schedule (UTC):\n{schedule_str}\n\n"
-            f'Total: {amount} ETH (${"{:0,.0f}".format(api.get_native_price("eth") * amount)})',
+            f'Total: {amount} ETH (${"{:0,.0f}".format(native_price * amount)})',
         reply_markup=InlineKeyboardMarkup(
             [
                 [

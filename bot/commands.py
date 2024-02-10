@@ -1462,14 +1462,15 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_amount = api.get_native_balance(ca.X7R_LIQ_LOCK, chain)
         x7dao_amount = api.get_native_balance(ca.X7DAO_LIQ_LOCK, chain)
         cons_amount = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
+        native_price = api.get_native_price(chain_native)
         x7dao_dollar = (
-            float(x7dao_amount) * float(api.get_native_price(chain_native)) / 1**18
+            float(x7dao_amount) * float(native_price) / 1**18
         )
         x7r_dollar = (
-            float(x7r_amount) * float(api.get_native_price(chain_native)) / 1**18
+            float(x7r_amount) * float(native_price) / 1**18
         )
         cons_dollar = (
-            float(cons_amount) * float(api.get_native_price(chain_native)) / 1**18
+            float(cons_amount) * float(native_price) / 1**18
         )
         im1 = Image.open((random.choice(media.BLACKHOLE)))
         im1.paste(im2, (720, 20), im2)
@@ -2257,16 +2258,17 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         pioneer_id = " ".join(context.args)
         data = api.get_os_nft_collection("/x7-pioneer")
         floor = api.get_nft_floor(ca.PIONEER, "eth")
+        native_price = api.get_native_price("eth")
         if floor != "N/A":
             floor_round = round(floor, 2)
-            floor_dollar = floor * float(api.get_native_price("eth")) / 1**18
+            floor_dollar = floor * float(native_price) / 1**18
         else:
             floor_round = "N/A"
             floor_dollar = 0 
         pioneer_pool = api.get_native_balance(ca.PIONEER, "eth")
         each = float(pioneer_pool) / 639
-        each_dollar = float(each) * float(api.get_native_price("eth")) / 1**18
-        total_dollar = float(pioneer_pool) * float(api.get_native_price("eth")) / 1**18
+        each_dollar = float(each) * float(native_price) / 1**18
+        total_dollar = float(pioneer_pool) * float(native_price) / 1**18
         if pioneer_id == "":
             img = Image.open(random.choice(media.BLACKHOLE))
             i1 = ImageDraw.Draw(img)
@@ -2343,69 +2345,48 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
+        eth_price = api.get_native_price("eth")
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "eth")
-        eth_lpool_reserve_dollar = (
-            float(eth_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
-        )
+        eth_lpool_reserve_dollar = (float(eth_lpool_reserve) * float(eth_price) / 1**18)
         eth_lpool = api.get_native_balance(ca.LPOOL, "eth")
-        eth_lpool_dollar = (
-            float(eth_lpool) * float(api.get_native_price("eth")) / 1**18
-        )
+        eth_lpool_dollar = (float(eth_lpool) * float(eth_price) / 1**18)
         eth_pool = round(float(eth_lpool_reserve) + float(eth_lpool), 2)
         eth_dollar = eth_lpool_reserve_dollar + eth_lpool_dollar
 
+        bnb_price = api.get_native_price("bnb")
         bsc_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "bsc")
-        bsc_lpool_reserve_dollar = (
-            float(bsc_lpool_reserve) * float(api.get_native_price("bnb")) / 1**18
-        )
+        bsc_lpool_reserve_dollar = (float(bsc_lpool_reserve) * float(bnb_price) / 1**18)
         bsc_lpool = api.get_native_balance(ca.LPOOL, "bsc")
-        bsc_lpool_dollar = (
-            float(bsc_lpool) * float(api.get_native_price("bnb")) / 1**18
-        )
+        bsc_lpool_dollar = (float(bsc_lpool) * float(bnb_price) / 1**18)
         bsc_pool = round(float(bsc_lpool_reserve) + float(bsc_lpool), 2)
         bsc_dollar = bsc_lpool_reserve_dollar + bsc_lpool_dollar
 
+        poly_price = api.get_native_price("matic")
         poly_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "poly")
-        poly_lpool_reserve_dollar = (
-            float(poly_lpool_reserve) * float(api.get_native_price("matic")) / 1**18
-        )
+        poly_lpool_reserve_dollar = (float(poly_lpool_reserve) * float(poly_price) / 1**18)
         poly_lpool = api.get_native_balance(ca.LPOOL, "poly")
-        poly_lpool_dollar = (
-            float(poly_lpool) * float(api.get_native_price("matic")) / 1**18
-        )
+        poly_lpool_dollar = (float(poly_lpool) * float(poly_price) / 1**18)
         poly_pool = round(float(poly_lpool_reserve) + float(poly_lpool), 2)
         poly_dollar = poly_lpool_reserve_dollar + poly_lpool_dollar
 
         arb_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "arb")
-        arb_lpool_reserve_dollar = (
-            float(arb_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
-        )
+        arb_lpool_reserve_dollar = (float(arb_lpool_reserve) * float(eth_price) / 1**18)
         arb_lpool = api.get_native_balance(ca.LPOOL, "arb")
-        arb_lpool_dollar = (
-            float(arb_lpool) * float(api.get_native_price("eth")) / 1**18
-        )
+        arb_lpool_dollar = (float(arb_lpool) * float(eth_price) / 1**18)
         arb_pool = round(float(arb_lpool_reserve) + float(arb_lpool), 2)
         arb_dollar = arb_lpool_reserve_dollar + arb_lpool_dollar
 
         opti_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "opti")
-        opti_lpool_reserve_dollar = (
-            float(opti_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
-        )
+        opti_lpool_reserve_dollar = (float(opti_lpool_reserve) * float(eth_price) / 1**18)
         opti_lpool = api.get_native_balance(ca.LPOOL, "opti")
-        opti_lpool_dollar = (
-            float(opti_lpool) * float(api.get_native_price("eth")) / 1**18
-        )
+        opti_lpool_dollar = (float(opti_lpool) * float(eth_price) / 1**18)
         opti_pool = round(float(opti_lpool_reserve) + float(opti_lpool), 2)
         opti_dollar = opti_lpool_reserve_dollar + opti_lpool_dollar
 
         base_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "base")
-        base_lpool_reserve_dollar = (
-            float(base_lpool_reserve) * float(api.get_native_price("eth")) / 1**18
-        )
+        base_lpool_reserve_dollar = (float(base_lpool_reserve) * float(eth_price) / 1**18)
         base_lpool = api.get_native_balance(ca.LPOOL, "base")
-        base_lpool_dollar = (
-            float(base_lpool) * float(api.get_native_price("eth")) / 1**18
-        )
+        base_lpool_dollar = (float(base_lpool) * float(eth_price) / 1**18)
         base_pool = round(float(base_lpool_reserve) + float(base_lpool), 2)
         base_dollar = base_lpool_reserve_dollar + base_lpool_dollar
 
@@ -2479,17 +2460,11 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         address = to_checksum_address(ca.LPOOL)
         contract = web3_url.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
         available = (contract.functions.availableCapital().call() / 10**18)
-
+        native_price = api.get_native_price(chain_native)
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
-        lpool_reserve_dollar = (
-            float(lpool_reserve)
-            * float(api.get_native_price(chain_native))
-            / 1**18
-        )
+        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price) / 1**18)
         lpool = float(api.get_native_balance(ca.LPOOL, chain))
-        lpool_dollar = (
-            float(lpool) * float(api.get_native_price(chain_native)) / 1**18
-        )
+        lpool_dollar = (float(lpool) * float(native_price) / 1**18)
         pool = round(float(lpool_reserve) + float(lpool), 2)
         dollar = lpool_reserve_dollar + lpool_dollar
         lpool_reserve = round(float(lpool_reserve), 2)
@@ -3798,7 +3773,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     com_x7dao_balance = api.get_token_balance(chain_com_multi, ca.X7DAO, chain)
     com_x7dao_price = com_x7dao_balance * api.get_price(ca.X7DAO, chain)
     com_x7d_balance = api.get_token_balance(chain_com_multi, ca.X7D, chain)
-    com_x7d_price = com_x7d_balance * api.get_native_price(chain_native)
+    com_x7d_price = com_x7d_balance * native_price
     com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price + stables
     im2 = Image.open(chain_logo)
     im1 = Image.open((random.choice(media.BLACKHOLE)))
@@ -3983,7 +3958,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7105_balance = api.get_token_balance(wallet, ca.X7105, chain)
     x7105_price = x7105_balance * api.get_price(ca.X7105, chain)
     x7d_balance = api.get_token_balance(wallet, ca.X7D, chain)
-    x7d_price = x7d_balance * api.get_native_price(chain_native)
+    x7d_price = x7d_balance * native_price
     total = (
         x7d_price
         + x7r_price
@@ -4164,14 +4139,11 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain = "eth"
     if chain in mappings.X7D:
         chain_name, chain_url, chain_native = mappings.X7D[chain]
+        native_price = api.get_native_price(chain_native)
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
-        lpool_reserve_dollar = (
-            float(lpool_reserve) * float(api.get_native_price(chain_native)) / 1**18
-        )
+        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price) / 1**18)
         lpool = api.get_native_balance(ca.LPOOL, chain)
-        lpool_dollar = (
-            float(lpool) * float(api.get_native_price(chain_native)) / 1**18
-        )
+        lpool_dollar = (float(lpool) * float(native_price) / 1**18)
         dollar = lpool_reserve_dollar + lpool_dollar
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)
@@ -4448,9 +4420,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7dao_token = float(x7dao["reserve0"]) / 10**18
         x7dao_weth = float(x7dao["reserve1"]) / 10**18
         x7dao_token_dollar = float(price) * float(x7dao_token)
-        x7dao_weth_dollar = float(x7dao_weth) * float(
-            api.get_native_price(chain_native)
-        )
+        native_price = api.get_native_price(chain_native)
+        x7dao_weth_dollar = float(x7dao_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7dao_token)[:4]}M X7DAO (${"{:0,.0f}".format(x7dao_token_dollar)})\n'
@@ -4461,7 +4432,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ### REMOVE AT MIGRATION ###
     except Exception:
         x7dao_weth = api.get_native_balance(ca.X7DAO_LIQ_LOCK, chain)
-        x7dao_weth_dollar = float(x7dao_weth) * api.get_native_price(chain_native)
+        x7dao_weth_dollar = float(x7dao_weth) * native_price
         x7dao_token = 0
         x7dao_token_dollar = 0
         liquidity = f'{x7dao_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7dao_weth_dollar)})'
@@ -4680,7 +4651,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_token = float(x7r["reserve0"]) / 10**18
         x7r_weth = float(x7r["reserve1"]) / 10**18
         x7r_token_dollar = float(price) * float(x7r_token)
-        x7r_weth_dollar = float(x7r_weth) * float(api.get_native_price(chain_native))
+        native_price = api.get_native_price(chain_native)
+        x7r_weth_dollar = float(x7r_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7r_token)[:4]}M X7R (${"{:0,.0f}".format(x7r_token_dollar)})\n'
@@ -4690,7 +4662,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ### REMOVE AT MIGRATION ###
     except Exception:
         x7r_weth = api.get_native_balance(ca.X7R_LIQ_LOCK, chain)
-        x7r_weth_dollar = float(x7r_weth) * api.get_native_price(chain_native)
+        x7r_weth_dollar = float(x7r_weth) * native_price
         x7r_token = 0
         x7r_token_dollar = 0
         liquidity = f'{x7r_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7r_weth_dollar)})'
@@ -4910,9 +4882,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7101_token = float(x7101["reserve0"]) / 10**18
         x7101_weth = float(x7101["reserve1"]) / 10**18
         x7101_token_dollar = float(price) * float(x7101_token)
-        x7101_weth_dollar = float(x7101_weth) * float(
-            api.get_native_price(chain_native)
-        )
+        native_price = api.get_native_price(chain_native)
+        x7101_weth_dollar = float(x7101_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7101_token)[:4]}M X7101 (${"{:0,.0f}".format(x7101_token_dollar)})\n'
@@ -4922,7 +4893,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ### REMOVE AT MIGRATION ###
     except Exception:
         x7101_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7101_weth_dollar = float(x7101_weth) * api.get_native_price(chain_native)
+        x7101_weth_dollar = float(x7101_weth) * native_price
         x7101_token = 0
         x7101_token_dollar = 0
         liquidity = f'{x7101_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7101_weth_dollar)})'
@@ -5141,9 +5112,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7102_token = float(x7102["reserve0"]) / 10**18
         x7102_weth = float(x7102["reserve1"]) / 10**18
         x7102_token_dollar = float(price) * float(x7102_token)
-        x7102_weth_dollar = float(x7102_weth) * float(
-            api.get_native_price(chain_native)
-        )
+        native_price = api.get_native_price(chain_native)
+        x7102_weth_dollar = float(x7102_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7102_token)[:4]}M X7102 (${"{:0,.0f}".format(x7102_token_dollar)})\n'
@@ -5153,7 +5123,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ### REMOVE AT MIGRATION ###
     except Exception:
         x7102_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7102_weth_dollar = float(x7102_weth) * api.get_native_price(chain_native)
+        x7102_weth_dollar = float(x7102_weth) * native_price
         x7102_token = 0
         x7102_token_dollar = 0
         liquidity = f'{x7102_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7102_weth_dollar)})'
@@ -5373,9 +5343,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7103_token = float(x7103["reserve0"]) / 10**18
         x7103_weth = float(x7103["reserve1"]) / 10**18
         x7103_token_dollar = float(price) * float(x7103_token)
-        x7103_weth_dollar = float(x7103_weth) * float(
-            api.get_native_price(chain_native)
-        )
+        native_price = api.get_native_price(chain_native)
+        x7103_weth_dollar = float(x7103_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7103_token)[:4]}M X7103 (${"{:0,.0f}".format(x7103_token_dollar)})\n'
@@ -5385,7 +5354,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ### REMOVE AT MIGRATION ###
     except Exception:
         x7103_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7103_weth_dollar = float(x7103_weth) * api.get_native_price(chain_native)
+        x7103_weth_dollar = float(x7103_weth) * native_price
         x7103_token = 0
         x7103_token_dollar = 0
         liquidity = f'{x7103_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7103_weth_dollar)})'
@@ -5604,9 +5573,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7104_token = float(x7104["reserve0"]) / 10**18
         x7104_weth = float(x7104["reserve1"]) / 10**18
         x7104_token_dollar = float(price) * float(x7104_token)
-        x7104_weth_dollar = float(x7104_weth) * float(
-            api.get_native_price(chain_native)
-        )
+        native_price = api.get_native_price(chain_native)
+        x7104_weth_dollar = float(x7104_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7104_token)[:4]}M X7104 (${"{:0,.0f}".format(x7104_token_dollar)})\n'
@@ -5616,7 +5584,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ### REMOVE AT MIGRATION ###
     except Exception:
         x7104_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7104_weth_dollar = float(x7104_weth) * api.get_native_price(chain_native)
+        x7104_weth_dollar = float(x7104_weth) * native_price
         x7104_token = 0
         x7104_token_dollar = 0
         liquidity = f'{x7104_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7104_weth_dollar)})'
@@ -5836,9 +5804,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7105_token = float(x7105["reserve0"]) / 10**18
         x7105_weth = float(x7105["reserve1"]) / 10**18
         x7105_token_dollar = float(price) * float(x7105_token)
-        x7105_weth_dollar = float(x7105_weth) * float(
-            api.get_native_price(chain_native)
-        )
+        native_price = api.get_native_price(chain_native)
+        x7105_weth_dollar = float(x7105_weth) * float(native_price)
 
         liquidity = (
             f'{"{:0,.0f}".format(x7105_token)[:4]}M X7105 (${"{:0,.0f}".format(x7105_token_dollar)})\n'
@@ -5848,7 +5815,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ### REMOVE AT MIGRATION ###
     except Exception:
         x7105_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7105_weth_dollar = float(x7105_weth) * api.get_native_price(chain_native)
+        x7105_weth_dollar = float(x7105_weth) * native_price
         x7105_token = 0
         x7105_token_dollar = 0
         liquidity = f'{x7105_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7105_weth_dollar)})'
