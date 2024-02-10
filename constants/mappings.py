@@ -641,3 +641,53 @@ X7105 = {
             "eth",
         ),
     }
+
+
+ALCHEMY_CHAINS = {
+    "eth": f"https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_ETH')}",
+    "arb": f"https://arb-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_ARB')}",
+    "poly": f"https://polygon-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_POLY')}",
+    "bsc": "bsc",
+    "opti": f"https://opt-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_OPTI')}",
+    "base": "base",
+}
+
+
+BLOCKSPAN_CHAINS = {
+    "eth": "eth-main",
+    "arb": "arbitrum-main",
+    "poly": "poly-main",
+    "bsc": "bsc-main",
+    "opti": "optimism-main",
+    "base": "base-main",
+}
+
+
+DEFINED_CHAINS = {
+    "eth": "1",
+    "arb": "42161",
+    "poly": "137",
+    "bsc": "46",
+    "opti": "10",
+    "base": "8453",
+}
+
+
+DEX_TOOLS_CHAINS = {
+    "eth": "ether",
+    "arb": "arbitrum",
+    "poly": "polygon",
+    "bsc": "bsc",
+    "opti": "optimism",
+    "base": "base",
+}
+
+
+MORALIS_CHAINS = {
+    "eth": "eth",
+    "arb": "arbitrum",
+    "poly": "polygon",
+    "bsc": "bsc",
+    "opti": "optimism",
+    "base": "base",
+}
