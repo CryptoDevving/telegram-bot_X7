@@ -154,7 +154,7 @@ CHAINS = {
         "poly-main",
         Web3(Web3.HTTPProvider(f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}")),
         "https://api.polygonscan.com/api",
-        os.getenv('ALCHEMY_POLY'),
+        os.getenv('POLY'),
         ca.COM_MULTI_POLY,
         ca.DEV_MULTI_POLY,
         [ca.X7R_PAIR_POLY,
