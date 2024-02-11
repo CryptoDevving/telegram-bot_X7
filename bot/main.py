@@ -115,12 +115,23 @@ async def click_me_function(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                 f"Clicks till next X7R Burn: *{clicks_needed}*\n\n"
                 f"use `/leaderboard` to see the fastest Pioneers!\n\n"
             )
+
+            photos = await context.bot.get_user_profile_photos(update.effective_user.id,limit=1)
+            if photos and photos.photos and photos.photos[0]:
+                photo = photos.photos[0][0].file_id
             
-            clicked = await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=message_text,
-                parse_mode="Markdown",
-            )
+                clicked = await context.bot.send_photo(
+                    photo=photo,
+                    chat_id=update.effective_chat.id,
+                    caption=message_text,
+                    parse_mode="Markdown",
+                )
+            else:
+                clicked = await context.bot.send_photo(
+                    chat_id=update.effective_chat.id,
+                    text=message_text,
+                    parse_mode="Markdown",
+                )
 
             if total_click_count % times.BURN_INCREMENT == 0:
                 burn_message = await api.burn_x7r(times.BURN_AMOUNT)
