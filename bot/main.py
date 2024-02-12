@@ -127,7 +127,7 @@ async def click_me_function(update: Update, context: ContextTypes.DEFAULT_TYPE) 
                     parse_mode="Markdown",
                 )
             else:
-                clicked = await context.bot.send_photo(
+                clicked = await context.bot.send_message(
                     chat_id=update.effective_chat.id,
                     text=message_text,
                     parse_mode="Markdown",
