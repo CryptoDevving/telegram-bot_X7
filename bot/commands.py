@@ -578,27 +578,28 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) == 2:
         amount = context.args[0]
-        token = context.args[1]
-        if token.lower() in ["eth", "bnb", "matic"]:
-            price = api.get_native_price(token.lower()) / 1**18
-        elif token.lower() in ["x7r", "x7dao", "x7101", "x7102", "x7103", "x7104", "x7105"]:
-            cg = api.get_cg_price(token)
-            price = cg[token.lower()]['usd']
+        search = context.args[1]
+        token = api.get_cg_search(search.lower())
+        if token and "coins" in token and len(token["coins"]) > 0:
+            token_id = token["coins"][0]["api_symbol"]
+            cg = api.get_cg_price(token_id)
+            price = cg[token_id]["usd"]
+            output = float(amount) * float(price)
+        
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance Price Conversion*\n\n"
+                    f"{amount} {token_id.upper()} is worth ${'{:0,.0f}'.format(output )}\n\n"
+                    f"{api.get_quote()}",
+                parse_mode="Markdown"
+                )
         else:
-            await update.message.reply_text("Please follow command with amount and token name: X7 Tokens or ETH, BNB, MATIC")
-            return
-    output = float(amount) * float(price)
-    
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"*X7 Finance Price Conversion*\n\n"
-            f"{amount} {token.upper()} is worth ${'{:0,.0f}'.format(output )}\n\n"
-            f"{api.get_quote()}",
-        parse_mode="Markdown"
-        )
+            await update.message.reply_text(f"{search.upper()} Not Found")
+    else:
+        await update.message.reply_text("Please follow command with amount and token name you wish to convert")
 
-
+            
 async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
         duration = times.COUNTDOWN_TIME - datetime.utcnow()
         days, hours, minutes = api.get_duration_days(duration)
