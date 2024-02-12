@@ -198,7 +198,6 @@ async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -215,7 +214,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     burn = api.get_token_balance(ca.DEAD, ca.X7R, chain)
     percent = round(burn / ca.SUPPLY * 100, 2)
     burn_dollar = api.get_price(ca.X7R, chain) * float(burn)
@@ -807,7 +806,6 @@ async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -818,9 +816,8 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     now = datetime.utcnow()
-
     def get_liquidity_data(hub_address):
         hub = api.get_internal_tx(hub_address, chain)
         hub_filter = [d for d in hub["result"] if d["from"] in f"{hub_address}".lower()]
@@ -1003,7 +1000,6 @@ async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1015,7 +1011,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     now = datetime.utcnow()
     tx = api.get_tx(ca.FEE_TO, chain)
     filter = [d for d in tx["result"] if d["to"] in f"{ca.ECO_SPLITTER}".lower() and d.get("functionName", "") != "pushAll()"]
@@ -1188,7 +1184,6 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1198,7 +1193,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     x7dao_holders = api.get_holders(ca.X7DAO, chain)
     x7r_holders = api.get_holders(ca.X7R, chain)
     x7d_holders = api.get_holders(ca.X7D, chain)
@@ -1359,7 +1354,6 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1372,7 +1366,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     im2 = Image.open(chain_logo)
     if chain == "eth":  ### REMOVE LINE AFTER MIGRATION
         token_liquidity = []
@@ -1522,7 +1516,6 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1533,7 +1526,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     contract = chain_web3.eth.contract(
         address=Web3.to_checksum_address(ca.LPOOL), abi=api.get_abi(ca.LPOOL, chain)
     )
@@ -1572,7 +1565,6 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) >= 2:
         loan_id = context.args[0]
         chain = context.args[1].lower()
@@ -1593,7 +1585,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = api.get_native_price(chain_native)
     address = to_checksum_address(ca.LPOOL)
     contract = chain_web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
@@ -1651,7 +1643,6 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     loan_type = " ".join(context.args).lower()
     if loan_type == "":
         await update.message.reply_text(
@@ -1741,7 +1732,6 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1755,7 +1745,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def calculate_remaining_time(web3, contract, token_pair, now):
         timestamp = contract.functions.getTokenUnlockTimestamp(to_checksum_address(token_pair)).call()
         unlock_datetime = datetime.utcfromtimestamp(timestamp)
@@ -1850,7 +1840,6 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -1859,7 +1848,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = {}
     token_names = {
         ca.X7R: "X7R",
@@ -2001,7 +1990,6 @@ async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -2012,7 +2000,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain_prices = nfts.NFT_PRICES()
     chain_counts = nfts.NFT_COUNTS()
     chain_floors = nfts.NFT_FLOORS()
@@ -2928,12 +2916,11 @@ async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) == 0:
         await update.message.reply_text(
             f"Please provide contract address and chain")
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) == 1:
         token_address = context.args[0].lower()
         chain = "eth"
@@ -3745,6 +3732,7 @@ async def translate_russian(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -3757,6 +3745,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     native_price = api.get_native_price(chain_native)
     com_eth_raw = api.get_native_balance(chain_com_multi, chain)
     com_eth = round(float(com_eth_raw), 2)
@@ -3915,7 +3904,6 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) >= 2:
         chain = context.args[1].lower()
         wallet = context.args[0]
@@ -3939,7 +3927,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     native_price = api.get_native_price(chain_native)
     eth = api.get_native_balance(wallet, chain)
     dollar = float(eth) * float(native_price)
