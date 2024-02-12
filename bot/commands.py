@@ -1838,7 +1838,8 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
 
-    holders = api.get_nft_holder_count(ca.MAGISTER, chain_holders)
+    data = api.get_nft_data(ca.MAGISTER, chain_holders)
+    holders = data["holder_count"]
     response = api.get_nft_holder_list(ca.MAGISTER, chain)
     magisters = [holder["owner_of"] for holder in response["result"]]
     address = "\n\n".join(map(lambda x: f"`{x}`", magisters))
@@ -2026,10 +2027,9 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    chain_prices = nfts.NFT_PRICES()
-    chain_counts = nfts.NFT_COUNTS()
-    chain_floors = nfts.NFT_FLOORS()
-    chain_discount = nfts.NFT_DISCOUNTS()
+    chain_prices = nfts.MINT_PRICES()
+    chain_data = nfts.DATA()
+    chain_discount = nfts.DISCOUNTS()
 
     eco_price = chain_prices.get(chain, {}).get("eco")
     liq_price = chain_prices.get(chain, {}).get("liq")
@@ -2037,17 +2037,17 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     borrow_price = chain_prices.get(chain, {}).get("borrow")
     magister_price = chain_prices.get(chain, {}).get("magister")
 
-    eco_floor = chain_floors.get(chain, {}).get("eco")
-    liq_floor = chain_floors.get(chain, {}).get("liq")
-    dex_floor = chain_floors.get(chain, {}).get("dex")
-    borrow_floor = chain_floors.get(chain, {}).get("borrow")
-    magister_floor = chain_floors.get(chain, {}).get("magister")
+    eco_floor = chain_data.get(chain, {}).get("eco", {}).get("floor_price")
+    liq_floor = chain_data.get(chain, {}).get("liq", {}).get("floor_price")
+    dex_floor = chain_data.get(chain, {}).get("dex", {}).get("floor_price")
+    borrow_floor = chain_data.get(chain, {}).get("borrow", {}).get("floor_price")
+    magister_floor = chain_data.get(chain, {}).get("magister", {}).get("floor_price")
 
-    eco_count = chain_counts.get(chain, {}).get("eco")
-    liq_count = chain_counts.get(chain, {}).get("liq")
-    dex_count = chain_counts.get(chain, {}).get("dex")
-    borrow_count = chain_counts.get(chain, {}).get("borrow")
-    magister_count = chain_counts.get(chain, {}).get("magister")
+    eco_count = chain_data.get(chain, {}).get("eco", {}).get("holder_count")
+    liq_count = chain_data.get(chain, {}).get("liq", {}).get("holder_count")
+    dex_count = chain_data.get(chain, {}).get("dex", {}).get("holder_count")
+    borrow_count = chain_data.get(chain, {}).get("borrow", {}).get("holder_count")
+    magister_count = chain_data.get(chain, {}).get("magister", {}).get("holder_count")
 
     eco_discount = chain_discount.get("eco", {})
     liq_discount = chain_discount.get("liq", {})
@@ -2096,19 +2096,19 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=
             f"*NFT Info {chain_name}*\nUse `/nft [chain-name]` for other chains\n\n"
             f"*Ecosystem Maxi*\n{eco_price}\n"
-            f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native}\n"
+            f"Available - {500 - eco_count}\nFloor price - {eco_floor} {chain_native.upper()}\n"
             f"{eco_discount_text}\n\n"
             f"*Liquidity Maxi*\n{liq_price}\n"
-            f"Available - {250 - liq_count}\nFloor price - {liq_floor} {chain_native}\n"
+            f"Available - {250 - liq_count}\nFloor price - {liq_floor} {chain_native.upper()}\n"
             f"{liq_discount_text}\n\n"
             f"*Dex Maxi*\n{dex_price}\n"
-            f"Available - {150 - dex_count}\nFloor price - {dex_floor} {chain_native}\n"
+            f"Available - {150 - dex_count}\nFloor price - {dex_floor} {chain_native.upper()}\n"
             f"{dex_discount_text}\n\n"
             f"*Borrow Maxi*\n{borrow_price}\n"
-            f"Available - {100 - borrow_count}\nFloor price - {borrow_floor} {chain_native}\n"
+            f"Available - {100 - borrow_count}\nFloor price - {borrow_floor} {chain_native.upper()}\n"
             f"{borrow_discount_text}\n\n"
             f"*Magister*\n{magister_price}\n"
-            f"Available - {49 - magister_count}\nFloor price - {magister_floor} {chain_native}\n"
+            f"Available - {49 - magister_count}\nFloor price - {magister_floor} {chain_native.upper()}\n"
             f"{magister_discount_text}\n",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -2270,7 +2270,8 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     try:
         pioneer_id = " ".join(context.args)
         data = api.get_os_nft_collection("/x7-pioneer")
-        floor = api.get_nft_floor(ca.PIONEER, "eth")
+        floor_data = api.get_nft_data(ca.PIONEER, "eth")
+        floor = floor_data["floor_price"]
         native_price = api.get_native_price("eth")
         if floor != "N/A":
             floor_round = round(floor, 2)

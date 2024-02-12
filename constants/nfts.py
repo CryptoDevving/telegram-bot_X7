@@ -4,7 +4,75 @@ from hooks import api
 from constants import ca
 
 
-def NFT_PRICES():
+def DATA():
+    return {
+        "eth": {
+            "eco": api.get_nft_data(ca.ECO, "eth"),
+            "liq": api.get_nft_data(ca.LIQ, "eth"),
+            "dex": api.get_nft_data(ca.DEX, "eth"),
+            "borrow": api.get_nft_data(ca.BORROW, "eth"),
+            "magister": api.get_nft_data(ca.MAGISTER, "eth"),
+        },
+        "arb": {
+            "eco": api.get_nft_data(ca.ECO, "arb"),
+            "liq": api.get_nft_data(ca.LIQ, "arb"),
+            "dex": api.get_nft_data(ca.DEX, "arb"),
+            "borrow": api.get_nft_data(ca.BORROW, "arb"),
+            "magister": api.get_nft_data(ca.MAGISTER, "arb"),
+        },
+        "opti": {
+            "eco": api.get_nft_data(ca.ECO, "opti"),
+            "borrow": api.get_nft_data(ca.BORROW, "opti"),
+            "dex": api.get_nft_data(ca.DEX, "opti"),
+            "liq": api.get_nft_data(ca.LIQ, "opti"),
+            "magister": api.get_nft_data(ca.MAGISTER, "opti"),
+        },
+        "poly": {
+            "eco": api.get_nft_data(ca.ECO, "poly"),
+            "borrow": api.get_nft_data(ca.BORROW, "poly"),
+            "dex": api.get_nft_data(ca.DEX, "poly"),
+            "liq": api.get_nft_data(ca.LIQ, "poly"),
+            "magister": api.get_nft_data(ca.MAGISTER, "poly"),
+        },
+        "bsc": {
+            "eco": api.get_nft_data(ca.ECO, "bsc"),
+            "borrow": api.get_nft_data(ca.BORROW, "bsc"),
+            "dex": api.get_nft_data(ca.DEX, "bsc"),
+            "liq": api.get_nft_data(ca.LIQ, "bsc"),
+            "magister": api.get_nft_data(ca.MAGISTER, "bsc"),
+        },
+        "base": {
+            "eco": api.get_nft_data(ca.ECO, "base"),
+            "liq": api.get_nft_data(ca.LIQ, "base"),
+            "dex": api.get_nft_data(ca.DEX, "base"),
+            "borrow": api.get_nft_data(ca.BORROW, "base"),
+            "magister": api.get_nft_data(ca.MAGISTER, "base"),
+        },
+    }
+
+
+def DISCOUNTS():
+    return {
+        "eco": {
+            "X7R": 10,
+            "X7DAO": 10,
+            "X7100": 25,
+        },
+        "liq": {
+            "X7R": 25,
+            "X7DAO": 15,
+            "X7100": 50,
+        },
+        "dex": {"LP Fee discounts while trading on Xchange"},
+        "borrow": {"Fee discounts for borrowing funds for ILL on Xchange"},
+        "magister": {
+            "X7R": 25,
+            "X7100": 25,
+        },
+    }
+
+
+def MINT_PRICES():
     return {
         "eth": {
             "eco": "0.3 ETH - 500 Supply",
@@ -50,110 +118,3 @@ def NFT_PRICES():
         },
     }
 
-
-def NFT_FLOORS():
-    return {
-        "eth": {
-            "eco": api.get_nft_floor(ca.ECO, "eth") or 0,
-            "liq": api.get_nft_floor(ca.LIQ, "eth") or 0,
-            "dex": api.get_nft_floor(ca.DEX, "eth") or 0,
-            "borrow": api.get_nft_floor(ca.BORROW, "eth") or 0,
-            "magister": api.get_nft_floor(ca.MAGISTER, "eth") or 0,
-        },
-        "arb": {
-            "eco": api.get_nft_floor(ca.ECO, "arb") or 0,
-            "liq": api.get_nft_floor(ca.LIQ, "arb") or 0,
-            "dex": api.get_nft_floor(ca.DEX, "arb") or 0,
-            "borrow": api.get_nft_floor(ca.BORROW, "arb") or 0,
-            "magister": api.get_nft_floor(ca.MAGISTER, "arb") or 0,
-        },
-        "opti": {
-            "eco": api.get_nft_floor(ca.ECO, "opti") or 0,
-            "borrow": api.get_nft_floor(ca.BORROW, "opti") or 0,
-            "dex": api.get_nft_floor(ca.DEX, "opti") or 0,
-            "liq": api.get_nft_floor(ca.LIQ, "opti") or 0,
-            "magister": api.get_nft_floor(ca.MAGISTER, "opti") or 0,
-        },
-        "poly": {
-            "eco": api.get_nft_floor(ca.ECO, "poly") or 0,
-            "borrow": api.get_nft_floor(ca.BORROW, "poly") or 0,
-            "dex": api.get_nft_floor(ca.DEX, "poly") or 0,
-            "liq": api.get_nft_floor(ca.LIQ, "poly") or 0,
-            "magister": api.get_nft_floor(ca.MAGISTER, "poly") or 0,
-        },
-        "bsc": {
-            "eco": api.get_nft_floor(ca.ECO, "bsc") or 0,
-            "borrow": api.get_nft_floor(ca.BORROW, "bsc") or 0,
-            "dex": api.get_nft_floor(ca.DEX, "bsc") or 0,
-            "liq": api.get_nft_floor(ca.LIQ, "bsc") or 0,
-            "magister": api.get_nft_floor(ca.MAGISTER, "bsc") or 0,
-        },
-        "base": {
-            "eco": api.get_nft_floor(ca.ECO, "base") or 0,
-            "liq": api.get_nft_floor(ca.LIQ, "base") or 0,
-            "dex": api.get_nft_floor(ca.DEX, "base") or 0,
-            "borrow": api.get_nft_floor(ca.BORROW, "base") or 0,
-            "magister": api.get_nft_floor(ca.MAGISTER, "base") or 0,
-        },
-    }
-
-
-def NFT_COUNTS():
-    return {
-        "eth": {
-            "eco": int(api.get_nft_holder_count(ca.ECO, "eth")) or 0,
-            "liq": int(api.get_nft_holder_count(ca.LIQ, "eth")) or 0,
-            "dex": int(api.get_nft_holder_count(ca.DEX, "eth")) or 0,
-            "borrow": int(api.get_nft_holder_count(ca.BORROW, "eth")) or 0,
-            "magister": int(api.get_nft_holder_count(ca.MAGISTER, "eth")) or 0,
-        },
-        "arb": {
-            "eco": int(api.get_nft_holder_count(ca.ECO, "arb")) or 0,
-            "liq": int(api.get_nft_holder_count(ca.LIQ, "arb")) or 0,
-            "dex": int(api.get_nft_holder_count(ca.DEX, "arb")) or 0,
-            "borrow": int(api.get_nft_holder_count(ca.BORROW, "arb")) or 0,
-            "magister": int(api.get_nft_holder_count(ca.MAGISTER, "arb")) or 0,
-        },
-        "opti": {
-            "eco": int(api.get_nft_holder_count(ca.ECO, "opti")) or 0,
-            "borrow": int(api.get_nft_holder_count(ca.BORROW, "opti")) or 0,
-            "dex": int(api.get_nft_holder_count(ca.DEX, "opti")) or 0,
-            "liq": int(api.get_nft_holder_count(ca.LIQ, "opti")) or 0,
-            "magister": int(api.get_nft_holder_count(ca.MAGISTER, "opti")) or 0,
-        },
-        "poly": {
-            "eco": int(api.get_nft_holder_count(ca.ECO, "poly")) or 0,
-            "borrow": int(api.get_nft_holder_count(ca.BORROW, "poly")) or 0,
-            "dex": int(api.get_nft_holder_count(ca.DEX, "poly")) or 0,
-            "liq": int(api.get_nft_holder_count(ca.LIQ, "poly")) or 0,
-            "magister": int(api.get_nft_holder_count(ca.MAGISTER, "poly")) or 0,
-        },
-        "bsc": {
-            "eco": int(api.get_nft_holder_count(ca.ECO, "bsc")) or 0,
-            "borrow": int(api.get_nft_holder_count(ca.BORROW, "bsc")) or 0,
-            "dex": int(api.get_nft_holder_count(ca.DEX, "bsc")) or 0,
-            "liq": int(api.get_nft_holder_count(ca.LIQ, "bsc")) or 0,
-            "magister": int(api.get_nft_holder_count(ca.MAGISTER, "bsc")) or 0,
-        },
-    }
-
-
-def NFT_DISCOUNTS():
-    return {
-        "eco": {
-            "X7R": 10,
-            "X7DAO": 10,
-            "X7100": 25,
-        },
-        "liq": {
-            "X7R": 25,
-            "X7DAO": 15,
-            "X7100": 50,
-        },
-        "dex": {"LP Fee discounts while trading on Xchange"},
-        "borrow": {"Fee discounts for borrowing funds for ILL on Xchange"},
-        "magister": {
-            "X7R": 25,
-            "X7100": 25,
-        },
-    }

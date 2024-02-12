@@ -392,38 +392,27 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
 
 # BLOCKSPAN
 
-
-def get_nft_holder_count(nft, chain):
+def get_nft_data(nft, chain):
     try:
         if chain in mappings.BLOCKSPAN_CHAINS:
             chain = mappings.BLOCKSPAN_CHAINS[chain]
+
         url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
         response = requests.get(
             url,
             headers={
                 "accept": "application/json",
                 "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
-            },
+            }
         )
         data = response.json()
-        return data.get("total_tokens", "0")
-    except Exception:
-        return 0
 
+        info = {"holder_count": 0, "floor_price": "N/A"}
 
-def get_nft_floor(nft, chain):
-    try:
-        if chain in mappings.BLOCKSPAN_CHAINS:
-            chain = mappings.BLOCKSPAN_CHAINS[chain]
+        holder_count = data.get("total_tokens", None)
+        if holder_count is not None:
+            info["holder_count"] = int(holder_count)
 
-        url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
-        response = requests.get(
-            url,
-            headers={
-                "accept": "application/json",
-                "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
-            })
-        data = response.json()
         exchange_data = data.get("exchange_data")
         if exchange_data is not None:
             for item in exchange_data:
@@ -431,12 +420,13 @@ def get_nft_floor(nft, chain):
                 if stats is not None:
                     floor_price = stats.get("floor_price")
                     if floor_price is not None:
-                        return floor_price
-            return "N/A"
-        else:
-            return "N/A"
+                        info["floor_price"] = floor_price
+                        break
+                        
+        return info
+
     except Exception:
-        return "N/A"
+        return {"holder_count": 0, "floor_price": "N/A"}
 
 
 # OPENSEA
