@@ -6,7 +6,7 @@ from datetime import datetime
 import os, sys, subprocess, random
 from constants import url
 import media
-from bot import commands, twitter, welcome, auto, admin
+from bot import commands, twitter, welcome, admin
 from variables import times, text
 from hooks import db, api
 
@@ -245,7 +245,7 @@ async def click_me_function(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             context.user_data["current_button_data"] = None
             times.BUTTON_TIME = times.RANDOM_BUTTON_TIME()
             job_queue.run_once(
-            auto.click_me,
+            click_me,
             times.BUTTON_TIME,
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Me",
@@ -303,6 +303,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["constellations", "constellation", "quints"], commands.constellations))
     application.add_handler(CommandHandler(["ca", "contract", "contracts"], commands.contracts))
     application.add_handler(CommandHandler("compare", commands.compare))
+    application.add_handler(CommandHandler("convert", commands.convert))
     application.add_handler(CommandHandler("countdown", commands.countdown))
     application.add_handler(CommandHandler(["dao", "vote", "snaphot"], commands.dao_command))
     application.add_handler(CommandHandler(["deployer", "devs"], commands.deployer))

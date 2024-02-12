@@ -74,6 +74,7 @@ COMMANDS = (
     "/constellations - Constellation Info\n"
     "/ca - Contract Addresses\n"
     "/compare - Compare X7 tokens with another token\n"
+    "/convert - Convert tokens to dollars\n"
     "/countdown - 5,4,3,2,1\n"
     "/dao - DAO Function Info\n"
     "/deployer - Deployer Info\n"
