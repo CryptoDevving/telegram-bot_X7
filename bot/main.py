@@ -3,7 +3,7 @@ from telegram import *
 from telegram.ext import *
 import time as t
 from datetime import datetime
-import os, random
+import os, random, sys, subprocess
 from constants import url
 import media
 from bot import commands, twitter, welcome, admin
@@ -255,6 +255,22 @@ async def click_me_function(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             return times.BUTTON_TIME
 
 
+def scanners():
+    chains = [
+        "scanners/bsc.py",
+        "scanners/eth.py",
+        "scanners/arb.py",
+        "scanners/poly.py",
+        "scanners/opti.py",
+##        "scanner/base.py",
+    ]
+    python_executable = sys.executable
+    processes = []
+    for chain in chains:
+        command = [python_executable, chain]
+        process = subprocess.Popen(command)
+        processes.append(process)
+
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
 job_queue = application.job_queue
 
@@ -391,5 +407,5 @@ if __name__ == "__main__":
         name="Click Me")
 
     ## RUN ##
-    scanners.run()
+    scanners()
     application.run_polling(allowed_updates=Update.ALL_TYPES)
