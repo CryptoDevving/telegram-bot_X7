@@ -616,27 +616,6 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("Please follow command with amount and token name you wish to convert")
 
-            
-async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        duration = times.COUNTDOWN_TIME - datetime.utcnow()
-        days, hours, minutes = api.get_duration_days(duration)
-        if duration < timedelta(0):
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance Countdown*\n\nNo countdown set, Please check back for more details\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
-            )
-            return
-        await update.message.reply_text(
-            text=f"*X7 Finance Countdown:*\n\n"
-            f'{times.COUNTDOWN_TITLE}\n\n{times.COUNTDOWN_TIME.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
-            f"{days} days, {hours} hours and {minutes} minutes\n\n"
-            f"{times.COUNTDOWN_DESC}\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-        )
-
 
 async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
@@ -665,11 +644,33 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-            f"Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
+            f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
             f"Launch pair: {cost_in_eth / 10**9:.2f} {native.upper()} (${cost_in_dollars:.2f})",
             parse_mode = "markdown")
     except Exception as e:
         await update.message.reply_text(f"Unable to collect live data: {e}")
+
+
+async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        duration = times.COUNTDOWN_TIME - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
+        if duration < timedelta(0):
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance Countdown*\n\nNo countdown set, Please check back for more details\n\n"
+                    f"{api.get_quote()}",
+                parse_mode="Markdown",
+            )
+            return
+        await update.message.reply_text(
+            text=f"*X7 Finance Countdown:*\n\n"
+            f'{times.COUNTDOWN_TITLE}\n\n{times.COUNTDOWN_TIME.strftime("%A %B %d %Y %I:%M %p")} UTC\n\n'
+            f"{days} days, {hours} hours and {minutes} minutes\n\n"
+            f"{times.COUNTDOWN_DESC}\n\n{api.get_quote()}",
+            parse_mode="Markdown",
+        )
+
 
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
