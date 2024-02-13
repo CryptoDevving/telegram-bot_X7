@@ -93,5 +93,13 @@ async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
-
+async def scanners(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        await update.message.reply_text(f"@Xchange_arb_bot\n"
+                                        "@Xchange_base_bot\n"
+                                        "@Xchange_bsc_bot\n"
+                                        "@Xchange_eth_bot\n"
+                                        "@Xchange_opti_bot\n"
+                                        "@Xchange_pol_bot\n")
 

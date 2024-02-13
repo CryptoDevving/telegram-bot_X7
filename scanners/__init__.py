@@ -2,12 +2,12 @@ import sys, subprocess
 
 def run():
     chains = [
-        "scanners/bsc.py",
-        "scanners/eth.py",
-        "scanners/arb.py",
-        "scanners/poly.py",
-        "scanners/opti.py",
-##        "scanner/base.py",
+        "bsc.py",
+        "eth.py",
+        "arb.py",
+        "poly.py",
+        "opti.py",
+##        "base.py",
     ]
     python_executable = sys.executable
     processes = []
