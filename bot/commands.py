@@ -628,27 +628,63 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
-    try:
-        data = "0xc9c65396" + ca.WETH[2:].lower().rjust(64, '0') + ca.DEAD[2:].lower().rjust(64, '0')
+    
+    gas_price = web3.eth.gas_price / 10**9
+    eth_price = api.get_native_price("eth")
 
-        gas_estimate = web3.eth.estimate_gas({
+    try:
+        pair_data = "0xc9c65396" + ca.WETH[2:].lower().rjust(64, '0') + ca.DEAD[2:].lower().rjust(64, '0')
+        pair_gas_estimate = web3.eth.estimate_gas({
             'from': web3.to_checksum_address(ca.DEPLOYER),
             'to': web3.to_checksum_address(ca.FACTORY),
-            'data': data,
-        })
-
-        gas_price = web3.eth.gas_price / 10**9
-        eth_price = api.get_native_price("eth")
-        cost_in_eth = gas_price * gas_estimate
-        cost_in_dollars = (cost_in_eth / 10**9)* eth_price
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-            f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
-            f"Launch pair: {cost_in_eth / 10**9:.2f} {native.upper()} (${cost_in_dollars:.2f})",
-            parse_mode = "markdown")
+            'data': pair_data,})
+        pair_cost_in_eth = gas_price * pair_gas_estimate
+        pair_cost_in_dollars = (pair_cost_in_eth / 10**9)* eth_price
+        pair_text = f"Create Pair: {pair_cost_in_eth / 10**9:.2f} {native.upper()} (${pair_cost_in_dollars:.2f})"
+    except Exception:
+        pair_text = "Create Pair: N/A"
+    split_data = "0x11ec9d34"
+    try:
+        eco_split_gas = web3.eth.estimate_gas({
+            'from': web3.to_checksum_address(ca.DEPLOYER),
+            'to': web3.to_checksum_address(ca.ECO_SPLITTER),
+            'data': split_data,})
+        eco_split_eth = gas_price * eco_split_gas
+        eco_split_dollars = (eco_split_eth / 10**9)* eth_price
+        eco_split_text = f"Ecosystem Splitter Push: {eco_split_eth / 10**9:.3f} {native.upper()} (${eco_split_dollars:.2f})"
     except Exception as e:
-        await update.message.reply_text(f"Unable to collect live data: {e}")
+        eco_split_text = "Ecosystem Splitter Push: N/A"
+    try:
+        treasury_split_gas = web3.eth.estimate_gas({
+            'from': web3.to_checksum_address(ca.DEPLOYER),
+            'to': web3.to_checksum_address(ca.TREASURY_SPLITTER),
+            'data': split_data,})
+        treasury_split_eth = gas_price * treasury_split_gas
+        treasury_split_dollars = (treasury_split_eth / 10**9)* eth_price
+        treasury_split_text = f"Treasury Splitter Push: {treasury_split_eth / 10**9:.3f} {native.upper()} (${treasury_split_dollars:.2f})"
+    except Exception:
+        treasury_split_text = "Treasury Splitter Push: N/A"
+
+    try:
+        deposit_data = "0xf6326fb3"
+        deposit_gas = web3.eth.estimate_gas({
+            'from': web3.to_checksum_address(ca.DEPLOYER),
+            'to': web3.to_checksum_address(ca.LPOOL_RESERVE),
+            'data': deposit_data,})
+        deposit_eth = gas_price * deposit_gas
+        deposit_dollars = (deposit_eth / 10**9)* eth_price
+        deposit_text = f"Mint X7D: {deposit_eth / 10**9:.3f} {native.upper()} (${deposit_dollars:.2f})"
+    except Exception:
+        deposit_text = "Mint X7D: N/A"
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+        f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
+        f"{pair_text}\n"
+        f"{eco_split_text}\n"
+        f"{treasury_split_text}\n"
+        f"{deposit_text}",
+        parse_mode = "markdown")
 
 
 async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
