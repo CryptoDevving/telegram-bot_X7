@@ -638,6 +638,40 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
+    if chain in mappings.CHAINS:
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        web3 = mappings.CHAINS[chain].w3
+        native = mappings.CHAINS[chain].token
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    try:
+        data = "0xc9c65396" + ca.WETH[2:].lower().rjust(64, '0') + ca.DEAD[2:].lower().rjust(64, '0')
+
+        gas_estimate = web3.eth.estimate_gas({
+            'from': web3.to_checksum_address(ca.DEPLOYER),
+            'to': web3.to_checksum_address(ca.FACTORY),
+            'data': data,
+        })
+
+        gas_price = web3.eth.gas_price / 10**9
+        eth_price = api.get_native_price("eth")
+        cost_in_eth = gas_price * gas_estimate
+        cost_in_dollars = (cost_in_eth / 10**9)* eth_price
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+            f"Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
+            f"Launch pair: {cost_in_eth / 10**9:.2f} {native.upper()} (${cost_in_dollars:.2f})",
+            parse_mode = "markdown")
+    except Exception as e:
+        await update.message.reply_text(f"Unable to collect live data: {e}")
+
+
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     input_contract = " ".join(context.args).lower()
     contract_names = list(dao.CONTRACT_MAPPINGS.keys())
@@ -1093,7 +1127,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def fg(update, context):
+async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
     fear_response = requests.get("https://api.alternative.me/fng/?limit=0")
     fear_data = fear_response.json()
     fear_values = []
@@ -1127,49 +1161,55 @@ async def fg(update, context):
     )
    
 
-async def gas(update, context):
-    chain = " ".join(context.args).lower()
-    if chain == "":
-        chain = "eth"
-    if chain in mappings.CHAINS:
-        chain_name = mappings.CHAINS[chain].name
-        chain_url = mappings.CHAINS[chain].gas
-        chain_logo = mappings.CHAINS[chain].logo
-    else:
-        await update.message.reply_text(text.CHAIN_ERROR)
-        return
-    
-    gas_data = api.get_gas(chain)
-    im2 = Image.open(chain_logo)
-    im1 = Image.open(random.choice(media.BLACKHOLE))
-    im1.paste(im2, (720, 20), im2)
-    i1 = ImageDraw.Draw(im1)
-    i1.text(
-        (26, 30),
-            f"{chain_name} Gas Prices:\n\n"
-            f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
-            f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
-            f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n\n\n\n\n\n\n\n'
-            f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-        font = ImageFont.truetype(media.FONT, 26),
-        fill = (255, 255, 255),
-    )
-    im1.save("media/blackhole.png")
-    await update.message.reply_photo(
-        photo=open("media/blackhole.png", "rb"),
-        caption=
-            f"*{chain_name} Gas Prices:*\n"
-            f"For other chains use `/gas [chain-name]`\n\n"
-            f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
-            f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
-            f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n'
-            f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text=f"{chain_name} Gas Tracker", url=chain_url)]]
-        ),
-    )
 
+async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        chain = " ".join(context.args).lower()
+        if chain == "":
+            chain = "eth"
+        if chain in mappings.CHAINS:
+            await context.bot.send_chat_action(update.effective_chat.id, "typing")
+            chain_name = mappings.CHAINS[chain].name
+            chain_url = mappings.CHAINS[chain].gas
+            chain_logo = mappings.CHAINS[chain].logo
+            web3 = mappings.CHAINS[chain].w3
+            native = mappings.CHAINS[chain].token
+        else:
+            await update.message.reply_text(text.CHAIN_ERROR)
+            return
+
+        gas_data = api.get_gas(chain)
+        im2 = Image.open(chain_logo)
+        im1 = Image.open(random.choice(media.BLACKHOLE))
+        im1.paste(im2, (720, 20), im2)
+        i1 = ImageDraw.Draw(im1)
+        i1.text(
+            (26, 30),
+                f"{chain_name} Gas Prices:\n\n"
+                f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
+                f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
+                f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n\n\n\n\n\n\n\n'
+                f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+            font = ImageFont.truetype(media.FONT, 26),
+            fill = (255, 255, 255),
+        )
+        im1.save("media/blackhole.png")
+        await update.message.reply_photo(
+            photo=open("media/blackhole.png", "rb"),
+            caption=
+                f"*{chain_name} Gas Prices:*\n"
+                f"For other chains use `/gas [chain-name]`\n\n"
+                f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
+                f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
+                f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n'
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton(text=f"{chain_name} Gas Tracker", url=chain_url)]]
+            ),
+        )
+    except Exception as e:
+        print(e)
 
 async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = " ".join(context.args)

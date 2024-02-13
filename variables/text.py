@@ -76,6 +76,7 @@ COMMANDS = (
     "/compare - Compare X7 tokens with another token\n"
     "/convert - Convert tokens to dollars\n"
     "/countdown - 5,4,3,2,1\n"
+    "/costs - Live Xchange Costs\n"
     "/dao - DAO Function Info\n"
     "/deployer - Deployer Info\n"
     "/docs - X7 Finance Docs\n"

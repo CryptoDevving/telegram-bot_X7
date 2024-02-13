@@ -2,7 +2,7 @@ import sentry_sdk
 from telegram import *
 from telegram.ext import *
 import time as t
-from datetime import datetime
+from datetime import datetime, timedelta
 import os, random, sys, subprocess
 from constants import url
 import media
@@ -11,6 +11,8 @@ from variables import times, text
 from hooks import db, api
 import scanners
 import auto
+from web3 import Web3
+from constants import ca
 
 
 sentry_sdk.init(
@@ -96,6 +98,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("compare", commands.compare))
     application.add_handler(CommandHandler("convert", commands.convert))
     application.add_handler(CommandHandler("countdown", commands.countdown))
+    application.add_handler(CommandHandler("costs", commands.costs))
     application.add_handler(CommandHandler(["dao", "vote", "snaphot"], commands.dao_command))
     application.add_handler(CommandHandler(["deployer", "devs"], commands.deployer))
     application.add_handler(CommandHandler(["discount", "dsc", "dac"], commands.discount))
