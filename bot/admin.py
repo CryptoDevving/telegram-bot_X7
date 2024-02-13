@@ -1,25 +1,15 @@
 import os
-import re
-import random
-import time as t
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
-import pytz
-from gtts import gTTS
-import requests
-import textwrap
-import wikipediaapi
-from web3 import Web3
 from telegram import *
 from telegram.ext import *
-from translate import Translator
-from eth_utils import to_checksum_address
-from PIL import Image, ImageDraw, ImageFont
 
-from hooks import dune, db, api
-import media
-from constants import ca, loans, nfts, tax, url, dao, mappings
-from variables import times, giveaway, text
+from hooks import  db, api
+from variables import times, text
+import auto
+
+
+click_me = auto.ClickMe()
 
 
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -41,12 +31,22 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
             except Exception:
                 await update.message.reply_text(f"Error adding {ticker.upper()} Please try again.")
 
-
         else:
             await update.message.reply_text(f"use /add [ticker] [pair] [ca] [chain]")
 
     else:
         await update.message.reply_text(f"{text.MODS_ONLY}")
+
+
+async def clickme(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        current_jobs = context.job_queue.get_jobs_by_name("Click Me")
+        if not current_jobs:
+            await update.message.reply_text(f"Unable to send")
+        for job in current_jobs:
+            job.schedule_removal()
+            await click_me.send(update, context)
 
 
 async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -66,7 +66,7 @@ async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
-async def reset_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
         db.clicks_reset()
