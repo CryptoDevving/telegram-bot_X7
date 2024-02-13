@@ -577,23 +577,40 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) == 2:
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
         amount = context.args[0]
         search = context.args[1]
         token = api.get_cg_search(search.lower())
         if token and "coins" in token and len(token["coins"]) > 0:
             token_id = token["coins"][0]["api_symbol"]
+            thumb = token["coins"][0]["large"]
             cg = api.get_cg_price(token_id)
             price = cg[token_id]["usd"]
             output = float(amount) * float(price)
         
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance Price Conversion*\n\n"
-                    f"{amount} {token_id.upper()} is worth ${'{:0,.0f}'.format(output )}\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown"
+            img = Image.open(requests.get(thumb, stream=True).raw)
+            result = img.convert("RGBA")
+            result.save(r"media/tokenlogo.png")
+            im1 = Image.open((random.choice(media.BLACKHOLE)))
+            im2 = Image.open(r"media/tokenlogo.png")
+            im1.paste(im2, (680, 20), im2)
+            i1 = ImageDraw.Draw(im1)
+            i1.text(
+                (28, 36),
+                    f"X7 Finance Price Conversion\n\n"
+                    f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output )}\n\n\n\n\n\n\n\n\n"
+                    f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+                font = ImageFont.truetype(media.FONT, 28),
+                fill=(255, 255, 255),
                 )
+            im1.save(r"media/blackhole.png", quality=95)
+            await update.message.reply_photo(
+                photo=open(r"media/blackhole.png", "rb"),
+                caption=
+                f"*X7 Finance Price Conversion*\n\n"
+                f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output )}\n\n"
+                f"{api.get_quote()}",
+                parse_mode="Markdown")
         else:
             await update.message.reply_text(f"{search.upper()} Not Found")
     else:
