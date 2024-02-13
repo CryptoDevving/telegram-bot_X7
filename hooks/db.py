@@ -43,6 +43,33 @@ def clicks_check_is_fastest(time_to_check):
         return False
 
 
+def clicks_check_time(time_to_check):
+    try:
+        db_connection = create_db_connection()
+        cursor = db_connection.cursor()
+        cursor.execute("""
+            SELECT MIN(time_taken), MAX(time_taken)
+            FROM leaderboard
+            WHERE time_taken IS NOT NULL
+        """)
+        extreme_times_data = cursor.fetchone()
+        close_db_connection(db_connection, cursor)
+
+        min_time_taken, max_time_taken = extreme_times_data if extreme_times_data else (None, None)
+
+        if isinstance(time_to_check, (int, float)) and isinstance(min_time_taken, (int, float)) and isinstance(max_time_taken, (int, float)):
+            if time_to_check < min_time_taken:
+                return "fastest"
+            elif time_to_check > max_time_taken:
+                return "slowest"
+            else:
+                return None
+        else:
+            return "error"
+    except mysql.connector.Error:
+        return
+        
+
 def clicks_check_highest_streak():
     db_connection = create_db_connection()
     cursor = db_connection.cursor()
