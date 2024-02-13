@@ -45,10 +45,6 @@ async def restart_script():
     os.execl(python, python, script)
 
 
-async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("bsc pong")
-
-
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "bsc")
     if event["args"]["token0"] == ca.WBNB:
@@ -323,7 +319,4 @@ if __name__ == "__main__":
         .connection_pool_size(512)
         .build()
     )
-    application.add_handler(CommandHandler("ping", ping))
     asyncio.run(main())
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
-    print("BSC Scanner Started")

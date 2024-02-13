@@ -46,10 +46,6 @@ async def restart_script():
     os.execl(python, python, script)
 
 
-async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("poly pong")
-
-
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), "poly")
     if event["args"]["token0"] == ca.WMATIC:
@@ -313,13 +309,11 @@ async def main():
 
 
 if __name__ == "__main__":
+    asyncio.run(main())
     application = (
         ApplicationBuilder()
         .token(os.getenv("TELEGRAM_BOT_TOKEN_POLY"))
         .connection_pool_size(512)
         .build()
     )
-    application.add_handler(CommandHandler("ping", ping))
     asyncio.run(main())
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
-    print("POLY Scanner Started")
