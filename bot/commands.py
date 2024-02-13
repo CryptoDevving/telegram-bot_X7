@@ -848,7 +848,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         hub_filter = [d for d in hub["result"] if d["from"] in f"{hub_address}".lower()]
         value_raw = int(hub_filter[0]["value"]) / 10**18
         value = round(value_raw, 3) 
-        dollar = float(value) * float(api.get_native_price(chain_native)) / 1**18
+        dollar = float(value) * float(api.get_native_price(chain_native))
         time = datetime.utcfromtimestamp(int(hub_filter[0]["timeStamp"]))
         duration = now - time
         days = duration.days
@@ -1043,7 +1043,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     value_raw = int(filter[0]["value"]) / 10**18
     hash = filter[0]["hash"]
     value = round(value_raw, 3) 
-    dollar = float(value) * float(api.get_native_price(chain_native)) / 1**18
+    dollar = float(value) * float(api.get_native_price(chain_native))
     time = datetime.utcfromtimestamp(int(filter[0]["timeStamp"]))
     duration = now - time
     days = duration.days
@@ -1483,13 +1483,13 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cons_amount = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         native_price = api.get_native_price(chain_native)
         x7dao_dollar = (
-            float(x7dao_amount) * float(native_price) / 1**18
+            float(x7dao_amount) * float(native_price)
         )
         x7r_dollar = (
-            float(x7r_amount) * float(native_price) / 1**18
+            float(x7r_amount) * float(native_price)
         )
         cons_dollar = (
-            float(cons_amount) * float(native_price) / 1**18
+            float(cons_amount) * float(native_price)
         )
         im1 = Image.open((random.choice(media.BLACKHOLE)))
         im1.paste(im2, (720, 20), im2)
@@ -2275,14 +2275,14 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         native_price = api.get_native_price("eth")
         if floor != "N/A":
             floor_round = round(floor, 2)
-            floor_dollar = floor * float(native_price) / 1**18
+            floor_dollar = floor * float(native_price)
         else:
             floor_round = "N/A"
             floor_dollar = 0 
         pioneer_pool = api.get_native_balance(ca.PIONEER, "eth")
         each = float(pioneer_pool) / 639
-        each_dollar = float(each) * float(native_price) / 1**18
-        total_dollar = float(pioneer_pool) * float(native_price) / 1**18
+        each_dollar = float(each) * float(native_price)
+        total_dollar = float(pioneer_pool) * float(native_price)
         if pioneer_id == "":
             img = Image.open(random.choice(media.BLACKHOLE))
             i1 = ImageDraw.Draw(img)
@@ -2361,46 +2361,46 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         eth_price = api.get_native_price("eth")
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "eth")
-        eth_lpool_reserve_dollar = (float(eth_lpool_reserve) * float(eth_price) / 1**18)
+        eth_lpool_reserve_dollar = (float(eth_lpool_reserve) * float(eth_price))
         eth_lpool = api.get_native_balance(ca.LPOOL, "eth")
-        eth_lpool_dollar = (float(eth_lpool) * float(eth_price) / 1**18)
+        eth_lpool_dollar = (float(eth_lpool) * float(eth_price))
         eth_pool = round(float(eth_lpool_reserve) + float(eth_lpool), 2)
         eth_dollar = eth_lpool_reserve_dollar + eth_lpool_dollar
 
         bnb_price = api.get_native_price("bnb")
         bsc_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "bsc")
-        bsc_lpool_reserve_dollar = (float(bsc_lpool_reserve) * float(bnb_price) / 1**18)
+        bsc_lpool_reserve_dollar = (float(bsc_lpool_reserve) * float(bnb_price))
         bsc_lpool = api.get_native_balance(ca.LPOOL, "bsc")
-        bsc_lpool_dollar = (float(bsc_lpool) * float(bnb_price) / 1**18)
+        bsc_lpool_dollar = (float(bsc_lpool) * float(bnb_price))
         bsc_pool = round(float(bsc_lpool_reserve) + float(bsc_lpool), 2)
         bsc_dollar = bsc_lpool_reserve_dollar + bsc_lpool_dollar
 
         poly_price = api.get_native_price("matic")
         poly_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "poly")
-        poly_lpool_reserve_dollar = (float(poly_lpool_reserve) * float(poly_price) / 1**18)
+        poly_lpool_reserve_dollar = (float(poly_lpool_reserve) * float(poly_price))
         poly_lpool = api.get_native_balance(ca.LPOOL, "poly")
-        poly_lpool_dollar = (float(poly_lpool) * float(poly_price) / 1**18)
+        poly_lpool_dollar = (float(poly_lpool) * float(poly_price))
         poly_pool = round(float(poly_lpool_reserve) + float(poly_lpool), 2)
         poly_dollar = poly_lpool_reserve_dollar + poly_lpool_dollar
 
         arb_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "arb")
-        arb_lpool_reserve_dollar = (float(arb_lpool_reserve) * float(eth_price) / 1**18)
+        arb_lpool_reserve_dollar = (float(arb_lpool_reserve) * float(eth_price))
         arb_lpool = api.get_native_balance(ca.LPOOL, "arb")
-        arb_lpool_dollar = (float(arb_lpool) * float(eth_price) / 1**18)
+        arb_lpool_dollar = (float(arb_lpool) * float(eth_price))
         arb_pool = round(float(arb_lpool_reserve) + float(arb_lpool), 2)
         arb_dollar = arb_lpool_reserve_dollar + arb_lpool_dollar
 
         opti_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "opti")
-        opti_lpool_reserve_dollar = (float(opti_lpool_reserve) * float(eth_price) / 1**18)
+        opti_lpool_reserve_dollar = (float(opti_lpool_reserve) * float(eth_price))
         opti_lpool = api.get_native_balance(ca.LPOOL, "opti")
-        opti_lpool_dollar = (float(opti_lpool) * float(eth_price) / 1**18)
+        opti_lpool_dollar = (float(opti_lpool) * float(eth_price))
         opti_pool = round(float(opti_lpool_reserve) + float(opti_lpool), 2)
         opti_dollar = opti_lpool_reserve_dollar + opti_lpool_dollar
 
         base_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "base")
-        base_lpool_reserve_dollar = (float(base_lpool_reserve) * float(eth_price) / 1**18)
+        base_lpool_reserve_dollar = (float(base_lpool_reserve) * float(eth_price))
         base_lpool = api.get_native_balance(ca.LPOOL, "base")
-        base_lpool_dollar = (float(base_lpool) * float(eth_price) / 1**18)
+        base_lpool_dollar = (float(base_lpool) * float(eth_price))
         base_pool = round(float(base_lpool_reserve) + float(base_lpool), 2)
         base_dollar = base_lpool_reserve_dollar + base_lpool_dollar
 
@@ -2476,9 +2476,9 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         available = (contract.functions.availableCapital().call() / 10**18)
         native_price = api.get_native_price(chain_native)
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
-        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price) / 1**18)
+        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price))
         lpool = float(api.get_native_balance(ca.LPOOL, chain))
-        lpool_dollar = (float(lpool) * float(native_price) / 1**18)
+        lpool_dollar = (float(lpool) * float(native_price))
         pool = round(float(lpool_reserve) + float(lpool), 2)
         dollar = lpool_reserve_dollar + lpool_dollar
         lpool_reserve = round(float(lpool_reserve), 2)
@@ -4155,9 +4155,9 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name, chain_url, chain_native = mappings.X7D[chain]
         native_price = api.get_native_price(chain_native)
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
-        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price) / 1**18)
+        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price))
         lpool = api.get_native_balance(ca.LPOOL, chain)
-        lpool_dollar = (float(lpool) * float(native_price) / 1**18)
+        lpool_dollar = (float(lpool) * float(native_price))
         dollar = lpool_reserve_dollar + lpool_dollar
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)

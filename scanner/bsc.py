@@ -130,7 +130,7 @@ async def new_pair(event):
     if pool == 0 or pool == "" or not pool:
         pool_text = "Liquidity: Unavailable"
     else:
-        pool_dollar = float(pool) * float(api.get_native_price("bnb")) / 1**18
+        pool_dollar = float(pool) * float(api.get_native_price("bnb"))
         pool_text = (
             f'{pool} BNB (${"{:0,.0f}".format(pool_dollar)})\n'
             f'Total Liquidity: ${"{:0,.0f}".format(pool_dollar * 2)}'

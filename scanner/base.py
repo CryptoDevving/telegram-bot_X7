@@ -124,7 +124,7 @@ async def new_pair(event):
     if pool == 0 or pool == "" or not pool:
         pool_text = "Liquidity: Unavailable"
     else:
-        pool_dollar = float(pool) * float(api.get_native_price("eth")) / 1**18
+        pool_dollar = float(pool) * float(api.get_native_price("eth"))
         pool_text = (
             f'{pool} ETH (${"{:0,.0f}".format(pool_dollar)})\n'
             f'Total Liquidity: ${"{:0,.0f}".format(pool_dollar * 2)}'

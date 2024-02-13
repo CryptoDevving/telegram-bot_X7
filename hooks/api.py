@@ -170,7 +170,7 @@ def get_native_price(token):
     url = f"{tokens_info[token]['url']}&{tokens_info[token]['key']}"
     response = requests.get(url)
     data = response.json()
-    return float(data["result"][tokens_info[token]["field"]])
+    return float(data["result"][tokens_info[token]["field"]]) / 1**18
 
 
 def get_pool_liq_balance(wallet, token, chain):
