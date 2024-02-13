@@ -119,7 +119,7 @@ def get_daily_tx_count(contract: str, chain: str, ) -> int:
     tx_response = requests.get(tx_url)
     tx_data = tx_response.json()
     tx_entry_count = len(tx_data['result']) if 'result' in tx_data else 0
-    internal_tx_url = f"{chain_info.url}?module=account&action=txlist&address={contract}&startblock={block_yesterday}&endblock={block_now}&page=1&offset=1000&sort=asc{chain_info.key}"
+    internal_tx_url = f"{chain_info.api}?module=account&action=txlist&address={contract}&startblock={block_yesterday}&endblock={block_now}&page=1&offset=1000&sort=asc{chain_info.key}"
     internal_tx_response = requests.get(internal_tx_url)
     internal_tx_data = internal_tx_response.json()
     internal_tx_entry_count = len(internal_tx_data['result']) if 'result' in internal_tx_data else 0
