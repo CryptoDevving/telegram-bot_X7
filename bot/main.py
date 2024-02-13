@@ -1,18 +1,11 @@
 import sentry_sdk
 from telegram import *
 from telegram.ext import *
-import time as t
-from datetime import datetime, timedelta
-import os, random, sys, subprocess
-from constants import url
-import media
+import os, sys, subprocess
 from bot import commands, twitter, welcome, admin
-from variables import times, text
-from hooks import db, api
+from variables import times
 import scanners
 import auto
-from web3 import Web3
-from constants import ca
 
 
 sentry_sdk.init(
