@@ -321,3 +321,4 @@ if __name__ == "__main__":
     )
     application.add_handler(CommandHandler("ping", ping))
     asyncio.run(main())
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
