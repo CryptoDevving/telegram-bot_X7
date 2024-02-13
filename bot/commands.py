@@ -2291,7 +2291,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                     f"X7 Pioneer NFT Info\n\n"
                     f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
                     f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
-                    f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
+                    f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n\n\n\n\n\n\n"
                     f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
                 font = ImageFont.truetype(media.FONT, 28),
                 fill = (255, 255, 255),
