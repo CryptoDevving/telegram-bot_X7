@@ -6,10 +6,6 @@ from telegram.ext import *
 
 from hooks import  db, api
 from variables import times, text
-import auto
-
-
-click_me = auto.ClickMe()
 
 
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -36,17 +32,6 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     else:
         await update.message.reply_text(f"{text.MODS_ONLY}")
-
-
-async def clickme(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        current_jobs = context.job_queue.get_jobs_by_name("Click Me")
-        if not current_jobs:
-            await update.message.reply_text(f"Unable to send")
-        for job in current_jobs:
-            job.schedule_removal()
-            await click_me.send(update, context)
 
 
 async def delete(update: Update, context: ContextTypes.DEFAULT_TYPE):

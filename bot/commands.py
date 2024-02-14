@@ -607,9 +607,9 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_photo(
                 photo=open(r"media/blackhole.png", "rb"),
                 caption=
-                f"*X7 Finance Price Conversion*\n\n"
-                f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output )}\n\n"
-                f"{api.get_quote()}",
+                    f"*X7 Finance Price Conversion*\n\n"
+                    f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output )}\n\n"
+                    f"{api.get_quote()}",
                 parse_mode="Markdown")
         else:
             await update.message.reply_text(f"{search.upper()} Not Found")
@@ -679,11 +679,12 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
-        f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
-        f"{pair_text}\n"
-        f"{eco_split_text}\n"
-        f"{treasury_split_text}\n"
-        f"{deposit_text}",
+            f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
+            f"{pair_text}\n"
+            f"{eco_split_text}\n"
+            f"{treasury_split_text}\n"
+            f"{deposit_text}\n\n"
+            f"{api.get_quote()}",
         parse_mode = "markdown")
 
 
