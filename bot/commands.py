@@ -86,6 +86,7 @@ async def announcements(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting ATH Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def get_ath_info(coin):
         ath, ath_change, date = api.get_ath(coin)
@@ -117,7 +118,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         x7dao_ath = "Unavaliable"
         x7r_ath = "Unavaliable"
-
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption = 
@@ -214,6 +215,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Burn Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     burn = api.get_token_balance(ca.DEAD, ca.X7R, chain)
     percent = round(burn / ca.SUPPLY * 100, 2)
@@ -234,6 +236,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -414,6 +417,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 x7_supply = api.get_x7r_supply("eth")
             else:
                 x7_supply = ca.SUPPLY
+            message = await update.message.reply_text("Getting Comparison Info, Please wait...")
             x7_market_cap = x7_price * x7_supply
             percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
             x = (token_market_cap - x7_market_cap) / x7_market_cap
@@ -442,6 +446,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 fill = (255, 255, 255),
             )
             im1.save(r"media/blackhole.png", quality=95)
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
                 photo=open(r"media/blackhole.png", "rb"),
                 caption=
@@ -476,10 +481,12 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="Markdown",
             )
     except IndexError:
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_text("Comparison not avaliable, please try again.")
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Constellation Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     price = api.get_cg_price("x7101, x7102, x7103, x7104, x7105")
@@ -531,6 +538,7 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
             fill=(255, 255, 255),
         )
         img.save(r"media/blackhole.png")
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -622,6 +630,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain in mappings.CHAINS:
+        message = await update.message.reply_text("Getting Xchange Cost Info, Please wait...")
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         web3 = mappings.CHAINS[chain].w3
         native = mappings.CHAINS[chain].token
@@ -652,7 +661,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         eco_split_eth = gas_price * eco_split_gas
         eco_split_dollars = (eco_split_eth / 10**9)* eth_price
         eco_split_text = f"Ecosystem Splitter Push: {eco_split_eth / 10**9:.3f} {native.upper()} (${eco_split_dollars:.2f})"
-    except Exception as e:
+    except Exception:
         eco_split_text = "Ecosystem Splitter Push: N/A"
     try:
         treasury_split_gas = web3.eth.estimate_gas({
@@ -676,6 +685,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         deposit_text = f"Mint X7D: {deposit_eth / 10**9:.3f} {native.upper()} (${deposit_dollars:.2f})"
     except Exception:
         deposit_text = "Mint X7D: N/A"
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -929,6 +939,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Buy Back Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     now = datetime.utcnow()
     def get_liquidity_data(hub_address):
@@ -968,6 +979,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7100_hours,
         x7100_minutes,
     ) = get_liquidity_data(ca.X7100_LIQ_HUB)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1124,6 +1136,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Xchange Fee Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     now = datetime.utcnow()
     tx = api.get_tx(ca.FEE_TO, chain)
@@ -1137,6 +1150,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     days = duration.days
     hours, remainder = divmod(duration.seconds, 3600)
     minutes = (remainder % 3600) // 60
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1198,55 +1212,50 @@ async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
    
 
-
 async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        chain = " ".join(context.args).lower()
-        if chain == "":
-            chain = "eth"
-        if chain in mappings.CHAINS:
-            await context.bot.send_chat_action(update.effective_chat.id, "typing")
-            chain_name = mappings.CHAINS[chain].name
-            chain_url = mappings.CHAINS[chain].gas
-            chain_logo = mappings.CHAINS[chain].logo
-            web3 = mappings.CHAINS[chain].w3
-            native = mappings.CHAINS[chain].token
-        else:
-            await update.message.reply_text(text.CHAIN_ERROR)
-            return
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
+    if chain in mappings.CHAINS:
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].gas
+        chain_logo = mappings.CHAINS[chain].logo
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
 
-        gas_data = api.get_gas(chain)
-        im2 = Image.open(chain_logo)
-        im1 = Image.open(random.choice(media.BLACKHOLE))
-        im1.paste(im2, (720, 20), im2)
-        i1 = ImageDraw.Draw(im1)
-        i1.text(
-            (26, 30),
-                f"{chain_name} Gas Prices:\n\n"
-                f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
-                f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
-                f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n\n\n\n\n\n\n\n'
-                f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-            font = ImageFont.truetype(media.FONT, 26),
-            fill = (255, 255, 255),
-        )
-        im1.save("media/blackhole.png")
-        await update.message.reply_photo(
-            photo=open("media/blackhole.png", "rb"),
-            caption=
-                f"*{chain_name} Gas Prices:*\n"
-                f"For other chains use `/gas [chain-name]`\n\n"
-                f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
-                f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
-                f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n'
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton(text=f"{chain_name} Gas Tracker", url=chain_url)]]
-            ),
-        )
-    except Exception as e:
-        print(e)
+    gas_data = api.get_gas(chain)
+    im2 = Image.open(chain_logo)
+    im1 = Image.open(random.choice(media.BLACKHOLE))
+    im1.paste(im2, (720, 20), im2)
+    i1 = ImageDraw.Draw(im1)
+    i1.text(
+        (26, 30),
+            f"{chain_name} Gas Prices:\n\n"
+            f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
+            f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
+            f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n\n\n\n\n\n\n\n'
+            f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+        font = ImageFont.truetype(media.FONT, 26),
+        fill = (255, 255, 255),
+    )
+    im1.save("media/blackhole.png")
+    await update.message.reply_photo(
+        photo=open("media/blackhole.png", "rb"),
+        caption=
+            f"*{chain_name} Gas Prices:*\n"
+            f"For other chains use `/gas [chain-name]`\n\n"
+            f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
+            f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
+            f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n'
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton(text=f"{chain_name} Gas Tracker", url=chain_url)]]
+        ),
+    )
+
 
 async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ext = " ".join(context.args)
@@ -1312,6 +1321,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Holder Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     x7dao_holders = api.get_holders(ca.X7DAO, chain)
     x7r_holders = api.get_holders(ca.X7R, chain)
@@ -1332,6 +1342,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fill = (255, 255, 255),
     )
     im1.save(r"media/blackhole.png")
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -1485,6 +1496,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Liquidity Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     im2 = Image.open(chain_logo)
     if chain == "eth":  ### REMOVE LINE AFTER MIGRATION
@@ -1547,6 +1559,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         img_path = os.path.join("media", "blackhole.png")
         im1.save(img_path)
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -1645,6 +1658,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Liquidation Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     contract = chain_web3.eth.contract(
         address=Web3.to_checksum_address(ca.LPOOL), abi=api.get_abi(ca.LPOOL, chain)
@@ -1663,6 +1677,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     liquidatable_loans_text = f"Total liquidatable loans: {liquidatable_loans}"
     output = "\n".join([liquidatable_loans_text] + results)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1704,6 +1719,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Loan Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = api.get_native_price(chain_native)
     address = to_checksum_address(ca.LPOOL)
@@ -1727,6 +1743,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     schedule2 = contract.functions.getPrincipalPaymentSchedule(int(loan_id)).call()
     schedule_str = api.format_schedule(schedule1, schedule2, chain_native.upper())
 
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1864,6 +1881,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Lock Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def calculate_remaining_time(web3, contract, token_pair, now):
         timestamp = contract.functions.getTokenUnlockTimestamp(to_checksum_address(token_pair)).call()
@@ -1897,6 +1915,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7r_remaining_time_str, x7r_unlock_datetime_str = calculate_remaining_time(web3, contract, x7r_pair, now)
     x7dao_remaining_time_str, x7dao_unlock_datetime_str = calculate_remaining_time(web3, contract, x7dao_pair, now)
 
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1968,6 +1987,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Market Cap Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = {}
     token_names = {
@@ -2010,6 +2030,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     i1.text((28, 36), market_cap_info, font = ImageFont.truetype(media.FONT, 22), fill = (255, 255, 255))
     im1.save(r"media/blackhole.png")
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -2120,6 +2141,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting NFT Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain_prices = nfts.MINT_PRICES()
     chain_data = nfts.DATA()
@@ -2185,6 +2207,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
     ]
 
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -2287,7 +2310,8 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
 
-async def pair(update: Update, context: CallbackContext):
+async def pair(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Pair Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     networks = {
         "ETH": f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
@@ -2314,6 +2338,7 @@ async def pair(update: Update, context: CallbackContext):
         )
         amount = contract.functions.allPairsLength().call()
         contract_instances[network] = amount
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -2360,6 +2385,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
+    message = await update.message.reply_text("Getting Pioneer Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         pioneer_id = " ".join(context.args)
@@ -2391,6 +2417,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                 fill = (255, 255, 255),
             )
             img.save(r"media/blackhole.png")
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
                 photo=open(r"media/blackhole.png", "rb"),
                 caption=
@@ -2421,6 +2448,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             data = api.get_os_nft_id(ca.PIONEER, pioneer_id)
             status = data["nft"]["traits"][0]["value"]
             image_url = data["nft"]["image_url"]
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
             photo=image_url,
             caption=
@@ -2450,6 +2478,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 
 async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Lending Pool Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -2538,6 +2567,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         img_path = os.path.join("media", "blackhole.png")
         im1.save(img_path)
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -2577,11 +2607,8 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         dollar = lpool_reserve_dollar + lpool_dollar
         lpool_reserve = round(float(lpool_reserve), 2)
         lpool = round(float(lpool), 2)
-
         used = lpool - available
         percent = int((used / pool) * 100)
-            
-
         im2 = Image.open(chain_logo)
         im1 = Image.open((random.choice(media.BLACKHOLE)))
         im1.paste(im2, (720, 20), im2)
@@ -2603,6 +2630,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         img_path = os.path.join("media", "blackhole.png")
         im1.save(img_path)
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -2637,7 +2665,9 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Price Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    
     try:
         if context.args:
             search = context.args[0].lower()
@@ -2715,6 +2745,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 img_path = os.path.join("media", "blackhole.png")
                 im1.save(img_path)
+                await context.bot.delete_message(update.effective_chat.id, message.id)
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2776,6 +2807,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 img_path = os.path.join("media", "blackhole.png")
                 im1.save(img_path)
+                await context.bot.delete_message(update.effective_chat.id, message.id)
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2891,6 +2923,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 img_path = os.path.join("media", "blackhole.png")
                 im1.save(img_path)
+                await context.bot.delete_message(update.effective_chat.id, message.id)
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2966,6 +2999,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     fill=(255, 255, 255),
                 )
                 im1.save(r"media/blackhole.png", quality=95)
+                await context.bot.delete_message(update.effective_chat.id, message.id)
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2987,6 +3021,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ),
                 )
     except IndexError:
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_text(
             f"{search.upper()} Not found",
             parse_mode="Markdown",
@@ -3062,6 +3097,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Please provide Contract Address and chain",
     )
         return
+    message = await update.message.reply_text("Scanning, Please wait...")
     scan = api.get_scan(token_address, chain)
     if scan == {}:
         await update.message.reply_text(f"{token_address} ({chain.upper}) not found")
@@ -3216,7 +3252,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}\n{liquidity}\n{lock}"
     token_name = scan[f"{str(token_address).lower()}"]["token_name"]
-
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -3438,7 +3474,8 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     )
 
 
-async def splitters(update: Update, context):
+async def splitters(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Splitter Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         if len(context.args) > 1:
@@ -3459,6 +3496,7 @@ async def splitters(update: Update, context):
                 else:
                     message += f"{location}: {share:.2f} {chain_native.upper()}\n"
 
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
@@ -3508,6 +3546,7 @@ async def splitters(update: Update, context):
             eco_dollar = float(eco_eth) * float(native_price)
             profit_dollar = float(profit_eth) * float(native_price)
             treasury_dollar = float(treasury_eth) * float(native_price)
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
@@ -3561,6 +3600,7 @@ async def splitters(update: Update, context):
             eco_dollar = float(eco_eth) * float(native_price)
             profit_dollar = float(profit_eth) * float(native_price)
             treasury_dollar = float(treasury_eth) * float(native_price)
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
@@ -3595,6 +3635,7 @@ async def splitters(update: Update, context):
                 ),
             )
     except Exception:
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_text(
                             f"For example of splitter allocation use\n`/splitter [chain-name] [amount]`",
                             parse_mode="Markdown",
@@ -3642,6 +3683,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Supply Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     token_pairs = {
         "x7r": (ca.X7R_PAIR_ETH, ca.X7R),
@@ -3671,6 +3713,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         line = f"{token.upper()}\n{balance_str} {token.upper()} ({dollar_value_str}) {percent_str}"
         caption_lines.append(line)
     caption_text = "\n\n".join(caption_lines)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -3852,7 +3895,6 @@ async def translate_russian(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = "eth"
@@ -3865,6 +3907,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+    message = await update.message.reply_text("Getting Treasury Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     native_price = api.get_native_price(chain_native)
     com_eth_raw = api.get_native_balance(chain_com_multi, chain)
@@ -3906,6 +3949,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -3987,6 +4031,7 @@ async def v1(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting Volume Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
         if dune.FLAG == False:
@@ -4006,7 +4051,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f'7 Day:      ${"{:0,.0f}".format(last_7d_amt)}\n'
                 f'24 Hour:  ${"{:0,.0f}".format(last_24hr_amt)}'
                 )
-
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
@@ -4027,6 +4072,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             dune.FLAG = True
             dune.VOLUME = volume
         else:
+            await context.bot.delete_message(update.effective_chat.id, message.id)
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
@@ -4045,6 +4091,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ),
             )
     except Exception:
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -4065,129 +4112,128 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        if len(context.args) >= 2:
-            chain = context.args[1].lower()
-            wallet = context.args[0]
-        else:
-            await update.message.reply_text(
-            f"Please use `/wallet [wallet_address] [chain-name]`",
-            parse_mode="Markdown")
-            return
-        if not re.match(r'^0x[a-fA-F0-9]{40}$', wallet):
-            await update.message.reply_text(
-            f"Wallet address not recongised\n\n"
-            "Please use `/wallet [wallet_address] [chain-name]`",
-            parse_mode="Markdown")
-            return
-        if chain == "":
-            chain = "eth"
-        if chain in mappings.CHAINS:
-                    chain_name = mappings.CHAINS[chain].name
-                    chain_url = mappings.CHAINS[chain].scan_address
-                    chain_native = mappings.CHAINS[chain].token
-                    chain_logo = mappings.CHAINS[chain].logo
-        else:
-            await update.message.reply_text(text.CHAIN_ERROR)
-            return
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        native_price = api.get_native_price(chain_native)
-        eth = api.get_native_balance(wallet, chain)
-        dollar = float(eth) * float(native_price)
-        x7r_balance = api.get_token_balance(wallet, ca.X7R, chain)
-        x7r_price = x7r_balance * api.get_price(ca.X7R, chain)
-        x7dao_balance = api.get_token_balance(wallet, ca.X7DAO, chain)
-        x7dao_price = x7dao_balance * api.get_price(ca.X7DAO, chain)
-        x7101_balance = api.get_token_balance(wallet, ca.X7101, chain)
-        x7101_price = x7101_balance * api.get_price(ca.X7101, chain)
-        x7102_balance = api.get_token_balance(wallet, ca.X7102, chain)
-        x7102_price = x7102_balance * api.get_price(ca.X7102, chain)
-        x7103_balance = api.get_token_balance(wallet, ca.X7103, chain)
-        x7103_price = x7103_balance * api.get_price(ca.X7103, chain)
-        x7104_balance = api.get_token_balance(wallet, ca.X7104, chain)
-        x7104_price = x7104_balance * api.get_price(ca.X7104, chain)
-        x7105_balance = api.get_token_balance(wallet, ca.X7105, chain)
-        x7105_price = x7105_balance * api.get_price(ca.X7105, chain)
-        x7d_balance = api.get_token_balance(wallet, ca.X7D, chain)
-        x7d_price = x7d_balance * native_price
-        total = (
-            x7d_price
-            + x7r_price
-            + x7dao_price
-            + x7101_price
-            + x7102_price
-            + x7103_price
-            + x7104_price
-            + x7105_price
-        )
-        percentages = [round(balance / ca.SUPPLY * 100, 2) for balance in [x7dao_balance, x7101_balance, x7102_balance, x7103_balance, x7104_balance, x7105_balance]]
-        if x7r_balance == 0:
-            x7r_percent = 0
-        else:
-            x7r_percent = round(x7r_balance / api.get_x7r_supply(chain) * 100, 2)
-        pioneers = api.get_pioneer_holdings(wallet, chain)
-        maxis = api.get_maxi_holdings(wallet, chain)
-        txs = api.get_daily_tx_count(wallet, chain)
-        im1 = Image.open((random.choice(media.BLACKHOLE)))
-        im2 = Image.open(chain_logo)
-        im1.paste(im2, (720, 20), im2)
-        i1 = ImageDraw.Draw(im1)
-        i1.text(
-            (28, 10),
-                f"X7 Finance Wallet Info {chain_name}\n\n"
-                f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-                f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
-                f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
-                f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
-                f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
-                f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
-                f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
-                f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
-                f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-                f"{pioneers} Pioneer NFTs\n"
-                f"{maxis} Maxi NFTs\n"
-                f"{txs} tx's in the last 24 hours\n\n"
-                f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n\n"
-                f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
-            font = ImageFont.truetype(media.FONT, 24),
-            fill = (255, 255, 255),
-        )
+    if len(context.args) >= 2:
+        chain = context.args[1].lower()
+        wallet = context.args[0]
+    else:
+        await update.message.reply_text(
+        f"Please use `/wallet [wallet_address] [chain-name]`",
+        parse_mode="Markdown")
+        return
+    if not re.match(r'^0x[a-fA-F0-9]{40}$', wallet):
+        await update.message.reply_text(
+        f"Please use `/wallet [wallet_address] [chain-name]`",
+        parse_mode="Markdown")
+        return
+    if chain == "":
+        chain = "eth"
+    if chain in mappings.CHAINS:
+                chain_name = mappings.CHAINS[chain].name
+                chain_url = mappings.CHAINS[chain].scan_address
+                chain_native = mappings.CHAINS[chain].token
+                chain_logo = mappings.CHAINS[chain].logo
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    message = await update.message.reply_text("Getting Wallet Info, Please wait...")
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    native_price = api.get_native_price(chain_native)
+    eth = api.get_native_balance(wallet, chain)
+    dollar = float(eth) * float(native_price)
+    x7r_balance = api.get_token_balance(wallet, ca.X7R, chain)
+    x7r_price = x7r_balance * api.get_price(ca.X7R, chain)
+    x7dao_balance = api.get_token_balance(wallet, ca.X7DAO, chain)
+    x7dao_price = x7dao_balance * api.get_price(ca.X7DAO, chain)
+    x7101_balance = api.get_token_balance(wallet, ca.X7101, chain)
+    x7101_price = x7101_balance * api.get_price(ca.X7101, chain)
+    x7102_balance = api.get_token_balance(wallet, ca.X7102, chain)
+    x7102_price = x7102_balance * api.get_price(ca.X7102, chain)
+    x7103_balance = api.get_token_balance(wallet, ca.X7103, chain)
+    x7103_price = x7103_balance * api.get_price(ca.X7103, chain)
+    x7104_balance = api.get_token_balance(wallet, ca.X7104, chain)
+    x7104_price = x7104_balance * api.get_price(ca.X7104, chain)
+    x7105_balance = api.get_token_balance(wallet, ca.X7105, chain)
+    x7105_price = x7105_balance * api.get_price(ca.X7105, chain)
+    x7d_balance = api.get_token_balance(wallet, ca.X7D, chain)
+    x7d_price = x7d_balance * native_price
+    total = (
+        x7d_price
+        + x7r_price
+        + x7dao_price
+        + x7101_price
+        + x7102_price
+        + x7103_price
+        + x7104_price
+        + x7105_price
+    )
+    percentages = [round(balance / ca.SUPPLY * 100, 2) for balance in [x7dao_balance, x7101_balance, x7102_balance, x7103_balance, x7104_balance, x7105_balance]]
+    if x7r_balance == 0:
+        x7r_percent = 0
+    else:
+        x7r_percent = round(x7r_balance / api.get_x7r_supply(chain) * 100, 2)
+    pioneers = api.get_pioneer_holdings(wallet, chain)
+    maxis = api.get_maxi_holdings(wallet, chain)
+    txs = api.get_daily_tx_count(wallet, chain)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(chain_logo)
+    im1.paste(im2, (720, 20), im2)
+    i1 = ImageDraw.Draw(im1)
+    i1.text(
+        (28, 10),
+            f"X7 Finance Wallet Info {chain_name}\n\n"
+            f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
+            f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
+            f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
+            f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
+            f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
+            f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
+            f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
+            f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
+            f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
+            f"{pioneers} Pioneer NFTs\n"
+            f"{maxis} Maxi NFTs\n"
+            f"{txs} tx's in the last 24 hours\n\n"
+            f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n\n"
+            f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
+        font = ImageFont.truetype(media.FONT, 24),
+        fill = (255, 255, 255),
+    )
 
-        img_path = os.path.join("media", "blackhole.png")
-        im1.save(img_path)
-        await update.message.reply_photo(
-            photo=open(r"media/blackhole.png", "rb"),
-            caption=
-                f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
-                f"`{wallet}`\n\n"
-                f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-                f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
-                f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
-                f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
-                f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
-                f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
-                f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
-                f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
-                f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
-                f"{pioneers} Pioneer NFTs\n"
-                f"{maxis} Maxi NFTs\n\n"
-                f"{txs} tx's in the last 24 hours\n\n"
-                f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
+    img_path = os.path.join("media", "blackhole.png")
+    im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await update.message.reply_photo(
+        photo=open(r"media/blackhole.png", "rb"),
+        caption=
+            f"*X7 Finance Wallet Info {chain_name}*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
+            f"`{wallet}`\n\n"
+            f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
+            f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
+            f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
+            f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
+            f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
+            f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
+            f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
+            f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
+            f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n"
+            f"{pioneers} Pioneer NFTs\n"
+            f"{maxis} Maxi NFTs\n\n"
+            f"{txs} tx's in the last 24 hours\n\n"
+            f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton(
-                            text="Wallet Link",
-                            url=f"{chain_url}{wallet}",
-                        )
-                    ],
-                ]
-            ),
-        )
-    except Exception as e:
-        print(e)
+                    InlineKeyboardButton(
+                        text="Wallet Link",
+                        url=f"{chain_url}{wallet}",
+                    )
+                ],
+            ]
+        ),
+    )
+
 
 async def website(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
@@ -4285,6 +4331,7 @@ async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7D Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4318,6 +4365,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4343,6 +4391,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7DAO Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4427,6 +4476,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4453,6 +4503,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7R Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4537,6 +4588,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4563,6 +4615,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7101 Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4648,6 +4701,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4674,6 +4728,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7102 Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4758,6 +4813,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4784,6 +4840,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7103 Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4869,6 +4926,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4895,6 +4953,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7104 Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4979,6 +5038,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -5005,6 +5065,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = await update.message.reply_text("Getting X7105 Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -5090,6 +5151,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
