@@ -4074,9 +4074,10 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Please use `/wallet [wallet_address] [chain-name]`",
             parse_mode="Markdown")
             return
-        if not wallet.startswith("0x"):
+        if not re.match(r'^0x[a-fA-F0-9]{40}$', wallet):
             await update.message.reply_text(
-            f"Please use `/wallet [wallet_address] [chain-name]`",
+            f"Wallet address not recongised\n\n"
+            "Please use `/wallet [wallet_address] [chain-name]`",
             parse_mode="Markdown")
             return
         if chain == "":
