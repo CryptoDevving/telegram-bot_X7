@@ -147,6 +147,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("russian", commands.translate_russian))
     application.add_handler(CommandHandler("treasury", commands.treasury))
     application.add_handler(CommandHandler("website", commands.website))
+    application.add_handler(CommandHandler("v1", commands.v1))
     application.add_handler(CommandHandler("x7r", commands.x7r))
     application.add_handler(CommandHandler("x7d", commands.x7d))
     application.add_handler(CommandHandler("x7dao", commands.x7dao))

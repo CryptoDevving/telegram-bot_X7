@@ -3944,6 +3944,47 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def v1(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    native_price = api.get_native_price("eth")
+    v1_1_eth_raw = api.get_native_balance(ca.V1_1, "eth")
+    v1_1_eth = round(float(v1_1_eth_raw), 2)
+    v1_1_dollar = float(v1_1_eth) * float(native_price)
+
+    v1_2_eth_raw = api.get_native_balance(ca.V1_2, "eth")
+    v1_2_eth = round(float(v1_2_eth_raw), 2)
+    v1_2_dollar = float(v1_2_eth) * float(native_price)
+
+    total_eth  = v1_1_eth + v1_2_eth
+    total_dollar = v1_1_dollar + v1_2_dollar 
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"*X7 Finance V1 Wallets*\n\n"
+            f'Wallet 1: {v1_1_eth} ETH (${"{:0,.0f}".format(v1_1_dollar)})\n'
+            f'Wallet 2: {v1_2_eth} ETH (${"{:0,.0f}".format(v1_2_dollar)})\n\n'
+            f'Total: {total_eth} ETH (${"{:0,.0f}".format(total_dollar)})\n\n'
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="Wallet 1",
+                        url=f"{url.ETHER_ADDRESS}{ca.V1_2}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="Wallet 2",
+                        url=f"{url.ETHER_ADDRESS}{ca.V1_1}",
+                    )
+                ],
+            ]
+        ),
+    )
+
+
 async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
