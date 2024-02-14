@@ -179,7 +179,7 @@ CHAINS = {
         "base-main",
         Web3(Web3.HTTPProvider(f"https://mainnet.base.org")),
         "https://api.basescan.org/api",
-        os.getenv('ALCHEMY_BASE'),
+        os.getenv('BASE'),
         ca.COM_MULTI_BASE,
         ca.DEV_MULTI_BASE,
         [ca.X7R_PAIR_BASE,
