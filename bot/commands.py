@@ -1376,6 +1376,7 @@ async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fill = (255, 255, 255),
     )
     img.save(r"media/blackhole.png")
+    await context.bot.delete_message(update.effective_chat.id, update.message.id)
     await update.message.reply_photo(photo=open(r"media/blackhole.png", "rb"))
 
 
@@ -1391,7 +1392,7 @@ async def joke(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
-            caption=f'`{joke["setup"]}\n\n{joke["delivery"]}`',
+            caption=f'{joke["setup"]}\n\n{joke["delivery"]}',
             parse_mode="Markdown",
         )
 
@@ -3061,12 +3062,12 @@ async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def say(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "upload_audio")
     if not context.args:
         await update.message.reply_text("Please provide some words to convert to speech.")
         return
     voice_note = gTTS(" ".join(context.args), lang='en', slow=False)
     voice_note.save("media/voicenote.mp3")
+    await context.bot.delete_message(update.effective_chat.id, update.message.id)
     await update.message.reply_audio(audio=open("media/voicenote.mp3", "rb"))
 
 
@@ -4016,13 +4017,13 @@ async def v1(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Wallet 1",
-                        url=f"{url.ETHER_ADDRESS}{ca.V1_2}",
+                        url=f"{url.ETHER_ADDRESS}{ca.V1_1}",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="Wallet 2",
-                        url=f"{url.ETHER_ADDRESS}{ca.V1_1}",
+                        url=f"{url.ETHER_ADDRESS}{ca.V1_2}",
                     )
                 ],
             ]
