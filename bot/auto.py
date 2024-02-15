@@ -3,9 +3,8 @@ from telegram import *
 from telegram.ext import *
 import random
 
-from variables import text
 import media
-from constants import url
+from constants import text, url
 from hooks import api
 
 
