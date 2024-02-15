@@ -1899,7 +1899,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if unlock_datetime > now:
             time_remaining = unlock_datetime - now
-            prefix = "in"
+            prefix = "away"
         else:
             time_remaining = now - unlock_datetime
             prefix = "ago"
@@ -1908,11 +1908,10 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         months = (time_remaining.days % 365) // 30
         days = (time_remaining.days % 365) % 30
         hours, remainder = divmod(time_remaining.seconds, 3600)
-        minutes, _ = divmod(remainder, 60)
         weeks = days // 7
         days = days % 7
 
-        remaining_time_str = f"{years} years, {months} months, {weeks} weeks, {days} days, {hours} hours, {minutes} minutes {prefix}"
+        remaining_time_str = f"{years} years, {months} months, {weeks} weeks, {days} days, and {hours} hours {prefix}"
         unlock_datetime_str = unlock_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
 
         return remaining_time_str, unlock_datetime_str
