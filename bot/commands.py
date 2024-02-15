@@ -3489,7 +3489,7 @@ async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 await update.message.reply_text(text.CHAIN_ERROR)
                 return
-            distribution = splitters.GENERATE_INFO(eth_value)
+            distribution = splitters.GENERATE_INFO(chain, eth_value)
             splitter_text = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
             for location, share in distribution.items():
                 if location == "Treasury":

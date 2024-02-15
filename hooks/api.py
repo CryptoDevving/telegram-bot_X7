@@ -559,6 +559,7 @@ def get_token_image(token, chain):
     else:
         return "N/A"
 
+
 def get_volume(pair, chain):
     try:
         if chain in mappings.DEFINED_CHAINS:
@@ -825,8 +826,6 @@ def get_word(word):
             audio_url = first_phonetic.get("audio")
 
     return definition, audio_url
-
-
 
 
 # TWITTER
