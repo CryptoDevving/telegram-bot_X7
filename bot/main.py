@@ -4,10 +4,8 @@ from telegram.ext import *
 import os, sys, subprocess, random
 from datetime import datetime
 import time as t
-from bot import commands, twitter, welcome, admin
-from variables import times, text
-import media
-from constants import url
+from bot import commands, twitter, welcome, admin, auto
+from variables import times
 import scanners
 from hooks import db, api
 
@@ -64,81 +62,6 @@ def scanners():
         command = [python_executable, chain]
         process = subprocess.Popen(command)
         processes.append(process)
-
-
-async def auto_messages(context: ContextTypes.DEFAULT_TYPE) -> None:
-    job = context.job
-    messages = [text.ABOUT, text.AIRDROP, text.ECOSYSTEM,
-                text.VOLUME, random.choice(text.QUOTES)]
-    random_message = random.choice(messages)
-    if random_message in text.QUOTES:
-        message = f"*X7 Finance Whitepaper Quote*\n\n{random_message}"
-    else:
-        message = random_message
-
-    await context.bot.send_photo(
-        chat_id=job.chat_id,
-        photo=api.get_random_pioneer(),
-    )
-
-    await context.bot.send_message(
-        chat_id=job.chat_id,
-        text=f"{message}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
-            ]
-        ),
-    )
-
-
-async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = f"{update.effective_message.text}"
-    lower_message = message.lower()
-    keyword_to_response = {
-        "https://twitter": {
-            "text": random.choice(text.X_REPLIES),
-            "mode": None,
-        },
-        "https://x.com": {
-            "text": random.choice(text.X_REPLIES),
-            "mode": None,
-        },
-        "gm": {"sticker": media.GM},
-        "gm!": {"sticker": media.GM},
-        "new on chain message": {"sticker": media.ONCHAIN},
-        "lfg": {"sticker": media.LFG},
-        "goat": {"sticker": media.GOAT},
-        "smashed": {"sticker": media.SMASHED},
-        "wagmi": {"sticker": media.WAGMI},
-        "slapped": {"sticker": media.SLAPPED},
-    }
-
-    words = lower_message.split()
-
-    for keyword, response in keyword_to_response.items():
-        if keyword.startswith("https://"):
-            if any(word.startswith(keyword) for word in words):
-                if "text" in response:
-                    await update.message.reply_text(
-                        text=response["text"], parse_mode=response["mode"]
-                    )
-                elif "sticker" in response:
-                    await update.message.reply_sticker(sticker=response["sticker"])
-        else:
-            if (
-                f" {keyword} " in f" {lower_message} "
-                or lower_message.startswith(keyword + " ")
-                or lower_message.endswith(" " + keyword)
-            ):
-                if "text" in response:
-                    await update.message.reply_text(
-                        text=response["text"], parse_mode=response["mode"]
-                    )
-                elif "sticker" in response:
-                    await update.message.reply_sticker(sticker=response["sticker"])
 
 
 async def button_send(context: ContextTypes.DEFAULT_TYPE):
@@ -350,7 +273,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("search", commands.search))
     application.add_handler(CommandHandler("signers", commands.signers))
     application.add_handler(CommandHandler("smart", commands.smart))
-    application.add_handler(CommandHandler(["split", "splitters", "splitter"], commands.splitters))
+    application.add_handler(CommandHandler(["split", "splitters", "splitter"], commands.splitters_command))
     application.add_handler(CommandHandler("stats", commands.stats))
     application.add_handler(CommandHandler("supply", commands.supply))
     application.add_handler(CommandHandler(["beta", "swap", "xchange", "dex"], commands.swap))
@@ -394,10 +317,10 @@ if __name__ == "__main__":
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(button_function))
-    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto_replies))
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
 #    job_queue.run_repeating(
-#        auto_messages,
+#        auto.messages,
 #        times.AUTO_MESSAGE_TIME,
 #        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
 #        first=times.AUTO_MESSAGE_TIME,
