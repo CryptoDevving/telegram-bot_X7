@@ -95,21 +95,22 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         x7r_ath, x7r_ath_change, x7r_date = get_ath_info("x7r")
-        x7dao_ath, x7dao_ath_change, x7dao_date = get_ath_info("x7dao")
-        
-        x7dao_date_object = datetime.fromisoformat(x7dao_date.replace("Z", "+00:00"))
-        x7dao_readable_date = x7dao_date_object.strftime("%Y-%m-%d %H:%M:%S")
-        x7dao_mcap = x7dao_ath * ca.SUPPLY
-
         x7r_date_object = datetime.fromisoformat(x7r_date.replace("Z", "+00:00"))
         x7r_readable_date = x7r_date_object.strftime("%Y-%m-%d %H:%M:%S")
         x7r_mcap = x7r_ath * api.get_x7r_supply("eth")
-
         x7r_ath = (
             f'${x7r_ath} (${"{:0,.0f}".format(x7r_mcap)})\n'
             f'{x7r_ath_change}%\n'
             f'{x7r_readable_date}'
             )
+    except Exception:
+        x7r_ath = "Unavaliable"
+
+    try:
+        x7dao_ath, x7dao_ath_change, x7dao_date = get_ath_info("x7dao")
+        x7dao_date_object = datetime.fromisoformat(x7dao_date.replace("Z", "+00:00"))
+        x7dao_readable_date = x7dao_date_object.strftime("%Y-%m-%d %H:%M:%S")
+        x7dao_mcap = x7dao_ath * ca.SUPPLY
         x7dao_ath = (
             f'${x7dao_ath} (${"{:0,.0f}".format(x7dao_mcap)})\n'
             f'{x7dao_ath_change}%\n'
@@ -117,7 +118,6 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
     except Exception:
         x7dao_ath = "Unavaliable"
-        x7r_ath = "Unavaliable"
     await context.bot.delete_message(update.effective_chat.id, message.id)
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
