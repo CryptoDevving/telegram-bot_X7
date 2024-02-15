@@ -8,7 +8,7 @@ import pytz
 from dateutil import parser
 
 from constants import url
-from variables import text
+from constants import text
 import media
 from hooks import api
 

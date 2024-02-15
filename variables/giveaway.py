@@ -17,4 +17,3 @@ TEXT = (
 )
 
 TIME = datetime(2023, 7, 24, 5, 00, 00)
-UPDATE = datetime(2023, 7, 21, 21, 30, 00)

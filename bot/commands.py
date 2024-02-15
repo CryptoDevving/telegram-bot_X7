@@ -18,8 +18,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 from hooks import dune, db, api
 import media
-from constants import ca, loans, nfts, tax, url, dao, mappings, splitters
-from variables import times, giveaway, text
+from constants import ca, loans, nfts, tax, text, url, dao, mappings, splitters
+from variables import times, giveaway
 
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):

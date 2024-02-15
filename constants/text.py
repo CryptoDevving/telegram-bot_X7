@@ -15,19 +15,6 @@ ABOUT = (
     "downside risk.`\n\n#LongLiveDefi"
 )
 
-ADMIN_COMMANDS = (
-    "To be run in main chat\n\n"
-    "/settings - Open the setting menu\n"
-    "/setup - Setup the portal\n"
-    "/difficulty - Set the CAPTCHA difficulty\n"
-    "/antiflood - (Dis)Enable anti-flood mode\n"
-    "/lock all - mutes chat\n"
-    "/unlock all - unmute chat\n"
-    "/shield - Start shield raid\n"
-    "BuyBotTech - X7R\n"
-    "BobbyBuyBot - X7DAO, X7101, X7102\n"
-    "BubbleBuyBot - X7103, X7104, X7105\n"
-)
 
 AIRDROP = (
     "*X7 Finance Airdrop Information*\n\nThe rollout of the Ecosystem Contracts on BNB Smart Chain, Polygon "
@@ -48,8 +35,6 @@ ALUMNI = (
     "@WoxieX - Creator of the OG dashboard -  x7community.space\n\n"
     "@Zaratustra  - Defi extraordinaire and protocol prophet\n\n"
 )
-
-
 
 BURN_INCREMENT = 100
 
