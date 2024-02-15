@@ -727,16 +727,6 @@ def get_fact():
     return quote["text"]
 
 
-def get_giveaway_entries():
-    with open("logs/entries.csv", "r") as file:
-        csv_reader = csv.reader(file)
-        _ = next(csv_reader)
-        column_data = []
-        for row in csv_reader:
-            if len(row) > 0 and row[0] != "":
-                column_data.append(row[0])
-    return [entry[-5:] for entry in column_data]
-
 
 def get_quote():
     response = requests.get("https://type.fit/api/quotes")
@@ -753,20 +743,6 @@ def get_quote():
 def get_random_pioneer():
     number = f"{random.randint(1, 4480)}".zfill(4)
     return f"{url.PIONEERS}{number}.png"
-
-
-def get_random_word(variable):
-    url = f"https://random-word-api.herokuapp.com/{variable}"
-    response = requests.get(url)
-    data = response.json()
-    return data[0]
-
-
-def get_riddle():
-    url = f"https://riddles-api.vercel.app/random"
-    response = requests.get(url)
-    data = response.json()
-    return data
 
 
 def get_scan(token: str, chain: str) -> dict:

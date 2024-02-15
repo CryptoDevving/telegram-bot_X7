@@ -1278,45 +1278,15 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
     else:
-        if ext == "":
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*{giveaway.NAME}*\n\n{giveaway.TEXT}\n\n"
-                    f"Ends:\n\n{giveaway.TIME.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
-                    f"{days} days, {hours} hours and {minutes} minutes\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*{giveaway.NAME}*\n\n{giveaway.TEXT}\n\n"
+                f"Ends:\n\n{giveaway.TIME.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
+                f"{days} days, {hours} hours and {minutes} minutes\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
             )
-
-        if ext == "entries":
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*{giveaway.NAME}*\n\n"
-                    f"Entries for the {giveaway.NAME} are: (last 5 digits only):\n\n{api.get_giveaway_entries()}\n\n"
-                    f"Last updated at:\n"
-                    f"{giveaway.UPDATE.strftime('%A %B %d %Y %I:%M %p')} UTC\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
-            )
-        if ext == "run":
-            chat_admins = await context.bot.get_chat_administrators(os.getenv("MAIN_TELEGRAM_CHANNEL_ID"))
-            if update.effective_user in (admin.user for admin in chat_admins):
-                winner_entries = list(api.get_giveaway_entries())
-                winner = random.choice(winner_entries)
-                await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=
-                        f"*{giveaway.NAME}*\n\n"
-                        f"The winner of the {giveaway.NAME} is: (last 5 digits only)\n\n"
-                        f"{winner}\n\n"
-                        f"Trust no one, trust code. Long live Defi!\n\n"
-                        f"{api.get_quote()}",
-                    parse_mode="Markdown",
-                )
-            else:
-                await update.message.reply_text(f"{text.MODS_ONLY}")
 
 
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
