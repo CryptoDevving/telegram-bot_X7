@@ -382,107 +382,115 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    try:
-        token_names = {
-            "x7r": {"contract": ca.X7R, "image": media.X7R_LOGO},
-            "x7dao": {"contract": ca.X7DAO, "image": media.X7DAO_LOGO},
-            "x7101": {"contract": ca.X7101, "image": media.X7101_LOGO},
-            "x7102": {"contract": ca.X7102, "image": media.X7102_LOGO},
-            "x7103": {"symbol": ca.X7103, "image": media.X7103_LOGO},
-            "x7104": {"contract": ca.X7104, "image": media.X7104_LOGO},
-            "x7105": {"contract": ca.X7105, "image": media.X7105_LOGO},
-        }
+    token_names = {
+        "x7r": {"contract": ca.X7R, "image": media.X7R_LOGO},
+        "x7dao": {"contract": ca.X7DAO, "image": media.X7DAO_LOGO},
+        "x7101": {"contract": ca.X7101, "image": media.X7101_LOGO},
+        "x7102": {"contract": ca.X7102, "image": media.X7102_LOGO},
+        "x7103": {"symbol": ca.X7103, "image": media.X7103_LOGO},
+        "x7104": {"contract": ca.X7104, "image": media.X7104_LOGO},
+        "x7105": {"contract": ca.X7105, "image": media.X7105_LOGO},
+    }
 
-        x7token = context.args[0].lower()
-        token2 = context.args[1].lower()
-        search = api.get_cg_search(token2)
+    x7token = context.args[0].lower()
+    if x7token not in token_names:
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*X7 Finance Market Cap Comparison*\n\n"
+                f"Please enter X7 token first followed by token to compare\n\n"
+                f"ie. `/compare x7r uni`\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+        )
+        return
+    
+    token2 = context.args[1].lower()
+    search = api.get_cg_search(token2)
+    if "coins" in search and search["coins"]:
         token_id = search["coins"][0]["api_symbol"]
         thumb = search["coins"][0]["large"]
-
-        if x7token in token_names:
-            token_info = token_names[x7token]
-            x7_price = api.get_price(token_info["contract"], "eth")
-            image = token_info["image"]
-            token_market_cap = api.get_mcap(token_id)
-            if token_market_cap == 0:
-                await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=
-                        f"*X7 Finance Market Cap Comparison*\n\n"
-                        f"No Market Cap data found for {token2.upper()}\n\n"
-                        f"{api.get_quote()}",
-                    parse_mode="Markdown",
-                )
-            if x7token == ca.X7R:
-                x7_supply = api.get_x7r_supply("eth")
-            else:
-                x7_supply = ca.SUPPLY
-            message = await update.message.reply_text("Getting Comparison Info, Please wait...")
-            x7_market_cap = x7_price * x7_supply
-            percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
-            x = (token_market_cap - x7_market_cap) / x7_market_cap
-            token_value = token_market_cap / x7_supply
-            img = Image.open(requests.get(thumb, stream=True).raw)
-            result = img.convert("RGBA")
-            result.save(r"media/tokenlogo.png")
-            im1 = Image.open((random.choice(media.BLACKHOLE)))
-            im2 = Image.open(r"media/tokenlogo.png")
-            im2_resized = im2.resize((200, 200))
-            im3 = Image.open(image)
-            im1.paste(im2_resized, (680, 20), im2_resized)
-            im1.paste(im3, (680, 200), im3)
-            i1 = ImageDraw.Draw(im1)
-            i1.text(
-                (28, 36),
-                f"X7 Finance Market Cap Comparison\n\n"
-                f"{context.args[1].upper()} Market Cap:\n"
-                f'${"{:,.2f}".format(token_market_cap)}\n\n'
-                f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
-                f'${"{:,.2f}".format(token_value)}\n'
-                f'{"{:,.0f}%".format(percent)}\n'
-                f'{"{:,.0f}x".format(x)}\n\n\n\n\n'
-                f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-                font = ImageFont.truetype(media.FONT, 28),
-                fill = (255, 255, 255),
-            )
-            im1.save(r"media/blackhole.png", quality=95)
-            await context.bot.delete_message(update.effective_chat.id, message.id)
-            await update.message.reply_photo(
-                photo=open(r"media/blackhole.png", "rb"),
-                caption=
-                    f"*X7 Finance Market Cap Comparison*\n\n"
-                    f"{context.args[1].upper()} Market Cap:\n"
-                    f'${"{:,.2f}".format(token_market_cap)}\n\n'
-                    f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
-                    f'${"{:,.2f}".format(token_value)}\n'
-                    f'{"{:,.0f}%".format(percent)}\n'
-                    f'{"{:,.0f}x".format(x)}\n\n'
-                    f'{api.get_quote()}',
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text=f"{context.args[1].upper()} Chart",
-                                url=f"https://www.coingecko.com/en/coins/{token_id}",
-                            )
-                        ],
-                    ]
-                ),
-            )
-        else:
-            await update.message.reply_photo(
+    else:
+        await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
                     f"*X7 Finance Market Cap Comparison*\n\n"
-                    f"Please enter X7 token first followed by token to compare\n\n"
-                    f"ie. `/compare x7r uni`\n\n"
+                    f"No Market Cap data found for {token2.upper()}\n\n"
                     f"{api.get_quote()}",
                 parse_mode="Markdown",
             )
-    except IndexError:
-        await context.bot.delete_message(update.effective_chat.id, message.id)
-        await update.message.reply_text("Comparison not avaliable, please try again.")
+        return
+
+    token_market_cap = api.get_mcap(token_id)
+    if token_market_cap == 0:
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*X7 Finance Market Cap Comparison*\n\n"
+                f"No Market Cap data found for {token2.upper()}\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+        )
+    if x7token == ca.X7R:
+        x7_supply = api.get_x7r_supply("eth")
+    else:
+        x7_supply = ca.SUPPLY
+    message = await update.message.reply_text("Getting Comparison Info, Please wait...")
+    token_info = token_names[x7token]
+    x7_price = api.get_price(token_info["contract"], "eth")
+    image = token_info["image"]
+    x7_market_cap = x7_price * x7_supply
+    percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
+    x = (token_market_cap - x7_market_cap) / x7_market_cap
+    token_value = token_market_cap / x7_supply
+    img = Image.open(requests.get(thumb, stream=True).raw)
+    result = img.convert("RGBA")
+    result.save(r"media/tokenlogo.png")
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    im2 = Image.open(r"media/tokenlogo.png")
+    im2_resized = im2.resize((200, 200))
+    im3 = Image.open(image)
+    im1.paste(im2_resized, (680, 20), im2_resized)
+    im1.paste(im3, (680, 200), im3)
+    i1 = ImageDraw.Draw(im1)
+    i1.text(
+        (28, 36),
+        f"X7 Finance Market Cap Comparison\n\n"
+        f"{context.args[1].upper()} Market Cap:\n"
+        f'${"{:,.2f}".format(token_market_cap)}\n\n'
+        f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
+        f'${"{:,.2f}".format(token_value)}\n'
+        f'{"{:,.0f}%".format(percent)}\n'
+        f'{"{:,.0f}x".format(x)}\n\n\n\n\n'
+        f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+        font = ImageFont.truetype(media.FONT, 28),
+        fill = (255, 255, 255),
+    )
+    im1.save(r"media/blackhole.png", quality=95)
+    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await update.message.reply_photo(
+        photo=open(r"media/blackhole.png", "rb"),
+        caption=
+            f"*X7 Finance Market Cap Comparison*\n\n"
+            f"{context.args[1].upper()} Market Cap:\n"
+            f'${"{:,.2f}".format(token_market_cap)}\n\n'
+            f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
+            f'${"{:,.2f}".format(token_value)}\n'
+            f'{"{:,.0f}%".format(percent)}\n'
+            f'{"{:,.0f}x".format(x)}\n\n'
+            f'{api.get_quote()}',
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text=f"{context.args[1].upper()} Chart",
+                        url=f"https://www.coingecko.com/en/coins/{token_id}",
+                    )
+                ],
+            ]
+        ),
+    )
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -630,7 +638,6 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = "eth"
     if chain in mappings.CHAINS:
-        message = await update.message.reply_text("Getting Xchange Cost Info, Please wait...")
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         web3 = mappings.CHAINS[chain].w3
         native = mappings.CHAINS[chain].token
@@ -638,6 +645,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     
+    message = await update.message.reply_text("Getting Xchange Cost Info, Please wait...")
     gas_price = web3.eth.gas_price / 10**9
     eth_price = api.get_native_price("eth")
 
@@ -2388,73 +2396,43 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     message = await update.message.reply_text("Getting Pioneer Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    try:
-        pioneer_id = " ".join(context.args)
-        data = api.get_os_nft_collection("/x7-pioneer")
-        floor_data = api.get_nft_data(ca.PIONEER, "eth")
-        floor = floor_data["floor_price"]
-        native_price = api.get_native_price("eth")
-        if floor != "N/A":
-            floor_round = round(floor, 2)
-            floor_dollar = floor * float(native_price)
-        else:
-            floor_round = "N/A"
-            floor_dollar = 0 
-        pioneer_pool = api.get_native_balance(ca.PIONEER, "eth")
-        each = float(pioneer_pool) / 639
-        each_dollar = float(each) * float(native_price)
-        total_dollar = float(pioneer_pool) * float(native_price)
-        if pioneer_id == "":
-            img = Image.open(random.choice(media.BLACKHOLE))
-            i1 = ImageDraw.Draw(img)
-            i1.text(
-                (28, 36),
-                    f"X7 Pioneer NFT Info\n\n"
-                    f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
-                    f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
-                    f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n\n\n\n\n\n\n"
-                    f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
-                font = ImageFont.truetype(media.FONT, 28),
-                fill = (255, 255, 255),
-            )
-            img.save(r"media/blackhole.png")
-            await context.bot.delete_message(update.effective_chat.id, message.id)
-            await update.message.reply_photo(
-                photo=open(r"media/blackhole.png", "rb"),
-                caption=
-                    f"*X7 Pioneer NFT Info*\n\n"
-                    f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
-                    f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
-                    f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="X7 Pioneer Dashboard",
-                                url="https://x7.finance/x/nft/pioneer",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Opensea",
-                                url=f"{url.OS_PIONEER}",
-                            )
-                        ],
-                    ]
-                ),
-            )
-        else:
-            data = api.get_os_nft_id(ca.PIONEER, pioneer_id)
-            status = data["nft"]["traits"][0]["value"]
-            image_url = data["nft"]["image_url"]
-            await context.bot.delete_message(update.effective_chat.id, message.id)
-            await update.message.reply_photo(
-            photo=image_url,
+    pioneer_id = " ".join(context.args)
+    data = api.get_os_nft_collection("/x7-pioneer")
+    floor_data = api.get_nft_data(ca.PIONEER, "eth")
+    floor = floor_data["floor_price"]
+    native_price = api.get_native_price("eth")
+    if floor != "N/A":
+        floor_round = round(floor, 2)
+        floor_dollar = floor * float(native_price)
+    else:
+        floor_round = "N/A"
+        floor_dollar = 0 
+    pioneer_pool = api.get_native_balance(ca.PIONEER, "eth")
+    each = float(pioneer_pool) / 639
+    each_dollar = float(each) * float(native_price)
+    total_dollar = float(pioneer_pool) * float(native_price)
+    if pioneer_id == "":
+        img = Image.open(random.choice(media.BLACKHOLE))
+        i1 = ImageDraw.Draw(img)
+        i1.text(
+            (28, 36),
+                f"X7 Pioneer NFT Info\n\n"
+                f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
+                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
+                f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n\n\n\n\n\n\n"
+                f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
+            font = ImageFont.truetype(media.FONT, 28),
+            fill = (255, 255, 255),
+        )
+        img.save(r"media/blackhole.png")
+        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await update.message.reply_photo(
+            photo=open(r"media/blackhole.png", "rb"),
             caption=
-                f"*X7 Pioneer {pioneer_id} NFT Info*\n\n"
-                f"Transfer Lock Status: {status}\n\n"
+                f"*X7 Pioneer NFT Info*\n\n"
+                f"Floor Price: {floor_round} ETH (${'{:0,.0f}'.format(floor_dollar)})\n"
+                f"Pioneer Pool: {pioneer_pool[:3]} ETH (${'{:0,.0f}'.format(total_dollar)})\n"
+                f"Per Pioneer: {each:.3f} ETH (${each_dollar:,.2f})\n\n"
                 f"{api.get_quote()}",
             parse_mode="markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -2468,21 +2446,54 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                     [
                         InlineKeyboardButton(
                             text="Opensea",
-                            url=f"https://pro.opensea.io/nft/ethereum/{ca.PIONEER}/{pioneer_id}",
+                            url=f"{url.OS_PIONEER}",
                         )
                     ],
                 ]
             ),
         )
-    except Exception:
-        await update.message.reply_text(f"Pioneer {pioneer_id} not found")
+    else:
+        data = api.get_os_nft_id(ca.PIONEER, pioneer_id)
+        if "nft" in data and data["nft"]:
+            status = data["nft"]["traits"][0]["value"]
+            image_url = data["nft"]["image_url"]
+        else:
+            await context.bot.delete_message(update.effective_chat.id, message.id)
+            await update.message.reply_text(f"Pioneer {pioneer_id} not found")
+            return
+        
+        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await update.message.reply_photo(
+        photo=image_url,
+        caption=
+            f"*X7 Pioneer {pioneer_id} NFT Info*\n\n"
+            f"Transfer Lock Status: {status}\n\n"
+            f"{api.get_quote()}",
+        parse_mode="markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="X7 Pioneer Dashboard",
+                        url="https://x7.finance/x/nft/pioneer",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="Opensea",
+                        url=f"https://pro.opensea.io/nft/ethereum/{ca.PIONEER}/{pioneer_id}",
+                    )
+                ],
+            ]
+        ),
+    )
 
 
 async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = await update.message.reply_text("Getting Lending Pool Info, Please wait...")
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        message = await update.message.reply_text("Getting Lending Pool Info, Please wait...")
         eth_price = api.get_native_price("eth")
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "eth")
         eth_lpool_reserve_dollar = (float(eth_lpool_reserve) * float(eth_price))
@@ -3476,121 +3487,120 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 
 async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = await update.message.reply_text("Getting Splitter Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    try:
-        if len(context.args) > 1:
+    if len(context.args) > 1:
+        eth_value = context.args[0]
+        if eth_value.isdigit():
             eth_value = float(context.args[0])
-            chain = context.args[1].lower()
-            if chain in mappings.CHAINS:
-                chain_name = mappings.CHAINS[chain].name
-                chain_url = mappings.CHAINS[chain].scan_address
-                chain_native = mappings.CHAINS[chain].token
-            else:
-                await update.message.reply_text(text.CHAIN_ERROR)
-                return
-            distribution = splitters.GENERATE_INFO(chain, eth_value)
-            splitter_text = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
-            for location, share in distribution.items():
-                if location == "Treasury":
-                    splitter_text += f"\n{location}: {share:.2f} {chain_native.upper()}:\n"
-                else:
-                    splitter_text += f"{location}: {share:.2f} {chain_native.upper()}\n"
-
-            await context.bot.delete_message(update.effective_chat.id, message.id)
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"{splitter_text}\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="Ecosystem Splitter",
-                                url=f"{chain_url}{ca.ECO_SPLITTER}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Treasury Splitter",
-                                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Profit Share Splitter",
-                                url=f"{chain_url}{ca.PROFIT_SHARING}",
-                            )
-                        ],
-                    ]
-                ),
-            )
         else:
-            chain = " ".join(context.args).lower()
-            if chain == "":
-                chain = "eth"
-            
-            if chain in mappings.CHAINS:
-                chain_name = mappings.CHAINS[chain].name
-                chain_url = mappings.CHAINS[chain].scan_address
-                chain_native = mappings.CHAINS[chain].token
+            await update.message.reply_text(
+                "Please Use `/splitter [amount] [chain-name]`",
+            parse_mode = "markdown")
+            return
+        chain = context.args[1].lower()
+        if chain in mappings.CHAINS:
+            chain_name = mappings.CHAINS[chain].name
+            chain_url = mappings.CHAINS[chain].scan_address
+            chain_native = mappings.CHAINS[chain].token
+        else:
+            await update.message.reply_text(text.CHAIN_ERROR)
+            return
+        distribution = splitters.GENERATE_INFO(chain, eth_value)
+        splitter_text = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
+        for location, share in distribution.items():
+            if location == "Treasury":
+                splitter_text += f"\n{location}: {share:.2f} {chain_native.upper()}:\n"
             else:
-                await update.message.reply_text(text.CHAIN_ERROR)
-                return
-            
-            treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
-            eco_eth_raw = api.get_native_balance(ca.ECO_SPLITTER, chain)
-            profit_eth_raw = api.get_native_balance(ca.PROFIT_SHARING, chain)
-            treasury_eth = round(float(treasury_eth_raw), 2)
-            eco_eth = round(float(eco_eth_raw), 2)
-            profit_eth = round(float(profit_eth_raw), 2)
-            native_price = api.get_native_price(chain_native)
-            eco_dollar = float(eco_eth) * float(native_price)
-            profit_dollar = float(profit_eth) * float(native_price)
-            treasury_dollar = float(treasury_eth) * float(native_price)
-            await context.bot.delete_message(update.effective_chat.id, message.id)
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance Ecosystem Splitters {chain_name}*\n"
-                    f"For example of splitter allocation use\n`/splitter [amount] [chain-name]`\n\n"
-                    f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-                    f"Profit Share Splitter: {profit_eth} {chain_native.upper()} (${'{:0,.0f}'.format(profit_dollar)})\n"
-                    f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
-                    
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
+                splitter_text += f"{location}: {share:.2f} {chain_native.upper()}\n"
+
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"{splitter_text}\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
                     [
-                        [
-                            InlineKeyboardButton(
-                                text="Ecosystem Splitter",
-                                url=f"{chain_url}{ca.ECO_SPLITTER}",
-                            )
-                        ],
-                        [
+                        InlineKeyboardButton(
+                            text="Ecosystem Splitter",
+                            url=f"{chain_url}{ca.ECO_SPLITTER}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Treasury Splitter",
+                            url=f"{chain_url}{ca.TREASURY_SPLITTER}",
+                        )
+                    ],
+                    [
                         InlineKeyboardButton(
                             text="Profit Share Splitter",
                             url=f"{chain_url}{ca.PROFIT_SHARING}",
                         )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Treasury Splitter",
-                                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
-                            )
-                        ],
-                    ]
-                ),
-            )
-    except Exception as e:
+                    ],
+                ]
+            ),
+        )
+    else:
+        message = await update.message.reply_text("Getting Splitter Info, Please wait...")
+        chain = " ".join(context.args).lower()
+        if chain == "":
+            chain = "eth"
+        
+        if chain in mappings.CHAINS:
+            chain_name = mappings.CHAINS[chain].name
+            chain_url = mappings.CHAINS[chain].scan_address
+            chain_native = mappings.CHAINS[chain].token
+        else:
+            await update.message.reply_text(text.CHAIN_ERROR)
+            return
+        
+        treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
+        eco_eth_raw = api.get_native_balance(ca.ECO_SPLITTER, chain)
+        profit_eth_raw = api.get_native_balance(ca.PROFIT_SHARING, chain)
+        treasury_eth = round(float(treasury_eth_raw), 2)
+        eco_eth = round(float(eco_eth_raw), 2)
+        profit_eth = round(float(profit_eth_raw), 2)
+        native_price = api.get_native_price(chain_native)
+        eco_dollar = float(eco_eth) * float(native_price)
+        profit_dollar = float(profit_eth) * float(native_price)
+        treasury_dollar = float(treasury_eth) * float(native_price)
         await context.bot.delete_message(update.effective_chat.id, message.id)
-        await update.message.reply_text(
-                            f"For example of splitter allocation use\n`/splitter [amount] [chain-name]`",
-                            parse_mode="Markdown",
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*X7 Finance Ecosystem Splitters {chain_name}*\n"
+                f"For example of splitter allocation use\n`/splitter [amount] [chain-name]`\n\n"
+                f"Ecosystem Splitter: {eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+                f"Profit Share Splitter: {profit_eth} {chain_native.upper()} (${'{:0,.0f}'.format(profit_dollar)})\n"
+                f"Treasury Splitter: {treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+                
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Ecosystem Splitter",
+                            url=f"{chain_url}{ca.ECO_SPLITTER}",
                         )
+                    ],
+                    [
+                    InlineKeyboardButton(
+                        text="Profit Share Splitter",
+                        url=f"{chain_url}{ca.PROFIT_SHARING}",
+                    )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Treasury Splitter",
+                            url=f"{chain_url}{ca.TREASURY_SPLITTER}",
+                        )
+                    ],
+                ]
+            ),
+        )
 
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
