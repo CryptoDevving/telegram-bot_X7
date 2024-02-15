@@ -141,50 +141,50 @@ async def auto_replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     await update.message.reply_sticker(sticker=response["sticker"])
 
 
-async def button_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        FIRST_USER_CLICKED = False
-        if context.bot_data is None:
-            context.bot_data = {}
+async def button_send(context: ContextTypes.DEFAULT_TYPE):
+    global CURRENT_BUTTON_DATA, FIRST_USER_CLICKED
+    FIRST_USER_CLICKED = False
+    if context.bot_data is None:
+        context.bot_data = {}
 
-        previous_click_me_id = context.bot_data.get('click_me_id')
-        previous_clicked_id = context.bot_data.get('clicked_id')
+    previous_click_me_id = context.bot_data.get('click_me_id')
+    previous_clicked_id = context.bot_data.get('clicked_id')
 
-        if previous_click_me_id:
-            try:
-                await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_click_me_id)
-                await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_clicked_id)
-            except Exception:
-                pass
+    if previous_click_me_id:
+        try:
+            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_click_me_id)
+            await context.bot.delete_message(chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"), message_id=previous_clicked_id)
 
-        CURRENT_BUTTON_DATA = str(random.randint(1, 100000000))
-        context.bot_data["current_button_data"] = CURRENT_BUTTON_DATA
+        except Exception:
+            pass
 
-        keyboard = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("Click Me!", callback_data=CURRENT_BUTTON_DATA)]]
-        )
-        click_me = await context.bot.send_photo(
-                        photo=api.get_random_pioneer(),
-                        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-                        reply_markup=keyboard,
-                    )
+    CURRENT_BUTTON_DATA = str(random.randint(1, 100000000))
+    context.bot_data["current_button_data"] = CURRENT_BUTTON_DATA
 
-        button_generation_timestamp = t.time()
-        context.bot_data["button_generation_timestamp"] = button_generation_timestamp
-        context.bot_data['click_me_id'] = click_me.message_id
-    except Exception as e:
-        print(f"Exception in send method: {e}")
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Click Me!", callback_data=CURRENT_BUTTON_DATA)]]
+    )
+    click_me = await context.bot.send_photo(
+                    photo=api.get_random_pioneer(),
+                    chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+                    reply_markup=keyboard,
+                )
+
+    button_generation_timestamp = t.time()
+    context.bot_data["button_generation_timestamp"] = button_generation_timestamp
+    context.bot_data['click_me_id'] = click_me.message_id
 
 
 async def button_function(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global CURRENT_BUTTON_DATA, FIRST_USER_CLICKED
     button_click_timestamp = t.time()
 
     if context.user_data is None:
         context.user_data = {}
 
-    current_button_data = context.bot_data.get("current_button_data")
+    CURRENT_BUTTON_DATA = context.bot_data.get("current_button_data")
     button_generation_timestamp = context.bot_data.get("button_generation_timestamp")
-    if not current_button_data:
+    if not CURRENT_BUTTON_DATA:
         return
 
     button_data = update.callback_query.data
@@ -196,7 +196,7 @@ async def button_function(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     CLICKED_BUTTONS.add(button_data)
 
-    if button_data == current_button_data:
+    if button_data == CURRENT_BUTTON_DATA:
         time_taken = button_click_timestamp - button_generation_timestamp
 
         await db.clicks_update(user_info, time_taken)
@@ -258,19 +258,19 @@ async def button_function(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         f"{burn_message}"
                 )
 
-        context.bot_data['clicked_id'] = clicked.message_id
+            context.bot_data['clicked_id'] = clicked.message_id
 
-        times.RESTART_TIME = datetime.now().timestamp()
-        context.user_data["current_button_data"] = None
-        times.BUTTON_TIME = times.RANDOM_BUTTON_TIME()
-        job_queue.run_once(
+            times.RESTART_TIME = datetime.now().timestamp()
+            context.user_data["current_button_data"] = None
+            times.BUTTON_TIME = times.RANDOM_BUTTON_TIME()
+            job_queue.run_once(
             button_send,
             times.BUTTON_TIME,
             chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
             name="Click Me",
         )
-
-        return times.BUTTON_TIME
+            
+            return times.BUTTON_TIME
 
 
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
