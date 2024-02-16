@@ -196,6 +196,12 @@ async def button_function(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return times.BUTTON_TIME
 
 
+async def click_me(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
+        await button_send(context)
+
+
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
 job_queue = application.job_queue
 
@@ -310,21 +316,22 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
     ## ADMIN ##
-    application.add_handler(CommandHandler("wen", admin.wen))
+    application.add_handler(CommandHandler("clickme", click_me))
     application.add_handler(CommandHandler("add", admin.add))
     application.add_handler(CommandHandler("delete", admin.delete))
     application.add_handler(CommandHandler("reset", admin.reset))
+    application.add_handler(CommandHandler("wen", admin.wen))
 
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(button_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
 
-#    job_queue.run_repeating(
-#        auto.messages,
-#        times.AUTO_MESSAGE_TIME,
-#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-#        first=times.AUTO_MESSAGE_TIME,
-#        name="Auto Message")
+    job_queue.run_repeating(
+        auto.messages,
+        times.AUTO_MESSAGE_TIME,
+        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
+        first=times.AUTO_MESSAGE_TIME,
+        name="Auto Message")
 
     job_queue.run_once(
         button_send,
