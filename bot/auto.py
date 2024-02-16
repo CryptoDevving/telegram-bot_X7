@@ -3,19 +3,19 @@ from telegram import *
 from telegram.ext import *
 
 import os, random, time as t
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 from web3 import Web3
 
-from constants import ca, loans, nfts, text, url
+from constants import ca, dao, loans, nfts, text, url
 from hooks import api, dune
 import media
 
 
-## 1 = TEXT, 2 = BURN, 3 = COSTS, 4 = LIQUIDITY, 5 = LOANS 
-## 6 = LOCKS, 7 = NFTS 8 = PAIRS, 9 = PIONEER, 10 = POOL, 
-## 11 = PRICE, 12 = TREASURY, 13 = VOLUME
+## 1 = TEXT, 2 = BURN, 3 = COSTS, 4 = DAO, 5 = LIQUIDITY, 
+## 6 = LOANS, 7 = LOCKS, 8 = NFTS 9 = PAIRS, 10 = PIONEER, 11 = POOL, 
+## 12 = PRICE, 13 = TREASURY, 14 = VOLUME
 
 
 async def messages(context: ContextTypes.DEFAULT_TYPE):
@@ -39,7 +39,8 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
         "BASE": "base",
     }
     contract_instances = {}
-    number = random.randint(1, 13)
+
+    number = random.randint(1, 14)
     await context.bot.send_chat_action(job.chat_id, "typing")
 
     if number == 1:
@@ -165,6 +166,73 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             parse_mode = "markdown")
 
     elif number == 4:
+        contract_names = list(dao.CONTRACT_MAPPINGS.keys())
+        formatted_contract_names = '\n'.join(contract_names)
+        keyboard = InlineKeyboardMarkup(
+                [[InlineKeyboardButton(text="Vote Here",url=url.SNAPSHOT,)],
+                [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
+        snapshot = api.get_snapshot()
+        end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        start = datetime.utcfromtimestamp(
+            snapshot["data"]["proposals"][0]["start"]
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+        duration = then - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
+        if duration > timedelta(0):
+            await context.bot.send_photo(
+                chat_id=job.chat_id,
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO*\n\n"
+                    f'use `/dao functions` for a list of call callable contracts\n\n'
+                    f'*Open Proposal:*\n\n'
+                    f'{snapshot["data"]["proposals"][0]["title"]} by - '
+                    f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
+                    f"Voting Start: {start} UTC\n"
+                    f"Voting End:   {end} UTC\n\n"
+                    f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
+                    f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
+                    f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes\n\n"
+                    f"{api.get_quote()}",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text=f"Vote Here",
+                                url=f"{url.SNAPSHOT}/proposal/"
+                                f'{snapshot["data"]["proposals"][0]["id"]}',
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text=f"DAO Proposers Chat",
+                                url=f"{url.TG_DAO}",
+                            )
+                        ],
+                    ]
+                ),
+            )
+            return
+        else:
+            await context.bot.send_photo(
+                chat_id=job.chat_id,
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO*\n\nThere are no proposals currently open\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                    f"*Contract Names:*\n{formatted_contract_names}\n\n",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+                )
+            return
+
+    elif number == 5:
         token_liquidity = []
         weth_liquidity = []
         token_dollars = []
@@ -257,7 +325,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
 
-    elif number == 5:
+    elif number == 6:
         for network, web3_url in networks.items():
             web3 = Web3(Web3.HTTPProvider(web3_url))
             contract = web3.eth.contract(
@@ -284,7 +352,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
 
-    elif number == 6:
+    elif number == 7:
         def calculate_remaining_time(web3, contract, token_pair, now):
             timestamp = contract.functions.getTokenUnlockTimestamp(to_checksum_address(token_pair)).call()
             unlock_datetime = datetime.utcfromtimestamp(timestamp)
@@ -339,7 +407,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             ),
         )
 
-    elif number == 7:
+    elif number == 8:
         chain_prices = nfts.MINT_PRICES()
         chain_data = nfts.DATA()
         chain_discount = nfts.DISCOUNTS()
@@ -428,7 +496,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(buttons),
         )
 
-    elif number == 8:
+    elif number == 9:
         contract_instances = {}
         for network, web3_url in networks.items():
             web3 = Web3(Web3.HTTPProvider(web3_url))
@@ -464,7 +532,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             ),
         )
 
-    elif number == 9:
+    elif number == 10:
         floor_data = api.get_nft_data(ca.PIONEER, chain)
         floor = floor_data["floor_price"]
         native_price = api.get_native_price(chain)
@@ -519,7 +587,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             ),
         )
 
-    elif number == 10:
+    elif number == 11:
         eth_price = api.get_native_price(chain)
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
         eth_lpool_reserve_dollar = (float(eth_lpool_reserve) * float(eth_price))
@@ -623,7 +691,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
 
-    elif number == 11:
+    elif number == 12:
         price = api.get_cg_price("x7r, x7dao")
         x7r_change = price["x7r"]["usd_24h_change"]
         if x7r_change is None:
@@ -684,7 +752,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             ),
         )
 
-    elif number == 12:
+    elif number == 13:
         native_price = api.get_native_price(chain)
         com_eth_raw = api.get_native_balance(ca.COM_MULTI_ETH, chain)
         com_eth = round(float(com_eth_raw), 2)
@@ -764,7 +832,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             ),
         )
 
-    elif number == 13:
+    elif number == 14:
         try:
             if dune.FLAG == False:
                 execution_id = dune.execute_query("2972368", "medium")
