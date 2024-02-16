@@ -1,9 +1,9 @@
+# MAPPINGS
+
 import os
-from constants import url, ca
+from constants import ca, url
 import media
-
 from web3 import Web3
-
 
 
 class TokensInfo:

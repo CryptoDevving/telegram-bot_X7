@@ -1,24 +1,18 @@
-import os
-import re
-import random
-import time as t
-from datetime import datetime, timedelta, timezone
-
-import pytz
-from gtts import gTTS
-import requests
-import textwrap
-import wikipediaapi
-from web3 import Web3
 from telegram import *
 from telegram.ext import *
-from translate import Translator
-from eth_utils import to_checksum_address
-from PIL import Image, ImageDraw, ImageFont
 
-from hooks import dune, db, api
+import os, pytz, random, re, requests, textwrap, time as t, wikipediaapi
+from datetime import datetime, timedelta, timezone
+from gtts import gTTS
+
+from eth_utils import to_checksum_address
+from translate import Translator
+from PIL import Image, ImageDraw, ImageFont
+from web3 import Web3
+
+from constants import ca, dao, loans, mappings, nfts, splitters, tax, text, url  
+from hooks import api, db, dune 
 import media
-from constants import ca, loans, nfts, tax, text, url, dao, mappings, splitters
 from variables import times, giveaway
 
 
@@ -1683,7 +1677,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain = context.args[1].lower()
     else:
         await update.message.reply_text(
-            f"Please use `/loan # chain` to see details",
+            f"Please use `/loan [ID] [chain]` to see details",
             parse_mode="Markdown",
         )
         return
@@ -1760,51 +1754,8 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     loan_type = " ".join(context.args).lower()
     if loan_type == "":
-        await update.message.reply_text(
-            f"{loans.OVERVIEW}\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7 Finance Whitepaper", url=f"{url.WP_LINK}"
-                        )
-                    ],
-                ]
-            ),
-        )
-        return
-    else:
-        loan_types = {
-            "ill001": (loans.ILL001_NAME, loans.ILL001_TERMS, ca.ILL001),
-            "ill002": (loans.ILL002_NAME, loans.ILL002_TERMS, ca.ILL002),
-            "ill003": (loans.ILL003_NAME, loans.ILL003_TERMS, ca.ILL003),
-        }
-        if loan_type in loan_types:
-            loan_name, loan_terms, loan_ca = loan_types[loan_type]
-            buttons = [
-                [
-                    InlineKeyboardButton(text="Ethereum", url=f"{url.ETHER_ADDRESS}{loan_ca}"),
-                    InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{loan_ca}"),
-                ],
-                [
-                    InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{loan_ca}"),
-                    InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{loan_ca}"),
-                ],
-                [
-                    InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{loan_ca}"),
-                    InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{loan_ca}"),
-                ],
-            ]
-
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=f"{loan_name}\n{loan_terms.generate_terms()}\n\n",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(buttons),
-            )
-
-    if loan_type == "count":
+        message = await update.message.reply_text("Getting Loan Info, Please wait...")
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
         networks = {
             "ETH": f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
             "ARB": f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
@@ -1830,10 +1781,13 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             amount = contract.functions.nextLoanID().call() - 1
             contract_instances[network] = amount
+        await context.bot.delete_message(update.effective_chat.id, message.id)
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-                f"*X7 Finance Loan Count*\n\n"
+                f"*X7 Finance Loan Count*\n"
+                f"Use `/loans info` for ILL info\n"
+                f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
                 f'`ETH:`       {contract_instances["ETH"]}\n'
                 f'`BSC:`       {contract_instances["BSC"]}\n'
                 f'`ARB:`       {contract_instances["ARB"]}\n'
@@ -1843,6 +1797,51 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown",
+        )
+        return
+    if loan_type == "info":
+        await update.message.reply_text(
+            f"{loans.OVERVIEW}\n\n{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="X7 Finance Whitepaper", url=f"{url.WP_LINK}"
+                        )
+                    ],
+                ]
+            ),
+        )
+        return
+    else:
+        loan_types = {
+        "ill001": (loans.ILL001_NAME, loans.ILL001_TERMS, ca.ILL001),
+        "ill002": (loans.ILL002_NAME, loans.ILL002_TERMS, ca.ILL002),
+        "ill003": (loans.ILL003_NAME, loans.ILL003_TERMS, ca.ILL003),
+    }
+    if loan_type in loan_types:
+        loan_name, loan_terms, loan_ca = loan_types[loan_type]
+        buttons = [
+            [
+                InlineKeyboardButton(text="Ethereum", url=f"{url.ETHER_ADDRESS}{loan_ca}"),
+                InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{loan_ca}"),
+            ],
+            [
+                InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{loan_ca}"),
+                InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{loan_ca}"),
+            ],
+            [
+                InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{loan_ca}"),
+                InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{loan_ca}"),
+            ],
+        ]
+
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=f"{loan_name}\n{loan_terms.generate_terms()}\n\n",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(buttons),
         )
 
 

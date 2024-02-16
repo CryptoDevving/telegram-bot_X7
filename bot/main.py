@@ -1,13 +1,17 @@
-import sentry_sdk
 from telegram import *
 from telegram.ext import *
-import os, sys, subprocess, random
+
+import os, sys, sentry_sdk, subprocess, random, time as t
 from datetime import datetime
-import time as t
-from bot import commands, twitter, welcome, admin, auto
-from variables import times
+
+from bot import admin, auto, commands, twitter, welcome
+from hooks import api, db
 import scanners
-from hooks import db, api
+from variables import times
+
+
+application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+job_queue = application.job_queue
 
 
 CURRENT_BUTTON_DATA = None
@@ -202,10 +206,6 @@ async def click_me(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await button_send(context)
 
 
-application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
-job_queue = application.job_queue
-
-
 if __name__ == "__main__":
     application.add_error_handler(error)
     application.add_handler(CommandHandler("test", test))
@@ -237,7 +237,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("convert", commands.convert))
     application.add_handler(CommandHandler("costs", commands.costs))
     application.add_handler(CommandHandler("countdown", commands.countdown))
-    application.add_handler(CommandHandler(["dao", "vote", "snaphot"], commands.dao_command))
+    application.add_handler(CommandHandler(["dao", "vote", "snaphot", "propose"], commands.dao_command))
     application.add_handler(CommandHandler(["deployer", "devs"], commands.deployer))
     application.add_handler(CommandHandler(["discount", "dsc", "dac"], commands.discount))
     application.add_handler(CommandHandler(["docs", "documents"], commands.docs,))

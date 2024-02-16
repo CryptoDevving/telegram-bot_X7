@@ -1,3 +1,5 @@
+# TEXT
+
 ABOUT = (
     "*X7 Finance - Home of Xchange*\n\n"
     "X7 Finance is an ecosystem of innovative smart contracts, and the centre of the ecosystem is the X7 Finance"

@@ -1,3 +1,5 @@
+# GIVEAWAY
+
 from datetime import datetime
 
 NAME = "BUY THE X”7s”R CONTEST!!"

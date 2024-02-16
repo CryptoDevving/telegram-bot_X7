@@ -1,7 +1,7 @@
 # NFTS
 
-from hooks import api
 from constants import ca
+from hooks import api
 
 
 def DATA():

@@ -1,16 +1,11 @@
-import os
-import csv
-import random
-import requests
-import time as t
+# API
+
+import random, requests, os, time as t, tweepy
 from typing import Tuple
 from datetime import datetime, timedelta
-
-import tweepy
-from web3 import Web3
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
-
+from web3 import Web3
 from constants import ca, url, mappings
 
 
