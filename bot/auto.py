@@ -18,6 +18,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
     chain  = "eth"
     web3 = Web3(Web3.HTTPProvider(f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}"))
     number = random.randint(1, 9)
+    await context.bot.send_chat_action(job.chat_id, "typing")
     if number == 1:
         eth_price = api.get_native_price(chain)
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
