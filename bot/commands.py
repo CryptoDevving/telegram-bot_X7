@@ -725,15 +725,9 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     input_contract = " ".join(context.args).lower()
     contract_names = list(dao.CONTRACT_MAPPINGS.keys())
     formatted_contract_names = '\n'.join(contract_names)
-    if input_contract == "list":
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance DAO*\n\nUse `/dao contract-name` for a list of DAO callable functions\n\n"
-                f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
-            parse_mode="Markdown",
-            )
-        return
+    keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton(text="Vote Here",url=url.SNAPSHOT,)],
+            [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
     if not input_contract:
         snapshot = api.get_snapshot()
         end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
@@ -745,81 +739,89 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
         duration = then - datetime.utcnow()
         days, hours, minutes = api.get_duration_days(duration)
-        if duration < timedelta(0):
-            countdown = "Vote Closed"
-            caption = "View"
+        if duration > timedelta(0):
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO*\n\n"
+                    f'use `/dao functions` for a list of call callable contracts\n\n'
+                    f'*Open Proposal:*\n\n'
+                    f'{snapshot["data"]["proposals"][0]["title"]} by - '
+                    f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
+                    f"Voting Start: {start} UTC\n"
+                    f"Voting End:   {end} UTC\n\n"
+                    f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
+                    f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
+                    f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes\n\n"
+                    f"{api.get_quote()}",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text=f"Vote Here",
+                                url=f"{url.SNAPSHOT}/proposal/"
+                                f'{snapshot["data"]["proposals"][0]["id"]}',
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text=f"DAO Proposers Chat",
+                                url=f"{url.TG_DAO}",
+                            )
+                        ],
+                    ]
+                ),
+            )
+            return
         else:
-            countdown = f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes"
-            caption = "Vote"
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance DAO*\n\n"
-                f'use `/dao list` for a list of call callable contracts\n\n'
-                f'*Latest Proposal:*\n\n'
-                f'{snapshot["data"]["proposals"][0]["title"]} by - '
-                f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
-                f"Voting Start: {start} UTC\n"
-                f"Voting End:   {end} UTC\n\n"
-                f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
-                f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
-                f"{countdown}\n\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text=f"{caption} Here",
-                            url=f"{url.SNAPSHOT}/proposal/"
-                            f'{snapshot["data"]["proposals"][0]["id"]}',
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text=f"DAO Proposers Chat",
-                            url=f"{url.TG_DAO}",
-                        )
-                    ],
-                ]
-            ),
-        )
-        
-        return
-    matching_contract = None
-    for contract in dao.CONTRACT_MAPPINGS:
-        if contract.lower() == input_contract:
-            matching_contract = contract
-            break
-    if matching_contract:
-        contract_text, contract_ca = dao.CONTRACT_MAPPINGS[contract]
-        await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"*X7 Finance DAO Functions*\n"
-            f"{contract}\n\n"
-            f"The following functions can be called on the {contract} contract:\n\n"
-            f"{contract_text}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="Contract", url=f"{url.ETHER_ADDRESS}{contract_ca}")],
-            ]
-        ),
-    )
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO*\n\nThere are no proposals currently open\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                    f"*Contract Names:*\n{formatted_contract_names}\n\n",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+                )
+            return
     else:
-        contract_names = list(dao.CONTRACT_MAPPINGS.keys())
-        formatted_contract_names = '\n'.join(contract_names)
-        await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"*X7 Finance DAO Functions*\n\n"
-            f"'{input_contract}' not found\nPlease choose from the following\n\n"
-            f"*Contract Names:*\n\n{formatted_contract_names}",
-        parse_mode="Markdown")
+        if input_contract == "functions":
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO*\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                    f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+                )
+        else:
+            matching_contract = None
+            for contract in dao.CONTRACT_MAPPINGS:
+                if contract.lower() == input_contract:
+                    matching_contract = contract
+                    break
+            if matching_contract:
+                contract_text, contract_ca = dao.CONTRACT_MAPPINGS[contract]
+                await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO Functions* - {contract}\n\n"
+                    f"The following functions can be called on the {contract} contract:\n\n"
+                    f"{contract_text}",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+                )
+            else:
+                await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO Functions*\n\n"
+                    f"'{input_contract}' not found - Use `/dao` followed by one of the contract names below:\n\n"
+                    f"{formatted_contract_names}",
+                parse_mode="Markdown")
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
