@@ -222,7 +222,7 @@ async def new_loan(event):
             int(event["args"]["loanID"])
         ).call()
 
-        schedule_str = api.format_schedule(schedule1, schedule2, chain)
+        schedule_str = api.format_schedule(schedule1, schedule2, "ETH")
     except Exception as e:
         sentry_sdk.capture_exception(e)
         schedule_str = ""
