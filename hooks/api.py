@@ -376,7 +376,7 @@ def get_token_data(token: str, chain: str) -> dict:
 
 
 def get_token_name(token: str, chain: str) -> Tuple[str, str]:
-    if chain in mappings.MOARLIS_CHAINS:
+    if chain in mappings.MORALIS_CHAINS:
         chain = mappings.MORALIS_CHAINS[chain]
     result = evm_api.token.get_token_metadata(
         api_key=os.getenv("MORALIS_API_KEY"),
