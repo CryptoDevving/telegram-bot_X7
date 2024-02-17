@@ -17,21 +17,25 @@ from hooks import api, db
 import media
 
 
+sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
+
+
+chain = "eth"
 alchemy_keys = os.getenv("ALCHEMY_ETH")
 alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
 web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
 
-factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, "eth"))
-ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, "eth"))
-ill002 = web3.eth.contract(address=ca.ILL002, abi=api.get_abi(ca.ILL002, "eth"))
-ill003 = web3.eth.contract(address=ca.ILL003, abi=api.get_abi(ca.ILL003, "eth"))
+
+factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
+ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, chain))
+ill002 = web3.eth.contract(address=ca.ILL002, abi=api.get_abi(ca.ILL002, chain))
+ill003 = web3.eth.contract(address=ca.ILL003, abi=api.get_abi(ca.ILL003, chain))
+
 
 pair_filter = factory.events.PairCreated.create_filter(fromBlock="latest")
 ill001_filter = ill001.events.LoanOriginated.create_filter(fromBlock="latest")
 ill002_filter = ill002.events.LoanOriginated.create_filter(fromBlock="latest")
 ill003_filter = ill003.events.LoanOriginated.create_filter(fromBlock="latest")
-
-sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 class FilterNotFoundError(Exception):
@@ -47,29 +51,29 @@ async def restart_script():
 
 
 async def new_pair(event):
-    tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
+    tx = api.get_tx_from_hash(event["transactionHash"].hex(), chain)
     if event["args"]["token0"] == ca.WETH:
-        native = api.get_token_name(event["args"]["token0"], "eth")
-        token_name = api.get_token_name(event["args"]["token1"], "eth")
+        native = api.get_token_name(event["args"]["token0"], chain)
+        token_name = api.get_token_name(event["args"]["token1"], chain)
         token_address = event["args"]["token1"]
     elif event["args"]["token1"] == ca.WETH:
-        native = api.get_token_name(event["args"]["token1"], "eth")
-        token_name = api.get_token_name(event["args"]["token0"], "eth")
+        native = api.get_token_name(event["args"]["token1"], chain)
+        token_name = api.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
     elif event["args"]["token0"] in ca.STABLES:
-        native = api.get_token_name(event["args"]["token0"], "eth")
-        token_name = api.get_token_name(event["args"]["token1"], "eth")
+        native = api.get_token_name(event["args"]["token0"], chain)
+        token_name = api.get_token_name(event["args"]["token1"], chain)
         token_address = event["args"]["token1"]
     elif event["args"]["token1"] in ca.STABLES:
-        native = api.get_token_name(event["args"]["token1"], "eth")
-        token_name = api.get_token_name(event["args"]["token0"], "eth")
+        native = api.get_token_name(event["args"]["token1"], chain)
+        token_name = api.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
     else:
-        native = api.get_token_name(event["args"]["token1"], "eth")
-        token_name = api.get_token_name(event["args"]["token0"], "eth")
+        native = api.get_token_name(event["args"]["token1"], chain)
+        token_name = api.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
-    info = api.get_token_data(token_address, "eth")
-    if api.get_verified(token_address, "eth"):
+    info = api.get_token_data(token_address, chain)
+    if api.get_verified(token_address, chain):
         verified = "✅ Contract Verified"
     else:
         "⚠️ Contract Unverified"
@@ -78,16 +82,16 @@ async def new_pair(event):
         or info[0]["decimals"] == "0"
         or not info[0]["decimals"]
     ):
-        supply = int(api.get_supply(token_address, "eth"))
+        supply = int(api.get_supply(token_address, chain))
     else:
-        supply = int(api.get_supply(token_address, "eth")) / 10 ** int(
+        supply = int(api.get_supply(token_address, chain)) / 10 ** int(
             info[0]["decimals"]
         )
     status = ""
     renounced = ""
     tax = ""
     try:
-        scan = api.get_scan(token_address, "eth")
+        scan = api.get_scan(token_address, chain)
         if "owner_address" in scan[f"{str(token_address).lower()}"]:
             if scan[f"{str(token_address).lower()}"]["owner_address"] == "0x0000000000000000000000000000000000000000":
                 renounced = "✅ Contract Renounced"
@@ -190,21 +194,21 @@ async def new_pair(event):
         )
         try:
             if event["args"]["token0"] == ca.WETH or event["args"]["token1"] == ca.WETH:
-                image_url = api.get_token_image(token_address, "eth")
+                image_url = api.get_token_image(token_address, chain)
                 if image_url is None:
                     image_url = "N/A"
 
-                db.token_add(token_name[1], event["args"]["pair"], token_address, "eth", image_url)
+                db.token_add(token_name[1], event["args"]["pair"], token_address, chain, image_url)
 
         except Exception as e:
             sentry_sdk.capture_exception(e)
                 
 
 async def new_loan(event):
-    tx = api.get_tx_from_hash(event["transactionHash"].hex(), "eth")
+    tx = api.get_tx_from_hash(event["transactionHash"].hex(), chain)
     try:
         address = to_checksum_address(ca.LPOOL)
-        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, "eth"))
+        contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
         amount = (
             contract.functions.getRemainingLiability(
                 int(event["args"]["loanID"])
@@ -218,7 +222,7 @@ async def new_loan(event):
             int(event["args"]["loanID"])
         ).call()
 
-        schedule_str = api.format_schedule(schedule1, schedule2, "ETH")
+        schedule_str = api.format_schedule(schedule1, schedule2, chain)
     except Exception as e:
         sentry_sdk.capture_exception(e)
         schedule_str = ""
