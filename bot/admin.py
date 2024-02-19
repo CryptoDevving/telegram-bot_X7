@@ -1,7 +1,7 @@
 from telegram import *
 from telegram.ext import *
 
-import os
+import os, asyncio
 from datetime import datetime, timedelta
 
 from constants import text
@@ -73,7 +73,9 @@ async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
         hours, remainder = divmod(time_difference.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds\n\n"
+        message = await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds\n\n"
         )
+        await asyncio.sleep(1)
+        await message.delete()
     else:
         await update.message.reply_text(f"{text.MODS_ONLY}")

@@ -112,7 +112,7 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
     except Exception:
         x7dao_ath = "Unavaliable"
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption = 
@@ -141,7 +141,6 @@ async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif len(input) > 230:
         await update.message.reply_text(
             f"Your bio exceeds the maximum character limit of 230 characters, please resubmit")
-        await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.message.message_id)
     else:
         user = update.effective_user
         user_info = user.username or f"{user.first_name} {user.last_name}"
@@ -230,7 +229,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -461,7 +460,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fill = (255, 255, 255),
     )
     im1.save(r"media/blackhole.png", quality=95)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -540,7 +539,7 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
             fill=(255, 255, 255),
         )
         img.save(r"media/blackhole.png")
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -687,7 +686,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         deposit_text = f"Mint X7D: {deposit_eth / 10**9:.3f} {native.upper()} (${deposit_dollars:.2f})"
     except Exception:
         deposit_text = "Mint X7D: N/A"
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -983,7 +982,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7100_hours,
         x7100_minutes,
     ) = get_liquidity_data(ca.X7100_LIQ_HUB)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1154,7 +1153,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     days = duration.days
     hours, remainder = divmod(duration.seconds, 3600)
     minutes = (remainder % 3600) // 60
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1316,7 +1315,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         fill = (255, 255, 255),
     )
     im1.save(r"media/blackhole.png")
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -1534,7 +1533,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         img_path = os.path.join("media", "blackhole.png")
         im1.save(img_path)
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -1652,7 +1651,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     liquidatable_loans_text = f"Total liquidatable loans: {liquidatable_loans}"
     output = "\n".join([liquidatable_loans_text] + results)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1718,7 +1717,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     schedule2 = contract.functions.getPrincipalPaymentSchedule(int(loan_id)).call()
     schedule_str = api.format_schedule(schedule1, schedule2, chain_native.upper())
 
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1783,7 +1782,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             amount = contract.functions.nextLoanID().call() - 1
             contract_instances[network] = amount
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
@@ -1894,7 +1893,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     x7r_remaining_time_str, x7r_unlock_datetime_str = calculate_remaining_time(web3, contract, x7r_pair, now)
     x7dao_remaining_time_str, x7dao_unlock_datetime_str = calculate_remaining_time(web3, contract, x7dao_pair, now)
 
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -2009,7 +2008,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     i1.text((28, 36), market_cap_info, font = ImageFont.truetype(media.FONT, 22), fill = (255, 255, 255))
     im1.save(r"media/blackhole.png")
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -2186,7 +2185,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
     ]
 
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -2317,7 +2316,7 @@ async def pair(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         amount = contract.functions.allPairsLength().call()
         contract_instances[network] = amount
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -2395,7 +2394,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             fill = (255, 255, 255),
         )
         img.save(r"media/blackhole.png")
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -2428,11 +2427,11 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             status = data["nft"]["traits"][0]["value"]
             image_url = data["nft"]["image_url"]
         else:
-            await context.bot.delete_message(update.effective_chat.id, message.id)
+            await message.delete()
             await update.message.reply_text(f"Pioneer {pioneer_id} not found")
             return
         
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
         photo=image_url,
         caption=
@@ -2461,9 +2460,9 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    message = await update.message.reply_text("Getting Lending Pool Info, Please wait...")
     if chain == "":
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        message = await update.message.reply_text("Getting Lending Pool Info, Please wait...")
         eth_price = api.get_native_price("eth")
         eth_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "eth")
         eth_lpool_reserve_dollar = (float(eth_lpool_reserve) * float(eth_price))
@@ -2549,7 +2548,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         img_path = os.path.join("media", "blackhole.png")
         im1.save(img_path)
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -2612,7 +2611,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         img_path = os.path.join("media", "blackhole.png")
         im1.save(img_path)
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=open(r"media/blackhole.png", "rb"),
             caption=
@@ -2727,7 +2726,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 img_path = os.path.join("media", "blackhole.png")
                 im1.save(img_path)
-                await context.bot.delete_message(update.effective_chat.id, message.id)
+                await message.delete()
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2789,7 +2788,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 img_path = os.path.join("media", "blackhole.png")
                 im1.save(img_path)
-                await context.bot.delete_message(update.effective_chat.id, message.id)
+                await message.delete()
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2905,7 +2904,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 img_path = os.path.join("media", "blackhole.png")
                 im1.save(img_path)
-                await context.bot.delete_message(update.effective_chat.id, message.id)
+                await message.delete()
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -2981,7 +2980,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     fill=(255, 255, 255),
                 )
                 im1.save(r"media/blackhole.png", quality=95)
-                await context.bot.delete_message(update.effective_chat.id, message.id)
+                await message.delete()
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
@@ -3003,7 +3002,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ),
                 )
     except IndexError:
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_text(
             f"{search.upper()} Not found",
             parse_mode="Markdown",
@@ -3234,7 +3233,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     status = f"{verified}\n{renounced}\n{tax}\n{sellable}\n{mint}\n{honey_pot}\n{whitelist}\n{blacklist}\n{creator_percent}\n{owner_percent}\n{liquidity}\n{lock}"
     token_name = scan[f"{str(token_address).lower()}"]["token_name"]
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -3536,7 +3535,7 @@ async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         eco_dollar = float(eco_eth) * float(native_price)
         profit_dollar = float(profit_eth) * float(native_price)
         treasury_dollar = float(treasury_eth) * float(native_price)
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
@@ -3644,7 +3643,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         line = f"{token.upper()}\n{balance_str} {token.upper()} ({dollar_value_str}) {percent_str}"
         caption_lines.append(line)
     caption_text = "\n\n".join(caption_lines)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -3880,7 +3879,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -3982,7 +3981,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f'7 Day:      ${"{:0,.0f}".format(last_7d_amt)}\n'
                 f'24 Hour:  ${"{:0,.0f}".format(last_24hr_amt)}'
                 )
-            await context.bot.delete_message(update.effective_chat.id, message.id)
+            await message.delete()
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
@@ -4003,7 +4002,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             dune.FLAG = True
             dune.VOLUME = volume
         else:
-            await context.bot.delete_message(update.effective_chat.id, message.id)
+            await message.delete()
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
@@ -4022,7 +4021,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ),
             )
     except Exception:
-        await context.bot.delete_message(update.effective_chat.id, message.id)
+        await message.delete()
         await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -4132,7 +4131,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4296,7 +4295,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4407,7 +4406,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4519,7 +4518,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4632,7 +4631,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4744,7 +4743,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4857,7 +4856,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -4969,7 +4968,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
@@ -5082,7 +5081,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     img_path = os.path.join("media", "blackhole.png")
     im1.save(img_path)
-    await context.bot.delete_message(update.effective_chat.id, message.id)
+    await message.delete()
     await update.message.reply_photo(
         photo=open(r"media/blackhole.png", "rb"),
         caption=
