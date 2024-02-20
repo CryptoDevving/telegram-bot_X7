@@ -52,6 +52,7 @@ COMMANDS = (
     "/bio - Submit a bio to x7finance.org\n"
     "/blocks - Block Info\n"
     "/blog - X7 Finance Blog\n"
+    "/borrow - X7 Finance Loan Rates\n"
     "/burn - X7R Burn Info\n"
     "/buy - X7 Finance Buy Links\n"
     "/buybacks - X7 Finance Buy Backs\n"

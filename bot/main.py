@@ -225,6 +225,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("bio", commands.bio))
     application.add_handler(CommandHandler("blocks", commands.blocks))
     application.add_handler(CommandHandler("blog", commands.blog))
+    application.add_handler(CommandHandler("borrow", commands.borrow))
     application.add_handler(CommandHandler(["bot", "start", "filters"], commands.bot))
     application.add_handler(CommandHandler("burn", commands.burn))
     application.add_handler(CommandHandler("buy", commands.buy))
