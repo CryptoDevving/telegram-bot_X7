@@ -54,12 +54,17 @@ def get_liquidity_dex(pair, chain):
     }
 
     response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        data = response.json()
-        return data["data"]["exchange"]["name"]
-    else:
-        return "Unknown DEX"
+    data = response.json()
+    try:
+        if data is not None:
+            if "data" in data and "exchange" in data["data"] and "name" in data["data"]["exchange"]:
+                return data["data"]["exchange"]["name"]
+            else:
+                return "Unknown DEX"
+        else:
+            return "Unknown DEX"
+    except Exception:
+        "Unknown DEX"
     
 
 def get_liquidity_from_dextools(pair, chain):
