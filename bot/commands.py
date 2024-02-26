@@ -3743,7 +3743,7 @@ async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         tax_info = tax.GENERATE_INFO(chain)
     if tax_info:
         caption = f"{tax_info}"
-    caption = f"{chain.upper()}:\n{caption}\n\n{api.get_quote()}"
+    caption = f"{caption}\n\n{api.get_quote()}"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=caption,
