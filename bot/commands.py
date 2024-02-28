@@ -375,11 +375,6 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 text="Xchange Alerts", url="https://t.me/x7_alerts"
             ),
         ],
-        [
-            InlineKeyboardButton(
-                text="LP Providers", url="https://t.me/x7financeLPs"
-            ),
-        ],
     ]
 
     await update.message.reply_photo(
@@ -429,10 +424,13 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     first = context.args[0]
     second = context.args[1]
-    if first == second:
+    differences = [(i, j) for i, j in zip(first, second) if i != j]
+
+    if not differences:
         reply = "✅ Both inputs match"
     else:
-        reply = "❌ Inputs do not match"
+        mismatch_details = "\n".join([f"'{char1}' vs '{char2}'" for i, (char1, char2) in enumerate(differences)])
+        reply = f"❌ Inputs do not match\n\nDifferences:\n{mismatch_details}"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
