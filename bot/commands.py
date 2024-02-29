@@ -3927,10 +3927,6 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     com_eth_raw = api.get_native_balance(chain_com_multi, chain)
     com_eth = round(float(com_eth_raw), 2)
     com_dollar = float(com_eth) * float(native_price)
-    treasury_eth = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
-    eco_eth = api.get_native_balance(ca.ECO_SPLITTER, chain)
-    eco_dollar = float(eco_eth) * float(native_price)
-    treasury_dollar = float(treasury_eth) * float(native_price)
     com_usdt_balance = api.get_stables_balance(chain_com_multi, ca.USDT, chain)
     com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.USDC, chain)
     stables = com_usdt_balance + com_usdc_balance
@@ -3952,12 +3948,10 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"{com_x7d_balance} X7D (${'{:0,.0f}'.format(com_x7d_price)})\n"
             f"{com_x7r_balance} X7R (${'{:0,.0f}'.format(com_x7r_price)})\n"
             f"{com_x7dao_balance} X7DAO (${'{:0,.0f}'.format(com_x7dao_price)})\n"
-            f"${'{:0,.0f}'.format(stables)} USDT/C\n"
-            f"Total: (${'{:0,.0f}'.format(com_total)})\n\n"
-            f"Ecosystem Splitter:\n{eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n\n"
-            f"Treasury Splitter:\n{treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
+            f"${'{:0,.0f}'.format(stables)} USDT/C\n\n"
+            f"Total: (${'{:0,.0f}'.format(com_total)})\n\n\n\n"
             f"UTC: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}",
-        font = ImageFont.truetype(media.FONT, 24),
+        font = ImageFont.truetype(media.FONT, 28),
         fill = (255, 255, 255),
     )
 
@@ -3972,10 +3966,8 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'{com_x7d_balance} X7D (${"{:0,.0f}".format(com_x7d_price)})\n'
             f'{"{:0,.0f}".format(com_x7r_balance)} X7R (${"{:0,.0f}".format(com_x7r_price)})\n'
             f'{"{:0,.0f}".format(com_x7dao_balance)} X7DAO (${"{:0,.0f}".format(com_x7dao_price)})\n'
-            f"${'{:0,.0f}'.format(stables)} USDT/C\n"
+            f"${'{:0,.0f}'.format(stables)} USDT/C\n\n"
             f'Total: (${"{:0,.0f}".format(com_total)})\n\n'
-            f"Ecosystem Splitter: {eco_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-            f"Treasury Splitter: {treasury_eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
