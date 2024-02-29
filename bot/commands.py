@@ -3040,7 +3040,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 i1 = ImageDraw.Draw(im1)
                 i1.text(
                     (28, 36),
-                        f"{symbol} price - CoinGecko\n\n"
+                        f"{symbol} price\n\n"
                         f'Price: ${price}\n'
                         f"24 Hour Change: {price_change}%\n"
                         f'Market Cap: {market_cap_formatted}\n\n\n\n\n\n\n\n'
@@ -3053,7 +3053,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
-                        f"*{symbol} price* - CoinGecko\n\n"
+                        f"*{symbol} price*\n\n"
                         f'Price: ${price}\n'
                         f'24 Hour Change: {price_change}%\n'
                         f'Market Cap: {market_cap_formatted}\n\n'
