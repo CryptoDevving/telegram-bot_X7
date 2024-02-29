@@ -33,9 +33,11 @@ AIRDROP = (
 )
 
 ALUMNI = (
-    "@Callmelandlord - The Godfather of the X7 Finance community, the OG, the creator - X7 God\n\n"
-    "@WoxieX - Creator of the OG dashboard -  x7community.space\n\n"
-    "@Zaratustra  - Defi extraordinaire and protocol prophet\n\n"
+    "@Callmelandlord - The Godfather of the X7 Finance community, the OG, the creator - OG Community Signer\n\n"
+    "@Zaratustra  - Defi extraordinaire and protocol prophet - OG Community Signer\n\n"
+    "@KBCrypto11  - ChatGPT King - OG Community Signer\n\n"
+    "@Robthebank44 - The Voice of X7 - An outstanding community member and marketer - OG Community Signer\n\n"
+    "@WoxieX - Creator of the OG dashboard -  x7community.space"
 )
 
 BURN_INCREMENT = 100

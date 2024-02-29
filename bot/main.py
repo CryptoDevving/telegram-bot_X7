@@ -217,6 +217,7 @@ if __name__ == "__main__":
     
     ## COMANDS ##
     application.add_handler(CommandHandler("about", commands.about))
+    application.add_handler(CommandHandler("admins", commands.admins))
     application.add_handler(CommandHandler(["rollout", "multichain", "airdrop"], commands.airdrop))
     application.add_handler(CommandHandler("alerts", commands.alerts))
     application.add_handler(CommandHandler("alumni", commands.alumni))

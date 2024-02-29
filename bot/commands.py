@@ -29,6 +29,21 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    administrators = await context.bot.get_chat_administrators(-1001780235511)
+    community_team = [f"@{admin.user.username}" for admin in administrators if 'community team' in admin.custom_title.lower()]
+    og = [f"@{admin.user.username}" for admin in administrators if 'og' in admin.custom_title.lower()]
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=(
+            "*X7 Finance Telegram Admins*\n\n"
+            "Community Team:\n" + "\n".join(community_team) +
+            "\n\nOGs:\n" + "\n".join(og) +
+            f"\n\n{api.get_quote()}"
+        ),
+        parse_mode="Markdown",
+    )
+
 async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(sticker=media.CHAINS)
     await update.message.reply_text(
