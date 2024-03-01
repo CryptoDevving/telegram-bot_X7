@@ -3809,10 +3809,10 @@ async def time(update: Update, context: CallbackContext):
         ("America/Los_Angeles", "PST"),
         ("America/New_York", "EST"),
         ("UTC", "UTC"),
-        ("Europe/Dublin", "IST"),
         ("Europe/London", "GMT"),
         ("Europe/Berlin", "CET"),
         ("Asia/Dubai", "GST"),
+        ("Asia/Kolkata", "IST"),
         ("Asia/Tokyo", "JST"),
         ("Australia/Sydney", "AEST"),
     ]
