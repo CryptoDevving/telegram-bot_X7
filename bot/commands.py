@@ -680,7 +680,11 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
             cg = api.get_cg_price(token_id)
             price = cg[token_id]["usd"]
             output = float(amount) * float(price)
-        
+            caption_text = f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output)}"
+            if amount == "500000" and search == "x7dao":
+                proposers = api.get_proposers("eth")
+                caption_text +=f"\n\nDAO Proposers: {proposers}"
+                
             img = Image.open(requests.get(thumb, stream=True).raw)
             result = img.convert("RGBA")
             result.save(r"media/tokenlogo.png")
@@ -691,7 +695,7 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
             i1.text(
                 (28, 36),
                     f"X7 Finance Price Conversion\n\n"
-                    f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output )}\n\n\n\n\n\n\n\n\n"
+                    f"{caption_text}\n\n\n\n\n\n\n\n\n"
                     f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
                 font = ImageFont.truetype(media.FONT, 28),
                 fill=(255, 255, 255),
@@ -701,7 +705,7 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 photo=open(r"media/blackhole.png", "rb"),
                 caption=
                     f"*X7 Finance Price Conversion*\n\n"
-                    f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output )}\n\n"
+                    f"{caption_text}\n\n"
                     f"{api.get_quote()}",
                 parse_mode="Markdown")
         else:
