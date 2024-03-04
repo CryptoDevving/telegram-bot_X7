@@ -812,6 +812,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [[InlineKeyboardButton(text="Vote Here",url=url.SNAPSHOT,)],
             [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
     if not input_contract:
+        x7dao_proposers = api.get_proposers("eth")
         snapshot = api.get_snapshot()
         end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
             "%Y-%m-%d %H:%M:%S"
@@ -826,8 +827,9 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
-                    f"*X7 Finance DAO*\n\n"
+                    f"*X7 Finance DAO*\n"
                     f'use `/dao functions` for a list of call callable contracts\n\n'
+                    f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
                     f'*Open Proposal:*\n\n'
                     f'{snapshot["data"]["proposals"][0]["title"]} by - '
                     f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
@@ -1381,6 +1383,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text("Getting Holder Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     x7dao_holders = api.get_holders(ca.X7DAO, chain)
+    x7dao_proposers = api.get_proposers(chain)
     x7r_holders = api.get_holders(ca.X7R, chain)
     x7d_holders = api.get_holders(ca.X7D, chain)
     
@@ -1393,7 +1396,8 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"X7 Finance Token Holders {chain_name}\n\n"
             f"X7R:   {x7r_holders}\n"
             f"X7DAO: {x7dao_holders}\n"
-            f"X7D:   {x7d_holders}\n\n\n\n\n\n\n\n\n"
+            f"X7DAO ≥ 500K: {x7dao_proposers}\n"
+            f"X7D:   {x7d_holders}\n\n\n\n\n\n\n\n"
             f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
         font = ImageFont.truetype(media.FONT, 26),
         fill = (255, 255, 255),
@@ -1407,6 +1411,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"For other chains use `/holders [chain-name]`\n\n"
             f"X7R:        {x7r_holders}\n"
             f"X7DAO:  {x7dao_holders}\n"
+            f"X7DAO ≥ 500K: {x7dao_proposers}\n"
             f"X7D:        {x7d_holders}\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",

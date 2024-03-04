@@ -1,6 +1,6 @@
 # API
 
-import random, requests, os, time as t, tweepy
+import random, requests, os, time as t, tweepy, json
 from typing import Tuple
 from datetime import datetime, timedelta
 from moralis import evm_api
@@ -802,6 +802,46 @@ def get_word(word):
             audio_url = first_phonetic.get("audio")
 
     return definition, audio_url
+
+
+# BITQUERY
+
+
+def get_proposers(chain):
+    today = datetime.now().strftime("%Y-%m-%d")
+    url_graphql = "https://streaming.bitquery.io/graphql"
+    headers_graphql = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {os.getenv("BITQUERY_API_KEY")}'
+    }
+
+    graphql_query = f'''
+    {{
+      EVM(dataset: archive, network: {chain}) {{
+        TokenHolders(
+          date: "{today}"
+          tokenSmartContract: "{ca.X7DAO}"
+          where: {{ Balance: {{ Amount: {{ ge: "500000" }} }} }}
+        ) {{
+          uniq(of: Holder_Address)
+        }}
+      }}
+    }}
+    '''
+    payload_graphql = json.dumps({'query': graphql_query})
+
+    try:
+        response_graphql = requests.post(url_graphql, headers=headers_graphql, data=payload_graphql)
+
+        if response_graphql.status_code == 200:
+            result = response_graphql.json()
+            number_of_holders = result.get('data', {}).get('EVM', {}).get('TokenHolders', [])[0].get('uniq', '0')
+            return int(number_of_holders)
+        else:
+            return "N/A"
+
+    except requests.RequestException as e:
+        return "N/A"
 
 
 # TWITTER
