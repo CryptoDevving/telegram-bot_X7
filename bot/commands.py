@@ -819,9 +819,8 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7dao_proposers = api.get_proposers("eth")
         snapshot = api.get_snapshot()
         if snapshot["data"]["proposals"][0]["state"] == "active":
-            end_time = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime("%Y-%m-%d %H:%M:%S")
-            then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-            duration = then - datetime.utcnow()
+            end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+            duration = end - datetime.utcnow()
             days, hours, minutes = api.get_duration_days(duration)
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
@@ -833,11 +832,13 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f'{snapshot["data"]["proposals"][0]["title"]} by - '
                     f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
                     f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
                     f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
-                    f"Vote Closing: {end_time} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n"
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
+                    f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
+                    f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
                     f"{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
