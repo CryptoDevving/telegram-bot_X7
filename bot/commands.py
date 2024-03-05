@@ -2751,17 +2751,17 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain = ""
         token_info = db.token_get(search, chain)
         for token_instance in token_info:
-                holders = api.get_holders(token_instance['ca'], token_instance['chain'])
-                dext = mappings.CHAINS[token_instance['chain']].dext
-                w3 = mappings.CHAINS[token_instance['chain']].w3
-                token = mappings.CHAINS[token_instance['chain']].token
+                holders = api.get_holders(token_instance['ca'], token_instance['chain'].lower())
+                dext = mappings.CHAINS[token_instance['chain'].lower()].dext
+                w3 = mappings.CHAINS[token_instance['chain'].lower()].w3
+                token = mappings.CHAINS[token_instance['chain'].lower()].token
                 contract = w3.eth.contract(
                     address=Web3.to_checksum_address(token_instance['pair']), abi=ca.PAIRS_ABI)
                 token0_address = contract.functions.token0().call()
                 token1_address = contract.functions.token1().call()
                 is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
                 is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
-                supply = int(api.get_supply(token_instance['ca'], token_instance['chain']))
+                supply = int(api.get_supply(token_instance['ca'], token_instance['chain'].lower()))
                 eth = ""
                 if is_reserve_token0:
                     eth = contract.functions.getReserves().call()[1]
@@ -2771,7 +2771,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 eth_in_wei = int(eth)
                 liq = api.get_native_price(token) * eth_in_wei * 2
                 formatted_liq = "${:,.2f}".format(liq / (10**decimals))
-                token_price = api.get_price(token_instance['ca'], token_instance['chain'])
+                token_price = api.get_price(token_instance['ca'], token_instance['chain'].lower())
                 mcap = token_price * supply
                 if "e-" in str(token_price):
                     price = "{:.8f}".format(token_price)
@@ -2780,8 +2780,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 else:
                     price = "{:.2f}".format(token_price)
                 formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-                volume = api.get_volume(token_instance['pair'], token_instance['chain'])
-                price_change = api.get_price_change(token_instance['ca'], token_instance['chain'])
+                volume = api.get_volume(token_instance['pair'], token_instance['chain'].lower())
+                price_change = api.get_price_change(token_instance['ca'], token_instance['chain'].lower())
                 im1 = Image.open((random.choice(media.BLACKHOLE)))
                 try:
                     image = token_instance['image_url']
@@ -2791,30 +2791,31 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     result.save(r"media/tokenlogo.png")
                     im2 = Image.open(r"media/tokenlogo.png")
                 except Exception:
-                    if token_instance['chain'] == "eth":
+                    if token_instance['chain'].lower() == "eth":
                         im2 = Image.open(media.ETH_LOGO)
-                    if token_instance['chain'] == "bsc":
+                    if token_instance['chain'].lower() == "bsc":
                         im2 = Image.open(media.BSC_LOGO)
-                    if token_instance['chain'] == "poly":
+                    if token_instance['chain'].lower() == "poly":
                         im2 = Image.open(media.POLY_LOGO)
-                    if token_instance['chain'] == "arb":
+                    if token_instance['chain'].lower() == "arb":
                         im2 = Image.open(media.ARB_LOGO)
-                    if token_instance['chain'] == "opti":
+                    if token_instance['chain'].lower() == "opti":
                         im2 = Image.open(media.OPTI_LOGO)
 
                 im1.paste(im2, (720, 20), im2)
                 i1 = ImageDraw.Draw(im1)
                 i1.text(
-                    (26, 30),
-                        f"Xchange Pair Info\n\n💰 {search.upper()}\n\n"
+                    (0, 0),
+                        f"  Xchange Pair Info\n\n💰 {search.upper()}\n\n"
+                        f"💰 Chain: {token_instance['chain'].upper()}\n"
                         f"💰 Price: {price}\n"
                         f"💎 Market Cap: {formatted_mcap}\n"
                         f"📊 24 Hour Volume: {volume}\n"
                         f"💦 Liquidity: {formatted_liq}\n"
                         f"👪 Holders: {holders}\n\n"
-                        f"{price_change}\n\n"
-                        f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-                    font = ImageFont.truetype(media.FONT, 26),
+                        f"{price_change}\n\n\n"
+                        f'  UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+                    font = ImageFont.truetype(media.FONT, 24),
                     fill=(255, 255, 255),
                 )
                 img_path = os.path.join("media", "blackhole.png")
@@ -2823,8 +2824,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
-                        f"*Xchange Pair Info\n\n{search.upper()}*\n\n"
+                        f"*Xchange Pair Info\n\n{search.upper()}*\n"
                         f"`{token_instance['ca']}`\n\n"
+                        f"⛓️ Chain: {token_instance['chain'].upper()}\n"
                         f"💰 Price: {price}\n"
                         f"💎 Market Cap: {formatted_mcap}\n"
                         f"📊 24 Hour Volume: {volume}\n"
