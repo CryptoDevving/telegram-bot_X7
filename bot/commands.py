@@ -818,33 +818,26 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not input_contract:
         x7dao_proposers = api.get_proposers("eth")
         snapshot = api.get_snapshot()
-        end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-        start = datetime.utcfromtimestamp(
-            snapshot["data"]["proposals"][0]["start"]
-        ).strftime("%Y-%m-%d %H:%M:%S")
-        then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-        duration = then - datetime.utcnow()
-        days, hours, minutes = api.get_duration_days(duration)
-        if duration > timedelta(0):
+        if snapshot["data"]["proposals"][0]["state"] == "active":
+            end_time = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime("%Y-%m-%d %H:%M:%S")
+            then = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+            duration = then - datetime.utcnow()
+            days, hours, minutes = api.get_duration_days(duration)
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
                     f"*X7 Finance DAO*\n"
                     f'use `/dao functions` for a list of call callable contracts\n\n'
                     f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
-                    f'*Open Proposal:*\n\n'
+                    f'*Current Open Proposal:*\n\n'
                     f'{snapshot["data"]["proposals"][0]["title"]} by - '
                     f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
-                    f"Voting Start: {start} UTC\n"
-                    f"Voting End:   {end} UTC\n\n"
                     f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
                     f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} DAO Votes\n'
                     f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
                     f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} DAO Votes\n\n'
                     f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total DAO Votes\n\n'
-                    f"Vote Closing in: {days} days, {hours} hours and {minutes} minutes\n\n"
+                    f"Vote Closing: {end_time} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n"
                     f"{api.get_quote()}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
@@ -870,7 +863,9 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
-                    f"*X7 Finance DAO*\n\nThere are no proposals currently open\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                    f"*X7 Finance DAO*\n\n"
+                    f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
+                    "There are no proposals currently open\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
                     f"*Contract Names:*\n{formatted_contract_names}\n\n",
                 parse_mode="Markdown",
                 reply_markup=keyboard
