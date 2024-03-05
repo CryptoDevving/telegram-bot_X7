@@ -818,60 +818,53 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not input_contract:
         x7dao_proposers = api.get_proposers("eth")
         snapshot = api.get_snapshot()
+        end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+        duration = end - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
         if snapshot["data"]["proposals"][0]["state"] == "active":
-            end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-            duration = end - datetime.utcnow()
-            days, hours, minutes = api.get_duration_days(duration)
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance DAO*\n"
-                    f'use `/dao functions` for a list of call callable contracts\n\n'
-                    f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
-                    f'*Current Open Proposal:*\n\n'
-                    f'{snapshot["data"]["proposals"][0]["title"]} by - '
-                    f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
-                    f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
-                    f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
-                    f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
-                    f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text=f"Vote Here",
-                                url=f"{url.SNAPSHOT}/proposal/"
-                                f'{snapshot["data"]["proposals"][0]["id"]}',
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text=f"DAO Proposers Chat",
-                                url=f"{url.TG_DAO}",
-                            )
-                        ],
-                    ]
-                ),
-            )
-            return
+            end_status = f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
+            header = 'Current Open Proposal'
         else:
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance DAO*\n\n"
-                    f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
-                    "There are no proposals currently open\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
-                    f"*Contract Names:*\n{formatted_contract_names}\n\n",
-                parse_mode="Markdown",
-                reply_markup=keyboard
-                )
-            return
+            end_status = f'Vote Closed: {end.strftime("%Y-%m-%d %H:%M:%S")}'
+            header = 'No Current Open Proposal\n\nLast Proposal:'
+        
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f'*X7 Finance DAO*\n'
+                f'use `/dao functions` for a list of call callable contracts\n\n'
+                f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
+                f'*{header}*\n\n'
+                f'{snapshot["data"]["proposals"][0]["title"]} by - '
+                f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
+                f'{end_status}',
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text=f"Vote Here",
+                            url=f"{url.SNAPSHOT}/proposal/"
+                            f'{snapshot["data"]["proposals"][0]["id"]}',
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text=f"DAO Proposers Chat",
+                            url=f"{url.TG_DAO}",
+                        )
+                    ],
+                ]
+            ),
+        )
+        return
     else:
         if input_contract == "functions":
             await update.message.reply_photo(
