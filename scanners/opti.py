@@ -19,9 +19,8 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 chain = "opti"
-alchemy_opti = os.getenv("ALCHEMY_OPTI")
-alchemy_opti_url = f"https://opt-mainnet.g.alchemy.com/v2/{alchemy_opti}"
-web3 = Web3(Web3.HTTPProvider(alchemy_opti_url))
+opti_url = f"https://lb.drpc.org/ogrpc?network=optimism&dkey={os.getenv('DRPC_API_KEY')}"
+web3 = Web3(Web3.HTTPProvider(opti_url))
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
 ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, chain))

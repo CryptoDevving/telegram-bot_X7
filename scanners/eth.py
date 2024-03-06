@@ -21,9 +21,8 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 chain = "eth"
-alchemy_keys = os.getenv("ALCHEMY_ETH")
-alchemy_eth_url = f"https://eth-mainnet.g.alchemy.com/v2/{alchemy_keys}"
-web3 = Web3(Web3.HTTPProvider(alchemy_eth_url))
+eth_url = f"https://lb.drpc.org/ogrpc?network=ethereum&dkey={os.getenv('DRPC_API_KEY')}"
+web3 = Web3(Web3.HTTPProvider(eth_url))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))

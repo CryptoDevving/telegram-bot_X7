@@ -1839,28 +1839,21 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if loan_type == "":
         message = await update.message.reply_text("Getting Loan Info, Please wait...")
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        url = "https://lb.drpc.org/ogrpc?network="
         networks = {
-            "ETH": f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
-            "ARB": f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
+            "ETH": f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}",
+            "ARB": f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}",
             "BSC": "https://bsc-dataseed.binance.org/",
-            "POLY": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
-            "OPTI": f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
+            "POLY": f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}",
+            "OPTI": f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}",
             "BASE": "https://mainnet.base.org"
-        }
-        contract_networks = {
-            "ETH": "eth",
-            "ARB": "arb",
-            "BSC": "bsc",
-            "POLY": "poly",
-            "OPTI": "opti",
-            "BASE": "base",
         }
         contract_instances = {}
         for network, web3_url in networks.items():
             web3 = Web3(Web3.HTTPProvider(web3_url))
             contract = web3.eth.contract(
                 address=to_checksum_address(ca.LPOOL),
-                abi=api.get_abi(ca.LPOOL, contract_networks[network]),
+                abi=api.get_abi(ca.LPOOL, network.lower()),
             )
             amount = contract.functions.nextLoanID().call() - 1
             contract_instances[network] = amount
@@ -2373,28 +2366,22 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def pair(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text("Getting Pair Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    url = "https://lb.drpc.org/ogrpc?network="
     networks = {
-        "ETH": f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ETH')}",
-        "ARB": f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}",
+        "ETH": f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}",
+        "ARB": f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}",
         "BSC": "https://bsc-dataseed.binance.org/",
-        "POLY": f"https://polygon-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_POLY')}",
-        "OPTI": f"https://opt-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_OPTI')}",
+        "POLY": f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}",
+        "OPTI": f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}",
         "BASE": "https://mainnet.base.org"
     }
-    contract_networks = {
-        "ETH": "eth",
-        "ARB": "arb",
-        "BSC": "bsc",
-        "POLY": "poly",
-        "OPTI": "opti",
-        "BASE": "base",
-    }
+
     contract_instances = {}
     for network, web3_url in networks.items():
         web3 = Web3(Web3.HTTPProvider(web3_url))
         contract = web3.eth.contract(
             address=to_checksum_address(ca.FACTORY),
-            abi=api.get_abi(ca.FACTORY, contract_networks[network]),
+            abi=api.get_abi(ca.FACTORY, network.lower()),
         )
         amount = contract.functions.allPairsLength().call()
         contract_instances[network] = amount

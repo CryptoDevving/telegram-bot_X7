@@ -19,9 +19,8 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 chain = "arb"
-alchemy_arb = os.getenv("ALCHEMY_ARB")
-alchemy_arb_url = f"https://arb-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_ARB')}"
-web3 = Web3(Web3.HTTPProvider(alchemy_arb_url))
+arb_url = f"https://lb.drpc.org/ogrpc?network=arbitrum&dkey={os.getenv('DRPC_API_KEY')}"
+web3 = Web3(Web3.HTTPProvider(arb_url))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
