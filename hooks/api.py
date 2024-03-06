@@ -1,21 +1,12 @@
 # API
 
-import random, requests, os, time as t, tweepy, json
+import random, requests, os, time as t, json
 from typing import Tuple
 from datetime import datetime, timedelta
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 from web3 import Web3
 from constants import ca, url, mappings
-
-
-bsc = os.getenv("BSC")
-ether = os.getenv("ETHER")
-poly = os.getenv("POLY")
-opti = os.getenv("OPTI")
-arb = os.getenv("ARB")
-base = os.getenv("BASE")
-COINGECKO_URL = "https://api.coingecko.com/api/v3"
 
 
 # DEX TOOLS
@@ -150,17 +141,17 @@ def get_native_price(token):
     tokens_info = {
         "eth": {
             "url": "https://api.etherscan.io/api?module=stats&action=ethprice",
-            "key": ether,
+            "key": os.getenv("ETHER"),
             "field": "ethusd",
         },
         "bnb": {
             "url": "https://api.bscscan.com/api?module=stats&action=bnbprice",
-            "key": bsc,
+            "key": os.getenv("BSC"),
             "field": "ethusd",
         },
         "matic": {
             "url": "https://api.polygonscan.com/api?module=stats&action=maticprice",
-            "key": poly,
+            "key": os.getenv("POLY"),
             "field": "maticusd",
         },
     }
@@ -841,3 +832,4 @@ def get_proposers(chain):
 
     except requests.RequestException as e:
         return "N/A"
+    
