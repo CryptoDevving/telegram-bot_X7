@@ -1165,6 +1165,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
     fear_response = requests.get("https://api.alternative.me/fng/?limit=0")
     fear_data = fear_response.json()
+    print(fear_data)
     fear_values = []
     for i in range(7):
         timestamp = float(fear_data["data"][i]["timestamp"])
@@ -1181,16 +1182,16 @@ async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
     hours = divmod(days[1], 3600)
     minutes = divmod(hours[1], 60)
     caption = "*Market Fear and Greed Index*\n\n"
-    caption += f'{fear_values[0][0]} - {fear_values[0][1]} - {fear_values[0][2].strftime("%A %B %d")}\n\n'
+    caption += f'{fear_values[0][0]} - {fear_values[0][1]} - {fear_values[0][2].strftime("%B %d")}\n\n'
     caption += "Change:\n"
     for i in range(1, 7):
-        caption += f'{fear_values[i][0]} - {fear_values[i][1]} - {fear_values[i][2].strftime("%A %B %d")}\n'
+        caption += f'{fear_values[i][0]} - {fear_values[i][1]} - {fear_values[i][2].strftime("%B %d")}\n'
     caption += "\nNext Update:\n"
     caption += (
         f"{int(hours[0])} hours and {int(minutes[0])} minutes\n\n{api.get_quote()}"
     )
     await update.message.reply_photo(
-        photo="https://alternative.me/crypto/fear-and-greed-index.png",
+        photo=f"https://alternative.me/crypto/fear-and-greed-index.png?timestamp={int(t.time())}",
         caption=caption,
         parse_mode="Markdown",
     )
