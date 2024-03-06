@@ -313,8 +313,8 @@ def get_mcap(token):
 
 
 def get_maxi_holdings(wallet, chain):
-    if chain in mappings.ALCHEMY_CHAINS:
-        chain = mappings.ALCHEMY_CHAINS[chain]
+    if chain in mappings.WEB3_URLS:
+        chain = mappings.WEB3_URLS[chain]
     url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.BORROW}&contractAddresses[]={ca.LIQ}&contractAddresses[]={ca.DEX}&contractAddresses[]={ca.ECO}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
@@ -324,8 +324,8 @@ def get_maxi_holdings(wallet, chain):
 
 
 def get_pioneer_holdings(wallet, chain):
-    if chain in mappings.ALCHEMY_CHAINS:
-        chain = mappings.ALCHEMY_CHAINS[chain]
+    if chain in mappings.WEB3_URLS:
+        chain = mappings.WEB3_URLS[chain]
     url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.PIONEER}&withMetadata=false&pageSize=100'
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)

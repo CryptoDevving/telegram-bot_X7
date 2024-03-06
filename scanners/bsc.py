@@ -19,8 +19,8 @@ sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 chain = "bsc"
-web3_url = random.choice(url.BSC)
-web3 = Web3(Web3.HTTPProvider(web3_url))
+bsc_url = f"https://lb.drpc.org/ogrpc?network=bsc&dkey={os.getenv('DRPC_API_KEY')}"
+web3 = Web3(Web3.HTTPProvider(bsc_url))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))

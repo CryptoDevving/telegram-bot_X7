@@ -4,6 +4,7 @@ import os
 from constants import ca, url
 import media
 from web3 import Web3
+import random
 
 
 class TokensInfo:
@@ -76,7 +77,7 @@ CHAINS = {
         url.DEX_TOOLS_BSC,
         "-binance",
         "",
-        Web3(Web3.HTTPProvider("https://bsc-dataseed.binance.org/")),
+        Web3(Web3.HTTPProvider(f"https://lb.drpc.org/ogrpc?network=bsc&dkey={os.getenv('DRPC_API_KEY')}")),
         "https://api.bscscan.com/api",
         os.getenv('BSC'),
         ca.COM_MULTI_BSC,
@@ -191,6 +192,7 @@ CHAINS = {
         ca.X7105_PAIR_BASE]
     ),
 }
+
 
 X7D = {
         "eth": (
@@ -632,13 +634,13 @@ X7105 = {
     }
 
 
-ALCHEMY_CHAINS = {
+WEB3_URLS = {
     "eth": f"https://eth-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_ETH')}",
     "arb": f"https://arb-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_ARB')}",
     "poly": f"https://polygon-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_POLY')}",
-    "bsc": "bsc",
+    "bsc": random.choice(url.BSC),
     "opti": f"https://opt-mainnet.g.alchemy.com/nft/v2/{os.getenv('ALCHEMY_OPTI')}",
-    "base": "base",
+    "base": "https://mainnet.base.org",
 }
 
 
