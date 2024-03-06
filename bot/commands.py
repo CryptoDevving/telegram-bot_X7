@@ -1165,7 +1165,6 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
     fear_response = requests.get("https://api.alternative.me/fng/?limit=0")
     fear_data = fear_response.json()
-    print(fear_data)
     fear_values = []
     for i in range(7):
         timestamp = float(fear_data["data"][i]["timestamp"])
