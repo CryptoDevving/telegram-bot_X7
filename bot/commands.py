@@ -3982,6 +3982,23 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
+    await update.message.reply_text(
+        f"*X7 Finance X*\n\n" f"{random.choice(text.X_REPLIES)}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text=f"{url.TWITTER}",
+                        url=f"{url.TWITTER}",
+                    )
+                ],
+            ]
+        ),
+    )
+
 async def v1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     native_price = api.get_native_price("eth")

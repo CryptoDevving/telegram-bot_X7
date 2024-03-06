@@ -841,11 +841,3 @@ def get_proposers(chain):
 
     except requests.RequestException as e:
         return "N/A"
-
-
-# TWITTER
-
-auth = tweepy.OAuthHandler(os.getenv("TWITTER_API"), os.getenv("TWITTER_API_SECRET"))
-auth.set_access_token(os.getenv("TWITTER_ACCESS"), os.getenv("TWITTER_ACCESS_SECRET"))
-twitter = tweepy.API(auth)
-twitter_v2 = tweepy.Client(os.getenv("TWITTER_BEARER"))

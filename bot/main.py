@@ -4,7 +4,7 @@ from telegram.ext import *
 import os, sys, sentry_sdk, subprocess, random, time as t
 from datetime import datetime
 
-from bot import admin, auto, commands, twitter, welcome
+from bot import admin, auto, commands, welcome
 from hooks import api, db
 import scanners
 from variables import times
@@ -293,6 +293,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("japanese", commands.translate_japanese))
     application.add_handler(CommandHandler("russian", commands.translate_russian))
     application.add_handler(CommandHandler("treasury", commands.treasury))
+    application.add_handler(CommandHandler(["twitter", "x"], commands.twitter))
     application.add_handler(CommandHandler("website", commands.website))
     application.add_handler(CommandHandler("v1", commands.v1))
     application.add_handler(CommandHandler("x7r", commands.x7r))
@@ -310,12 +311,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("word", commands.word))
     application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
 
-    ## TWITTER ##
-    application.add_handler(CommandHandler(["twitter", "x"], twitter.tweet))
-    application.add_handler(CommandHandler("count", twitter.count))
-    application.add_handler(CommandHandler("draw", twitter.draw))
-    application.add_handler(CommandHandler("raid", twitter.raid))
-    application.add_handler(CommandHandler(["spaces", "space"], twitter.spaces))
 
     ## ADMIN ##
     application.add_handler(CommandHandler("clickme", click_me))
