@@ -16,8 +16,7 @@ import media
 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
-
-
+defined = api.Defined()
 chain = "arb"
 arb_url = f"https://lb.drpc.org/ogrpc?network=arbitrum&dkey={os.getenv('DRPC_API_KEY')}"
 web3 = Web3(Web3.HTTPProvider(arb_url))
@@ -191,7 +190,7 @@ async def new_pair(event):
         )
         try:
             if event["args"]["token0"] == ca.AWETH or event["args"]["token1"] == ca.AWETH:
-                image_url = api.get_token_image(token_address, chain)
+                image_url = defined.get_token_image(token_address, chain)
                 if image_url is None:
                     image_url = "N/A"
 

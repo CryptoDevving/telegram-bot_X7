@@ -16,10 +16,8 @@ from constants import ca, url
 from hooks import api, db
 import media
 
-
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
-
-
+defined = api.Defined()
 chain = "eth"
 eth_url = f"https://lb.drpc.org/ogrpc?network=ethereum&dkey={os.getenv('DRPC_API_KEY')}"
 web3 = Web3(Web3.HTTPProvider(eth_url))
@@ -193,7 +191,7 @@ async def new_pair(event):
         )
         try:
             if event["args"]["token0"] == ca.WETH or event["args"]["token1"] == ca.WETH:
-                image_url = api.get_token_image(token_address, chain)
+                image_url = defined.get_token_image(token_address, chain)
                 if image_url is None:
                     image_url = "N/A"
 

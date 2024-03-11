@@ -16,6 +16,11 @@ import media
 from variables import times, giveaway
 
 
+dextools = api.Dextools()
+coingecko = api.CoinGecko()
+defined = api.Defined()
+
+
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"{text.ABOUT}",
@@ -98,7 +103,7 @@ async def announcements(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def get_ath_info(coin):
-        ath, ath_change, date = api.get_ath(coin)
+        ath, ath_change, date = coingecko.get_ath(coin)
         ath_change_str = f"{ath_change}"
         return ath, ath_change_str[:3], date
     
@@ -465,7 +470,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     token2 = context.args[1].lower()
-    search = api.get_cg_search(token2)
+    search = coingecko.search(token2)
     if "coins" in search and search["coins"]:
         token_id = search["coins"][0]["api_symbol"]
     else:
@@ -479,7 +484,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         return
 
-    token_market_cap = api.get_mcap(token_id)
+    token_market_cap = coingecko.get_mcap(token_id)
     if token_market_cap == 0:
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
@@ -527,7 +532,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
-    price = api.get_cg_price("x7101, x7102, x7103, x7104, x7105")
+    price = coingecko.get_price("x7101, x7102, x7103, x7104, x7105")
     x7101mc = price["x7101"]["usd"] * ca.SUPPLY
     x7102mc = price["x7102"]["usd"] * ca.SUPPLY
     x7103mc = price["x7103"]["usd"] * ca.SUPPLY
@@ -594,11 +599,11 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         amount = context.args[0]
         search = context.args[1]
-        token = api.get_cg_search(search.lower())
+        token = coingecko.search(search.lower())
         if token and "coins" in token and len(token["coins"]) > 0:
             token_id = token["coins"][0]["api_symbol"]
             thumb = token["coins"][0]["large"]
-            cg = api.get_cg_price(token_id)
+            cg = coingecko.get_price(token_id)
             price = cg[token_id]["usd"]
             output = float(amount) * float(price)
             caption_text = f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output)}"
@@ -722,7 +727,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
     if not input_contract:
         x7dao_proposers = api.get_proposers("eth")
-        holders = api.get_holders(ca.X7DAO, "eth")
+        holders = dextools.get_holders(ca.X7DAO, "eth")
         snapshot = api.get_snapshot()
         end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
         duration = end - datetime.utcnow()
@@ -1272,10 +1277,10 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    x7dao_holders = api.get_holders(ca.X7DAO, chain)
+    x7dao_holders = dextools.get_holders(ca.X7DAO, chain)
     x7dao_proposers = api.get_proposers(chain)
-    x7r_holders = api.get_holders(ca.X7R, chain)
-    x7d_holders = api.get_holders(ca.X7D, chain)
+    x7r_holders = dextools.get_holders(ca.X7R, chain)
+    x7d_holders = dextools.get_holders(ca.X7D, chain)
     
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -2495,7 +2500,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for token_instance in token_info:
             message = await update.message.reply_text("Getting Price Info, Please wait...")
             await context.bot.send_chat_action(update.effective_chat.id, "typing")
-            holders = api.get_holders(token_instance['ca'], token_instance['chain'].lower())
+            holders = dextools.get_holders(token_instance['ca'], token_instance['chain'].lower())
             dext = mappings.CHAINS[token_instance['chain'].lower()].dext
             w3 = mappings.CHAINS[token_instance['chain'].lower()].w3
             token = mappings.CHAINS[token_instance['chain'].lower()].token
@@ -2524,8 +2529,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 price = "{:.2f}".format(token_price)
             formatted_mcap = "${:,.0f}".format(mcap / (10**decimals))
-            volume = api.get_volume(token_instance['pair'], token_instance['chain'].lower())
-            price_change = api.get_price_change(token_instance['ca'], token_instance['chain'].lower())
+            volume = defined.get_volume(token_instance['pair'], token_instance['chain'].lower())
+            price_change = defined.get_price_change(token_instance['ca'], token_instance['chain'].lower())
             im1 = Image.open((random.choice(media.BLACKHOLE)))
             try:
                 image = token_instance['image_url']
@@ -2598,7 +2603,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         if not token_info:
             if search == "":
-                price = api.get_cg_price("x7r, x7dao")
+                price = coingecko.get_price("x7r, x7dao")
                 x7r_change = price["x7r"]["usd_24h_change"]
                 if x7r_change is None:
                     x7r_change = 0
@@ -2662,7 +2667,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                     return
                 
-                holders = api.get_holders(search, chain)
+                holders = dextools.get_holders(search, chain)
                 if "dex" in scan[str(search)] and scan[str(search)]["dex"]:
                     pair = scan[str(search)]["dex"][0]["pair"]
                 else:
@@ -2671,9 +2676,9 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         if holder.get("is_contract", 0) == 1:
                             pair = holder.get("address")
                             break
-                dex = api.get_liquidity_dex(pair, chain)
+                dex = dextools.get_dex(pair, chain)
                 token_price = api.get_price(search, chain)
-                volume = api.get_volume(pair, chain)
+                volume = defined.get_volume(pair, chain)
                 if "e-" in str(token_price):
                     price = "{:.8f}".format(token_price)
                 elif token_price < 1:
@@ -2694,14 +2699,14 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                 mcap = float(price) * float(supply)
                 formatted_mcap = "${:,.0f}".format(mcap)
-                price_change = api.get_price_change(search, chain)
-                liquidity_data = api.get_liquidity_from_dextools(pair, chain)
+                price_change = defined.get_price_change(search, chain)
+                liquidity_data = dextools.get_liquidity(pair, chain)
                 try:
                     liq = f"${'{:0,.0f}'.format(liquidity_data['liquidity'])}"
                 except Exception:
                     liq = "N/A"
                 im1 = Image.open((random.choice(media.BLACKHOLE)))
-                logo = api.get_token_image(search, chain)
+                logo = defined.get_token_image(search, chain)
                 if logo:
                     img = Image.open(requests.get(logo, stream=True).raw)
                     result = img.convert("RGBA")
@@ -2758,11 +2763,11 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 return
             else:
-                token = api.get_cg_search(search)
+                token = coingecko.search(search)
                 token_id = token["coins"][0]["api_symbol"]
                 symbol = token["coins"][0]["symbol"]
                 thumb = token["coins"][0]["large"]
-                token_price = api.get_cg_price(token_id)
+                token_price = coingecko.get_price(token_id)
                 try:
                     if "e-" in str(token_price[token_id]["usd"]):
                         price = "{:.8f}".format(token_price[token_id]["usd"])
@@ -3441,7 +3446,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "x7104": (ca.X7104_PAIR_ETH, ca.X7104),
         "x7105": (ca.X7105_PAIR_ETH, ca.X7105),
     }
-    prices = api.get_cg_price("x7r, x7dao, x7101, x7102, x7103, x7104, x7105")
+    prices = coingecko.get_price("x7r, x7dao, x7101, x7102, x7103, x7104, x7105")
     supply_info = {}
     for token, (pair, contract) in token_pairs.items():
         balance = api.get_token_balance(pair, contract, "eth")
@@ -4051,7 +4056,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
-        holders = api.get_holders(ca.X7D, chain)
+        holders = dextools.get_holders(ca.X7D, chain)
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -4092,10 +4097,10 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7DAO[chain]
-        holders = api.get_holders(ca.X7DAO, chain)
+        holders = dextools.get_holders(ca.X7DAO, chain)
         price = api.get_price(ca.X7DAO, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7dao")
+        cg = coingecko.get_price("x7dao")
         volume = cg["x7dao"]["usd_24h_vol"]
         change = cg["x7dao"]["usd_24h_change"]
         if change == None or 0:
@@ -4108,8 +4113,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
-            ath_change = f'{api.get_ath("x7dao")[1]}'
-            ath_value = api.get_ath("x7dao")[0]
+            ath_change = f'{coingecko.get_ath("x7dao")[1]}'
+            ath_value = coingecko.get_ath("x7dao")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"     
@@ -4182,10 +4187,10 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7R[chain]
-        holders = api.get_holders(ca.X7R, chain)
+        holders = dextools.get_holders(ca.X7R, chain)
         price = api.get_price(ca.X7R, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7r")
+        cg = coingecko.get_price("x7r")
         volume = cg["x7r"]["usd_24h_vol"]
         change = cg["x7r"]["usd_24h_change"]
         if change == None or 0:
@@ -4198,8 +4203,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * api.get_x7r_supply(chain))}'
         try:
-            ath_change = f'{api.get_ath("x7r")[1]}'
-            ath_value = api.get_ath("x7r")[0]
+            ath_change = f'{coingecko.get_ath("x7r")[1]}'
+            ath_value = coingecko.get_ath("x7r")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"        
@@ -4272,10 +4277,10 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7101[chain]
-        holders = api.get_holders(ca.X7101, chain)
+        holders = dextools.get_holders(ca.X7101, chain)
         price = api.get_price(ca.X7101, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7101")
+        cg = coingecko.get_pricee("x7101")
         volume = cg["x7101"]["usd_24h_vol"]
         change = cg["x7101"]["usd_24h_change"]
 
@@ -4289,8 +4294,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
-            ath_change = f'{api.get_ath("x7101")[1]}'
-            ath_value = api.get_ath("x7101")[0]
+            ath_change = f'{coingecko.get_ath("x7101")[1]}'
+            ath_value = coingecko.get_ath("x7101")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"     
@@ -4363,10 +4368,10 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7102[chain]
-        holders = api.get_holders(ca.X7102, chain)
+        holders = dextools.get_holders(ca.X7102, chain)
         price = api.get_price(ca.X7102, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7102")
+        cg = coingecko.get_price("x7102")
         volume = cg["x7102"]["usd_24h_vol"]
         change = cg["x7102"]["usd_24h_change"]
         if change == None or 0:
@@ -4379,8 +4384,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
-            ath_change = f'{api.get_ath("x7102")[1]}'
-            ath_value = api.get_ath("x7102")[0]
+            ath_change = f'{coingecko.get_ath("x7102")[1]}'
+            ath_value = coingecko.get_ath("x7102")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"  
@@ -4453,10 +4458,10 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7103[chain]
-        holders = api.get_holders(ca.X7103, chain)
+        holders = dextools.get_holders(ca.X7103, chain)
         price = api.get_price(ca.X7103, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7103")
+        cg = coingecko.get_price("x7103")
         volume = cg["x7103"]["usd_24h_vol"]
         change = cg["x7103"]["usd_24h_change"]
 
@@ -4470,8 +4475,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
-            ath_change = f'{api.get_ath("x7103")[1]}'
-            ath_value = api.get_ath("x7103")[0]
+            ath_change = f'{coingecko.get_ath("x7103")[1]}'
+            ath_value = coingecko.get_ath("x7103")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"
@@ -4544,10 +4549,10 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7104[chain]
-        holders = api.get_holders(ca.X7104, chain)
+        holders = dextools.get_holders(ca.X7104, chain)
         price = api.get_price(ca.X7104, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7104")
+        cg = coingecko.get_price("x7104")
         volume = cg["x7104"]["usd_24h_vol"]
         change = cg["x7104"]["usd_24h_change"]
         if change == None or 0:
@@ -4560,8 +4565,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
-            ath_change = f'{api.get_ath("x7104")[1]}'
-            ath_value = api.get_ath("x7104")[0]
+            ath_change = f'{coingecko.get_ath("x7104")[1]}'
+            ath_value = coingecko.get_ath("x7104")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"
@@ -4634,10 +4639,10 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7105[chain]
-        holders = api.get_holders(ca.X7105, chain)
+        holders = dextools.get_holders(ca.X7105, chain)
         price = api.get_price(ca.X7105, chain)
     if chain == "eth":
-        cg = api.get_cg_price("x7105")
+        cg = coingecko.get_price("x7105")
         volume = cg["x7105"]["usd_24h_vol"]
         change = cg["x7105"]["usd_24h_change"]
         if change == None or 0:
@@ -4650,8 +4655,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             volume = f'${"{:0,.0f}".format(volume)}'
         market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
         try:
-            ath_change = f'{api.get_ath("x7105")[1]}'
-            ath_value = api.get_ath("x7105")[0]
+            ath_change = f'{coingecko.get_ath("x7105")[1]}'
+            ath_value = coingecko.get_ath("x7105")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
         except Exception:
             ath = "Unavailable"

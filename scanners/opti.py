@@ -16,16 +16,17 @@ import media
 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
-
-
+defined = api.Defined()
 chain = "opti"
 opti_url = f"https://lb.drpc.org/ogrpc?network=optimism&dkey={os.getenv('DRPC_API_KEY')}"
 web3 = Web3(Web3.HTTPProvider(opti_url))
+
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
 ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, chain))
 ill002 = web3.eth.contract(address=ca.ILL002, abi=api.get_abi(ca.ILL002, chain))
 ill003 = web3.eth.contract(address=ca.ILL003, abi=api.get_abi(ca.ILL003, chain))
+
 
 pair_filter = factory.events.PairCreated.create_filter(fromBlock="latest")
 ill001_filter = ill001.events.LoanOriginated.create_filter(fromBlock="latest")
@@ -189,7 +190,7 @@ async def new_pair(event):
         )
         try:
             if event["args"]["token0"] == ca.OWETH or event["args"]["token1"] == ca.OWETH:
-                image_url = api.get_token_image(token_address, chain)
+                image_url = defined.get_token_image(token_address, chain)
                 if image_url is None:
                     image_url = "N/A"
 

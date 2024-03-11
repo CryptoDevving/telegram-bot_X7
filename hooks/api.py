@@ -9,72 +9,240 @@ from web3 import Web3
 from constants import ca, url, mappings
 
 
-# DEX TOOLS
-
-
-def get_holders(pair, chain):
-    if chain in mappings.DEX_TOOLS_CHAINS:
-        dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-    url = f'https://public-api.dextools.io/trial/v2/token/{dextools_chain}/{pair}/info'
-    headers = {
+class Dextools:
+    def __init__(self):
+        self.plan = "trial"
+        self.headers = {
         'accept': 'application/json',
-        'x-api-key': os.getenv("DEXTOOLS_API_KEY")
-    }
+        'x-api-key': os.getenv("DEXTOOLS_API_KEY")}
+        self.url = f"http://public-api.dextools.io/{self.plan}/v2/"
 
-    response = requests.get(url, headers=headers)
 
-    if response.status_code == 200:
-        data = response.json()
+    def get_holders(self, pair, chain):
+        if chain in mappings.DEX_TOOLS_CHAINS:
+            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
+        endpoint = f'token/{dextools_chain}/{pair}/info'
+        response = requests.get(self.url + endpoint, headers=self.headers)
 
-        if data and "data" in data and data["data"]:
-            return data["data"]["holders"]
+        if response.status_code == 200:
+            data = response.json()
+
+            if data and "data" in data and data["data"]:
+                return data["data"]["holders"]
+            else:
+                return "N/A"
         else:
             return "N/A"
-    else:
-        return "N/A"
-    
+        
 
-def get_liquidity_dex(pair, chain):
-    if chain in mappings.DEX_TOOLS_CHAINS:
-        dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-    url = f'https://public-api.dextools.io/trial/v2/pool/{dextools_chain}/{pair}'
-    headers = {
-        'accept': 'application/json',
-        'x-api-key': os.getenv("DEXTOOLS_API_KEY")
-    }
+    def get_dex(self, pair, chain):
+        if chain in mappings.DEX_TOOLS_CHAINS:
+            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
+        endpoint = f'pool/{dextools_chain}/{pair}'
 
-    response = requests.get(url, headers=headers)
-    data = response.json()
-    try:
-        if data is not None:
-            if "data" in data and "exchange" in data["data"] and "name" in data["data"]["exchange"]:
-                return data["data"]["exchange"]["name"]
+        response = requests.get(self.url + endpoint, headers=self.headers)
+        data = response.json()
+        try:
+            if data is not None:
+                if "data" in data and "exchange" in data["data"] and "name" in data["data"]["exchange"]:
+                    return data["data"]["exchange"]["name"]
+                else:
+                    return "Unknown DEX"
             else:
                 return "Unknown DEX"
+        except Exception:
+            "Unknown DEX"
+        
+
+    def get_liquidity(self, pair, chain):
+        if chain in mappings.DEX_TOOLS_CHAINS:
+            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
+        endpoint = f'pool/{dextools_chain}/{pair}/liquidity'
+
+        response = requests.get(self.url + endpoint, headers=self.headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            return data["data"]
         else:
-            return "Unknown DEX"
-    except Exception:
-        "Unknown DEX"
-    
+            return "N/A"
 
-def get_liquidity_from_dextools(pair, chain):
-    if chain in mappings.DEX_TOOLS_CHAINS:
-        dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-    url = f'https://public-api.dextools.io/trial/v2/pool/{dextools_chain}/{pair}/liquidity'
-    headers = {
-        'accept': 'application/json',
-        'x-api-key': os.getenv("DEXTOOLS_API_KEY")
-    }
 
-    response = requests.get(url, headers=headers)
+class CoinGecko:
+    def __init__(self):
+        self.url = f"https://api.coingecko.com/api/v3/"
 
-    if response.status_code == 200:
+
+    def get_ath(self, token):
+        endpoint = (
+            f"coins/{token}?localization=false&tickers=false&market_data="
+            "true&community_data=false&developer_data=false&sparkline=false"
+        )
+        response = requests.get(self.url + endpoint)
         data = response.json()
-        return data["data"]
-    else:
-        return "N/A"
+        value = data["market_data"]
+        return (
+            value["ath"]["usd"],
+            value["ath_change_percentage"]["usd"],
+            value["ath_date"]["usd"],
+        )
 
 
+    def get_price(token):
+        coingecko = CoinGeckoAPI()
+        return coingecko.get_price(
+            ids=token,
+            vs_currencies="usd",
+            include_24hr_change="true",
+            include_24hr_vol="true",
+            include_market_cap="true",
+        )
+
+
+    def search(self, token):
+        endpoint = f"search?query={token}"
+        response = requests.get(self.url + endpoint)
+        return response.json()
+
+
+    def get_mcap(self, token):
+        endpoint = f"simple/price?ids={token}&vs_currencies=usd&include_market_cap=true"
+        response = requests.get(self.url + endpoint)
+        data = response.json()
+        return data[token]["usd_market_cap"]
+
+
+class Defined:
+    def __init__(self):
+        self.url = "https://graph.defined.fi/graphql"
+        self.headers = {
+            "content_type": "application/json",
+            "Authorization": os.getenv("DEFINED_API_KEY")
+        }
+
+
+    def get_price_change(self, address, chain):
+        if chain in mappings.DEFINED_CHAINS:
+            chain = mappings.DEFINED_CHAINS[chain]
+
+        current_timestamp = int(datetime.now().timestamp()) - 300
+        one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
+        twenty_four_hours_ago_timestamp = int((datetime.now() - timedelta(hours=24)).timestamp())
+        seven_days_ago_timestamp = int((datetime.now() - timedelta(days=7)).timestamp())
+
+        pricechange = f"""query {{
+            getTokenPrices(
+                inputs: [
+                    {{ 
+                        address: "{address}"
+                        networkId: {chain}
+                        timestamp: {current_timestamp}
+                    }}
+                    {{ 
+                        address: "{address}"
+                        networkId: {chain}
+                        timestamp: {one_hour_ago_timestamp}
+                    }}
+                    {{ 
+                        address: "{address}"
+                        networkId: {chain}
+                        timestamp: {twenty_four_hours_ago_timestamp}
+                    }}
+                    {{ 
+                        address: "{address}"
+                        networkId: {chain}
+                        timestamp: {seven_days_ago_timestamp}
+                    }}
+                ]
+            ) {{
+                priceUsd
+            }}
+        }}"""
+        try:
+            response = requests.post(self.url, headers=self.headers, json={"query": pricechange})
+            data = response.json()
+
+            current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
+            one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
+            twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
+            seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
+
+            one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
+            twenty_four_hours_change = round(
+                ((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
+            seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
+
+            emoji_up = "📈"
+            emoji_down = "📉"
+
+            one_hour_change_str = f"{emoji_up if one_hour_change > 0 else emoji_down} 1H Change: {one_hour_change}%"
+            twenty_four_hours_change_str = f"{emoji_up if twenty_four_hours_change > 0 else emoji_down} 24H Change: {twenty_four_hours_change}%"
+            seven_days_change_str = f"{emoji_up if seven_days_change > 0 else emoji_down} 7D Change: {seven_days_change}%"
+
+            result = (
+                f"{one_hour_change_str}\n"
+                f"{twenty_four_hours_change_str}\n"
+                f"{seven_days_change_str}"
+            )
+        except Exception as e:
+            result = "  1H Change: N/A\n  24H Change: N/A\n  7D Change: N/A"
+        return result
+
+
+    def get_token_image(self, token, chain):
+        if chain in mappings.DEFINED_CHAINS:
+            chain = mappings.DEFINED_CHAINS[chain]
+
+        image = f'''
+            query {{
+                getTokenInfo(address:"{token}", networkId:{chain}) {{
+                    imageLargeUrl
+                }}
+            }}
+        '''
+
+        response = requests.post(self.url, headers=self.headers, json={"query": image})
+        data = response.json()
+        if 'data' in data and 'getTokenInfo' in data['data']:
+                token_info = data['data']['getTokenInfo']
+
+                if token_info and 'imageLargeUrl' in token_info:
+                    image_url = token_info['imageLargeUrl']
+                    return image_url
+                else:
+                    return "N/A"
+        else:
+            return "N/A"
+
+
+    def get_volume(self, pair, chain):
+        try:
+            if chain in mappings.DEFINED_CHAINS:
+                chain = mappings.DEFINED_CHAINS[chain]
+
+            volume = f'''
+                query {{
+                getDetailedPairStats(pairAddress: "{pair}", networkId: {chain}, bucketCount: 1, tokenOfInterest: token1) {{
+                    stats_day1 {{
+                    statsUsd {{
+                        volume {{
+                        currentValue
+                        }}
+                    }}
+                    }}
+                }}
+                }}
+                '''
+
+            response = requests.post(self.url, headers=self.headers, json={"query": volume})
+            data = response.json()
+
+            current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
+            return "${:,.0f}".format(float(current_value))
+        except Exception as e:
+                return "N/A"
+        
+        
 # SCAN
 
 
@@ -258,48 +426,6 @@ def get_x7r_supply(chain):
     return supply
 
 
-# CG
-
-
-def get_ath(token):
-    url = (
-        f"https://api.coingecko.com/api/v3/coins/{token}?localization=false&tickers=false&market_data="
-        "true&community_data=false&developer_data=false&sparkline=false"
-    )
-    response = requests.get(url)
-    data = response.json()
-    value = data["market_data"]
-    return (
-        value["ath"]["usd"],
-        value["ath_change_percentage"]["usd"],
-        value["ath_date"]["usd"],
-    )
-
-
-def get_cg_price(token):
-    coingecko = CoinGeckoAPI()
-    return coingecko.get_price(
-        ids=token,
-        vs_currencies="usd",
-        include_24hr_change="true",
-        include_24hr_vol="true",
-        include_market_cap="true",
-    )
-
-
-def get_cg_search(token):
-    url = "https://api.coingecko.com/api/v3/search?query=" + token
-    response = requests.get(url)
-    return response.json()
-
-
-def get_mcap(token):
-    url = f"https://api.coingecko.com/api/v3/simple/price?ids={token}&vs_currencies=usd&include_market_cap=true"
-    response = requests.get(url)
-    data = response.json()
-    return data[token]["usd_market_cap"]
-
-
 # ALCHEMY
 
 
@@ -437,152 +563,6 @@ def get_os_nft_id(nft, identifier):
     response = requests.get(url, headers=headers)
     data = response.json()
     return data
-
-
-# DEFINED
-
-
-def get_price_change(address, chain):
-    if chain in mappings.DEFINED_CHAINS:
-        chain = mappings.DEFINED_CHAINS[chain]
-
-    url = "https://graph.defined.fi/graphql"
-
-    headers = {
-        "content_type": "application/json",
-        "Authorization": os.getenv("DEFINED_API_KEY")
-    }
-
-    current_timestamp = int(datetime.now().timestamp()) - 300
-    one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
-    twenty_four_hours_ago_timestamp = int((datetime.now() - timedelta(hours=24)).timestamp())
-    seven_days_ago_timestamp = int((datetime.now() - timedelta(days=7)).timestamp())
-
-    pricechange = f"""query {{
-        getTokenPrices(
-            inputs: [
-                {{ 
-                    address: "{address}"
-                    networkId: {chain}
-                    timestamp: {current_timestamp}
-                }}
-                {{ 
-                    address: "{address}"
-                    networkId: {chain}
-                    timestamp: {one_hour_ago_timestamp}
-                }}
-                {{ 
-                    address: "{address}"
-                    networkId: {chain}
-                    timestamp: {twenty_four_hours_ago_timestamp}
-                }}
-                {{ 
-                    address: "{address}"
-                    networkId: {chain}
-                    timestamp: {seven_days_ago_timestamp}
-                }}
-            ]
-        ) {{
-            priceUsd
-        }}
-    }}"""
-    try:
-        response = requests.post(url, headers=headers, json={"query": pricechange})
-        data = response.json()
-
-        current_price = data["data"]["getTokenPrices"][0]["priceUsd"]
-        one_hour_ago_price = data["data"]["getTokenPrices"][1]["priceUsd"]
-        twenty_four_hours_ago_price = data["data"]["getTokenPrices"][2]["priceUsd"]
-        seven_days_ago_price = data["data"]["getTokenPrices"][3]["priceUsd"]
-
-        one_hour_change = round(((current_price - one_hour_ago_price) / one_hour_ago_price) * 100, 2)
-        twenty_four_hours_change = round(
-            ((current_price - twenty_four_hours_ago_price) / twenty_four_hours_ago_price) * 100, 2)
-        seven_days_change = round(((current_price - seven_days_ago_price) / seven_days_ago_price) * 100, 2)
-
-        emoji_up = "📈"
-        emoji_down = "📉"
-
-        one_hour_change_str = f"{emoji_up if one_hour_change > 0 else emoji_down} 1H Change: {one_hour_change}%"
-        twenty_four_hours_change_str = f"{emoji_up if twenty_four_hours_change > 0 else emoji_down} 24H Change: {twenty_four_hours_change}%"
-        seven_days_change_str = f"{emoji_up if seven_days_change > 0 else emoji_down} 7D Change: {seven_days_change}%"
-
-        result = (
-            f"{one_hour_change_str}\n"
-            f"{twenty_four_hours_change_str}\n"
-            f"{seven_days_change_str}"
-        )
-    except Exception as e:
-        result = "  1H Change: N/A\n  24H Change: N/A\n  7D Change: N/A"
-    return result
-
-
-def get_token_image(token, chain):
-    if chain in mappings.DEFINED_CHAINS:
-        chain = mappings.DEFINED_CHAINS[chain]
-
-    url = "https://graph.defined.fi/graphql"
-
-    headers = {
-        "content_type": "application/json",
-        "Authorization": os.getenv("DEFINED_API_KEY")
-    }
-
-    image = f'''
-        query {{
-            getTokenInfo(address:"{token}", networkId:{chain}) {{
-                imageLargeUrl
-            }}
-        }}
-    '''
-
-    response = requests.post(url, headers=headers, json={"query": image})
-    data = response.json()
-    if 'data' in data and 'getTokenInfo' in data['data']:
-            token_info = data['data']['getTokenInfo']
-
-            if token_info and 'imageLargeUrl' in token_info:
-                image_url = token_info['imageLargeUrl']
-                return image_url
-            else:
-                return "N/A"
-    else:
-        return "N/A"
-
-
-def get_volume(pair, chain):
-    try:
-        if chain in mappings.DEFINED_CHAINS:
-            chain = mappings.DEFINED_CHAINS[chain]
-
-        url = "https://graph.defined.fi/graphql"
-
-        headers = {
-            "content_type": "application/json",
-            "Authorization": os.getenv("DEFINED_API_KEY")
-        }
-
-        volume = f'''
-            query {{
-            getDetailedPairStats(pairAddress: "{pair}", networkId: {chain}, bucketCount: 1, tokenOfInterest: token1) {{
-                stats_day1 {{
-                statsUsd {{
-                    volume {{
-                    currentValue
-                    }}
-                }}
-                }}
-            }}
-            }}
-            '''
-
-        response = requests.post(url, headers=headers, json={"query": volume})
-        data = response.json()
-
-        current_value = data['data']['getDetailedPairStats']['stats_day1']['statsUsd']['volume']['currentValue']
-        return "${:,.0f}".format(float(current_value))
-    except Exception as e:
-            return "N/A"
 
 
 # OTHER
