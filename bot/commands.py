@@ -713,6 +713,7 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    buttons = []
     input_contract = " ".join(context.args).lower()
     contract_names = list(dao.CONTRACT_MAPPINGS.keys())
     formatted_contract_names = '\n'.join(contract_names)
@@ -721,6 +722,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
     if not input_contract:
         x7dao_proposers = api.get_proposers("eth")
+        holders = api.get_holders(ca.X7DAO, "eth")
         snapshot = api.get_snapshot()
         end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
         duration = end - datetime.utcnow()
@@ -728,16 +730,41 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if snapshot["data"]["proposals"][0]["state"] == "active":
             end_status = f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
             header = 'Current Open Proposal'
+            buttons.extend([
+            [InlineKeyboardButton(
+                text="Vote Here",
+                url=f"{url.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
+            ],
+            [InlineKeyboardButton(
+                text="X7 Finance DAO",
+                url=f"{url.TG_DAO}")
+            ],
+            [InlineKeyboardButton(
+                    text="DAO Proposers Chat",
+                    url=f"{url.TG_DAO}")
+            ]
+            ])
         else:
             end_status = f'Vote Closed: {end.strftime("%Y-%m-%d %H:%M:%S")}'
             header = 'No Current Open Proposal\n\nLast Proposal:'
+            buttons.extend([
+            [InlineKeyboardButton(
+                text="X7 Finance DAO",
+                url=f"{url.TG_DAO}")
+            ],
+            [InlineKeyboardButton(
+                text="DAO Proposers Chat",
+                url=f"{url.TG_DAO}")
+            ]
+            ])
         
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
                 f'*X7 Finance DAO*\n'
                 f'use `/dao functions` for a list of call callable contracts\n\n'
-                f"X7DAO Holders ≥ 500K: {x7dao_proposers}\n\n"
+                f"X7DAO Holders: {holders}\n"
+                f"X7DAO Proposers: {x7dao_proposers}\n\n"
                 f'*{header}*\n\n'
                 f'{snapshot["data"]["proposals"][0]["title"]} by - '
                 f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
@@ -750,23 +777,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
                 f'{end_status}',
             parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text=f"Vote Here",
-                            url=f"{url.SNAPSHOT}/proposal/"
-                            f'{snapshot["data"]["proposals"][0]["id"]}',
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text=f"DAO Proposers Chat",
-                            url=f"{url.TG_DAO}",
-                        )
-                    ],
-                ]
-            ),
+            reply_markup=InlineKeyboardMarkup(buttons)
         )
         return
     else:
