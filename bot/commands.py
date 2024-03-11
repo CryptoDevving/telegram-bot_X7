@@ -750,7 +750,7 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             buttons.extend([
             [InlineKeyboardButton(
                 text="X7 Finance DAO",
-                url=f"{url.TG_DAO}")
+                url=f"{url.SNAPSHOT}")
             ],
             [InlineKeyboardButton(
                 text="DAO Proposers Chat",
