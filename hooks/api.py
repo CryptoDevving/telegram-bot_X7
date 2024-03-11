@@ -88,7 +88,7 @@ class CoinGecko:
         )
 
 
-    def get_price(token):
+    def get_price(self, token):
         coingecko = CoinGeckoAPI()
         return coingecko.get_price(
             ids=token,

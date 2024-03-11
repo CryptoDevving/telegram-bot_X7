@@ -2808,7 +2808,6 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     fill=(255, 255, 255),
                 )
                 im1.save(r"media/blackhole.png", quality=95)
-                await message.delete()
                 await update.message.reply_photo(
                     photo=open(r"media/blackhole.png", "rb"),
                     caption=
