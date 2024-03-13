@@ -531,7 +531,6 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    chain = " ".join(context.args).lower()
     price = coingecko.get_price("x7101, x7102, x7103, x7104, x7105")
     x7101mc = price["x7101"]["usd"] * ca.SUPPLY
     x7102mc = price["x7102"]["usd"] * ca.SUPPLY
@@ -549,36 +548,35 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
         price["x7104"]["usd_24h_change"] = 0
     if price["x7105"]["usd_24h_change"] is None:
         price["x7105"]["usd_24h_change"] = 0
-    if chain == "":
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance Constellation Token Prices (ETH)*\n\n"
-                f"For more info use `/x7token-name`\n\n"
-                f'X7101:      ${price["x7101"]["usd"]}\n'
-                f'24 Hour Change: {round(price["x7101"]["usd_24h_change"], 1)}%\n'
-                f'Market Cap:  ${"{:0,.0f}".format(x7101mc)}\n'
-                f"CA: `{ca.X7101}\n\n`"
-                f'X7102:      ${price["x7102"]["usd"]}\n'
-                f'24 Hour Change: {round(price["x7102"]["usd_24h_change"], 1)}%\n'
-                f'Market Cap:  ${"{:0,.0f}".format(x7102mc)}\n'
-                f"CA: `{ca.X7102}\n\n`"
-                f'X7103:      ${price["x7103"]["usd"]}\n'
-                f'24 Hour Change: {round(price["x7103"]["usd_24h_change"], 1)}%\n'
-                f'Market Cap:  ${"{:0,.0f}".format(x7103mc)}\n'
-                f"CA: `{ca.X7103}\n\n`"
-                f'X7104:      ${price["x7104"]["usd"]}\n'
-                f'24 Hour Change: {round(price["x7104"]["usd_24h_change"], 1)}%\n'
-                f'Market Cap:  ${"{:0,.0f}".format(x7104mc)}\n'
-                f"CA: `{ca.X7104}\n\n`"
-                f'X7105:      ${price["x7105"]["usd"]}\n'
-                f'24 Hour Change: {round(price["x7105"]["usd_24h_change"], 1)}%\n'
-                f'Market Cap:  ${"{:0,.0f}".format(x7105mc)}\n'
-                f"CA: `{ca.X7105}\n\n`"
-                f'Combined Market Cap: ${"{:0,.0f}".format(const_mc)}\n\n'
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-        )
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"*X7 Finance Constellation Token Prices (ETH)*\n\n"
+            f"For more info use `/x7token-name`\n\n"
+            f'X7101:      ${price["x7101"]["usd"]}\n'
+            f'24 Hour Change: {round(price["x7101"]["usd_24h_change"], 1)}%\n'
+            f'Market Cap:  ${"{:0,.0f}".format(x7101mc)}\n'
+            f"CA: `{ca.X7101}\n\n`"
+            f'X7102:      ${price["x7102"]["usd"]}\n'
+            f'24 Hour Change: {round(price["x7102"]["usd_24h_change"], 1)}%\n'
+            f'Market Cap:  ${"{:0,.0f}".format(x7102mc)}\n'
+            f"CA: `{ca.X7102}\n\n`"
+            f'X7103:      ${price["x7103"]["usd"]}\n'
+            f'24 Hour Change: {round(price["x7103"]["usd_24h_change"], 1)}%\n'
+            f'Market Cap:  ${"{:0,.0f}".format(x7103mc)}\n'
+            f"CA: `{ca.X7103}\n\n`"
+            f'X7104:      ${price["x7104"]["usd"]}\n'
+            f'24 Hour Change: {round(price["x7104"]["usd_24h_change"], 1)}%\n'
+            f'Market Cap:  ${"{:0,.0f}".format(x7104mc)}\n'
+            f"CA: `{ca.X7104}\n\n`"
+            f'X7105:      ${price["x7105"]["usd"]}\n'
+            f'24 Hour Change: {round(price["x7105"]["usd_24h_change"], 1)}%\n'
+            f'Market Cap:  ${"{:0,.0f}".format(x7105mc)}\n'
+            f"CA: `{ca.X7105}\n\n`"
+            f'Combined Market Cap: ${"{:0,.0f}".format(const_mc)}\n\n'
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+    )
 
 
 async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1807,6 +1805,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     x7r_remaining_time_str, x7r_unlock_datetime_str = calculate_remaining_time(web3, contract, x7r_pair, now)
     x7dao_remaining_time_str, x7dao_unlock_datetime_str = calculate_remaining_time(web3, contract, x7dao_pair, now)
+    x7d_remaining_time_str, x7d_unlock_datetime_str = calculate_remaining_time(web3, contract, ca.X7D, now)
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -1816,6 +1815,8 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"{x7r_remaining_time_str}\n\n"
             f"*X7DAO Unlock Date*:\n{x7dao_unlock_datetime_str}\n"
             f"{x7dao_remaining_time_str}\n\n"
+            f"*X7D Unlock Date*:\n{x7d_unlock_datetime_str}\n"
+            f"{x7d_remaining_time_str}\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
