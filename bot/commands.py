@@ -494,6 +494,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"{api.get_quote()}",
             parse_mode="Markdown",
         )
+        return
     if x7token == ca.X7R:
         x7_supply = api.get_x7r_supply("eth")
     else:
