@@ -214,6 +214,29 @@ class Defined:
         else:
             return "N/A"
 
+    def get_pair(self, address, chain):
+        if chain in mappings.DEFINED_CHAINS:
+            chain = mappings.DEFINED_CHAINS[chain]
+        
+        pair_query = f"""query {{
+            listPairsWithMetadataForToken (tokenAddress: "{address}" networkId: {chain}) {{
+                results {{
+                    pair {{
+                        address
+                    }}
+                }}
+            }}
+            }}"""
+        
+        response = requests.post(self.url, headers=self.headers, json={"query": pair_query})
+        data = response.json()
+        if response.status_code == 200:
+            data = response.json()
+            pair = data.get('data', {}).get('listPairsWithMetadataForToken', {}).get('results', [])[0].get('pair', {}).get('address')
+            return pair
+        else:
+            return None
+
 
     def get_volume(self, pair, chain):
         try:
@@ -716,7 +739,7 @@ def get_random_pioneer():
 
 
 def get_scan(token: str, chain: str) -> dict:
-    chains = {"eth": 1, "bsc": 56, "arb": 42161, "opti": 10, "poly": 137}
+    chains = {"eth": 1, "bsc": 56, "arb": 42161, "opti": 10, "poly": 137, "base": 8453}
     chain_number = chains.get(chain)
     if not chain_number:
         raise ValueError(f"{chain} is not a valid chain")
