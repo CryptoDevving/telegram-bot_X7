@@ -52,7 +52,86 @@ class Dextools:
                 return "Unknown DEX"
         except Exception:
             "Unknown DEX"
+    
+    def get_price(self, token, chain):
+        if chain in mappings.DEX_TOOLS_CHAINS:
+            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
+        endpoint = f'token/{dextools_chain}/{token}/price'
+
+        response = requests.get(self.url + endpoint, headers=self.headers)
+
+        if response.status_code == 200:
+            
+            data = response.json()
+            price = data['data']['price']
+            if "e-" in str(price):
+                price = "{:.8f}".format(price)
+            elif price < 1:
+                price = "{:.8f}".format(price) 
+            else:
+                price = "{:.2f}".format(price)
+
+            one_hour_change = data['data']['variation1h']
+            six_hour_change = data['data']['variation6h']
+            one_day_change = data['data']['variation24h']
+
+            emoji_up = "📈"
+            emoji_down = "📉"
+            one_hour = f"{emoji_up if one_hour_change is not None and one_hour_change > 0 else emoji_down} 1H Change: {round(one_hour_change, 2)}%" if one_hour_change is not None else f'{emoji_down} 1H Change: N/A'
+            six_hour = f"{emoji_up if six_hour_change is not None and six_hour_change > 0 else emoji_down} 6H Change: {round(six_hour_change, 2)}%" if six_hour_change is not None else f'{emoji_down} 6H Change: N/A'
+            one_day = f"{emoji_up if one_day_change is not None and one_day_change > 0 else emoji_down} 24H Change: {round(one_day_change, 2)}%" if one_day_change is not None else f'{emoji_down} 24H Change: N/A'
+    
+            result = {
+                "price": price,
+                "change": {
+                    "one_hour": one_hour,
+                    "six_hour": six_hour,
+                    "one_day": one_day
+                }
+            }
+            return price, result["change"]
+        else:
+            return 0, "N/A"
         
+    def get_token_info(self, pair, chain):
+        if chain in mappings.DEX_TOOLS_CHAINS:
+            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
+        endpoint = f"token/{dextools_chain}/{pair}/info"
+        response = requests.get(self.url + endpoint, headers=self.headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            if data and "data" in data and data["data"]:
+                total_supply = data["data"].get("totalSupply", 0)
+                mcap = data["data"].get("mcap", 0)
+                holders = data["data"].get("holders", 0)
+
+                if mcap is not None:
+                    formatted_mcap = "${:,.0f}".format(mcap)
+                else:
+                    fdv = data["data"].get("fdv", 0)
+                    if fdv is not None:
+                        formatted_mcap = f'${fdv:,.0f} (FDV)'
+                    else:
+                        formatted_mcap = "N/A"
+
+                return {
+                    "supply": total_supply,
+                    "mcap": formatted_mcap,
+                    "holders": holders
+                }
+            else:
+                return {
+                    "total_supply": 0,
+                    "mcap": "N/A",
+                    "holders": "N/A"
+                }
+        else:
+            return {
+                "supply": 0,
+                "mcap": "N/A",
+                "holders": "N/A"
+            }
 
     def get_liquidity(self, pair, chain):
         if chain in mappings.DEX_TOOLS_CHAINS:
