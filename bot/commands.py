@@ -1665,88 +1665,85 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        loan_type = " ".join(context.args).lower()
-        if loan_type == "":
-            message = await update.message.reply_text("Getting Loan Info, Please wait...")
-            await context.bot.send_chat_action(update.effective_chat.id, "typing")
-            url = "https://lb.drpc.org/ogrpc?network="
-            networks = {
-                "ETH": (f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL),
-                "ARB": (f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
-                "BSC": ("https://bsc-dataseed.binance.org/", ca.LPOOL_V1),
-                "POLY": (f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
-                "OPTI": (f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
-                "BASE": ("https://mainnet.base.org", ca.LPOOL_V1),
-            }
-            contract_instances = {}
-            for network, (web3_url, pool_contract) in networks.items():
-                web3 = Web3(Web3.HTTPProvider(web3_url))
-                contract = web3.eth.contract(
-                    address=to_checksum_address(pool_contract),
-                    abi=api.get_abi(pool_contract, network.lower()),
-                )
-                amount = contract.functions.nextLoanID().call() - 1
-                contract_instances[network] = amount
-            await message.delete()
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance Loan Count*\n"
-                    f"Use `/loans info` for ILL info\n"
-                    f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
-                    f'`ETH:`       {contract_instances["ETH"]}\n'
-                    f'`BSC:`       {contract_instances["BSC"]}\n'
-                    f'`ARB:`       {contract_instances["ARB"]}\n'
-                    f'`POLY:`     {contract_instances["POLY"]}\n'
-                    f'`OPTI:`     {contract_instances["OPTI"]}\n'
-                    f'`BASE:`     {contract_instances["BASE"]}\n\n'
-                    f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
+    loan_type = " ".join(context.args).lower()
+    if loan_type == "":
+        message = await update.message.reply_text("Getting Loan Info, Please wait...")
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        url = "https://lb.drpc.org/ogrpc?network="
+        networks = {
+            "ETH": (f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL),
+            "ARB": (f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
+            "BSC": ("https://bsc-dataseed.binance.org/", ca.LPOOL_V1),
+            "POLY": (f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
+            "OPTI": (f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
+            "BASE": ("https://mainnet.base.org", ca.LPOOL_V1),
+        }
+        contract_instances = {}
+        for network, (web3_url, pool_contract) in networks.items():
+            web3 = Web3(Web3.HTTPProvider(web3_url))
+            contract = web3.eth.contract(
+                address=to_checksum_address(pool_contract),
+                abi=api.get_abi(pool_contract, network.lower()),
             )
-            return
-        if loan_type == "info":
-            await update.message.reply_text(
-                f"{loans.OVERVIEW}\n\n{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
+            amount = contract.functions.nextLoanID().call() - 1
+            contract_instances[network] = amount
+        await message.delete()
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*X7 Finance Loan Count*\n"
+                f"Use `/loans info` for ILL info\n"
+                f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
+                f'`ETH:`       {contract_instances["ETH"]}\n'
+                f'`BSC:`       {contract_instances["BSC"]}\n'
+                f'`ARB:`       {contract_instances["ARB"]}\n'
+                f'`POLY:`     {contract_instances["POLY"]}\n'
+                f'`OPTI:`     {contract_instances["OPTI"]}\n'
+                f'`BASE:`     {contract_instances["BASE"]}\n\n'
+                f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+        )
+        return
+    if loan_type == "info":
+        await update.message.reply_text(
+            f"{loans.OVERVIEW}\n\n{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
                     [
-                        [
-                            InlineKeyboardButton(
-                                text="X7 Finance Whitepaper", url=f"{urls.WP_LINK}"
-                            )
-                        ],
-                    ]
-                ),
-            )
-            return
-        else:
-            if loan_type in loans.LOANS:
-                loan_terms = loans.LOANS[loan_type]
-                buttons = [
-                    [
-                        InlineKeyboardButton(text="Ethereum", url=f"{urls.ETHER_ADDRESS}{loan_terms.ca}"),
-                        InlineKeyboardButton(text="BSC", url=f"{urls.BSC_ADDRESS}{loan_terms.ca}"),
-                    ],
-                    [
-                        InlineKeyboardButton(text="Polygon", url=f"{urls.POLY_ADDRESS}{loan_terms.ca}"),
-                        InlineKeyboardButton(text="Arbitrum", url=f"{urls.ARB_ADDRESS}{loan_terms.ca}"),
-                    ],
-                    [
-                        InlineKeyboardButton(text="Optimism", url=f"{urls.OPTI_ADDRESS}{loan_terms.ca}"),
-                        InlineKeyboardButton(text="Base", url=f"{urls.BASE_ADDRESS}{loan_terms.ca}"),
+                        InlineKeyboardButton(
+                            text="X7 Finance Whitepaper", url=f"{urls.WP_LINK}"
+                        )
                     ],
                 ]
+            ),
+        )
+        return
+    else:
+        if loan_type in loans.LOANS:
+            loan_terms = loans.LOANS[loan_type]
+            buttons = [
+                [
+                    InlineKeyboardButton(text="Ethereum", url=f"{urls.ETHER_ADDRESS}{loan_terms.ca}"),
+                    InlineKeyboardButton(text="BSC", url=f"{urls.BSC_ADDRESS}{loan_terms.ca}"),
+                ],
+                [
+                    InlineKeyboardButton(text="Polygon", url=f"{urls.POLY_ADDRESS}{loan_terms.ca}"),
+                    InlineKeyboardButton(text="Arbitrum", url=f"{urls.ARB_ADDRESS}{loan_terms.ca}"),
+                ],
+                [
+                    InlineKeyboardButton(text="Optimism", url=f"{urls.OPTI_ADDRESS}{loan_terms.ca}"),
+                    InlineKeyboardButton(text="Base", url=f"{urls.BASE_ADDRESS}{loan_terms.ca}"),
+                ],
+            ]
 
-                await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=f"{loan_terms.name}\n{loan_terms.generate_terms()}\n\n",
-                    parse_mode="Markdown",
-                    reply_markup=InlineKeyboardMarkup(buttons),
-                )
-    except Exception as e:
-        print(e)
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=f"{loan_terms.name}\n{loan_terms.generate_terms()}\n\n",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(buttons),
+            )
 
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
