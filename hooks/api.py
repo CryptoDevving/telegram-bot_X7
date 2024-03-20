@@ -63,7 +63,8 @@ class Dextools:
         if response.status_code == 200:
             
             data = response.json()
-            if 'price' in data['data']:
+            if 'data' in data and 'price' in data['data']:
+                price = data['data']['price']
                 if "e-" in str(price):
                     price = "{:.8f}".format(price)
                 elif price < 1:
