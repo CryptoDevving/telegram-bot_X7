@@ -1,5 +1,7 @@
 # LOANS
 
+from constants import ca
+
 OVERVIEW = (
     "*X7 Finance Loan Terms*\n\n"
     "Use `/loans ill001 - ill003` for more details on individual loan contracts\n\n"
@@ -16,14 +18,11 @@ OVERVIEW = (
     "process by which new loan terms may be invented, provided they implement the proper interface."
 )
 
-ILL001_NAME = "X7 Initial Liquidity Loan Term (001) - X7ILL001"
-ILL002_NAME = "X7 Initial Liquidity Loan Term (002) - X7ILL002"
-ILL003_NAME = "X7 Initial Liquidity Loan Term (003) - X7ILL003"
-
 
 class LoanTerm:
     def __init__(
         self,
+        ca,
         name,
         min_loan,
         max_loan,
@@ -39,6 +38,7 @@ class LoanTerm:
         liquidator_reward,
     ):
         self.name = name
+        self.ca = ca
         self.min_loan = min_loan
         self.max_loan = max_loan
         self.leverage = leverage
@@ -69,7 +69,9 @@ class LoanTerm:
     """
 
 
-ILL001_TERMS = LoanTerm(
+LOANS = {
+    "ill001": LoanTerm(
+    ca.ILL001,
     "X7 Initial Liquidity Loan Term (001) - X7ILL001",
     0.5,
     5,
@@ -83,25 +85,9 @@ ILL001_TERMS = LoanTerm(
     "100%",
     "Failure of full repayment of principal by the end of the loan term will make the loan eligible for liquidation.",
     "5%",
-)
-
-ILL002_TERMS = LoanTerm(
-    "X7 Initial Liquidity Loan Term (002) - X7ILL002",
-    0.5,
-    5,
-    "(10x leverage)",
-    4,
-    4,
-    "1 Day",
-    "28 Days",
-    "10%",
-    "6.25%",
-    "25% of the capital must be repaid on each quarter",
-    "Failure to pay a premium + principal payment by its due date or repay the principal by the end of the loan term will make the loan eligible for liquidation.",
-    "5%",
-)
-
-ILL003_TERMS = LoanTerm(
+    ),
+    "ill003": LoanTerm(
+    ca.ILL003,
     "X7 Initial Liquidity Loan Term (003) - X7ILL003",
     0.5,
     5,
@@ -116,3 +102,4 @@ ILL003_TERMS = LoanTerm(
     "Failure to pay a premium payment by its due date or repay the principal by the end of the loan term will make the loan eligible for liquidation.",
     "10%",
 )
+}

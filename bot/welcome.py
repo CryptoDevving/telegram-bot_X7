@@ -4,7 +4,7 @@ from telegram.ext import *
 import os
 from typing import Optional, Tuple
 
-from constants import url
+from constants import urls
 from hooks import api
 import media
 
@@ -124,11 +124,11 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         [
                             InlineKeyboardButton(
                                 text="Website",
-                                url=url.WEBSITE,
+                                url=urls.WEBSITE,
                             ),
                             InlineKeyboardButton(
                                 text="Xchange",
-                                url=url.XCHANGE,
+                                url=urls.XCHANGE,
                             ),
                         ],
                     ]

@@ -10,7 +10,7 @@ from translate import Translator
 from PIL import Image, ImageDraw, ImageFont
 from web3 import Web3
 
-from constants import ca, dao, loans, mappings, nfts, splitters, tax, text, url  
+from constants import ca, dao, loans, mappings, nfts, splitters, tax, text, urls  
 from hooks import api, db, dune 
 import media
 from variables import times, giveaway
@@ -27,8 +27,8 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
+                [InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}")],
+                [InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}")],
             ]
         ),
     )
@@ -66,7 +66,7 @@ async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="XChange Alerts", url=f"{url.TG_ALERTS}")],
+                [InlineKeyboardButton(text="XChange Alerts", url=f"{urls.TG_ALERTS}")],
             ]
         ),
     )
@@ -198,7 +198,7 @@ async def blog(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 [
                     InlineKeyboardButton(
-                        text="X7 Finance Blog", url=f"{url.WEBSITE}blog"
+                        text="X7 Finance Blog", url=f"{urls.WEBSITE}blog"
                     )
                 ],
             ]
@@ -233,24 +233,18 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ill001_contract = chain_web3.eth.contract(
         address=Web3.to_checksum_address(ca.ILL001), abi=api.get_abi(ca.ILL001, chain)
     )
-    ill002_contract = chain_web3.eth.contract(
-        address=Web3.to_checksum_address(ca.ILL002), abi=api.get_abi(ca.ILL002, chain)
-    )
     ill003_contract = chain_web3.eth.contract(
         address=Web3.to_checksum_address(ca.ILL003), abi=api.get_abi(ca.ILL003, chain)
     )
     
     ill001_data = ill001_contract.functions.getQuote(int(amount_in_wei)).call()
-    ill002_data = ill002_contract.functions.getQuote(int(amount_in_wei)).call()
     ill003_data = ill003_contract.functions.getQuote(int(amount_in_wei)).call()
 
     ill001_origination_fee, ill001_total_premium = [value / 10**18 for value in ill001_data[1:]]
-    ill002_origination_fee, ill002_total_premium = [value / 10**18 for value in ill002_data[1:]]
     ill003_origination_fee, ill003_total_premium = [value / 10**18 for value in ill003_data[1:]]
 
     native_price = api.get_native_price(chain_native)
     ill001_origination_dollar, ill001_total_premium_dollar = [value * native_price for value in [ill001_origination_fee, ill001_total_premium]]
-    ill002_origination_dollar, ill002_total_premium_dollar = [value * native_price for value in [ill002_origination_fee, ill002_total_premium]]
     ill003_origination_dollar, ill003_total_premium_dollar = [value * native_price for value in [ill003_origination_fee, ill003_total_premium]]
 
     await message.delete()
@@ -263,10 +257,6 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Origination Fee: {ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar:.2f})\n"
         f"Premium Fees: {ill001_total_premium} {chain_native.upper()} (${ill001_total_premium_dollar:.2f})\n"
         f"*Total Cost:* {ill001_total_premium + ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar + ill001_total_premium_dollar:.2f})\n\n"
-        f"*ILL002*\n"
-        f"Origination Fee: {ill002_origination_fee} {chain_native.upper()} (${ill002_origination_dollar:.2f})\n"
-        f"Premium Fees: {ill002_total_premium} {chain_native.upper()} ({ill002_total_premium_dollar:.2f})\n"
-        f"*Total Cost:* {ill002_total_premium + ill002_origination_fee} {chain_native.upper()} (${ill002_origination_dollar + ill002_total_premium_dollar:.2f})\n\n"
         f"*ILL003*\n"
         f"Origination Fee: {ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar:.2f})\n"
         f"Premium Fees: {ill003_total_premium} {chain_native.upper()} (${ill003_total_premium_dollar:.2f})\n"
@@ -371,7 +361,7 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
         [
             InlineKeyboardButton(
-                text="DAO Proposers Chat", url=f"{url.TG_DAO}",
+                text="DAO Proposers Chat", url=f"{urls.TG_DAO}",
             ),
             InlineKeyboardButton(
                 text="Xchange Alerts", url="https://t.me/x7_alerts"
@@ -722,8 +712,8 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     contract_names = list(dao.CONTRACT_MAPPINGS.keys())
     formatted_contract_names = '\n'.join(contract_names)
     keyboard = InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text="Vote Here",url=url.SNAPSHOT,)],
-            [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
+            [[InlineKeyboardButton(text="Vote Here",url=urls.SNAPSHOT,)],
+            [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
     if not input_contract:
         x7dao_proposers = api.get_proposers("eth")
         holders = dextools.get_holders(ca.X7DAO, "eth")
@@ -737,15 +727,15 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             buttons.extend([
             [InlineKeyboardButton(
                 text="Vote Here",
-                url=f"{url.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
+                url=f"{urls.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
             ],
             [InlineKeyboardButton(
                 text="X7 Finance DAO",
-                url=f"{url.TG_DAO}")
+                url=f"{urls.TG_DAO}")
             ],
             [InlineKeyboardButton(
                     text="DAO Proposers Chat",
-                    url=f"{url.TG_DAO}")
+                    url=f"{urls.TG_DAO}")
             ]
             ])
         else:
@@ -754,11 +744,11 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             buttons.extend([
             [InlineKeyboardButton(
                 text="X7 Finance DAO",
-                url=f"{url.SNAPSHOT}")
+                url=f"{urls.SNAPSHOT}")
             ],
             [InlineKeyboardButton(
                 text="DAO Proposers Chat",
-                url=f"{url.TG_DAO}")
+                url=f"{urls.TG_DAO}")
             ]
             ])
         
@@ -842,13 +832,13 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{url.ETHER_TX}{tx["result"][0]["hash"]}',
+                            url=f'{urls.ETHER_TX}{tx["result"][0]["hash"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="View all on chains",
-                            url=f"{url.WEBSITE}docs/onchains",
+                            url=f"{urls.WEBSITE}docs/onchains",
                         )
                     ],
                 ]
@@ -873,13 +863,13 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{url.ETHER_TX}{tx["result"][0]["hash"]}',
+                            url=f'{urls.ETHER_TX}{tx["result"][0]["hash"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="View all on chains",
-                            url=f"{url.WEBSITE}docs/onchains",
+                            url=f"{urls.WEBSITE}docs/onchains",
                         )
                     ],
                 ]
@@ -896,7 +886,7 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7 Lending Discount Contract",
-                        url=f"{url.ETHER_ADDRESS}{ca.LENDING_DISCOUNT}#code",
+                        url=f"{urls.ETHER_ADDRESS}{ca.LENDING_DISCOUNT}#code",
                     )
                 ],
             ]
@@ -907,16 +897,16 @@ async def discount(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Get Started", url=f"{url.WEBSITE}getstarted/"),
-            InlineKeyboardButton(text="Trader", url=f"{url.WEBSITE}docs/guides/trade/"),
+            InlineKeyboardButton(text="Get Started", url=f"{urls.WEBSITE}getstarted/"),
+            InlineKeyboardButton(text="Trader", url=f"{urls.WEBSITE}docs/guides/trade/"),
         ],
         [
-            InlineKeyboardButton(text="Liquidity Provider", url=f"{url.WEBSITE}docs/guides/liquidity-provider/"),
-            InlineKeyboardButton(text="Capital Allocator", url=f"{url.WEBSITE}docs/guides/lending/"),
+            InlineKeyboardButton(text="Liquidity Provider", url=f"{urls.WEBSITE}docs/guides/liquidity-provider/"),
+            InlineKeyboardButton(text="Capital Allocator", url=f"{urls.WEBSITE}docs/guides/lending/"),
         ],
         [
-            InlineKeyboardButton(text="Project Engineer", url=f"{url.WEBSITE}docs/guides/integrate-ui/"),
-            InlineKeyboardButton(text="Project Launcher", url=f"{url.WEBSITE}docs/guides/launch/"),
+            InlineKeyboardButton(text="Project Engineer", url=f"{urls.WEBSITE}docs/guides/integrate-ui/"),
+            InlineKeyboardButton(text="Project Launcher", url=f"{urls.WEBSITE}docs/guides/launch/"),
 
         ],
     ]
@@ -1023,8 +1013,8 @@ async def ecosystem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
-                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
+                [InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}")],
+                [InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}")],
             ]
         ),
     )
@@ -1043,16 +1033,16 @@ async def fact(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def factory(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.FACTORY}"),
-            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="ETH", url=f"{urls.ETHER_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="BSC", url=f"{urls.BSC_ADDRESS}{ca.FACTORY}"),
         ],
         [
-            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.FACTORY}"),
-            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="Polygon", url=f"{urls.POLY_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="Arbitrum", url=f"{urls.ARB_ADDRESS}{ca.FACTORY}"),
         ],
         [
-            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.FACTORY}"),
-            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="Optimism", url=f"{urls.OPTI_ADDRESS}{ca.FACTORY}"),
+            InlineKeyboardButton(text="Base", url=f"{urls.BASE_ADDRESS}{ca.FACTORY}"),
         ],
     ]
 
@@ -1356,13 +1346,13 @@ async def launch(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7M105 Launch TX",
-                        url=f"{url.ETHER_TX}0x11ff5b6a860170eaac5b33930680bf79dbf0656292cac039805dbcf34e8abdbf",
+                        url=f"{urls.ETHER_TX}0x11ff5b6a860170eaac5b33930680bf79dbf0656292cac039805dbcf34e8abdbf",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="Migration Go Live TX",
-                        url=f"{url.ETHER_TX}0x13e8ed59bcf97c5948837c8069f1d61e3b0f817d6912015427e468a77056fe41",
+                        url=f"{urls.ETHER_TX}0x13e8ed59bcf97c5948837c8069f1d61e3b0f817d6912015427e468a77056fe41",
                     )
                 ],
             ]
@@ -1398,20 +1388,20 @@ async def leaderboard(update: Update, context: CallbackContext):
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}"),
-            InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}"),
+            InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}"),
+            InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}"),
         ],
         [
-            InlineKeyboardButton(text="Snapshot", url=f"{url.SNAPSHOT}"),
-            InlineKeyboardButton(text="Twitter", url=f"{url.TWITTER}"),
+            InlineKeyboardButton(text="Snapshot", url=f"{urls.SNAPSHOT}"),
+            InlineKeyboardButton(text="Twitter", url=f"{urls.TWITTER}"),
         ],
         [
-            InlineKeyboardButton(text="Reddit", url=f"{url.REDDIT}"),
-            InlineKeyboardButton(text="Youtube", url=f"{url.YOUTUBE}"),
+            InlineKeyboardButton(text="Reddit", url=f"{urls.REDDIT}"),
+            InlineKeyboardButton(text="Youtube", url=f"{urls.YOUTUBE}"),
         ],
         [
-            InlineKeyboardButton(text="Github", url=f"{url.GITHUB}"),
-            InlineKeyboardButton(text="Dune", url=f"{url.DUNE}"),
+            InlineKeyboardButton(text="Github", url=f"{urls.GITHUB}"),
+            InlineKeyboardButton(text="Dune", url=f"{urls.DUNE}"),
         ],
     ]
 
@@ -1675,90 +1665,88 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    loan_type = " ".join(context.args).lower()
-    if loan_type == "":
-        message = await update.message.reply_text("Getting Loan Info, Please wait...")
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        url = "https://lb.drpc.org/ogrpc?network="
-        networks = {
-            "ETH": f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}",
-            "ARB": f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}",
-            "BSC": "https://bsc-dataseed.binance.org/",
-            "POLY": f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}",
-            "OPTI": f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}",
-            "BASE": "https://mainnet.base.org"
-        }
-        contract_instances = {}
-        for network, web3_url in networks.items():
-            web3 = Web3(Web3.HTTPProvider(web3_url))
-            contract = web3.eth.contract(
-                address=to_checksum_address(ca.LPOOL),
-                abi=api.get_abi(ca.LPOOL, network.lower()),
+    try:
+        loan_type = " ".join(context.args).lower()
+        if loan_type == "":
+            message = await update.message.reply_text("Getting Loan Info, Please wait...")
+            await context.bot.send_chat_action(update.effective_chat.id, "typing")
+            url = "https://lb.drpc.org/ogrpc?network="
+            networks = {
+                "ETH": (f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL),
+                "ARB": (f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
+                "BSC": ("https://bsc-dataseed.binance.org/", ca.LPOOL_V1),
+                "POLY": (f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
+                "OPTI": (f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
+                "BASE": ("https://mainnet.base.org", ca.LPOOL_V1),
+            }
+            contract_instances = {}
+            for network, (web3_url, pool_contract) in networks.items():
+                web3 = Web3(Web3.HTTPProvider(web3_url))
+                contract = web3.eth.contract(
+                    address=to_checksum_address(pool_contract),
+                    abi=api.get_abi(pool_contract, network.lower()),
+                )
+                amount = contract.functions.nextLoanID().call() - 1
+                contract_instances[network] = amount
+            await message.delete()
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance Loan Count*\n"
+                    f"Use `/loans info` for ILL info\n"
+                    f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
+                    f'`ETH:`       {contract_instances["ETH"]}\n'
+                    f'`BSC:`       {contract_instances["BSC"]}\n'
+                    f'`ARB:`       {contract_instances["ARB"]}\n'
+                    f'`POLY:`     {contract_instances["POLY"]}\n'
+                    f'`OPTI:`     {contract_instances["OPTI"]}\n'
+                    f'`BASE:`     {contract_instances["BASE"]}\n\n'
+                    f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
+                    f"{api.get_quote()}",
+                parse_mode="Markdown",
             )
-            amount = contract.functions.nextLoanID().call() - 1
-            contract_instances[network] = amount
-        await message.delete()
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance Loan Count*\n"
-                f"Use `/loans info` for ILL info\n"
-                f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
-                f'`ETH:`       {contract_instances["ETH"]}\n'
-                f'`BSC:`       {contract_instances["BSC"]}\n'
-                f'`ARB:`       {contract_instances["ARB"]}\n'
-                f'`POLY:`     {contract_instances["POLY"]}\n'
-                f'`OPTI:`     {contract_instances["OPTI"]}\n'
-                f'`BASE:`     {contract_instances["BASE"]}\n\n'
-                f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-        )
-        return
-    if loan_type == "info":
-        await update.message.reply_text(
-            f"{loans.OVERVIEW}\n\n{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
-                [
+            return
+        if loan_type == "info":
+            await update.message.reply_text(
+                f"{loans.OVERVIEW}\n\n{api.get_quote()}",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="X7 Finance Whitepaper", url=f"{url.WP_LINK}"
-                        )
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Finance Whitepaper", url=f"{urls.WP_LINK}"
+                            )
+                        ],
+                    ]
+                ),
+            )
+            return
+        else:
+            if loan_type in loans.LOANS:
+                loan_terms = loans.LOANS[loan_type]
+                buttons = [
+                    [
+                        InlineKeyboardButton(text="Ethereum", url=f"{urls.ETHER_ADDRESS}{loan_terms.ca}"),
+                        InlineKeyboardButton(text="BSC", url=f"{urls.BSC_ADDRESS}{loan_terms.ca}"),
+                    ],
+                    [
+                        InlineKeyboardButton(text="Polygon", url=f"{urls.POLY_ADDRESS}{loan_terms.ca}"),
+                        InlineKeyboardButton(text="Arbitrum", url=f"{urls.ARB_ADDRESS}{loan_terms.ca}"),
+                    ],
+                    [
+                        InlineKeyboardButton(text="Optimism", url=f"{urls.OPTI_ADDRESS}{loan_terms.ca}"),
+                        InlineKeyboardButton(text="Base", url=f"{urls.BASE_ADDRESS}{loan_terms.ca}"),
                     ],
                 ]
-            ),
-        )
-        return
-    else:
-        loan_types = {
-        "ill001": (loans.ILL001_NAME, loans.ILL001_TERMS, ca.ILL001),
-        "ill002": (loans.ILL002_NAME, loans.ILL002_TERMS, ca.ILL002),
-        "ill003": (loans.ILL003_NAME, loans.ILL003_TERMS, ca.ILL003),
-    }
-    if loan_type in loan_types:
-        loan_name, loan_terms, loan_ca = loan_types[loan_type]
-        buttons = [
-            [
-                InlineKeyboardButton(text="Ethereum", url=f"{url.ETHER_ADDRESS}{loan_ca}"),
-                InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{loan_ca}"),
-            ],
-            [
-                InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{loan_ca}"),
-                InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{loan_ca}"),
-            ],
-            [
-                InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{loan_ca}"),
-                InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{loan_ca}"),
-            ],
-        ]
 
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=f"{loan_name}\n{loan_terms.generate_terms()}\n\n",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(buttons),
-        )
+                await update.message.reply_photo(
+                    photo=api.get_random_pioneer(),
+                    caption=f"{loan_terms.name}\n{loan_terms.generate_terms()}\n\n",
+                    parse_mode="Markdown",
+                    reply_markup=InlineKeyboardMarkup(buttons),
+                )
+    except Exception as e:
+        print(e)
 
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2081,15 +2069,15 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
             InlineKeyboardButton(text="Mint Here", url="https://x7.finance/x/nft/mint"),
-            InlineKeyboardButton(text="OS - Ecosystem Maxi", url=f"{url.OS_ECO}{chain_os}"),
+            InlineKeyboardButton(text="OS - Ecosystem Maxi", url=f"{urls.OS_ECO}{chain_os}"),
         ],
         [
-            InlineKeyboardButton(text="OS - Liquidity Maxi", url=f"{url.OS_LIQ}{chain_os}"),
-            InlineKeyboardButton(text="OS - DEX Maxi", url=f"{url.OS_DEX}{chain_os}"),
+            InlineKeyboardButton(text="OS - Liquidity Maxi", url=f"{urls.OS_LIQ}{chain_os}"),
+            InlineKeyboardButton(text="OS - DEX Maxi", url=f"{urls.OS_DEX}{chain_os}"),
         ],
         [
-            InlineKeyboardButton(text="OS - Borrowing Maxi", url=f"{url.OS_BORROW}{chain_os}"),
-            InlineKeyboardButton(text="OS - Magister", url=f"{url.OS_MAGISTER}{chain_os}"),
+            InlineKeyboardButton(text="OS - Borrowing Maxi", url=f"{urls.OS_BORROW}{chain_os}"),
+            InlineKeyboardButton(text="OS - Magister", url=f"{urls.OS_MAGISTER}{chain_os}"),
         ],
     ]
 
@@ -2150,12 +2138,12 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{url.ETHER_TX}{recent_tx["hash"]}',
+                            url=f'{urls.ETHER_TX}{recent_tx["hash"]}',
                         )
                     ],
                     [
                         InlineKeyboardButton(
-                            text="View all on chains", url=f"{url.WEBSITE}docs/onchains"
+                            text="View all on chains", url=f"{urls.WEBSITE}docs/onchains"
                         )
                     ],
                 ]
@@ -2183,12 +2171,12 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             InlineKeyboardButton(
                                 text="View on chain",
-                                url=f'{url.ETHER_TX}{recent_tx["hash"]}',
+                                url=f'{urls.ETHER_TX}{recent_tx["hash"]}',
                             )
                         ],
                         [
                             InlineKeyboardButton(
-                                text="View all on chains", url=f"{url.WEBSITE}docs/onchains"
+                                text="View all on chains", url=f"{urls.WEBSITE}docs/onchains"
                             )
                         ],
                     ]
@@ -2303,7 +2291,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
                     [
                         InlineKeyboardButton(
                             text="Opensea",
-                            url=f"{url.OS_PIONEER}",
+                            url=f"{urls.OS_PIONEER}",
                         )
                     ],
                 ]
@@ -2592,7 +2580,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         [
                             InlineKeyboardButton(
                                 text="Buy",
-                                url=f"{url.XCHANGE}/#/swap?outputCurrency={token_instance['ca']}",
+                                url=f"{urls.XCHANGE}/#/swap?outputCurrency={token_instance['ca']}",
                             )
                         ],
                     ]
@@ -2630,13 +2618,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             [
                                 InlineKeyboardButton(
                                     text="X7R Chart - Rewards Token",
-                                    url=f"{url.DEX_TOOLS_ETH}{ca.X7R_PAIR_ETH}",
+                                    url=f"{urls.DEX_TOOLS_ETH}{ca.X7R_PAIR_ETH}",
                                 )
                             ],
                             [
                                 InlineKeyboardButton(
                                     text="X7DAO Chart - Governance Token",
-                                    url=f"{url.DEX_TOOLS_ETH}{ca.X7DAO_PAIR_ETH}",
+                                    url=f"{urls.DEX_TOOLS_ETH}{ca.X7DAO_PAIR_ETH}",
                                 )
                             ],
                         ]
@@ -2728,16 +2716,16 @@ async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="ETH", url=f"{url.ETHER_ADDRESS}{ca.ROUTER}"),
-            InlineKeyboardButton(text="BSC", url=f"{url.BSC_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="ETH", url=f"{urls.ETHER_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="BSC", url=f"{urls.BSC_ADDRESS}{ca.ROUTER}"),
         ],
         [
-            InlineKeyboardButton(text="Polygon", url=f"{url.POLY_ADDRESS}{ca.ROUTER}"),
-            InlineKeyboardButton(text="Arbitrum", url=f"{url.ARB_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="Polygon", url=f"{urls.POLY_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="Arbitrum", url=f"{urls.ARB_ADDRESS}{ca.ROUTER}"),
         ],
         [
-            InlineKeyboardButton(text="Optimism", url=f"{url.OPTI_ADDRESS}{ca.ROUTER}"),
-            InlineKeyboardButton(text="Base", url=f"{url.BASE_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="Optimism", url=f"{urls.OPTI_ADDRESS}{ca.ROUTER}"),
+            InlineKeyboardButton(text="Base", url=f"{urls.BASE_ADDRESS}{ca.ROUTER}"),
         ],
     ]
 
@@ -3055,7 +3043,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         [
             InlineKeyboardButton(
                 text="Contracts Directory",
-                url=f"{url.CA_DIRECTORY}",
+                url=f"{urls.CA_DIRECTORY}",
             ),
         ],
         [
@@ -3355,7 +3343,7 @@ async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         sticker=media.SWAP,
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange", url=f"{url.XCHANGE}")],
+                [InlineKeyboardButton(text="Xchange", url=f"{urls.XCHANGE}")],
             ]
         ),
     )
@@ -3597,8 +3585,8 @@ async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 [
                     InlineKeyboardButton(
-                        text=f"{url.TWITTER}",
-                        url=f"{url.TWITTER}",
+                        text=f"{urls.TWITTER}",
+                        url=f"{urls.TWITTER}",
                     )
                 ],
             ]
@@ -3632,13 +3620,13 @@ async def v1(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="Wallet 1",
-                        url=f"{url.ETHER_ADDRESS}{ca.V1_1}",
+                        url=f"{urls.ETHER_ADDRESS}{ca.V1_1}",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="Wallet 2",
-                        url=f"{url.ETHER_ADDRESS}{ca.V1_2}",
+                        url=f"{urls.ETHER_ADDRESS}{ca.V1_2}",
                     )
                 ],
             ]
@@ -3678,7 +3666,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     [
                         InlineKeyboardButton(
-                            text="X7 Dune Dashboard", url=f"{url.DUNE}"
+                            text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                         )
                     ],
                 ]
@@ -3700,7 +3688,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     [
                         InlineKeyboardButton(
-                            text="X7 Dune Dashboard", url=f"{url.DUNE}"
+                            text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                         )
                     ],
                 ]
@@ -3719,7 +3707,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 [
                     InlineKeyboardButton(
-                        text="X7 Dune Dashboard", url=f"{url.DUNE}"
+                        text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                     )
                 ],
             ]
@@ -3827,17 +3815,17 @@ async def website(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange", url=f"{url.XCHANGE}")],
+                [InlineKeyboardButton(text="Xchange", url=f"{urls.XCHANGE}")],
                 [
                     InlineKeyboardButton(
                         text="X7.Finance",
-                        url=f"{url.WEBSITE_DEV}",
+                        url=f"{urls.WEBSITE_DEV}",
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="X7Finance.org",
-                        url=f"{url.WEBSITE}",
+                        url=f"{urls.WEBSITE}",
                     )
                 ],
             ]
@@ -3908,8 +3896,8 @@ async def wp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
-                [InlineKeyboardButton(text="Full WP", url=f"{url.WP_LINK}")],
+                [InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}")],
+                [InlineKeyboardButton(text="Full WP", url=f"{urls.WP_LINK}")],
             ]
         ),
     )
@@ -3949,7 +3937,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text="X7D Funding Dashboard",
-                        url=f"{url.XCHANGE_FUND}",
+                        url=f"{urls.XCHANGE_FUND}",
                     )
                 ],
             ]

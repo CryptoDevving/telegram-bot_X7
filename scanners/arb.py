@@ -10,7 +10,7 @@ from telegram.ext import *
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
-from constants import ca, url
+from constants import ca, urls
 from hooks import api, db
 import media
 
@@ -164,25 +164,25 @@ async def new_pair(event):
                     [
                         InlineKeyboardButton(
                             text=f"Buy On Xchange",
-                            url=f"{url.XCHANGE_BUY_ETH}{token_address}",
+                            url=f"{urls.XCHANGE_BUY_ETH}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Chart",
-                            url=f"{url.DEX_TOOLS_ARB}{event['args']['pair']}",
+                            url=f"{urls.DEX_TOOLS_ARB}{event['args']['pair']}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Token Contract",
-                            url=f"{url.ARB_ADDRESS}{token_address}",
+                            url=f"{urls.ARB_ADDRESS}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Deployer TX",
-                            url=f"{url.ARB_TX}{event['transactionHash'].hex()}",
+                            url=f"{urls.ARB_TX}{event['transactionHash'].hex()}",
                         )
                     ],
                 ]
@@ -258,7 +258,7 @@ async def new_loan(event):
                 [
                     InlineKeyboardButton(
                         text=f"Loan TX",
-                        url=f"{url.ARB_TX}{event['transactionHash'].hex()}",
+                        url=f"{urls.ARB_TX}{event['transactionHash'].hex()}",
                     )
                 ],
             ]

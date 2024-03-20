@@ -8,7 +8,7 @@ from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 from web3 import Web3
 
-from constants import ca, dao, loans, nfts, text, url
+from constants import ca, dao, loans, nfts, text, urls
 from hooks import api, dune
 import media
 
@@ -58,8 +58,8 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
-                    [InlineKeyboardButton(text="Xchange App", url=f"{url.XCHANGE}")],
-                    [InlineKeyboardButton(text="Website", url=f"{url.WEBSITE}")],
+                    [InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}")],
+                    [InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}")],
                 ]
             ),
         )
@@ -98,7 +98,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="Burn Wallet",
-                            url=f"{url.ETHER_ADDRESS}{ca.X7R}?a={ca.DEAD}",
+                            url=f"{urls.ETHER_ADDRESS}{ca.X7R}?a={ca.DEAD}",
                         )
                     ],
                 ]
@@ -169,8 +169,8 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
         contract_names = list(dao.CONTRACT_MAPPINGS.keys())
         formatted_contract_names = '\n'.join(contract_names)
         keyboard = InlineKeyboardMarkup(
-                [[InlineKeyboardButton(text="Vote Here",url=url.SNAPSHOT,)],
-                [InlineKeyboardButton(text="DAO Proposers Chat",url=url.TG_DAO,)],])
+                [[InlineKeyboardButton(text="Vote Here",url=urls.SNAPSHOT,)],
+                [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
         snapshot = api.get_snapshot()
         end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"]).strftime(
             "%Y-%m-%d %H:%M:%S"
@@ -206,14 +206,14 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                         [
                             InlineKeyboardButton(
                                 text=f"Vote Here",
-                                url=f"{url.SNAPSHOT}/proposal/"
+                                url=f"{urls.SNAPSHOT}/proposal/"
                                 f'{snapshot["data"]["proposals"][0]["id"]}',
                             )
                         ],
                         [
                             InlineKeyboardButton(
                                 text=f"DAO Proposers Chat",
-                                url=f"{url.TG_DAO}",
+                                url=f"{urls.TG_DAO}",
                             )
                         ],
                     ]
@@ -400,7 +400,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="Token Time Lock Contract",
-                            url=f"{url.ETHER_ADDRESS}{ca.TIME_LOCK}#readContract",
+                            url=f"{urls.ETHER_ADDRESS}{ca.TIME_LOCK}#readContract",
                         )
                     ],
                 ]
@@ -460,15 +460,15 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
         buttons = [
             [
                 InlineKeyboardButton(text="Mint Here", url="https://x7.finance/x/nft/mint"),
-                InlineKeyboardButton(text="OS - Ecosystem Maxi", url=f"{url.OS_ECO}"),
+                InlineKeyboardButton(text="OS - Ecosystem Maxi", url=f"{urls.OS_ECO}"),
             ],
             [
-                InlineKeyboardButton(text="OS - Liquidity Maxi", url=f"{url.OS_LIQ}"),
-                InlineKeyboardButton(text="OS - DEX Maxi", url=f"{url.OS_DEX}"),
+                InlineKeyboardButton(text="OS - Liquidity Maxi", url=f"{urls.OS_LIQ}"),
+                InlineKeyboardButton(text="OS - DEX Maxi", url=f"{urls.OS_DEX}"),
             ],
             [
-                InlineKeyboardButton(text="OS - Borrowing Maxi", url=f"{url.OS_BORROW}"),
-                InlineKeyboardButton(text="OS - Magister", url=f"{url.OS_MAGISTER}"),
+                InlineKeyboardButton(text="OS - Borrowing Maxi", url=f"{urls.OS_BORROW}"),
+                InlineKeyboardButton(text="OS - Magister", url=f"{urls.OS_MAGISTER}"),
             ],
         ]
 
@@ -580,7 +580,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="Opensea",
-                            url=f"{url.OS_PIONEER}",
+                            url=f"{urls.OS_PIONEER}",
                         )
                     ],
                 ]
@@ -739,13 +739,13 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="X7R Chart - Rewards Token",
-                            url=f"{url.DEX_TOOLS_ETH}{ca.X7R_PAIR_ETH}",
+                            url=f"{urls.DEX_TOOLS_ETH}{ca.X7R_PAIR_ETH}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="X7DAO Chart - Governance Token",
-                            url=f"{url.DEX_TOOLS_ETH}{ca.X7DAO_PAIR_ETH}",
+                            url=f"{urls.DEX_TOOLS_ETH}{ca.X7DAO_PAIR_ETH}",
                         )
                     ],
                 ]
@@ -813,19 +813,19 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="Community Multi-sig Wallet",
-                            url=f"{url.ETHER_ADDRESS}{ca.COM_MULTI_ETH}",
+                            url=f"{urls.ETHER_ADDRESS}{ca.COM_MULTI_ETH}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Ecosystem Splitter Contract",
-                            url=f"{url.ETHER_ADDRESS}{ca.ECO_SPLITTER}",
+                            url=f"{urls.ETHER_ADDRESS}{ca.ECO_SPLITTER}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Treasury Splitter Contract",
-                            url=f"{url.ETHER_ADDRESS}{ca.TREASURY_SPLITTER}",
+                            url=f"{urls.ETHER_ADDRESS}{ca.TREASURY_SPLITTER}",
                         )
                     ],
                 ]
@@ -862,7 +862,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         [
                             InlineKeyboardButton(
-                                text="X7 Dune Dashboard", url=f"{url.DUNE}"
+                                text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                             )
                         ],
                     ]
@@ -884,7 +884,7 @@ async def messages(context: ContextTypes.DEFAULT_TYPE):
                     [
                         [
                             InlineKeyboardButton(
-                                text="X7 Dune Dashboard", url=f"{url.DUNE}"
+                                text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                             )
                         ],
                     ]

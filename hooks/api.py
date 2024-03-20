@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 from web3 import Web3
-from constants import ca, url, mappings
+from constants import ca, mappings, urls
 
 
 class Dextools:
@@ -707,7 +707,7 @@ async def burn_x7r(amount):
 
         signed_transaction = w3.eth.account.sign_transaction(transaction, sender_private_key)
         tx_hash = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
-        return f"{amount} X7R Burnt\n\n{url.ETHER_TX}{tx_hash.hex()}"
+        return f"{amount} X7R Burnt\n\n{urls.ETHER_TX}{tx_hash.hex()}"
     except Exception as e:
         return f'Error burning X7R: {e}'
 
@@ -816,7 +816,7 @@ def get_quote():
 
 def get_random_pioneer():
     number = f"{random.randint(1, 4480)}".zfill(4)
-    return f"{url.PIONEERS}{number}.png"
+    return f"{urls.PIONEERS}{number}.png"
 
 
 def get_scan(token: str, chain: str) -> dict:
