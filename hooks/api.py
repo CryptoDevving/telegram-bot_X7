@@ -63,13 +63,15 @@ class Dextools:
         if response.status_code == 200:
             
             data = response.json()
-            price = data['data']['price']
-            if "e-" in str(price):
-                price = "{:.8f}".format(price)
-            elif price < 1:
-                price = "{:.8f}".format(price) 
+            if 'price' in data['data']:
+                if "e-" in str(price):
+                    price = "{:.8f}".format(price)
+                elif price < 1:
+                    price = "{:.8f}".format(price) 
+                else:
+                    price = "{:.2f}".format(price)
             else:
-                price = "{:.2f}".format(price)
+                price = "N/A"
 
             one_hour_change = data['data']['variation1h']
             six_hour_change = data['data']['variation6h']

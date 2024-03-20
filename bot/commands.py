@@ -2500,7 +2500,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain = ""
         token_info = db.token_get(search, chain)
         for token_instance in token_info:
-            message = await update.message.reply_text("Getting Price Info, Please wait...")
+            message = await update.message.reply_text("Getting Xchange Pair Price Info, Please wait...")
             await context.bot.send_chat_action(update.effective_chat.id, "typing")
             holders = dextools.get_holders(token_instance['ca'], token_instance['chain'].lower())
             dext = mappings.CHAINS[token_instance['chain'].lower()].dext
@@ -2599,7 +2599,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ),
             )
             return
-        if not token_info:
+        else:
             if search == "":
                 price = coingecko.get_price("x7r, x7dao")
                 x7r_change = price["x7r"]["usd_24h_change"]
