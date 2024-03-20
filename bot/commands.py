@@ -2345,7 +2345,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         bnb_price = api.get_native_price("bnb")
         bsc_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "bsc")
         bsc_lpool_reserve_dollar = (float(bsc_lpool_reserve) * float(bnb_price))
-        bsc_lpool = api.get_native_balance(ca.LPOOL, "bsc")
+        bsc_lpool = api.get_native_balance(ca.LPOOL_V1, "bsc")
         bsc_lpool_dollar = (float(bsc_lpool) * float(bnb_price))
         bsc_pool = round(float(bsc_lpool_reserve) + float(bsc_lpool), 2)
         bsc_dollar = bsc_lpool_reserve_dollar + bsc_lpool_dollar
@@ -2353,28 +2353,28 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         poly_price = api.get_native_price("matic")
         poly_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "poly")
         poly_lpool_reserve_dollar = (float(poly_lpool_reserve) * float(poly_price))
-        poly_lpool = api.get_native_balance(ca.LPOOL, "poly")
+        poly_lpool = api.get_native_balance(ca.LPOOL_V1, "poly")
         poly_lpool_dollar = (float(poly_lpool) * float(poly_price))
         poly_pool = round(float(poly_lpool_reserve) + float(poly_lpool), 2)
         poly_dollar = poly_lpool_reserve_dollar + poly_lpool_dollar
 
         arb_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "arb")
         arb_lpool_reserve_dollar = (float(arb_lpool_reserve) * float(eth_price))
-        arb_lpool = api.get_native_balance(ca.LPOOL, "arb")
+        arb_lpool = api.get_native_balance(ca.LPOOL_V1, "arb")
         arb_lpool_dollar = (float(arb_lpool) * float(eth_price))
         arb_pool = round(float(arb_lpool_reserve) + float(arb_lpool), 2)
         arb_dollar = arb_lpool_reserve_dollar + arb_lpool_dollar
 
         opti_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "opti")
         opti_lpool_reserve_dollar = (float(opti_lpool_reserve) * float(eth_price))
-        opti_lpool = api.get_native_balance(ca.LPOOL, "opti")
+        opti_lpool = api.get_native_balance(ca.LPOOL_V1, "opti")
         opti_lpool_dollar = (float(opti_lpool) * float(eth_price))
         opti_pool = round(float(opti_lpool_reserve) + float(opti_lpool), 2)
         opti_dollar = opti_lpool_reserve_dollar + opti_lpool_dollar
 
         base_lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, "base")
         base_lpool_reserve_dollar = (float(base_lpool_reserve) * float(eth_price))
-        base_lpool = api.get_native_balance(ca.LPOOL, "base")
+        base_lpool = api.get_native_balance(ca.LPOOL_V1, "base")
         base_lpool_dollar = (float(base_lpool) * float(eth_price))
         base_pool = round(float(base_lpool_reserve) + float(base_lpool), 2)
         base_dollar = base_lpool_reserve_dollar + base_lpool_dollar
@@ -2425,14 +2425,17 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             await update.message.reply_text(text.CHAIN_ERROR)
             return
-
-        address = to_checksum_address(ca.LPOOL)
-        contract = web3_url.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
+        if chain == "eth":
+            pool_address = ca.LPOOL
+        else:
+            pool_address = ca.LPOOL_V1
+        address = to_checksum_address(pool_address)
+        contract = web3_url.eth.contract(address=address, abi=api.get_abi(pool_address, chain))
         available = (contract.functions.availableCapital().call() / 10**18)
         native_price = api.get_native_price(chain_native)
         lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
         lpool_reserve_dollar = (float(lpool_reserve) * float(native_price))
-        lpool = float(api.get_native_balance(ca.LPOOL, chain))
+        lpool = float(api.get_native_balance(pool_address, chain))
         lpool_dollar = (float(lpool) * float(native_price))
         pool = round(float(lpool_reserve) + float(lpool), 2)
         dollar = lpool_reserve_dollar + lpool_dollar
@@ -2461,7 +2464,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="Lending Pool Contract",
-                            url=f"{chain_url}{ca.LPOOL}",
+                            url=f"{chain_url}{pool_address}",
                         )
                     ],
                     [
