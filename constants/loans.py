@@ -2,22 +2,6 @@
 
 from constants import ca
 
-OVERVIEW = (
-    "*X7 Finance Loan Terms*\n\n"
-    "Use `/loans ill001 - ill003` for more details on individual loan contracts\n\n"
-    "Loan terms are defined by standalone smart contracts that provide the following:\n\n"
-    "1. Loan origination fee\n"
-    "2. Loan retention premium fee schedule\n"
-    "3. Principal repayment condition/maximum loan duration\n"
-    "4. Liquidation conditions and Reward\n"
-    "5. Loan duration\n\n"
-    "The lending process delegates the loan terms to standalone smart contracts (see whitepaper below for "
-    "more details). These loan terms contracts must be deployed, and then “added” or “removed” from the "
-    "Lending Pool as “available” loan terms for new loans. The DAO will be able to add or remove these term "
-    "contracts.\n\nLoan term contracts may be created by any interested third party, enabling a market "
-    "process by which new loan terms may be invented, provided they implement the proper interface."
-)
-
 
 class LoanTerm:
     def __init__(
@@ -103,3 +87,26 @@ LOANS = {
     "10%",
 )
 }
+
+def loans_list():
+    loan_list = []
+    for loan_key, loan_term in LOANS.items():
+        loan_list.append(f"{loan_key}")
+    return ",".join(loan_list)
+
+
+OVERVIEW = (
+    "*X7 Finance Loan Terms*\n\n"
+    f"Use `/loans {loans_list()}` for more details on individual loan contracts\n\n"
+    "Loan terms are defined by standalone smart contracts that provide the following:\n\n"
+    "1. Loan origination fee\n"
+    "2. Loan retention premium fee schedule\n"
+    "3. Principal repayment condition/maximum loan duration\n"
+    "4. Liquidation conditions and Reward\n"
+    "5. Loan duration\n\n"
+    "The lending process delegates the loan terms to standalone smart contracts (see whitepaper below for "
+    "more details). These loan terms contracts must be deployed, and then “added” or “removed” from the "
+    "Lending Pool as “available” loan terms for new loans. The DAO will be able to add or remove these term "
+    "contracts.\n\nLoan term contracts may be created by any interested third party, enabling a market "
+    "process by which new loan terms may be invented, provided they implement the proper interface."
+)
