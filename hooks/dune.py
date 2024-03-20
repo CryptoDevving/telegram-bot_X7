@@ -13,6 +13,7 @@ FLAG = False
 TIMESTAMP = datetime.utcnow().timestamp()
 LAST_DATE = datetime.fromtimestamp(TIMESTAMP).strftime("%Y-%m-%d %H:%M:%S")
 VOLUME = ""
+TRENDING = ""
 
 
 def make_api_url(module, action, identifier):

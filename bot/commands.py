@@ -3576,6 +3576,82 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        if dune.FLAG == False:
+            message = await update.message.reply_text("Getting Xchange Trending, Please wait...")
+            await context.bot.send_chat_action(update.effective_chat.id, "typing")
+            execution_id = dune.execute_query("2970801", "medium")
+            t.sleep(10)
+
+            response = dune.get_query_results(execution_id)
+            response_data = response.json()
+
+            rows = response_data["result"]["rows"]
+            rows = [row for row in rows if row["pair"] != "TOTAL"]
+            sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
+            top_3_last_24hr_amt = sorted_rows[:3]
+            trending_text = "*Xchange Trending Pairs*\n\n"
+
+            for idx, item in enumerate(top_3_last_24hr_amt, start=1):
+                trending_text += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
+
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=f'{trending_text}{api.get_quote()}',
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text="X7 Dune Dashboard", url=f"{urls.DUNE}"
+                            )
+                        ],
+                    ]
+                ),
+                )
+            dune.TIMESTAMP = datetime.utcnow().timestamp()
+            dune.FLAG = True
+            dune.TRENDING = trending_text
+
+        else:
+            await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f'{dune.TRENDING}Last Updated: {dune.LAST_DATE}\n\n'
+                f'{api.get_quote()}',
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="X7 Dune Dashboard", url=f"{urls.DUNE}"
+                        )
+                    ],
+                ]
+            ),
+            )
+    except Exception:
+        await message.delete()
+        await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f'*Xchange Trending*\n\n'
+            f'Unable to refresh Dune data, please use the link below\n\n'
+            f'{api.get_quote()}',
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="X7 Dune Dashboard", url=f"{urls.DUNE}"
+                    )
+                ],
+            ]
+        ),
+        )
+
+
 async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_sticker(sticker=media.TWITTER_STICKER)
     await update.message.reply_text(
@@ -3649,7 +3725,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             last_7d_amt = response_data['result']['rows'][0]['last_7d_amt']
             lifetime_amt = response_data['result']['rows'][0]['lifetime_amt']
 
-            volume = (
+            volume_text = (
                 f'Total:       ${"{:0,.0f}".format(lifetime_amt)}\n'
                 f'30 Day:    ${"{:0,.0f}".format(last_30d_amt)}\n'
                 f'7 Day:      ${"{:0,.0f}".format(last_7d_amt)}\n'
@@ -3674,7 +3750,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             dune.TIMESTAMP = datetime.utcnow().timestamp()
             dune.FLAG = True
-            dune.VOLUME = volume
+            dune.VOLUME = volume_text
         else:
             await message.delete()
             await update.message.reply_photo(

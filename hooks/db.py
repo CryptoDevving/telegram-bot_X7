@@ -185,6 +185,7 @@ async def clicks_remove(name):
     db_connection.commit()
     close_db_connection(db_connection, cursor)
 
+
 def clicks_reset():
     try:
         db_connection = create_db_connection()
