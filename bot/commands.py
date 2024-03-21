@@ -2105,28 +2105,16 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    tx_deployer = api.get_tx(ca.DEPLOYER, "eth")
-    tx_magister_6 = api.get_tx(ca.MAGISTER_6, "eth")
-
-    tx_filter_deployer = [d for d in tx_deployer["result"] if d["to"] in f"{ca.DEAD}".lower()]
-    tx_filter_magister_6 = [d for d in tx_magister_6["result"] if d["to"] in f"{ca.DEAD}".lower()]
-
-    recent_tx_deployer = max(tx_filter_deployer, key=lambda tx: int(tx["timeStamp"]), default=None)
-    recent_tx_magister_6 = max(tx_filter_magister_6, key=lambda tx: int(tx["timeStamp"]), default=None)
-
-    if recent_tx_deployer and (not recent_tx_magister_6 or int(recent_tx_deployer["timeStamp"]) > int(recent_tx_magister_6["timeStamp"])):
-        recent_tx = recent_tx_deployer
-        address = ca.DEPLOYER
-    elif recent_tx_magister_6:
-        recent_tx = recent_tx_magister_6
-        address = ca.MAGISTER_6
+    tx= api.get_tx(ca.DEPLOYER, "eth")
+    tx_filter = [d for d in tx["result"] if d["to"] in f"{ca.DEAD}".lower()]
+    recent_tx = max(tx_filter, key=lambda tx: int(tx["timeStamp"]), default=None)
     message = bytes.fromhex(recent_tx["input"][2:]).decode("utf-8")
     time = datetime.utcfromtimestamp(int(recent_tx["timeStamp"]))
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
     try:
         await update.message.reply_text(
-            f"*Last On Chain Message from* `{address}`\n\n{time} UTC\n"
+            f"*Last On Chain Message*\n\n{time} UTC\n"
             f"{days} days, {hours} hours, and {minutes} minutes ago\n\n"
             f"`{message}`",
             parse_mode="Markdown",
@@ -2155,7 +2143,7 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
             part2 = message[middle_index:]
 
             await update.message.reply_text(
-                f"*Last On Chain Message from* `{address}`\n\n{time} UTC\n"
+                f"*Last On Chain Message*\n\n{time} UTC\n"
                 f"{days} days, {hours} hours, and {minutes} minutes ago\n\n"
                 f"`{part1}...`",
                 parse_mode="Markdown",
@@ -3415,7 +3403,7 @@ async def time(update: Update, context: CallbackContext):
         ("Asia/Dubai", "GST"),
         ("Asia/Kolkata", "IST"),
         ("Asia/Tokyo", "JST"),
-        ("Australia/Sydney", "AEST"),
+        ("Australia/Queensland", "AEST"),
     ]
     current_time = datetime.now(pytz.timezone("UTC"))
     local_time = current_time.astimezone(pytz.timezone("UTC"))
