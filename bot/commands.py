@@ -3578,7 +3578,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        if dune.FLAG == False:
+        if dune.TRENDING_FLAG == False:
             message = await update.message.reply_text("Getting Xchange Trending, Please wait...")
             await context.bot.send_chat_action(update.effective_chat.id, "typing")
             execution_id = dune.execute_query("2970801", "medium")
@@ -3610,15 +3610,15 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]
                 ),
                 )
-            dune.TIMESTAMP = datetime.utcnow().timestamp()
-            dune.FLAG = True
-            dune.TRENDING = trending_text
+            dune.TRENDING_TIMESTAMP = datetime.utcnow().timestamp()
+            dune.TRENDING_FLAG = True
+            dune.TRENDING_TEXT = trending_text
 
         else:
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-                f'{dune.TRENDING}Last Updated: {dune.LAST_DATE}\n\n'
+                f'{dune.TRENDING_TEXT}Last Updated: {dune.TRENDING_LAST_DATE}\n\n'
                 f'{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -3714,7 +3714,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text("Getting Volume Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     try:
-        if dune.FLAG == False:
+        if dune.VOLUME_FLAG == False:
             execution_id = dune.execute_query("2972368", "medium")
             t.sleep(5)
             response = dune.get_query_results(execution_id)
@@ -3748,16 +3748,16 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             ),
             )
-            dune.TIMESTAMP = datetime.utcnow().timestamp()
-            dune.FLAG = True
-            dune.VOLUME = volume_text
+            dune.VOLUME_TIMESTAMP = datetime.utcnow().timestamp()
+            dune.VOLUME_FLAG = True
+            dune.VOLUME_TEXT = volume_text
         else:
             await message.delete()
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
                 f'*Xchange Trading Volume*\n\n'
-                f'{dune.VOLUME}\n\nLast Updated: {dune.LAST_DATE}\n\n'
+                f'{dune.VOLUME_TEXT}\n\nLast Updated: {dune.VOLUME_LAST_DATE}\n\n'
                 f'{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
