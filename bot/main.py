@@ -223,7 +223,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("alumni", commands.alumni))
     application.add_handler(CommandHandler("announcements", commands.announcements))
     application.add_handler(CommandHandler("ath", commands.ath))
-    application.add_handler(CommandHandler("bio", commands.bio))
     application.add_handler(CommandHandler("blocks", commands.blocks))
     application.add_handler(CommandHandler("blog", commands.blog))
     application.add_handler(CommandHandler("borrow", commands.borrow))

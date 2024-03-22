@@ -145,34 +145,6 @@ async def ath(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    input = " ".join(context.args)
-    if not input:
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance DAO*\n\n"
-                "Follow the /bio command with a few sentences about yourself to be uploaded to x7finance.org/community/meetthedao\n\n"
-                "No more than 230 characters\n\nNew entries will be uploaded every 3/4 days\n\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown"
-        )
-    elif len(input) > 230:
-        await update.message.reply_text(
-            f"Your bio exceeds the maximum character limit of 230 characters, please resubmit")
-    else:
-        user = update.effective_user
-        user_info = user.username or f"{user.first_name} {user.last_name}"
-        await context.bot.send_message(
-            chat_id=os.getenv("BIO_TELEGRAM_CHANNEL_ID"),
-            text=f"{user.first_name}\nhttps://t.me/{user.username}\n\n{input}",
-            disable_web_page_preview="true",
-            )
-        await update.message.reply_text(
-            f"Thanks {user_info}, Your bio has been submitted")
-        await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.message.message_id)
-
-
 async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     time = round(t.time())
