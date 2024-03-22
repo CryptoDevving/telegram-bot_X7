@@ -3723,7 +3723,7 @@ async def volume(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-                f"*Xchange Trading Volume*\n\n{volume}\n\n"
+                f"*Xchange Trading Volume*\n\n{volume_text}\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
