@@ -1485,7 +1485,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f'X7R:\n{x7r_amount} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n\n'
                 f'X7DAO:\n{x7dao_amount} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_dollar)})\n\n'
                 f'X7100:\n{cons_amount} {chain_native.upper()} (${"{:0,.0f}".format(cons_dollar)})\n\n'
-                f'Total:\n ${"{:0,.0f}".format(total)}\n\n'
+                f'Total:\n${"{:0,.0f}".format(total)}\n\n'
                 f'{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
