@@ -18,23 +18,6 @@ class Dextools:
         self.url = f"http://public-api.dextools.io/{self.plan}/v2/"
 
 
-    def get_holders(self, pair, chain):
-        if chain in mappings.DEX_TOOLS_CHAINS:
-            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-        endpoint = f'token/{dextools_chain}/{pair}/info'
-        response = requests.get(self.url + endpoint, headers=self.headers)
-
-        if response.status_code == 200:
-            data = response.json()
-
-            if data and "data" in data and data["data"]:
-                return data["data"]["holders"]
-            else:
-                return "N/A"
-        else:
-            return "N/A"
-        
-
     def get_dex(self, pair, chain):
         if chain in mappings.DEX_TOOLS_CHAINS:
             dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
@@ -145,7 +128,25 @@ class Dextools:
 
         if response.status_code == 200:
             data = response.json()
-            return data["data"]
+            try:
+                return f"${'{:,.0f}'.format(data['data']['liquidity'])}"
+            except Exception:
+                return "N/A"
+        else:
+            return "N/A"
+        
+    def get_volume(self, pair, chain):
+        if chain in mappings.DEX_TOOLS_CHAINS:
+            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
+        endpoint = f"pool/{dextools_chain}/{pair}/price"
+
+        response = requests.get(self.url + endpoint, headers=self.headers)
+        if response.status_code == 200:
+            data = response.json()
+            try:
+                return f'${"{:,.0f}".format(float(data["data"]["volume24h"]))}'
+            except Exception:
+                return "N/A"
         else:
             return "N/A"
 

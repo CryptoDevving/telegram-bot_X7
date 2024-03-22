@@ -716,7 +716,8 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
     if not input_contract:
         x7dao_proposers = api.get_proposers("eth")
-        holders = dextools.get_holders(ca.X7DAO, "eth")
+        info = dextools.get_token_info(ca.X7DAO, "eth")
+        holders = info["holders"]
         snapshot = api.get_snapshot()
         end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
         duration = end - datetime.utcnow()
@@ -1266,10 +1267,13 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    x7dao_holders = dextools.get_holders(ca.X7DAO, chain)
     x7dao_proposers = api.get_proposers(chain)
-    x7r_holders = dextools.get_holders(ca.X7R, chain)
-    x7d_holders = dextools.get_holders(ca.X7D, chain)
+    x7dao_info = dextools.get_token_info(ca.X7DAO, "eth")
+    x7dao_holders = x7dao_info["holders"]
+    x7r_info = dextools.get_token_info(ca.X7D, "eth")
+    x7r_holders = x7r_info["holders"]
+    x7d_info = dextools.get_token_info(ca.X7D, "eth")
+    x7d_holders = x7d_info["holders"]
     
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -1427,61 +1431,39 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     message = await update.message.reply_text("Getting Liquidity Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    if chain == "eth":  ### REMOVE LINE AFTER MIGRATION
-        token_liquidity = []
-        weth_liquidity = []
-        token_dollars = []
-        weth_dollars = []
+    if chain == "eth":
+        all_liquidity = []
 
         for contract_address, pair in zip(ca.TOKENS, pair_addresses):
-            token_price = api.get_price(contract_address, chain)
-            liquidity_data = api.get_liquidity(pair, chain)
-            token_liq = float(liquidity_data["reserve0"])
-            weth_liq = float(liquidity_data["reserve1"]) / 10**18
-            weth_dollar = weth_liq * float(api.get_native_price(chain_native))
-            token_dollar = token_price * (token_liq / 10**18)
+            liquidity = dextools.get_liquidity(pair, chain)
+            all_liquidity.append(liquidity)
 
-            token_liquidity.append(token_liq)
-            weth_liquidity.append(weth_liq)
-            token_dollars.append(token_dollar)
-            weth_dollars.append(weth_dollar)
+        def clean_liquidity(liquidity):
+            if liquidity == 'N/A':
+                return 0
+            else:
+                return float(liquidity.replace('$', '').replace(',', ''))
 
-        constellations_tokens_liq = sum(token_liquidity[2:])
-        constellations_weth_liq = sum(weth_liquidity[2:])
-        constellations_weth_dollar = sum(weth_dollars[2:])
-        constellations_token_dollar = sum(token_dollars[2:])
+        cleaned_liquidity = [clean_liquidity(liquidity) for liquidity in all_liquidity]
 
-        x7r_token_liq = token_liquidity[0]
-        x7r_weth_liq = weth_liquidity[0]
-        x7r_token_dollar = token_dollars[0]
-        x7r_weth_dollar = weth_dollars[0]
-
-        x7dao_token_liq = token_liquidity[1]
-        x7dao_weth_liq = weth_liquidity[1]
-        x7dao_token_dollar = token_dollars[1]
-        x7dao_weth_dollar = weth_dollars[1]
+        x7r_liq = cleaned_liquidity[0]
+        x7dao_liq = cleaned_liquidity[1]
+        constellations_liq = sum(cleaned_liquidity[2:7])
+        total_liq = sum(cleaned_liquidity)
 
         await message.delete()
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
                 f"*X7 Finance Token Liquidity (ETH)*\n"
-                f"To show initial liquidity for other chains, Use `/liquidity "
-                f"[chain-name]`\n\n"
-                f"*X7R*\n"
-                f'{"{:0,.0f}".format(x7r_token_liq)[:4]}M X7R (${"{:0,.0f}".format(x7r_token_dollar)})\n'
-                f'{"{:0,.0f}".format(x7r_weth_liq)} WETH (${"{:0,.0f}".format(x7r_weth_dollar)})\n'
-                f'Total Liquidity ${"{:0,.0f}".format(x7r_weth_dollar + x7r_token_dollar)}\n\n'
-                f"*X7DAO*\n"
-                f'{"{:0,.0f}".format(x7dao_token_liq)[:4]}M X7DAO (${"{:0,.0f}".format(x7dao_token_dollar)})\n'
-                f'{"{:0,.0f}".format(x7dao_weth_liq)} WETH (${"{:0,.0f}".format(x7dao_weth_dollar)})\n'
-                f'Total Liquidity ${"{:0,.0f}".format(x7dao_weth_dollar + x7dao_token_dollar)}\n\n'
-                f"*Constellations*\n"
-                f'{"{:0,.0f}".format(constellations_tokens_liq)[:4]}M X7100 '
-                f'(${"{:0,.0f}".format(constellations_token_dollar)})\n'
-                f'{"{:0,.0f}".format(constellations_weth_liq)} WETH '
-                f'(${"{:0,.0f}".format(constellations_weth_dollar)})\n'
-                f'Total Liquidity ${"{:0,.0f}".format(constellations_weth_dollar + constellations_token_dollar)}\n\n'
+                f"For other chains, Use `/liquidity [chain-name]`\n\n"
+                f"X7R:\n"
+                f"${x7r_liq:,.0f}\n\n"
+                f"X7DAO:\n"
+                f"${x7dao_liq:,.0f}\n\n"
+                f"X7100:\n"
+                f"${constellations_liq:,.0f}\n\n"
+                f"Total: ${total_liq:,.0f}\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -1491,15 +1473,10 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7dao_amount = api.get_native_balance(ca.X7DAO_LIQ_LOCK, chain)
         cons_amount = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
         native_price = api.get_native_price(chain_native)
-        x7dao_dollar = (
-            float(x7dao_amount) * float(native_price)
-        )
-        x7r_dollar = (
-            float(x7r_amount) * float(native_price)
-        )
-        cons_dollar = (
-            float(cons_amount) * float(native_price)
-        )
+        x7dao_dollar = (float(x7dao_amount) * float(native_price))
+        x7r_dollar = (float(x7r_amount) * float(native_price))
+        cons_dollar = (float(cons_amount) * float(native_price))
+        total = float(cons_dollar) + float(x7dao_dollar) + float(x7r_dollar)
 
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
@@ -1508,6 +1485,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f'X7R:\n{x7r_amount} {chain_native.upper()} (${"{:0,.0f}".format(x7r_dollar)})\n\n'
                 f'X7DAO:\n{x7dao_amount} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_dollar)})\n\n'
                 f'X7100:\n{cons_amount} {chain_native.upper()} (${"{:0,.0f}".format(cons_dollar)})\n\n'
+                f'Total:\n ${"{:0,.0f}".format(total)}\n\n'
                 f'{api.get_quote()}',
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
@@ -2478,7 +2456,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for token_instance in token_info:
             message = await update.message.reply_text("Getting Xchange Pair Price Info, Please wait...")
             await context.bot.send_chat_action(update.effective_chat.id, "typing")
-            holders = dextools.get_holders(token_instance['ca'], token_instance['chain'].lower())
+            info = dextools.get_token_data(token_instance['ca'], token_instance['chain'].lower())
+            holders = info["holders"]
             dext = mappings.CHAINS[token_instance['chain'].lower()].dext
             w3 = mappings.CHAINS[token_instance['chain'].lower()].w3
             token = mappings.CHAINS[token_instance['chain'].lower()].token
@@ -2504,7 +2483,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             price_change = (f"{price_change_raw['one_hour']}\n"
                         f"{price_change_raw['six_hour']}\n"
                         f"{price_change_raw['one_day']}")
-            volume = defined.get_volume(token_instance['pair'], token_instance['chain'].lower())
+            volume = dextools.get_volume(token_instance['pair'], token_instance['chain'].lower())
             im1 = Image.open((random.choice(media.BLACKHOLE)))
             try:
                 image = token_instance['image_url']
@@ -3983,7 +3962,8 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         supply = round(float(lpool_reserve) + float(lpool), 2)
         lpool_rounded = round(float(lpool), 2)
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
-        holders = dextools.get_holders(ca.X7D, chain)
+        info = dextools.get_token_info(ca.X7D, "eth")
+        holders = info["holders"]
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -4024,70 +4004,35 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7DAO[chain]
-        holders = dextools.get_holders(ca.X7DAO, chain)
-        price = api.get_price(ca.X7DAO, chain)
-    if chain == "eth":
-        cg = coingecko.get_price("x7dao")
-        volume = cg["x7dao"]["usd_24h_vol"]
-        change = cg["x7dao"]["usd_24h_change"]
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
-        try:
+        info = dextools.get_token_info(ca.X7DAO, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7DAO, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7dao")[1]}'
             ath_value = coingecko.get_ath("x7dao")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        except Exception:
-            ath = "Unavailable"     
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7dao = api.get_liquidity(chain_pair, chain)
-        x7dao_token = float(x7dao["reserve0"]) / 10**18
-        x7dao_weth = float(x7dao["reserve1"]) / 10**18
-        x7dao_token_dollar = float(price) * float(x7dao_token)
-        native_price = api.get_native_price(chain_native)
-        x7dao_weth_dollar = float(x7dao_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7dao_token)[:4]}M X7DAO (${"{:0,.0f}".format(x7dao_token_dollar)})\n'
-            f'{x7dao_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7dao_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7dao_weth_dollar + x7dao_token_dollar):,.0f}"
-        )
-
-        ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7dao_weth = api.get_native_balance(ca.X7DAO_LIQ_LOCK, chain)
-        x7dao_weth_dollar = float(x7dao_weth) * native_price
-        x7dao_token = 0
-        x7dao_token_dollar = 0
-        liquidity = f'{x7dao_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7dao_weth_dollar)})'
-        ###
-    
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"X7DAO Info {chain_name}\n\n"
-            f"X7DAO Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
-            f"Contract Address:\n`{ca.X7DAO}`\n\n"
-            f"{api.get_quote()}",
+        else:
+            ath = "Unavailable"        
+        
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"X7DAO Info {chain_name}\n\n"
+                f"💰 Price: {price}\n"
+                f'💎 Market Cap:  {market_cap}\n'
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {liquidity}\n"
+                f"👪 Holders: {holders}\n"
+                f"🔝 ATH: {ath}\n\n"
+                f"{price_change}\n\n"
+                f"Contract Address:\n`{ca.X7DAO}`\n\n"
+                f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -4114,68 +4059,33 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7R[chain]
-        holders = dextools.get_holders(ca.X7R, chain)
-        price = api.get_price(ca.X7R, chain)
-    if chain == "eth":
-        cg = coingecko.get_price("x7r")
-        volume = cg["x7r"]["usd_24h_vol"]
-        change = cg["x7r"]["usd_24h_change"]
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * api.get_x7r_supply(chain))}'
-        try:
+        info = dextools.get_token_info(ca.X7R, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7R, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7r")[1]}'
             ath_value = coingecko.get_ath("x7r")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
-        except Exception:
+        else:
             ath = "Unavailable"        
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        holders = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7r = api.get_liquidity(chain_pair, chain)
-        x7r_token = float(x7r["reserve0"]) / 10**18
-        x7r_weth = float(x7r["reserve1"]) / 10**18
-        x7r_token_dollar = float(price) * float(x7r_token)
-        native_price = api.get_native_price(chain_native)
-        x7r_weth_dollar = float(x7r_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7r_token)[:4]}M X7R (${"{:0,.0f}".format(x7r_token_dollar)})\n'
-            f'{x7r_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7r_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7r_weth_dollar + x7r_token_dollar):,.0f}"
-        )
-    ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7r_weth = api.get_native_balance(ca.X7R_LIQ_LOCK, chain)
-        x7r_weth_dollar = float(x7r_weth) * native_price
-        x7r_token = 0
-        x7r_token_dollar = 0
-        liquidity = f'{x7r_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7r_weth_dollar)})'
-    ###
     
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
             f"X7R Info {chain_name}\n\n"
-            f"X7R Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  {market_cap}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n"
+            f"{price_change}\n\n"
             f"Contract Address:\n`{ca.X7R}`\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",
@@ -4204,71 +4114,35 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7101[chain]
-        holders = dextools.get_holders(ca.X7101, chain)
-        price = api.get_price(ca.X7101, chain)
-    if chain == "eth":
-        cg = coingecko.get_pricee("x7101")
-        volume = cg["x7101"]["usd_24h_vol"]
-        change = cg["x7101"]["usd_24h_change"]
-
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
-        try:
+        info = dextools.get_token_info(ca.X7101, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7101, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7101")[1]}'
             ath_value = coingecko.get_ath("x7101")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        except Exception:
-            ath = "Unavailable"     
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        holders = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7101 = api.get_liquidity(chain_pair, chain)
-        x7101_token = float(x7101["reserve0"]) / 10**18
-        x7101_weth = float(x7101["reserve1"]) / 10**18
-        x7101_token_dollar = float(price) * float(x7101_token)
-        native_price = api.get_native_price(chain_native)
-        x7101_weth_dollar = float(x7101_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7101_token)[:4]}M X7101 (${"{:0,.0f}".format(x7101_token_dollar)})\n'
-            f'{x7101_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7101_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7101_weth_dollar + x7101_token_dollar):,.0f}"
-        )
-    ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7101_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7101_weth_dollar = float(x7101_weth) * native_price
-        x7101_token = 0
-        x7101_token_dollar = 0
-        liquidity = f'{x7101_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7101_weth_dollar)})'
-    ###
+        else:
+            ath = "Unavailable"        
         
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"X7101 Info {chain_name}\n\n"
-            f"X7101 Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
-            f"Contract Address:\n`{ca.X7101}`\n\n"
-            f"{api.get_quote()}",
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"X7101 Info {chain_name}\n\n"
+                f"💰 Price: {price}\n"
+                f'💎 Market Cap:  {market_cap}\n'
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {liquidity}\n"
+                f"👪 Holders: {holders}\n"
+                f"🔝 ATH: {ath}\n\n"
+                f"{price_change}\n\n"
+                f"Contract Address:\n`{ca.X7101}`\n\n"
+                f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -4295,70 +4169,35 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7102[chain]
-        holders = dextools.get_holders(ca.X7102, chain)
-        price = api.get_price(ca.X7102, chain)
-    if chain == "eth":
-        cg = coingecko.get_price("x7102")
-        volume = cg["x7102"]["usd_24h_vol"]
-        change = cg["x7102"]["usd_24h_change"]
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
-        try:
+        info = dextools.get_token_info(ca.X7102, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7102, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7102")[1]}'
             ath_value = coingecko.get_ath("x7102")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        except Exception:
-            ath = "Unavailable"  
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        holders = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7102 = api.get_liquidity(chain_pair, chain)
-        x7102_token = float(x7102["reserve0"]) / 10**18
-        x7102_weth = float(x7102["reserve1"]) / 10**18
-        x7102_token_dollar = float(price) * float(x7102_token)
-        native_price = api.get_native_price(chain_native)
-        x7102_weth_dollar = float(x7102_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7102_token)[:4]}M X7102 (${"{:0,.0f}".format(x7102_token_dollar)})\n'
-            f'{x7102_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7102_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7102_weth_dollar + x7102_token_dollar):,.0f}"
-        )
-    ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7102_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7102_weth_dollar = float(x7102_weth) * native_price
-        x7102_token = 0
-        x7102_token_dollar = 0
-        liquidity = f'{x7102_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7102_weth_dollar)})'
-    ###
-    
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"X7102 Info {chain_name}\n\n"
-            f"X7102 Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
-            f"Contract Address:\n`{ca.X7102}`\n\n"
-            f"{api.get_quote()}",
+        else:
+            ath = "Unavailable"        
+        
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"X7102 Info {chain_name}\n\n"
+                f"💰 Price: {price}\n"
+                f'💎 Market Cap:  {market_cap}\n'
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {liquidity}\n"
+                f"👪 Holders: {holders}\n"
+                f"🔝 ATH: {ath}\n\n"
+                f"{price_change}\n\n"
+                f"Contract Address:\n`{ca.X7102}`\n\n"
+                f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -4385,71 +4224,35 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7103[chain]
-        holders = dextools.get_holders(ca.X7103, chain)
-        price = api.get_price(ca.X7103, chain)
-    if chain == "eth":
-        cg = coingecko.get_price("x7103")
-        volume = cg["x7103"]["usd_24h_vol"]
-        change = cg["x7103"]["usd_24h_change"]
-
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
-        try:
+        info = dextools.get_token_info(ca.X7103, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7103, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7103")[1]}'
             ath_value = coingecko.get_ath("x7103")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        except Exception:
-            ath = "Unavailable"
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        holders = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7103 = api.get_liquidity(chain_pair, chain)
-        x7103_token = float(x7103["reserve0"]) / 10**18
-        x7103_weth = float(x7103["reserve1"]) / 10**18
-        x7103_token_dollar = float(price) * float(x7103_token)
-        native_price = api.get_native_price(chain_native)
-        x7103_weth_dollar = float(x7103_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7103_token)[:4]}M X7103 (${"{:0,.0f}".format(x7103_token_dollar)})\n'
-            f'{x7103_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7103_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7103_weth_dollar + x7103_token_dollar):,.0f}"
-        )
-    ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7103_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7103_weth_dollar = float(x7103_weth) * native_price
-        x7103_token = 0
-        x7103_token_dollar = 0
-        liquidity = f'{x7103_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7103_weth_dollar)})'
-    ###
-    
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"X7103 Info {chain_name}\n\n"
-            f"X7103 Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
-            f"Contract Address:\n`{ca.X7103}`\n\n"
-            f"{api.get_quote()}",
+        else:
+            ath = "Unavailable"        
+        
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"X7103 Info {chain_name}\n\n"
+                f"💰 Price: {price}\n"
+                f'💎 Market Cap:  {market_cap}\n'
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {liquidity}\n"
+                f"👪 Holders: {holders}\n"
+                f"🔝 ATH: {ath}\n\n"
+                f"{price_change}\n\n"
+                f"Contract Address:\n`{ca.X7103}`\n\n"
+                f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -4476,70 +4279,35 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7104[chain]
-        holders = dextools.get_holders(ca.X7104, chain)
-        price = api.get_price(ca.X7104, chain)
-    if chain == "eth":
-        cg = coingecko.get_price("x7104")
-        volume = cg["x7104"]["usd_24h_vol"]
-        change = cg["x7104"]["usd_24h_change"]
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
-        try:
+        info = dextools.get_token_info(ca.X7104, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7104, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7104")[1]}'
             ath_value = coingecko.get_ath("x7104")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        except Exception:
-            ath = "Unavailable"
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        holders = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7104 = api.get_liquidity(chain_pair, chain)
-        x7104_token = float(x7104["reserve0"]) / 10**18
-        x7104_weth = float(x7104["reserve1"]) / 10**18
-        x7104_token_dollar = float(price) * float(x7104_token)
-        native_price = api.get_native_price(chain_native)
-        x7104_weth_dollar = float(x7104_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7104_token)[:4]}M X7104 (${"{:0,.0f}".format(x7104_token_dollar)})\n'
-            f'{x7104_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7104_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7104_weth_dollar + x7104_token_dollar):,.0f}"
-        )
-    ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7104_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7104_weth_dollar = float(x7104_weth) * native_price
-        x7104_token = 0
-        x7104_token_dollar = 0
-        liquidity = f'{x7104_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7104_weth_dollar)})'
-    ###
-
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"X7104 Info {chain_name}\n\n"
-            f"X7104 Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
-            f"Contract Address:\n`{ca.X7104}`\n\n"
-            f"{api.get_quote()}",
+        else:
+            ath = "Unavailable"        
+        
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"X7104 Info {chain_name}\n\n"
+                f"💰 Price: {price}\n"
+                f'💎 Market Cap:  {market_cap}\n'
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {liquidity}\n"
+                f"👪 Holders: {holders}\n"
+                f"🔝 ATH: {ath}\n\n"
+                f"{price_change}\n\n"
+                f"Contract Address:\n`{ca.X7104}`\n\n"
+                f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -4566,71 +4334,35 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7105[chain]
-        holders = dextools.get_holders(ca.X7105, chain)
-        price = api.get_price(ca.X7105, chain)
-    if chain == "eth":
-        cg = coingecko.get_price("x7105")
-        volume = cg["x7105"]["usd_24h_vol"]
-        change = cg["x7105"]["usd_24h_change"]
-        if change == None or 0:
-            change = 0
-        else:
-            change = round(change, 1)
-        if volume == None or 0:
-            volume = 0
-        else:
-            volume = f'${"{:0,.0f}".format(volume)}'
-        market_cap = f'${"{:0,.0f}".format(price * ca.SUPPLY)}'
-        try:
+        info = dextools.get_token_info(ca.X7105, chain)
+        holders = info["holders"]
+        market_cap = info["mcap"]
+        price, price_change_raw = dextools.get_price(ca.X7105, chain)
+        price_change = (f"{price_change_raw['one_hour']}\n"
+                    f"{price_change_raw['six_hour']}\n"
+                    f"{price_change_raw['one_day']}")
+        volume = dextools.get_volume(chain_pair, chain)
+        liquidity = dextools.get_liquidity(chain_pair, chain)
+        if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7105")[1]}'
             ath_value = coingecko.get_ath("x7105")[0]
             ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        except Exception:
-            ath = "Unavailable"
+        else:
+            ath = "Unavailable"        
         
-    else:
-        volume = "N/A"
-        change = "N/A"
-        ath = "N/A"
-        holders = "N/A"
-        market_cap = "N/A"
-
-    try:
-        x7105 = api.get_liquidity(chain_pair, chain)
-        x7105_token = float(x7105["reserve0"]) / 10**18
-        x7105_weth = float(x7105["reserve1"]) / 10**18
-        x7105_token_dollar = float(price) * float(x7105_token)
-        native_price = api.get_native_price(chain_native)
-        x7105_weth_dollar = float(x7105_weth) * float(native_price)
-
-        liquidity = (
-            f'{"{:0,.0f}".format(x7105_token)[:4]}M X7105 (${"{:0,.0f}".format(x7105_token_dollar)})\n'
-            f'{x7105_weth:.0f} {chain_native.upper()} (${"{:0,.0f}".format(x7105_weth_dollar)})\n'
-            f"Total Liquidity ${float(x7105_weth_dollar + x7105_token_dollar):,.0f}"
-        )
-    ### REMOVE AT MIGRATION ###
-    except Exception:
-        x7105_weth = api.get_native_balance(ca.CONS_LIQ_LOCK, chain)
-        x7105_weth_dollar = float(x7105_weth) * native_price
-        x7105_token = 0
-        x7105_token_dollar = 0
-        liquidity = f'{x7105_weth} {chain_native.upper()}\n(${"{:0,.0f}".format(x7105_weth_dollar)})'
-    ###
-
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"X7105 Info {chain_name}\n\n"
-            f"X7105 Price: ${round(price, 8)}\n"
-            f"24 Hour Change: {change}%\n"
-            f'Market Cap:  ${"{:0,.0f}".format(price * ca.SUPPLY)}\n'
-            f"24 Hour Volume: {volume}\n"
-            f"ATH: {ath}\n"
-            f"Holders: {holders}\n\n"
-            f"Liquidity:\n"
-            f"{liquidity}\n\n"
-            f"Contract Address:\n`{ca.X7105}`\n\n"
-            f"{api.get_quote()}",
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"X7105 Info {chain_name}\n\n"
+                f"💰 Price: {price}\n"
+                f'💎 Market Cap:  {market_cap}\n'
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {liquidity}\n"
+                f"👪 Holders: {holders}\n"
+                f"🔝 ATH: {ath}\n\n"
+                f"{price_change}\n\n"
+                f"Contract Address:\n`{ca.X7105}`\n\n"
+                f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
