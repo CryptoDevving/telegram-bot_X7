@@ -56,6 +56,17 @@ INFO = {
         "lending_pool_percentage": 0.20,
         "treasury_percentage": 0.50,
     },
+    "base": {
+        "profit_percentage": 0.49,
+        "pioneer_reward_pool_percentage": 0.06,
+        "community_multisig_percentage": 0.32,
+        "developers_multisig_percentage": 0.13,
+        "x7r_percentage": 0.10,
+        "x7dao_percentage": 0.10,
+        "x7_constellations_percentage": 0.10,
+        "lending_pool_percentage": 0.20,
+        "treasury_percentage": 0.50,
+    },
 }
 
 def GENERATE_INFO(chain, eth_value):

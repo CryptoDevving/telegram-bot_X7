@@ -66,6 +66,19 @@ INFO = {
         "eco_discount_x7100": 25,
         "magister_discount": 25,
     },
+    "base": {
+        "x7r": 6,
+        "x7dao": 6,
+        "x7100": 2,
+        "x7dao_discount_x7100": 50,
+        "liq_discount_x7r": 25,
+        "liq_discount_x7dao": 15,
+        "liq_discount_x7100": 50,
+        "eco_discount_x7r": 10,
+        "eco_discount_x7dao": 10,
+        "eco_discount_x7100": 25,
+        "magister_discount": 25,
+    },
 }
 
 

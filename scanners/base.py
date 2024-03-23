@@ -18,7 +18,9 @@ import media
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 defined = api.Defined()
 chain = "base"
-web3 = Web3(Web3.HTTPProvider("https://mainnet.base.org"))
+
+base_url = f"https://lb.drpc.org/ogrpc?network=base&dkey={os.getenv('DRPC_API_KEY')}"
+web3 = Web3(Web3.HTTPProvider(base_url))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
