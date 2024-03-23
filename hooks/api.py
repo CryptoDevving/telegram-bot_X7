@@ -40,7 +40,7 @@ class Dextools:
     def get_price(self, token, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f'token/{chain_info}/{token}/price'
+        endpoint = f'token/{chain_info.dext}/{token}/price'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
 

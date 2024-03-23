@@ -227,13 +227,13 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"*X7 Finance Loan Rates {chain_name}*\n\n"
         f"Borrowing {amount} {chain_native.upper()} will cost:\n\n"
         f"*ILL001*\n"
-        f"Origination Fee: {ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar:.2f})\n"
-        f"Premium Fees: {ill001_total_premium} {chain_native.upper()} (${ill001_total_premium_dollar:.2f})\n"
-        f"*Total Cost:* {ill001_total_premium + ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar + ill001_total_premium_dollar:.2f})\n\n"
+        f"Origination Fee: {ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar:,.0f})\n"
+        f"Premium Fees: {ill001_total_premium} {chain_native.upper()} (${ill001_total_premium_dollar:,.0f})\n"
+        f"*Total Cost:* {ill001_total_premium + ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar + ill001_total_premium_dollar:,.0f})\n\n"
         f"*ILL003*\n"
-        f"Origination Fee: {ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar:.2f})\n"
-        f"Premium Fees: {ill003_total_premium} {chain_native.upper()} (${ill003_total_premium_dollar:.2f})\n"
-        f"*Total Cost:* {ill003_total_premium + ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar + ill003_total_premium_dollar:.2f})\n\n"
+        f"Origination Fee: {ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar:,.02f})\n"
+        f"Premium Fees: {ill003_total_premium} {chain_native.upper()} (${ill003_total_premium_dollar:,.0f})\n"
+        f"*Total Cost:* {ill003_total_premium + ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar + ill003_total_premium_dollar:,.0f})\n\n"
 
         f"{api.get_quote()}",
     parse_mode="Markdown"
@@ -474,7 +474,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=
             f"*X7 Finance Market Cap Comparison*\n\n"
             f"{context.args[1].upper()} Market Cap:\n"
-            f'${"{:,.2f}".format(token_market_cap)}\n\n'
+            f'${"{:,.0f}".format(token_market_cap)}\n\n'
             f'Token value of {context.args[0].upper()} at {context.args[1].upper()} Market Cap:\n'
             f'${"{:,.2f}".format(token_value)}\n'
             f'{"{:,.0f}%".format(percent)}\n'
