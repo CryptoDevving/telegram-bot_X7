@@ -68,21 +68,10 @@ async def new_pair(event):
         native = api.get_token_name(event["args"]["token1"], chain)
         token_name = api.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
-    info = api.get_token_data(token_address, chain)
     if api.get_verified(token_address, chain):
         verified = "✅ Contract Verified"
     else:
         "⚠️ Contract Unverified"
-    if (
-        info[0]["decimals"] == ""
-        or info[0]["decimals"] == "0"
-        or not info[0]["decimals"]
-    ):
-        supply = int(api.get_supply(token_address, chain))
-    else:
-        supply = int(api.get_supply(token_address, chain)) / 10 ** int(
-            info[0]["decimals"]
-        )
     status = ""
     renounced = ""
     tax = ""
@@ -119,6 +108,7 @@ async def new_pair(event):
         status = f"{verified}\n{tax}\n{renounced}\n"
     except Exception:
         status = "⚠️ Scan Unavailable"
+
     pool = int(tx["result"]["value"], 0) / 10**18
     if pool == 0 or pool == "" or not pool:
         pool_text = "Liquidity: Unavailable"
@@ -136,7 +126,6 @@ async def new_pair(event):
         (26, 30),
             f"New Pair Created (ARB) \n\n"
             f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
-            f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
             f"{pool_text}\n\n"
             f"{status}\n",
         font = ImageFont.truetype(media.FONT, 26),
@@ -155,7 +144,6 @@ async def new_pair(event):
                 f"*New Pair Created (ARB)*\n\n"
                 f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
                 f"Token Address:\n`{token_address}`\n\n"
-                f'Supply: {"{:0,.0f}".format(supply)} ({info[0]["decimals"]} Decimals)\n\n'
                 f"{pool_text}\n\n"
                 f"{status}\n",
             parse_mode="Markdown",

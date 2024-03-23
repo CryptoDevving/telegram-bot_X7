@@ -19,6 +19,7 @@ from variables import times, giveaway
 dextools = api.Dextools()
 coingecko = api.CoinGecko()
 defined = api.Defined()
+opensea = api.Opensea()
 
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -263,7 +264,8 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     burn = api.get_token_balance(ca.DEAD, ca.X7R, chain)
     percent = round(burn / ca.SUPPLY * 100, 2)
-    burn_dollar = api.get_price(ca.X7R, chain) * float(burn)
+    price,_ = dextools.get_price(ca.X7R, "eth")
+    burn_dollar = float(price) * float(burn)
     native = f"{str(burn_dollar / api.get_native_price(chain_native))[:5]} {chain_native.upper()}"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -355,7 +357,7 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         chain = "eth"
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
-        chain_url = mappings.CHAINS[chain].dext
+        dext = mappings.CHAINS[chain].dext
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -371,13 +373,13 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             [
                 [
                     InlineKeyboardButton(
-                        text="X7R - Rewards Token", url=f"{chain_url}{ca.X7R}"
+                        text="X7R - Rewards Token", url=f"https://www.dextools.io/app/{dext}/pair-explorer/{ca.X7R}"
                     )
                 ],
                 [
                     InlineKeyboardButton(
                         text="X7DAO - Governance Token",
-                        url=f"{chain_url}{ca.X7DAO}",
+                        url=f"https://www.dextools.io/app/{dext}/pair-explorer/{ca.X7DAO}",
                     )
                 ],
             ]
@@ -462,8 +464,8 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         x7_supply = ca.SUPPLY
     token_info = token_names[x7token]
-    x7_price = api.get_price(token_info["contract"], "eth")
-    x7_market_cap = x7_price * x7_supply
+    x7_price,_ = dextools.get_price(token_info["contract"], "eth")
+    x7_market_cap = float(x7_price) * float(x7_supply)
     percent = ((token_market_cap - x7_market_cap) / x7_market_cap) * 100
     x = (token_market_cap - x7_market_cap) / x7_market_cap
     token_value = token_market_cap / x7_supply
@@ -1775,12 +1777,11 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_token
-        chain_holders = mappings.CHAINS[chain].nft_holders
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
 
-    data = api.get_nft_data(ca.MAGISTER, chain_holders)
+    data = api.get_nft_data(ca.MAGISTER, chain)
     holders = data["holder_count"]
     response = api.get_nft_holder_list(ca.MAGISTER, chain)
     magisters = [holder["owner_of"] for holder in response["result"]]
@@ -1817,7 +1818,6 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    price = {}
     token_names = {
         ca.X7R: "X7R",
         ca.X7DAO: "X7DAO",
@@ -1827,46 +1827,41 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ca.X7104: "X7104",
         ca.X7105: "X7105",
     }
-    for token in ca.TOKENS:
-        token_name = token_names.get(token, "Unknown Token")
-        price[token] = api.get_price(token, chain)
-
-    x7r_supply = api.get_x7r_supply(chain)
-
+    caps_info = {}
     caps = {}
     for token in ca.TOKENS:
-        if token == ca.X7R:
-            caps[token] = price[token] * x7r_supply
-        else:
-            caps[token] = price[token] * ca.SUPPLY
-    cons_cap = sum(caps.values()) - caps[ca.X7R] - caps[ca.X7DAO]
-    total_cap = sum(caps.values())
-    market_cap_info = f"X7 Finance Market Cap Info {chain_name}\n\n"
-    market_cap_info += f'X7R:     ${"{:0,.0f}".format(caps[ca.X7R])}\n'
-    for token in ca.TOKENS:
-        if token == ca.X7R:
+        caps_info[token] = dextools.get_token_info(token, chain)
+        caps[token] = caps_info[token]["mcap"]
+
+    total_mcap = 0
+    for token, mcap in caps.items():
+        if mcap == 'N/A':
             continue
-        market_cap_info += f'{token_name}:   ${"{:0,.0f}".format(caps[token])}\n'
-    market_cap_info += f'\nConstellations Combined:\n${"{:0,.0f}".format(cons_cap)}\n\n'
-    market_cap_info += f'Total Token Market Cap:\n${"{:0,.0f}".format(total_cap)}\n\n'
-    market_cap_info += (
-        f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}'
-    )
+        mcap_value = float(''.join(filter(str.isdigit, mcap)))
+        total_mcap += mcap_value
+
+    total_cons = 0
+    for token, mcap in caps.items():
+        if token in (ca.X7DAO, ca.X7R):
+            continue
+        if mcap == 'N/A':
+            continue
+        cons_mcap_value = float(''.join(filter(str.isdigit, mcap)))
+        total_cons += cons_mcap_value
+
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
             f"*X7 Finance Market Cap Info {chain_name}*\n\n"
-            f'`X7R: `            ${"{:0,.0f}".format(caps[ca.X7R])}\n'
-            f'`X7DAO:`         ${"{:0,.0f}".format(caps[ca.X7DAO])}\n'
-            f'`X7101:`         ${"{:0,.0f}".format(caps[ca.X7101])}\n'
-            f'`X7102:`         ${"{:0,.0f}".format(caps[ca.X7102])}\n'
-            f'`X7103:`         ${"{:0,.0f}".format(caps[ca.X7103])}\n'
-            f'`X7104:`         ${"{:0,.0f}".format(caps[ca.X7104])}\n'
-            f'`X7105:`         ${"{:0,.0f}".format(caps[ca.X7105])}\n\n'
-            f"`Constellations Combined:`\n"
-            f'${"{:0,.0f}".format(cons_cap)}\n\n'
-            f"`Total Token Market Cap:`\n"
-            f'${"{:0,.0f}".format(total_cap)}\n\n'
+            f'`X7R: `            {caps[ca.X7R]}\n'
+            f'`X7DAO:`         {caps[ca.X7DAO]}\n'
+            f'`X7101:`         {caps[ca.X7101]}\n'
+            f'`X7102:`         {caps[ca.X7102]}\n'
+            f'`X7103:`         {caps[ca.X7103]}\n'
+            f'`X7104:`         {caps[ca.X7104]}\n'
+            f'`X7105:`         {caps[ca.X7105]}\n\n'
+            f'`Constellations Combined:` ${total_cons:,.0f}\n'
+            f'`Total Market Cap:` ${total_mcap:,.0f}\n\n'
             f"{api.get_quote()}",
         parse_mode="Markdown",
     )
@@ -2190,7 +2185,7 @@ async def pfp(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     pioneer_id = " ".join(context.args)
-    data = api.get_os_nft_collection("/x7-pioneer")
+    data = opensea.get_nft_collection("/x7-pioneer")
     floor_data = api.get_nft_data(ca.PIONEER, "eth")
     floor = floor_data["floor_price"]
     native_price = api.get_native_price("eth")
@@ -2233,7 +2228,7 @@ async def pioneer(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             ),
         )
     else:
-        data = api.get_os_nft_id(ca.PIONEER, pioneer_id)
+        data = opensea.get_nft_id(ca.PIONEER, pioneer_id)
         if "nft" in data and data["nft"]:
             status = data["nft"]["traits"][0]["value"]
             image_url = data["nft"]["image_url"]
@@ -2693,14 +2688,14 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if len(context.args) == 1:
-        token_address = context.args[0].lower()
+        search = context.args[0].lower()
         chain = None
 
     if len(context.args) == 2:
-        token_address = context.args[0].lower()
+        search = context.args[0].lower()
         chain = context.args[1].lower()
         
-    if token_address == "":
+    if search == "":
         await update.message.reply_text(
         f"Please provide Contract Address and optional chain")
         return
@@ -2711,35 +2706,33 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     message = await update.message.reply_text("Scanning, Please wait...")
     if chain == None:
-        for chain in mappings.DEFINED_CHAINS:
-            scan = api.get_scan(token_address, chain)
+        for chain in mappings.CHAINS:
+            scan = api.get_scan(search, chain)
             if scan:
-                
                 break
         else:
-            await update.message.reply_text(f"{token_address} not found")
+            await update.message.reply_text(f"{search} not found")
             return
     
     else:
-        scan = api.get_scan(token_address, chain)
+        if chain in mappings.CHAINS:
+            scan = api.get_scan(search, chain)
         if scan == {}:
-            await update.message.reply_text(f"{token_address} ({chain.upper()}) not found")
+            await update.message.reply_text(f"{search} ({chain.upper()}) not found")
             return
-
     scan_link = mappings.CHAINS[chain].scan_address
-    dex_tools_link = mappings.CHAINS[chain].dext
+    dext = mappings.CHAINS[chain].dext
 
-    if api.get_verified(token_address, chain):
+    if api.get_verified(search, chain):
         verified = "✅ Contract Verified"
     else:
         verified = "⚠️ Contract Unverified"
 
-    token_address = str(token_address.lower())
+    token_address = str(search.lower())
     if token_address in scan:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         token_name = scan[token_address]["token_name"]
         token_symbol = scan[token_address]["token_symbol"]
-
         if scan[token_address]["is_in_dex"] == "1":
             buy_tax_raw = (float(scan[token_address]["buy_tax"]) * 100)
             sell_tax_raw = (float(scan[token_address]["sell_tax"]) * 100)
@@ -2881,7 +2874,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 [
                     InlineKeyboardButton(
                         text=f"Chart",
-                        url=f'{dex_tools_link}{pair}',
+                        url=f'https://www.dextools.io/app/{dext}/pair-explorer/{pair}',
                     )
                 ],
             ]
@@ -3470,9 +3463,11 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     com_usdc_balance = api.get_stables_balance(chain_com_multi, ca.USDC, chain)
     stables = com_usdt_balance + com_usdc_balance
     com_x7r_balance = api.get_token_balance(chain_com_multi, ca.X7R, chain)
-    com_x7r_price = com_x7r_balance * api.get_price(ca.X7R, chain)
+    x7r_price,_ = dextools.get_price(ca.X7R, chain)
+    com_x7r_price = float(com_x7r_balance) * float(x7r_price)
     com_x7dao_balance = api.get_token_balance(chain_com_multi, ca.X7DAO, chain)
-    com_x7dao_price = com_x7dao_balance * api.get_price(ca.X7DAO, chain)
+    x7dao_price,_ = dextools.get_price(ca.X7DAO, chain)
+    com_x7dao_price = float(com_x7dao_balance) * float(x7dao_price)
     com_x7d_balance = api.get_token_balance(chain_com_multi, ca.X7D, chain)
     com_x7d_price = com_x7d_balance * native_price
     com_total = com_x7r_price + com_dollar + com_x7d_price + com_x7dao_price + stables
@@ -3758,20 +3753,35 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     native_price = api.get_native_price(chain_native)
     eth = api.get_native_balance(wallet, chain)
     dollar = float(eth) * float(native_price)
+    x7r,_ = dextools.get_price(ca.X7R, chain)
+    x7dao,_ = dextools.get_price(ca.X7DAO, chain)
+    x7101,_ = dextools.get_price(ca.X7101, chain)
+    x7102,_ = dextools.get_price(ca.X7102, chain)
+    x7103,_ = dextools.get_price(ca.X7103, chain)
+    x7104,_ = dextools.get_price(ca.X7104, chain)
+    x7105,_ = dextools.get_price(ca.X7105, chain)
+
     x7r_balance = api.get_token_balance(wallet, ca.X7R, chain)
-    x7r_price = x7r_balance * api.get_price(ca.X7R, chain)
+    x7r_price = float(x7r_balance) * float(x7r)
+    
     x7dao_balance = api.get_token_balance(wallet, ca.X7DAO, chain)
-    x7dao_price = x7dao_balance * api.get_price(ca.X7DAO, chain)
+    x7dao_price = float(x7dao_balance) * float(x7dao)
+    
     x7101_balance = api.get_token_balance(wallet, ca.X7101, chain)
-    x7101_price = x7101_balance * api.get_price(ca.X7101, chain)
+    x7101_price = float(x7101_balance) * float(x7101)
+    
     x7102_balance = api.get_token_balance(wallet, ca.X7102, chain)
-    x7102_price = x7102_balance * api.get_price(ca.X7102, chain)
+    x7102_price = float(x7102_balance) * float(x7102)
+    
     x7103_balance = api.get_token_balance(wallet, ca.X7103, chain)
-    x7103_price = x7103_balance * api.get_price(ca.X7103, chain)
+    x7103_price = float(x7103_balance) * float(x7103)
+
     x7104_balance = api.get_token_balance(wallet, ca.X7104, chain)
-    x7104_price = x7104_balance * api.get_price(ca.X7104, chain)
+    x7104_price = float(x7104_balance) * float(x7104)
+
     x7105_balance = api.get_token_balance(wallet, ca.X7105, chain)
-    x7105_price = x7105_balance * api.get_price(ca.X7105, chain)
+    x7105_price = float(x7105_balance) * float(x7105)
+    
     x7d_balance = api.get_token_balance(wallet, ca.X7D, chain)
     x7d_price = x7d_balance * native_price
     total = (

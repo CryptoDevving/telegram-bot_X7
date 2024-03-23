@@ -19,8 +19,9 @@ class TokensInfo:
 
 
 class ChainInfo:
-    def __init__(self, name: str, token: str, logo: str, xchange: str, scan_token: str, scan_address: str, scan_tx: str, gas: str, dext: str, opensea: str, nft_holders: str, w3: str, api: str, key: str, com_multi: str, dev_multi: str, pairs: list):
+    def __init__(self, name: str, id: str,  token: str, logo: str, xchange: str, scan_token: str, scan_address: str, scan_tx: str, gas: str, dext: str, opensea: str, blockspan: str, w3: str, api: str, key: str, com_multi: str, dev_multi: str, pairs: list):
         self.name = name
+        self.id = id
         self.token = token
         self.logo = logo
         self.xchange = xchange
@@ -30,7 +31,7 @@ class ChainInfo:
         self.gas = gas
         self.dext = dext
         self.opensea = opensea
-        self.nft_holders = nft_holders
+        self.blockspan = blockspan
         self.w3 = w3
         self.api = api
         self.key = key
@@ -39,9 +40,21 @@ class ChainInfo:
         self.pairs = pairs
 
 
+
+MORALIS_CHAINS = {
+    "eth": "eth",
+    "arb": "arbitrum",
+    "poly": "polygon",
+    "bsc": "bsc",
+    "opti": "optimism",
+    "base": "base",
+}
+
+
 CHAINS = {
     "eth": ChainInfo(
         "(ETH)",
+        "1",
         "eth",
         media.ETH_LOGO,
         urls.XCHANGE_BUY_ETH,
@@ -49,7 +62,7 @@ CHAINS = {
         urls.ETHER_ADDRESS,
         urls.ETHER_TX,
         urls.ETHER_GAS,
-        urls.DEX_TOOLS_ETH,
+        "ether",
         "",
         "eth-main",
         Web3(Web3.HTTPProvider(f"https://lb.drpc.org/ogrpc?network=ethereum&dkey={os.getenv('DRPC_API_KEY')}")),
@@ -67,6 +80,7 @@ CHAINS = {
     ),
     "bsc": ChainInfo(
         "(BSC)",
+        "56",
         "bnb",
         media.BSC_LOGO,
         urls.XCHANGE_BUY_BSC,
@@ -74,7 +88,7 @@ CHAINS = {
         urls.BSC_ADDRESS,
         urls.BSC_TX,
         urls.BSC_GAS,
-        urls.DEX_TOOLS_BSC,
+        "bsc",
         "-binance",
         "",
         Web3(Web3.HTTPProvider(f"https://lb.drpc.org/ogrpc?network=bsc&dkey={os.getenv('DRPC_API_KEY')}")),
@@ -92,6 +106,7 @@ CHAINS = {
     ),
     "arb": ChainInfo(
         "(Arbitrum)",
+        "42161",
         "eth",
         media.ARB_LOGO,
         urls.XCHANGE_BUY_ARB,
@@ -99,7 +114,7 @@ CHAINS = {
         urls.ARB_ADDRESS,
         urls.ARB_TX,
         urls.ETHER_GAS,
-        urls.DEX_TOOLS_ARB,
+        "arbitrum",
         "-arbitrum",
         "arbitrum-main",
         Web3(Web3.HTTPProvider(f"https://lb.drpc.org/ogrpc?network=arbitrum&dkey={os.getenv('DRPC_API_KEY')}")),
@@ -118,6 +133,7 @@ CHAINS = {
     ),
     "opti": ChainInfo(
         "(Optimism)",
+        "10",
         "eth",
         media.OPTI_LOGO,
         urls.XCHANGE_BUY_OPTI,
@@ -125,7 +141,7 @@ CHAINS = {
         urls.OPTI_ADDRESS,
         urls.OPTI_TX,
         urls.ETHER_GAS,
-        urls.DEX_TOOLS_OPTI,
+        "optimism",
         "-optimism",
         "optimism-main",
         Web3(Web3.HTTPProvider(f"https://lb.drpc.org/ogrpc?network=optimism&dkey={os.getenv('DRPC_API_KEY')}")),
@@ -143,6 +159,7 @@ CHAINS = {
     ),
     "poly": ChainInfo(
         "(Polygon)",
+        "137",
         "matic",
         media.POLY_LOGO,
         urls.XCHANGE_BUY_POLY,
@@ -150,7 +167,7 @@ CHAINS = {
         urls.POLY_ADDRESS,
         urls.POLY_TX,
         urls.POLY_GAS,
-        urls.DEX_TOOLS_POLY,
+        "polygon",
         "-polygon",
         "poly-main",
         Web3(Web3.HTTPProvider(f"https://lb.drpc.org/ogrpc?network=polygon&dkey={os.getenv('DRPC_API_KEY')}")),
@@ -168,6 +185,7 @@ CHAINS = {
     ),
     "base": ChainInfo(
         "(Base)",
+        "8453",
         "eth",
         media.BASE_LOGO,
         urls.XCHANGE_BUY_BASE,
@@ -175,7 +193,7 @@ CHAINS = {
         urls.BASE_ADDRESS,
         urls.BASE_TX,
         urls.ETHER_GAS,
-        urls.DEX_TOOLS_BASE,
+        "base",
         "-base",
         "base-main",
         Web3(Web3.HTTPProvider(f"https://mainnet.base.org")),
@@ -644,41 +662,3 @@ WEB3_urlsS = {
 }
 
 
-BLOCKSPAN_CHAINS = {
-    "eth": "eth-main",
-    "arb": "arbitrum-main",
-    "poly": "poly-main",
-    "bsc": "bsc-main",
-    "opti": "optimism-main",
-    "base": "base-main",
-}
-
-
-DEFINED_CHAINS = {
-    "eth": "1",
-    "arb": "42161",
-    "poly": "137",
-    "bsc": "46",
-    "opti": "10",
-    "base": "8453",
-}
-
-
-DEX_TOOLS_CHAINS = {
-    "eth": "ether",
-    "arb": "arbitrum",
-    "poly": "polygon",
-    "bsc": "bsc",
-    "opti": "optimism",
-    "base": "base",
-}
-
-
-MORALIS_CHAINS = {
-    "eth": "eth",
-    "arb": "arbitrum",
-    "poly": "polygon",
-    "bsc": "bsc",
-    "opti": "optimism",
-    "base": "base",
-}

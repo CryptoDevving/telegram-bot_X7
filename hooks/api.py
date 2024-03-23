@@ -19,9 +19,9 @@ class Dextools:
 
 
     def get_dex(self, pair, chain):
-        if chain in mappings.DEX_TOOLS_CHAINS:
-            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-        endpoint = f'pool/{dextools_chain}/{pair}'
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+        endpoint = f'pool/{chain_info.dext}/{pair}'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
         data = response.json()
@@ -36,10 +36,11 @@ class Dextools:
         except Exception:
             "Unknown DEX"
     
+
     def get_price(self, token, chain):
-        if chain in mappings.DEX_TOOLS_CHAINS:
-            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-        endpoint = f'token/{dextools_chain}/{token}/price'
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+        endpoint = f'token/{chain_info}/{token}/price'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
 
@@ -79,10 +80,11 @@ class Dextools:
         else:
             return 0, "N/A"
         
+
     def get_token_info(self, pair, chain):
-        if chain in mappings.DEX_TOOLS_CHAINS:
-            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-        endpoint = f"token/{dextools_chain}/{pair}/info"
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+        endpoint = f"token/{chain_info.dext}/{pair}/info"
         response = requests.get(self.url + endpoint, headers=self.headers)
 
         if response.status_code == 200:
@@ -119,10 +121,11 @@ class Dextools:
                 "holders": "N/A"
             }
 
+
     def get_liquidity(self, pair, chain):
-        if chain in mappings.DEX_TOOLS_CHAINS:
-            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-        endpoint = f'pool/{dextools_chain}/{pair}/liquidity'
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+        endpoint = f'pool/{chain_info.dext}/{pair}/liquidity'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
 
@@ -135,10 +138,11 @@ class Dextools:
         else:
             return "N/A"
         
+
     def get_volume(self, pair, chain):
-        if chain in mappings.DEX_TOOLS_CHAINS:
-            dextools_chain = mappings.DEX_TOOLS_CHAINS[chain]
-        endpoint = f"pool/{dextools_chain}/{pair}/price"
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+        endpoint = f"pool/{chain_info.dext}/{pair}/price"
 
         response = requests.get(self.url + endpoint, headers=self.headers)
         if response.status_code == 200:
@@ -205,8 +209,8 @@ class Defined:
 
 
     def get_price_change(self, address, chain):
-        if chain in mappings.DEFINED_CHAINS:
-            chain = mappings.DEFINED_CHAINS[chain]
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
 
         current_timestamp = int(datetime.now().timestamp()) - 300
         one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
@@ -218,22 +222,22 @@ class Defined:
                 inputs: [
                     {{ 
                         address: "{address}"
-                        networkId: {chain}
+                        networkId: {chain_info.id}
                         timestamp: {current_timestamp}
                     }}
                     {{ 
                         address: "{address}"
-                        networkId: {chain}
+                        networkId: {chain_info.id}
                         timestamp: {one_hour_ago_timestamp}
                     }}
                     {{ 
                         address: "{address}"
-                        networkId: {chain}
+                        networkId: {chain_info.id}
                         timestamp: {twenty_four_hours_ago_timestamp}
                     }}
                     {{ 
                         address: "{address}"
-                        networkId: {chain}
+                        networkId: {chain_info.id}
                         timestamp: {seven_days_ago_timestamp}
                     }}
                 ]
@@ -273,12 +277,12 @@ class Defined:
 
 
     def get_token_image(self, token, chain):
-        if chain in mappings.DEFINED_CHAINS:
-            chain = mappings.DEFINED_CHAINS[chain]
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
 
         image = f'''
             query {{
-                getTokenInfo(address:"{token}", networkId:{chain}) {{
+                getTokenInfo(address:"{token}", networkId:{chain_info.id}) {{
                     imageLargeUrl
                 }}
             }}
@@ -297,12 +301,13 @@ class Defined:
         else:
             return "N/A"
 
+
     def get_pair(self, address, chain):
-        if chain in mappings.DEFINED_CHAINS:
-            chain = mappings.DEFINED_CHAINS[chain]
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
         
         pair_query = f"""query {{
-            listPairsWithMetadataForToken (tokenAddress: "{address}" networkId: {chain}) {{
+            listPairsWithMetadataForToken (tokenAddress: "{address}" networkId: {chain_info.id}) {{
                 results {{
                     pair {{
                         address
@@ -323,12 +328,12 @@ class Defined:
 
     def get_volume(self, pair, chain):
         try:
-            if chain in mappings.DEFINED_CHAINS:
-                chain = mappings.DEFINED_CHAINS[chain]
+            if chain in mappings.CHAINS:
+                chain_info = mappings.CHAINS[chain]
 
             volume = f'''
                 query {{
-                getDetailedPairStats(pairAddress: "{pair}", networkId: {chain}, bucketCount: 1, tokenOfInterest: token1) {{
+                getDetailedPairStats(pairAddress: "{pair}", networkId: {chain_info.id}, bucketCount: 1, tokenOfInterest: token1) {{
                     stats_day1 {{
                     statsUsd {{
                         volume {{
@@ -349,6 +354,29 @@ class Defined:
                 return "N/A"
         
         
+class Opensea:
+    def __init__(self):
+        self.headers = {
+            "accept": "application/json",
+            "X-API-KEY": os.getenv("OPENSEA_API_KEY")
+        }
+        self.url = f"https://api.opensea.io/v2/"
+        
+
+    def get_nft_collection(self, slug):
+        endpoint = f"collections/{slug}"
+        response = requests.get(self.url + endpoint, headers=self.headers)
+        data = response.json()
+        return data
+
+
+    def get_nft_id(self, nft, identifier):
+        endpoint = f"chain/ethereum/contract/{nft}/nfts/{identifier}"
+        response = requests.get(self.url + endpoint, headers=self.headers)
+        data = response.json()
+        return data
+    
+
 # SCAN
 
 
@@ -532,41 +560,8 @@ def get_x7r_supply(chain):
     return supply
 
 
-# ALCHEMY
-
-
-def get_maxi_holdings(wallet, chain):
-    if chain in mappings.WEB3_URLS:
-        chain = mappings.WEB3_URLS[chain]
-    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.BORROW}&contractAddresses[]={ca.LIQ}&contractAddresses[]={ca.DEX}&contractAddresses[]={ca.ECO}&withMetadata=false&pageSize=100'
-    headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
-    response_data = response.json()
-    total_count = response_data.get("totalCount")
-    return total_count
-
-
-def get_pioneer_holdings(wallet, chain):
-    if chain in mappings.WEB3_URLS:
-        chain = mappings.WEB3_URLS[chain]
-    url = f'{chain}/getNFTs?owner={wallet}&contractAddresses[]={ca.PIONEER}&withMetadata=false&pageSize=100'
-    headers = {"accept": "application/json"}
-    response = requests.get(url, headers=headers)
-    response_data = response.json()
-    total_count = response_data.get("totalCount")
-    return total_count
-
 
 # MORALIS
-
-
-def get_liquidity(pair, chain):
-    if chain in mappings.MORALIS_CHAINS:
-        chain = mappings.MORALIS_CHAINS[chain]
-    return evm_api.defi.get_pair_reserves(
-        api_key=os.getenv("MORALIS_API_KEY"),
-        params={"chain": chain, "pair_address": pair},
-    )
 
 
 def get_nft_holder_list(nft, chain):
@@ -576,30 +571,6 @@ def get_nft_holder_list(nft, chain):
         api_key=os.getenv("MORALIS_API_KEY"),
         params={"chain": chain, "format": "decimal", "address": nft},
     )
-
-
-def get_price(token, chain):
-    try:
-        if chain in mappings.MORALIS_CHAINS:
-            chain = mappings.MORALIS_CHAINS[chain]
-        api_key = os.getenv("MORALIS_API_KEY")
-        result = evm_api.token.get_token_price(
-            api_key=api_key,
-            params={"address": token, "chain": chain},
-        )
-        return result["usdPrice"]
-    except Exception:
-        return  0
-
-
-def get_token_data(token: str, chain: str) -> dict:
-    if chain in mappings.MORALIS_CHAINS:
-        chain = mappings.MORALIS_CHAINS[chain]
-    result = evm_api.token.get_token_metadata(
-        api_key=os.getenv("MORALIS_API_KEY"),
-        params={"addresses": [f"{token}"], "chain": chain},
-    )
-    return result
 
 
 def get_token_name(token: str, chain: str) -> Tuple[str, str]:
@@ -612,66 +583,9 @@ def get_token_name(token: str, chain: str) -> Tuple[str, str]:
     return result[0]["name"], result[0]["symbol"]
 
 
-# BLOCKSPAN
-
-def get_nft_data(nft, chain):
-    try:
-        if chain in mappings.BLOCKSPAN_CHAINS:
-            chain = mappings.BLOCKSPAN_CHAINS[chain]
-
-        url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain}"
-        response = requests.get(
-            url,
-            headers={
-                "accept": "application/json",
-                "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
-            }
-        )
-        data = response.json()
-
-        info = {"holder_count": 0, "floor_price": "N/A"}
-
-        holder_count = data.get("total_tokens", None)
-        if holder_count is not None:
-            info["holder_count"] = int(holder_count)
-
-        exchange_data = data.get("exchange_data")
-        if exchange_data is not None:
-            for item in exchange_data:
-                stats = item.get("stats")
-                if stats is not None:
-                    floor_price = stats.get("floor_price")
-                    if floor_price is not None:
-                        info["floor_price"] = floor_price
-                        break
-                        
-        return info
-
-    except Exception:
-        return {"holder_count": 0, "floor_price": "N/A"}
-
-
-# OPENSEA
-
-def get_os_nft_collection(slug):
-    url = f"https://api.opensea.io/api/v2/collections/{slug}"
-    response = requests.get(url, headers={"X-API-KEY": os.getenv("OPENSEA_API_KEY")})
-    data = response.json()
-    return data
-
-
-def get_os_nft_id(nft, identifier):
-    url = f"https://api.opensea.io/v2/chain/ethereum/contract/{nft}/nfts/{identifier}"
-    headers = {
-        "accept": "application/json",
-        "X-API-KEY": os.getenv("OPENSEA_API_KEY")
-    }
-    response = requests.get(url, headers=headers)
-    data = response.json()
-    return data
-
 
 # OTHER
+
 
 async def burn_x7r(amount):
     try:
@@ -803,6 +717,79 @@ def get_fact():
     return quote["text"]
 
 
+def get_nft_data(nft, chain):
+    try:
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+
+        url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain_info.blockspan}"
+        response = requests.get(
+            url,
+            headers={
+                "accept": "application/json",
+                "X-API-KEY": os.getenv("BLOCKSPAN_API_KEY"),
+            }
+        )
+        data = response.json()
+
+        info = {"holder_count": 0, "floor_price": "N/A"}
+
+        holder_count = data.get("total_tokens", None)
+        if holder_count is not None:
+            info["holder_count"] = int(holder_count)
+
+        exchange_data = data.get("exchange_data")
+        if exchange_data is not None:
+            for item in exchange_data:
+                stats = item.get("stats")
+                if stats is not None:
+                    floor_price = stats.get("floor_price")
+                    if floor_price is not None:
+                        info["floor_price"] = floor_price
+                        break
+                        
+        return info
+
+    except Exception:
+        return {"holder_count": 0, "floor_price": "N/A"}
+
+
+def get_proposers(chain):
+    today = datetime.now().strftime("%Y-%m-%d")
+    url_graphql = "https://streaming.bitquery.io/graphql"
+    headers_graphql = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {os.getenv("BITQUERY_API_KEY")}'
+    }
+
+    graphql_query = f'''
+    {{
+      EVM(dataset: archive, network: {chain}) {{
+        TokenHolders(
+          date: "{today}"
+          tokenSmartContract: "{ca.X7DAO}"
+          where: {{ Balance: {{ Amount: {{ ge: "500000" }} }} }}
+        ) {{
+          uniq(of: Holder_Address)
+        }}
+      }}
+    }}
+    '''
+    payload_graphql = json.dumps({'query': graphql_query})
+
+    try:
+        response_graphql = requests.post(url_graphql, headers=headers_graphql, data=payload_graphql)
+
+        if response_graphql.status_code == 200:
+            result = response_graphql.json()
+            number_of_holders = result.get('data', {}).get('EVM', {}).get('TokenHolders', [])[0].get('uniq', '0')
+            return int(number_of_holders)
+        else:
+            return "N/A"
+
+    except requests.RequestException as e:
+        return "N/A"
+
 
 def get_quote():
     response = requests.get("https://type.fit/api/quotes")
@@ -822,11 +809,9 @@ def get_random_pioneer():
 
 
 def get_scan(token: str, chain: str) -> dict:
-    chains = {"eth": 1, "bsc": 56, "arb": 42161, "opti": 10, "poly": 137, "base": 8453}
-    chain_number = chains.get(chain)
-    if not chain_number:
-        raise ValueError(f"{chain} is not a valid chain")
-    url = f"https://api.gopluslabs.io/api/v1/token_security/{chain_number}?contract_addresses={token}"
+    if chain in mappings.CHAINS:
+        chain_info = mappings.CHAINS[chain]
+    url = f"https://api.gopluslabs.io/api/v1/token_security/{chain_info.id}?contract_addresses={token}"
     response = requests.get(url)
     return response.json()["result"]
 
@@ -878,44 +863,3 @@ def get_word(word):
             audio_url = first_phonetic.get("audio")
 
     return definition, audio_url
-
-
-# BITQUERY
-
-
-def get_proposers(chain):
-    today = datetime.now().strftime("%Y-%m-%d")
-    url_graphql = "https://streaming.bitquery.io/graphql"
-    headers_graphql = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {os.getenv("BITQUERY_API_KEY")}'
-    }
-
-    graphql_query = f'''
-    {{
-      EVM(dataset: archive, network: {chain}) {{
-        TokenHolders(
-          date: "{today}"
-          tokenSmartContract: "{ca.X7DAO}"
-          where: {{ Balance: {{ Amount: {{ ge: "500000" }} }} }}
-        ) {{
-          uniq(of: Holder_Address)
-        }}
-      }}
-    }}
-    '''
-    payload_graphql = json.dumps({'query': graphql_query})
-
-    try:
-        response_graphql = requests.post(url_graphql, headers=headers_graphql, data=payload_graphql)
-
-        if response_graphql.status_code == 200:
-            result = response_graphql.json()
-            number_of_holders = result.get('data', {}).get('EVM', {}).get('TokenHolders', [])[0].get('uniq', '0')
-            return int(number_of_holders)
-        else:
-            return "N/A"
-
-    except requests.RequestException as e:
-        return "N/A"
-    
