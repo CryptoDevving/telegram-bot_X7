@@ -3486,19 +3486,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         text="Community Multi-sig Wallet",
                         url=f"{chain_url}{chain_com_multi}",
                     )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Ecosystem Splitter Contract",
-                        url=f"{chain_url}{ca.ECO_SPLITTER}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Treasury Splitter Contract",
-                        url=f"{chain_url}{ca.TREASURY_SPLITTER}",
-                    )
-                ],
+                ]
             ]
         ),
     )
