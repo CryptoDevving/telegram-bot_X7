@@ -203,41 +203,35 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Loan Rates Info, Please wait...")
-    ill001_contract = chain_web3.eth.contract(
-        address=Web3.to_checksum_address(ca.ILL001), abi=api.get_abi(ca.ILL001, chain)
-    )
-    ill003_contract = chain_web3.eth.contract(
-        address=Web3.to_checksum_address(ca.ILL003), abi=api.get_abi(ca.ILL003, chain)
-    )
-    
-    ill001_data = ill001_contract.functions.getQuote(int(amount_in_wei)).call()
-    ill003_data = ill003_contract.functions.getQuote(int(amount_in_wei)).call()
 
-    ill001_origination_fee, ill001_total_premium = [value / 10**18 for value in ill001_data[1:]]
-    ill003_origination_fee, ill003_total_premium = [value / 10**18 for value in ill003_data[1:]]
-
+    loan_info = ""
     native_price = api.get_native_price(chain_native)
-    ill001_origination_dollar, ill001_total_premium_dollar = [value * native_price for value in [ill001_origination_fee, ill001_total_premium]]
-    ill003_origination_dollar, ill003_total_premium_dollar = [value * native_price for value in [ill003_origination_fee, ill003_total_premium]]
-
+    borrow_usd = native_price * float(amount)
+    for loan_key, loan_term in loans.LOANS.items():
+        loan_contract = chain_web3.eth.contract(
+            address=Web3.to_checksum_address(loan_term.ca), abi=api.get_abi(loan_term.ca, chain)
+        )
+        loan_data = loan_contract.functions.getQuote(int(amount_in_wei)).call()
+        origination_fee, total_premium = [value / 10**18 for value in loan_data[1:]]
+        origination_dollar, total_premium_dollar = [value * native_price for value in [origination_fee, total_premium]]
+        
+        loan_info += (
+            f"*{loan_term.name}*\n"
+            f"Origination Fee: {origination_fee} {chain_native.upper()} (${origination_dollar:,.0f})\n"
+            f"Premium Fees: {total_premium} {chain_native.upper()} (${total_premium_dollar:,.0f})\n"
+            f"Total Cost: {total_premium + origination_fee} {chain_native.upper()} (${origination_dollar + total_premium_dollar:,.0f})\n\n"
+        )
     await message.delete()
     await update.message.reply_photo(
     photo=api.get_random_pioneer(),
     caption=
         f"*X7 Finance Loan Rates {chain_name}*\n\n"
-        f"Borrowing {amount} {chain_native.upper()} will cost:\n\n"
-        f"*ILL001*\n"
-        f"Origination Fee: {ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar:,.0f})\n"
-        f"Premium Fees: {ill001_total_premium} {chain_native.upper()} (${ill001_total_premium_dollar:,.0f})\n"
-        f"*Total Cost:* {ill001_total_premium + ill001_origination_fee} {chain_native.upper()} (${ill001_origination_dollar + ill001_total_premium_dollar:,.0f})\n\n"
-        f"*ILL003*\n"
-        f"Origination Fee: {ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar:,.02f})\n"
-        f"Premium Fees: {ill003_total_premium} {chain_native.upper()} (${ill003_total_premium_dollar:,.0f})\n"
-        f"*Total Cost:* {ill003_total_premium + ill003_origination_fee} {chain_native.upper()} (${ill003_origination_dollar + ill003_total_premium_dollar:,.0f})\n\n"
+        f"Borrowing {amount} {chain_native.upper()} (${borrow_usd:,.0f}) will cost:\n\n"
+        f"{loan_info}"
 
         f"{api.get_quote()}",
     parse_mode="Markdown"
-)
+    )
 
 
 async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
