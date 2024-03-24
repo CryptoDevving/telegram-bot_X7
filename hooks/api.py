@@ -120,6 +120,32 @@ class Dextools:
                 "mcap": "N/A",
                 "holders": "N/A"
             }
+        
+    def get_token_name(self, address, chain):
+        if chain in mappings.CHAINS:
+            chain_info = mappings.CHAINS[chain]
+        endpoint = f"token/{chain_info.dext}/{address}"
+        response = requests.get(self.url + endpoint, headers=self.headers)
+        if response.status_code == 200:
+            data = response.json()
+            if data and "data" in data and data["data"]:
+                name = data["data"].get("name", "N/A")
+                symbol = data["data"].get("symbol", "N/A")
+
+                return {
+                    "name": name,
+                    "symbol": symbol
+                }
+            else:
+                return {
+                    "name": "N/A",
+                    "symbol": "N/A"
+                }
+        else:
+            return {
+                "name": "N/A",
+                "symbol": "N/A"
+            }
 
 
     def get_liquidity(self, pair, chain):
@@ -560,30 +586,6 @@ def get_x7r_supply(chain):
     return supply
 
 
-
-# MORALIS
-
-
-def get_nft_holder_list(nft, chain):
-    if chain in mappings.MORALIS_CHAINS:
-        chain = mappings.MORALIS_CHAINS[chain]
-    return evm_api.nft.get_nft_owners(
-        api_key=os.getenv("MORALIS_API_KEY"),
-        params={"chain": chain, "format": "decimal", "address": nft},
-    )
-
-
-def get_token_name(token: str, chain: str) -> Tuple[str, str]:
-    if chain in mappings.MORALIS_CHAINS:
-        chain = mappings.MORALIS_CHAINS[chain]
-    result = evm_api.token.get_token_metadata(
-        api_key=os.getenv("MORALIS_API_KEY"),
-        params={"addresses": [f"{token}"], "chain": chain},
-    )
-    return result[0]["name"], result[0]["symbol"]
-
-
-
 # OTHER
 
 
@@ -752,6 +754,15 @@ def get_nft_data(nft, chain):
 
     except Exception:
         return {"holder_count": 0, "floor_price": "N/A"}
+
+
+def get_nft_holder_list(nft, chain):
+    if chain in mappings.MORALIS_CHAINS:
+        chain = mappings.MORALIS_CHAINS[chain]
+    return evm_api.nft.get_nft_owners(
+        api_key=os.getenv("MORALIS_API_KEY"),
+        params={"chain": chain, "format": "decimal", "address": nft},
+    )
 
 
 def get_proposers(chain):

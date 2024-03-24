@@ -1,14 +1,9 @@
-import os
-import sys
-import time
-import random
-import asyncio
-from datetime import datetime
-
-import sentry_sdk
-from web3 import Web3
 from telegram import *
 from telegram.ext import *
+
+import asyncio, os, requests, random, sentry_sdk, sys
+
+from web3 import Web3
 from eth_utils import to_checksum_address
 from PIL import Image, ImageDraw, ImageFont
 
@@ -18,9 +13,10 @@ import media
 
 
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
-
-
+defined = api.Defined()
+dextools = api.Dextools()
 chain = "poly"
+chain_native = "matic"
 poly_url = f"https://lb.drpc.org/ogrpc?network=polygon&dkey={os.getenv('DRPC_API_KEY')}"
 web3 = Web3(Web3.HTTPProvider(poly_url))
 
@@ -52,84 +48,94 @@ async def restart_script():
 async def new_pair(event):
     tx = api.get_tx_from_hash(event["transactionHash"].hex(), chain)
     if event["args"]["token0"] == ca.WMATIC:
-        native = api.get_token_name(event["args"]["token0"], chain)
-        token_name = api.get_token_name(event["args"]["token1"], chain)
+        native_token_info = dextools.get_token_name(event["args"]["token0"], chain)
+        token_info = dextools.get_token_name(event["args"]["token1"], chain)
         token_address = event["args"]["token1"]
     elif event["args"]["token1"] == ca.WMATIC:
-        native = api.get_token_name(event["args"]["token1"], chain)
-        token_name = api.get_token_name(event["args"]["token0"], chain)
+        native_token_info = dextools.get_token_name(event["args"]["token1"], chain)
+        token_info = dextools.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
     elif event["args"]["token0"] in ca.STABLES:
-        native = api.get_token_name(event["args"]["token0"], chain)
-        token_name = api.get_token_name(event["args"]["token1"], chain)
+        native_token_info = dextools.get_token_name(event["args"]["token0"], chain)
+        token_info = dextools.get_token_name(event["args"]["token1"], chain)
         token_address = event["args"]["token1"]
     elif event["args"]["token1"] in ca.STABLES:
-        native = api.get_token_name(event["args"]["token1"], chain)
-        token_name = api.get_token_name(event["args"]["token0"], chain)
+        native_token_info = dextools.get_token_name(event["args"]["token1"], chain)
+        token_info = dextools.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
     else:
-        native = api.get_token_name(event["args"]["token1"], chain)
-        token_name = api.get_token_name(event["args"]["token0"], chain)
+        native_token_info = dextools.get_token_name(event["args"]["token1"], chain)
+        token_info = dextools.get_token_name(event["args"]["token0"], chain)
         token_address = event["args"]["token0"]
+    
+    token_name = token_info["name"]
+    symbol = token_info["symbol"]
+    native = native_token_info["symbol"]
+    
     if api.get_verified(token_address, chain):
-        verified = "✅ Contract Verified"
+        verified = "Contract Verified"
     else:
-        "⚠️ Contract Unverified"
+        verified = "Contract Unverified"
     status = ""
-    tax = ""
     renounced = ""
+    tax = ""
     try:
         scan = api.get_scan(token_address, chain)
-        if "owner_address" in scan[f"{str(token_address).lower()}"]:
-            if scan[f"{str(token_address).lower()}"]["owner_address"] == "0x0000000000000000000000000000000000000000":
-                renounced = "✅ Contract Renounced"
+        token_address_str  = str(token_address).lower()
+        if "owner_address" in scan[token_address_str]:
+            if scan[token_address_str]["owner_address"] == "0x0000000000000000000000000000000000000000":
+                renounced = "Contract Renounced"
             else:
-                renounced = "⚠️ Contract Not Renounced"
-        if scan[f"{str(token_address).lower()}"]["is_in_dex"] == "1":
+                renounced = "Contract Not Renounced"
+        if scan[token_address_str]["is_in_dex"] == "1":
             try:
                 if (
-                    scan[f"{str(token_address).lower()}"]["sell_tax"] == "1"
-                    or scan[f"{str(token_address).lower()}"]["buy_tax"] == "1"
+                    scan[token_address_str]["sell_tax"] == "1"
+                    or scan[token_address_str]["buy_tax"] == "1"
                 ):
                     return
                 buy_tax_raw = (
-                    float(scan[f"{str(token_address).lower()}"]["buy_tax"]) * 100
+                    float(scan[token_address_str]["buy_tax"]) * 100
                 )
                 sell_tax_raw = (
-                    float(scan[f"{str(token_address).lower()}"]["sell_tax"]) * 100
+                    float(scan[token_address_str]["sell_tax"]) * 100
                 )
                 buy_tax = int(buy_tax_raw)
                 sell_tax = int(sell_tax_raw)
                 if sell_tax > 10 or buy_tax > 10:
-                    tax = f"⚠️ Tax: {buy_tax}/{sell_tax}"
+                    tax = f"Tax: {buy_tax}/{sell_tax}"
                 else:
-                    tax = f"✅️ Tax: {buy_tax}/{sell_tax}"
+                    tax = f"Tax: {buy_tax}/{sell_tax}"
             except Exception:
-                tax = f"⚠️ Tax: Unavailable"
+                tax = f"Tax: Unavailable"
         else:
-            tax = f"⚠️ Tax: Unavailable"
+            tax = f"Tax: Unavailable"
         status = f"{verified}\n{tax}\n{renounced}"
-    except Exception as e:
-        status = "⚠️ Scan Unavailable"
+    except Exception:
+        status = "Scan Unavailable"
     pool = int(tx["result"]["value"], 0) / 10**18
     if pool == 0 or pool == "" or not pool:
         pool_text = "Liquidity: Unavailable"
     else:
-        pool_dollar = float(pool) * float(api.get_native_price("matic"))
+        pool_dollar = float(pool) * float(api.get_native_price(chain_native))
         pool_text = (
-            f'{pool} MATIC (${"{:0,.0f}".format(pool_dollar)})\n'
+            f'{pool} {chain_native.upper()} (${"{:0,.0f}".format(pool_dollar)})\n'
             f'Total Liquidity: ${"{:0,.0f}".format(pool_dollar * 2)}'
         )
-    im1 = Image.open((random.choice(media.blackhole)))
-    im2 = Image.open(media.poly_logo)
-    im1.paste(im2, (720, 20), im2)
+    im1 = Image.open((random.choice(media.BLACKHOLE)))
+    try:
+        image_url = defined.get_token_image(token_address, chain)
+        im2 = Image.open(requests.get(image_url, stream=True).raw)
+    except:
+        im2 = Image.open(media.ETH_LOGO)
+    im1.paste(im2, (700, 20), im2)
     i1 = ImageDraw.Draw(im1)
     i1.text(
         (26, 30),
-            f"New Pair Created (POLYGON)\n\n"
-            f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
+            f"New Pair Created ({chain.upper()})\n\n"
+            f"{token_name} ({symbol}/{native})\n\n"
             f"{pool_text}\n\n"
-            f"{status}",
+            f"{status}\n",
         font = ImageFont.truetype(media.FONT, 26),
         fill = (255, 255, 255),
     )
@@ -143,36 +149,36 @@ async def new_pair(event):
             chat_id,
             photo=open(r"media/blackhole.png", "rb"),
             caption=
-                f"*New Pair Created (POLYGON)*\n\n"
-                f"{token_name[0]} ({token_name[1]}/{native[1]})\n\n"
+                f"*New Pair Created ({chain.upper()})*\n\n"
+                f"{token_name} ({symbol}/{native})\n\n"
                 f"Token Address:\n`{token_address}`\n\n"
                 f"{pool_text}\n\n"
-                f"{status}",
+                f"{status}\n",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton(
                             text=f"Buy On Xchange",
-                            url=f"{urls.XCHANGE_BUY_POLY}{token_address}",
+                            url=f"{urls.XCHANGE_BUY_ETH}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Chart",
-                            url=f"{urls.DEX_TOOLS_POLY}{event['args']['pool']}",
+                            url=f"{urls.DEX_TOOLS_ETH}{event['args']['pair']}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Token Contract",
-                            url=f"{urls.POLY_ADDRESS}{token_address}",
+                            url=f"{urls.ETHER_ADDRESS}{token_address}",
                         )
                     ],
                     [
                         InlineKeyboardButton(
                             text="Deployer TX",
-                            url=f"{urls.POLY_TX}{event['transactionHash'].hex()}",
+                            url=f"{urls.ETHER_TX}{event['transactionHash'].hex()}",
                         )
                     ],
                 ]
@@ -180,7 +186,6 @@ async def new_pair(event):
         )
         try:
             if event["args"]["token0"] == ca.WMATIC or event["args"]["token1"] == ca.WMATIC:
-                image_url = api.get_token_image(token_address, chain)
                 if image_url is None:
                     image_url = "N/A"
 
