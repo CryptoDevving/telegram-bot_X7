@@ -250,7 +250,7 @@ X7DAO = {
         "eth": (
             "(ETH)",
             urls.ETHER_TOKEN,
-            urls.DEX_TOOLS_ETH,
+            "ether",
             ca.X7DAO_PAIR_ETH,
             urls.XCHANGE_BUY_ETH,
             "Etherscan",
@@ -259,7 +259,7 @@ X7DAO = {
         "arb": (
             "(ARB)",
             urls.ARB_TOKEN,
-            urls.DEX_TOOLS_ARB,
+            "arbitrum",
             ca.X7DAO_PAIR_ARB,
             urls.XCHANGE_BUY_ARB,
             "Arbscan",
@@ -268,7 +268,7 @@ X7DAO = {
         "poly": (
             "(POLYGON)",
             urls.POLY_TOKEN,
-            urls.DEX_TOOLS_POLY,
+            "polygon",
             ca.X7DAO_PAIR_POLY,
             urls.XCHANGE_BUY_POLY,
             "Polygonscan",
@@ -277,7 +277,7 @@ X7DAO = {
         "bsc": (
             "(BSC)",
             urls.BSC_TOKEN,
-            urls.DEX_TOOLS_BSC,
+            "bsc",
             ca.X7DAO_PAIR_BSC,
             urls.XCHANGE_BUY_BSC,
             "BSCscan",
@@ -286,7 +286,7 @@ X7DAO = {
         "opti": (
             "(OP)",
             urls.OPTI_TOKEN,
-            urls.DEX_TOOLS_OPTI,
+            "optimism",
             ca.X7DAO_PAIR_OPTI,
             urls.XCHANGE_BUY_OPTI,
             "Optimismscan",
@@ -295,7 +295,7 @@ X7DAO = {
         "base": (
             "(BASE)",
             urls.BASE_TOKEN,
-            urls.DEX_TOOLS_BASE,
+            "base",
             ca.X7DAO_PAIR_BASE,
             urls.XCHANGE_BUY_BASE,
             "Basescan",
@@ -308,7 +308,7 @@ X7R = {
         "eth": (
             "(ETH)",
             urls.ETHER_TOKEN,
-            urls.DEX_TOOLS_ETH,
+            "ether",
             ca.X7R_PAIR_ETH,
             urls.XCHANGE_BUY_ETH,
             "Etherscan",
@@ -317,7 +317,7 @@ X7R = {
         "arb": (
             "(ARB)",
             urls.ARB_TOKEN,
-            urls.DEX_TOOLS_ARB,
+            "arbitrum",
             ca.X7R_PAIR_ARB,
             urls.XCHANGE_BUY_ARB,
             "Arbscan",
@@ -326,7 +326,7 @@ X7R = {
         "poly": (
             "(POLYGON)",
             urls.POLY_TOKEN,
-            urls.DEX_TOOLS_POLY,
+            "polygon",
             ca.X7R_PAIR_POLY,
             urls.XCHANGE_BUY_POLY,
             "Polygonscan",
@@ -335,7 +335,7 @@ X7R = {
         "bsc": (
             "(BSC)",
             urls.BSC_TOKEN,
-            urls.DEX_TOOLS_BSC,
+            "bsc",
             ca.X7R_PAIR_BSC,
             urls.XCHANGE_BUY_BSC,
             "BSCscan",
@@ -344,7 +344,7 @@ X7R = {
         "opti": (
             "(OP)",
             urls.OPTI_TOKEN,
-            urls.DEX_TOOLS_OPTI,
+            "optimism",
             ca.X7R_PAIR_OPTI,
             urls.XCHANGE_BUY_OPTI,
             "Optimismscan",
@@ -353,7 +353,7 @@ X7R = {
         "base": (
             "(BASE)",
             urls.BASE_TOKEN,
-            urls.DEX_TOOLS_BASE,
+            "base",
             ca.X7R_PAIR_BASE,
             urls.XCHANGE_BUY_BASE,
             "Basescan",
@@ -366,7 +366,7 @@ X7101 = {
     "eth": (
         "(ETH)",
         urls.ETHER_TOKEN,
-        urls.DEX_TOOLS_ETH,
+        "ether",
         ca.X7101_PAIR_ETH,
         urls.XCHANGE_BUY_ETH,
         "Etherscan",
@@ -375,7 +375,7 @@ X7101 = {
     "arb": (
         "(ARB)",
         urls.ARB_TOKEN,
-        urls.DEX_TOOLS_ARB,
+        "arbitrum",
         ca.X7101_PAIR_ARB,
         urls.XCHANGE_BUY_ARB,
         "Arbscan",
@@ -384,7 +384,7 @@ X7101 = {
     "poly": (
         "(POLYGON)",
         urls.POLY_TOKEN,
-        urls.DEX_TOOLS_POLY,
+        "polygon",
         ca.X7101_PAIR_POLY,
         urls.XCHANGE_BUY_POLY,
         "Polygonscan",
@@ -393,7 +393,7 @@ X7101 = {
     "bsc": (
         "(BSC)",
         urls.BSC_TOKEN,
-        urls.DEX_TOOLS_BSC,
+        "bsc",
         ca.X7101_PAIR_BSC,
         urls.XCHANGE_BUY_BSC,
         "BSCscan",
@@ -402,7 +402,7 @@ X7101 = {
     "opti": (
         "(OP)",
         urls.OPTI_TOKEN,
-        urls.DEX_TOOLS_OPTI,
+        "optimism",
         ca.X7101_PAIR_OPTI,
         urls.XCHANGE_BUY_OPTI,
         "Optimismscan",
@@ -411,7 +411,7 @@ X7101 = {
     "base": (
         "(BASE)",
         urls.BASE_TOKEN,
-        urls.DEX_TOOLS_BASE,
+        "base",
         ca.X7101_PAIR_BASE,
         urls.XCHANGE_BUY_BASE,
         "Basescan",
@@ -424,7 +424,7 @@ X7102 = {
         "eth": (
             "(ETH)",
             urls.ETHER_TOKEN,
-            urls.DEX_TOOLS_ETH,
+            "ether",
             ca.X7102_PAIR_ETH,
             urls.XCHANGE_BUY_ETH,
             "Etherscan",
@@ -433,7 +433,7 @@ X7102 = {
         "arb": (
             "(ARB)",
             urls.ARB_TOKEN,
-            urls.DEX_TOOLS_ARB,
+            "arbitrum",
             ca.X7102_PAIR_ARB,
             urls.XCHANGE_BUY_ARB,
             "Arbscan",
@@ -442,7 +442,7 @@ X7102 = {
         "poly": (
             "(POLYGON)",
             urls.POLY_TOKEN,
-            urls.DEX_TOOLS_POLY,
+            "polygon",
             ca.X7102_PAIR_POLY,
             urls.XCHANGE_BUY_POLY,
             "Polygonscan",
@@ -451,7 +451,7 @@ X7102 = {
         "bsc": (
             "(BSC)",
             urls.BSC_TOKEN,
-            urls.DEX_TOOLS_BSC,
+            "bsc",
             ca.X7102_PAIR_BSC,
             urls.XCHANGE_BUY_BSC,
             "BSCscan",
@@ -460,7 +460,7 @@ X7102 = {
         "opti": (
             "(OP)",
             urls.OPTI_TOKEN,
-            urls.DEX_TOOLS_OPTI,
+            "optimsim",
             ca.X7102_PAIR_OPTI,
             urls.XCHANGE_BUY_OPTI,
             "Optimismscan",
@@ -469,7 +469,7 @@ X7102 = {
         "base": (
             "(BASE)",
             urls.BASE_TOKEN,
-            urls.DEX_TOOLS_BASE,
+            "base",
             ca.X7102_PAIR_BASE,
             urls.XCHANGE_BUY_BASE,
             "Basescan",
@@ -482,7 +482,7 @@ X7103 = {
         "eth": (
             "(ETH)",
             urls.ETHER_TOKEN,
-            urls.DEX_TOOLS_ETH,
+            "ether",
             ca.X7103_PAIR_ETH,
             urls.XCHANGE_BUY_ETH,
             "Etherscan",
@@ -491,7 +491,7 @@ X7103 = {
         "arb": (
             "(ARB)",
             urls.ARB_TOKEN,
-            urls.DEX_TOOLS_ARB,
+            "arbitrum",
             ca.X7103_PAIR_ARB,
             urls.XCHANGE_BUY_ARB,
             "Arbscan",
@@ -500,7 +500,7 @@ X7103 = {
         "poly": (
             "(POLYGON)",
             urls.POLY_TOKEN,
-            urls.DEX_TOOLS_POLY,
+            "polygon",
             ca.X7103_PAIR_POLY,
             urls.XCHANGE_BUY_POLY,
             "Polygonscan",
@@ -509,7 +509,7 @@ X7103 = {
         "bsc": (
             "(BSC)",
             urls.BSC_TOKEN,
-            urls.DEX_TOOLS_BSC,
+            "bsc",
             ca.X7103_PAIR_BSC,
             urls.XCHANGE_BUY_BSC,
             "BSCscan",
@@ -518,7 +518,7 @@ X7103 = {
         "opti": (
             "(OP)",
             urls.OPTI_TOKEN,
-            urls.DEX_TOOLS_OPTI,
+            "optimism",
             ca.X7103_PAIR_OPTI,
             urls.XCHANGE_BUY_OPTI,
             "Optimismscan",
@@ -527,7 +527,7 @@ X7103 = {
         "base": (
             "(BASE)",
             urls.BASE_TOKEN,
-            urls.DEX_TOOLS_BASE,
+            "base",
             ca.X7103_PAIR_BASE,
             urls.XCHANGE_BUY_BASE,
             "Basescan",
@@ -540,7 +540,7 @@ X7104 = {
         "eth": (
             "(ETH)",
             urls.ETHER_TOKEN,
-            urls.DEX_TOOLS_ETH,
+            "ether",
             ca.X7104_PAIR_ETH,
             urls.XCHANGE_BUY_ETH,
             "Etherscan",
@@ -549,7 +549,7 @@ X7104 = {
         "arb": (
             "(ARB)",
             urls.ARB_TOKEN,
-            urls.DEX_TOOLS_ARB,
+            "arbitrum",
             ca.X7104_PAIR_ARB,
             urls.XCHANGE_BUY_ARB,
             "Arbscan",
@@ -558,7 +558,7 @@ X7104 = {
         "poly": (
             "(POLYGON)",
             urls.POLY_TOKEN,
-            urls.DEX_TOOLS_POLY,
+            "polygon",
             ca.X7104_PAIR_POLY,
             urls.XCHANGE_BUY_POLY,
             "Polygonscan",
@@ -567,7 +567,7 @@ X7104 = {
         "bsc": (
             "(BSC)",
             urls.BSC_TOKEN,
-            urls.DEX_TOOLS_BSC,
+            "bsc",
             ca.X7104_PAIR_BSC,
             urls.XCHANGE_BUY_BSC,
             "BSCscan",
@@ -576,7 +576,7 @@ X7104 = {
         "opti": (
             "(OP)",
             urls.OPTI_TOKEN,
-            urls.DEX_TOOLS_OPTI,
+            "optimsim",
             ca.X7104_PAIR_OPTI,
             urls.XCHANGE_BUY_OPTI,
             "Optimismscan",
@@ -585,7 +585,7 @@ X7104 = {
         "base": (
             "(BASE)",
             urls.BASE_TOKEN,
-            urls.DEX_TOOLS_BASE,
+            "base",
             ca.X7104_PAIR_BASE,
             urls.XCHANGE_BUY_BASE,
             "Basescan",
@@ -598,7 +598,7 @@ X7105 = {
         "eth": (
             "(ETH)",
             urls.ETHER_TOKEN,
-            urls.DEX_TOOLS_ETH,
+            "ether",
             ca.X7105_PAIR_ETH,
             urls.XCHANGE_BUY_ETH,
             "Etherscan",
@@ -607,7 +607,7 @@ X7105 = {
         "arb": (
             "(ARB)",
             urls.ARB_TOKEN,
-            urls.DEX_TOOLS_ARB,
+            "arbitrum",
             ca.X7105_PAIR_ARB,
             urls.XCHANGE_BUY_ARB,
             "Arbscan",
@@ -616,7 +616,7 @@ X7105 = {
         "poly": (
             "(POLYGON)",
             urls.POLY_TOKEN,
-            urls.DEX_TOOLS_POLY,
+            "polygon",
             ca.X7105_PAIR_POLY,
             urls.XCHANGE_BUY_POLY,
             "Polygonscan",
@@ -625,7 +625,7 @@ X7105 = {
         "bsc": (
             "(BSC)",
             urls.BSC_TOKEN,
-            urls.DEX_TOOLS_BSC,
+            "bsc",
             ca.X7105_PAIR_BSC,
             urls.XCHANGE_BUY_BSC,
             "BSCscan",
@@ -634,7 +634,7 @@ X7105 = {
         "opti": (
             "(OP)",
             urls.OPTI_TOKEN,
-            urls.DEX_TOOLS_OPTI,
+            "optimism",
             ca.X7105_PAIR_OPTI,
             urls.XCHANGE_BUY_OPTI,
             "Optimismscan",
@@ -643,7 +643,7 @@ X7105 = {
         "base": (
             "(BASE)",
             urls.BASE_TOKEN,
-            urls.DEX_TOOLS_BASE,
+            "base",
             ca.X7105_PAIR_BASE,
             urls.XCHANGE_BUY_BASE,
             "Basescan",

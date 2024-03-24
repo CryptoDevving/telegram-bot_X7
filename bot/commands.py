@@ -1423,7 +1423,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-                f"*X7 Finance Token Liquidity (ETH)*\n"
+                f"*X7 Finance Token Liquidity ({chain.upper()})*\n"
                 f"For other chains, Use `/liquidity [chain-name]`\n\n"
                 f"X7R:\n"
                 f"${x7r_liq:,.0f}\n\n"
@@ -2502,7 +2502,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         [
                             InlineKeyboardButton(
-                                text="Chart", url=f"{dext}{token_instance['pair']}"
+                                text="Chart", url=f"{urls.DEX_TOOLS(dext)}{token_instance['pair']}"
                             )
                         ],
                         [
@@ -2517,6 +2517,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         else:
             if search == "":
+                chain = "eth"
+                chain_dext = mappings.CHAINS[chain].dext
                 price = coingecko.get_price("x7r, x7dao")
                 x7r_change = price["x7r"]["usd_24h_change"]
                 if x7r_change is None:
@@ -2532,7 +2534,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_photo(
                     photo=api.get_random_pioneer(),
                     caption=
-                        f"*X7 Finance Token Price Info (ETH)*\n"
+                        f"*X7 Finance Token Price Info ({chain.upper()})*\n"
                         f"Use `/x7r [chain]` or `/x7dao [chain]` for all other details\n"
                         f"Use `/constellations` for constellations\n\n"
                         f'X7R:    ${price["x7r"]["usd"]}\n'
@@ -2546,13 +2548,13 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             [
                                 InlineKeyboardButton(
                                     text="X7R Chart - Rewards Token",
-                                    url=f"{urls.DEX_TOOLS_ETH}{ca.X7R_PAIR_ETH}",
+                                    url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7R}",
                                 )
                             ],
                             [
                                 InlineKeyboardButton(
                                     text="X7DAO Chart - Governance Token",
-                                    url=f"{urls.DEX_TOOLS_ETH}{ca.X7DAO_PAIR_ETH}",
+                                    url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7DAO}",
                                 )
                             ],
                         ]
@@ -4001,7 +4003,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7DAO}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7DAO}")],
             ]
         ),
@@ -4009,6 +4011,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -4056,7 +4059,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7R}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7R}")],
             ]
         ),
@@ -4111,7 +4114,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7101}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7101}")],
             ]
         ),
@@ -4166,7 +4169,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7102}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7102}")],
             ]
         ),
@@ -4221,7 +4224,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7103}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7103}")],
             ]
         ),
@@ -4276,7 +4279,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7104}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7104}")],
             ]
         ),
@@ -4331,7 +4334,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7105}")],
-                [InlineKeyboardButton(text="Chart", url=f"{chain_dext}{chain_pair}")],
+                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
                 [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7105}")],
             ]
         ),

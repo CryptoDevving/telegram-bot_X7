@@ -50,12 +50,8 @@ BASE_ADDRESS = "https://basescan.org/address/"
 BASE_TX = "https://basescan.org/tx/"
 
 # DEXTOOLS
-DEX_TOOLS_ETH = "https://www.dextools.io/app/ether/pair-explorer/"
-DEX_TOOLS_BSC = "https://www.dextools.io/app/bnb/pair-explorer/"
-DEX_TOOLS_POLY = "https://www.dextools.io/app/polygon/pair-explorer/"
-DEX_TOOLS_ARB = "https://www.dextools.io/app/arbitrum/pair-explorer/"
-DEX_TOOLS_OPTI = "https://www.dextools.io/app/optimism/pair-explorer/"
-DEX_TOOLS_BASE = "https://www.dextools.io/app/base/pair-explorer/"
+def DEX_TOOLS(chain):
+    return f"https://www.dextools.io/app/{chain}/pair-explorer/"
 
 # LINKS
 CA_DIRECTORY = "https://www.x7finance.org/en/docs/breakdowns/contracts"
