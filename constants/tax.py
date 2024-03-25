@@ -98,7 +98,6 @@ def GENERATE_INFO(chain):
         magister_discount = chain_info["magister_discount"]
 
         chain_info_str = (
-            f"*X7 Finance Tax Info ({chain.upper()})*\nUse `/tax [chain-name]` for other chains\n\n"
             f"X7R: {x7r}%\nX7DAO: {x7dao}%\n"
             f"X7101-X7105: {x7100}%\n\n"
             "*Tax with Discounts*\n\n"

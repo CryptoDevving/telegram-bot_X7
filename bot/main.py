@@ -272,7 +272,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("pfp", commands.pfp))
     application.add_handler(CommandHandler("pioneer", commands.pioneer))
     application.add_handler(CommandHandler(["pool", "lpool", "lendingpool"], commands.pool))
-    application.add_handler(CommandHandler(["price", "prices", "x"], commands.price))
+    application.add_handler(CommandHandler(["price", "prices"], commands.price))
     application.add_handler(CommandHandler("quote", commands.quote))
     application.add_handler(CommandHandler("router", commands.router))
     application.add_handler(CommandHandler("say", commands.say))
@@ -293,9 +293,15 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("russian", commands.translate_russian))
     application.add_handler(CommandHandler("treasury", commands.treasury))
     application.add_handler(CommandHandler("trending", commands.trending))
-    application.add_handler(CommandHandler(["twitter", "x"], commands.twitter))
+    application.add_handler(CommandHandler("twitter", commands.twitter))
     application.add_handler(CommandHandler("website", commands.website))
     application.add_handler(CommandHandler("v1", commands.v1))
+    application.add_handler(CommandHandler(["volume", "dune"], commands.volume))
+    application.add_handler(CommandHandler("wei", commands.wei))
+    application.add_handler(CommandHandler("wallet", commands.wallet))
+    application.add_handler(CommandHandler(["website", "site"], commands.website))
+    application.add_handler(CommandHandler("word", commands.word))
+    application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
     application.add_handler(CommandHandler("x7r", commands.x7r))
     application.add_handler(CommandHandler("x7d", commands.x7d))
     application.add_handler(CommandHandler("x7dao", commands.x7dao))
@@ -304,12 +310,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler(["x7103", "103"], commands.x7103))
     application.add_handler(CommandHandler(["x7104", "104"], commands.x7104))
     application.add_handler(CommandHandler(["x7105", "105"], commands.x7105))
-    application.add_handler(CommandHandler(["volume", "dune"], commands.volume))
-    application.add_handler(CommandHandler("wei", commands.wei))
-    application.add_handler(CommandHandler("wallet", commands.wallet))
-    application.add_handler(CommandHandler(["website", "site"], commands.website))
-    application.add_handler(CommandHandler("word", commands.word))
-    application.add_handler(CommandHandler(["whitepaper", "wp", "wpquote"], commands.wp))
+    application.add_handler(CommandHandler("x", commands.x))
 
 
     ## ADMIN ##
@@ -338,5 +339,5 @@ if __name__ == "__main__":
     )
 
     ## RUN ##
-    scanners()
+    # scanners()
     application.run_polling(allowed_updates=Update.ALL_TYPES)

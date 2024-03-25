@@ -241,7 +241,7 @@ async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7R:
         (
             chain_name,
@@ -285,7 +285,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].xchange
@@ -348,7 +348,7 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         dext = mappings.CHAINS[chain].dext
@@ -491,7 +491,12 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
+    if chain in mappings.CHAINS:
+        chain_dext = mappings.CHAINS[chain].dext
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
     x7101_change = (f"{x7101_change_raw['one_hour']}\n"
@@ -516,26 +521,61 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
-            f"*X7 Finance Constellation Token Prices (ETH)*\n\n"
-            f"For more info use `/x7token-name`\n\n"
-            f'X7101:      ${x7101_price}\n'
-            f'{x7101_change}\n'
-            f"CA: `{ca.X7101}\n\n`"
-            f'X7102:      ${x7102_price}\n'
-            f'{x7102_change}\n'
-            f"CA: `{ca.X7102}\n\n`"
-            f'X7103:      ${x7103_price}\n'
-            f'{x7103_change}\n'
-            f"CA: `{ca.X7103}\n\n`"
-            f'X7104:      ${x7104_price}\n'
-            f'{x7104_change}\n'
-            f"CA: `{ca.X7104}\n\n`"
-            f'X7105:      ${x7105_price}\n'
-            f'{x7105_change}\n'
-            f"CA: `{ca.X7105}\n\n`"
-            f"{api.get_quote()}",
+            f'*X7 Finance Constellation Token Prices {chain.upper()}*\n\n'
+            f'For more info use `/x7token-name`\n\n'
+            f'X7101\n'
+            f'💰 Price: ${x7101_price}\n'
+            f'{x7101_change}\n\n'
+            f'X7102:\n'
+            f'💰 Price: ${x7102_price}\n'
+            f'{x7102_change}\n\n'
+            f'X7103\n'
+            f'💰 Price: ${x7103_price}\n'
+            f'{x7103_change}\n\n'
+            f'X7104\n'
+            f'💰 Price: ${x7104_price}\n'
+            f'{x7104_change}\n\n'
+            f'X7105\n'
+            f'💰 Price: ${x7105_price}\n'
+            f'{x7105_change}\n\n'
+            f'{api.get_quote()}',
         parse_mode="Markdown",
-    )
+        reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="X7101 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7101}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7102 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7102}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7103 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7103}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7104 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7104}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7105 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7105}",
+                        )
+                    ],
+
+                ]
+            ),
+        )
 
 
 async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -584,7 +624,7 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         web3 = mappings.CHAINS[chain].w3
@@ -674,110 +714,122 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    buttons = []
-    input_contract = " ".join(context.args).lower()
-    contract_names = list(dao.CONTRACT_MAPPINGS.keys())
-    formatted_contract_names = '\n'.join(contract_names)
-    keyboard = InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text="Vote Here",url=urls.SNAPSHOT,)],
-            [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
-    if not input_contract:
-        x7dao_proposers = api.get_proposers("eth")
-        info = dextools.get_token_info(ca.X7DAO, "eth")
-        holders = info["holders"]
-        snapshot = api.get_snapshot()
-        end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-        duration = end - datetime.utcnow()
-        days, hours, minutes = api.get_duration_days(duration)
-        if snapshot["data"]["proposals"][0]["state"] == "active":
-            end_status = f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
-            header = 'Current Open Proposal'
-            buttons.extend([
-            [InlineKeyboardButton(
-                text="Vote Here",
-                url=f"{urls.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
-            ],
-            [InlineKeyboardButton(
-                text="X7 Finance DAO",
-                url=f"{urls.TG_DAO}")
-            ],
-            [InlineKeyboardButton(
+    try:
+        chain = " ".join(context.args).lower()
+        if chain == "":
+            chain = ca.DEFAULT_CHAIN
+        if chain in mappings.CHAINS:
+            await context.bot.send_chat_action(update.effective_chat.id, "typing")
+            chain_name = mappings.CHAINS[chain].name
+        else:
+            await update.message.reply_text(text.CHAIN_ERROR)
+            return
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        buttons = []
+        input_contract = " ".join(context.args).lower()
+        contract_names = list(dao.CONTRACT_MAPPINGS.keys())
+        formatted_contract_names = '\n'.join(contract_names)
+        keyboard = InlineKeyboardMarkup(
+                [[InlineKeyboardButton(text="Vote Here",url=urls.SNAPSHOT,)],
+                [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
+        if not input_contract:
+            x7dao_proposers = api.get_proposers(chain)
+            info = dextools.get_token_info(ca.X7DAO, chain)
+            holders = info["holders"]
+            snapshot = api.get_snapshot()
+            end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+            duration = end - datetime.utcnow()
+            days, hours, minutes = api.get_duration_days(duration)
+            if snapshot["data"]["proposals"][0]["state"] == "active":
+                end_status = f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
+                header = 'Current Open Proposal'
+                buttons.extend([
+                [InlineKeyboardButton(
+                    text="Vote Here",
+                    url=f"{urls.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
+                ],
+                [InlineKeyboardButton(
+                    text="X7 Finance DAO",
+                    url=f"{urls.TG_DAO}")
+                ],
+                [InlineKeyboardButton(
+                        text="DAO Proposers Chat",
+                        url=f"{urls.TG_DAO}")
+                ]
+                ])
+            else:
+                end_status = f'Vote Closed: {end.strftime("%Y-%m-%d %H:%M:%S")}'
+                header = 'No Current Open Proposal\n\nLast Proposal:'
+                buttons.extend([
+                [InlineKeyboardButton(
+                    text="X7 Finance DAO",
+                    url=f"{urls.SNAPSHOT}")
+                ],
+                [InlineKeyboardButton(
                     text="DAO Proposers Chat",
                     url=f"{urls.TG_DAO}")
-            ]
-            ])
-        else:
-            end_status = f'Vote Closed: {end.strftime("%Y-%m-%d %H:%M:%S")}'
-            header = 'No Current Open Proposal\n\nLast Proposal:'
-            buttons.extend([
-            [InlineKeyboardButton(
-                text="X7 Finance DAO",
-                url=f"{urls.SNAPSHOT}")
-            ],
-            [InlineKeyboardButton(
-                text="DAO Proposers Chat",
-                url=f"{urls.TG_DAO}")
-            ]
-            ])
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f'*X7 Finance DAO*\n'
-                f'use `/dao functions` for a list of call callable contracts\n\n'
-                f"X7DAO Holders: {holders}\n"
-                f"X7DAO Proposers: {x7dao_proposers}\n\n"
-                f'*{header}*\n\n'
-                f'{snapshot["data"]["proposals"][0]["title"]} by - '
-                f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
-                f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
-                f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
-                f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
-                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
-                f'{end_status}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(buttons)
-        )
-        return
-    else:
-        if input_contract == "functions":
+                ]
+                ])
+            
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
-                    f"*X7 Finance DAO*\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
-                    f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
+                    f'*X7 Finance DAO {chain_name}*\n'
+                    f'use `/dao functions` for a list of call callable contracts\n\n'
+                    f"X7DAO Holders: {holders}\n"
+                    f"X7DAO Proposers: {x7dao_proposers}\n\n"
+                    f'*{header}*\n\n'
+                    f'{snapshot["data"]["proposals"][0]["title"]} by - '
+                    f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
+                    f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
+                    f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
+                    f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
+                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
+                    f'{end_status}',
                 parse_mode="Markdown",
-                reply_markup=keyboard
-                )
+                reply_markup=InlineKeyboardMarkup(buttons)
+            )
+            return
         else:
-            matching_contract = None
-            for contract in dao.CONTRACT_MAPPINGS:
-                if contract.lower() == input_contract:
-                    matching_contract = contract
-                    break
-            if matching_contract:
-                contract_text, contract_ca = dao.CONTRACT_MAPPINGS[contract]
+            if input_contract == "functions":
                 await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance DAO Functions* - {contract}\n\n"
-                    f"The following functions can be called on the {contract} contract:\n\n"
-                    f"{contract_text}",
-                parse_mode="Markdown",
-                reply_markup=keyboard
-                )
+                    photo=api.get_random_pioneer(),
+                    caption=
+                        f"*X7 Finance DAO*\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                        f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
+                    parse_mode="Markdown",
+                    reply_markup=keyboard
+                    )
             else:
-                await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance DAO Functions*\n\n"
-                    f"'{input_contract}' not found - Use `/dao` followed by one of the contract names below:\n\n"
-                    f"{formatted_contract_names}",
-                parse_mode="Markdown")
+                matching_contract = None
+                for contract in dao.CONTRACT_MAPPINGS:
+                    if contract.lower() == input_contract:
+                        matching_contract = contract
+                        break
+                if matching_contract:
+                    contract_text, contract_ca = dao.CONTRACT_MAPPINGS[contract]
+                    await update.message.reply_photo(
+                    photo=api.get_random_pioneer(),
+                    caption=
+                        f"*X7 Finance DAO Functions* - {contract}\n\n"
+                        f"The following functions can be called on the {contract} contract:\n\n"
+                        f"{contract_text}",
+                    parse_mode="Markdown",
+                    reply_markup=keyboard
+                    )
+                else:
+                    await update.message.reply_photo(
+                    photo=api.get_random_pioneer(),
+                    caption=
+                        f"*X7 Finance DAO Functions*\n\n"
+                        f"'{input_contract}' not found - Use `/dao` followed by one of the contract names below:\n\n"
+                        f"{formatted_contract_names}",
+                    parse_mode="Markdown")
+    except Exception as e:
+        print(e)
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -891,7 +943,7 @@ async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
@@ -1087,7 +1139,7 @@ async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
@@ -1173,7 +1225,7 @@ async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         chain_name = mappings.CHAINS[chain].name
@@ -1227,7 +1279,7 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_logo = mappings.CHAINS[chain].logo
@@ -1388,7 +1440,7 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
@@ -1495,7 +1547,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
@@ -1554,7 +1606,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_address_url = mappings.CHAINS[chain].scan_address
@@ -1706,7 +1758,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
 
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
@@ -1778,7 +1830,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_token
@@ -1816,7 +1868,7 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
     else:
@@ -1954,7 +2006,7 @@ async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_os = mappings.CHAINS[chain].opensea
@@ -2417,232 +2469,57 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        if context.args:
-            search = context.args[0].lower()
-            chain = context.args[1].lower() if len(context.args) > 1 else "eth"
-        else:
-            search = ""
-            chain = ""
-        token_info = db.token_get(search, chain)
-        for token_instance in token_info:
-            message = await update.message.reply_text("Getting Xchange Pair Price Info, Please wait...")
-            await context.bot.send_chat_action(update.effective_chat.id, "typing")
-            info = dextools.get_token_data(token_instance['ca'], token_instance['chain'].lower())
-            holders = info["holders"]
-            dext = mappings.CHAINS[token_instance['chain'].lower()].dext
-            w3 = mappings.CHAINS[token_instance['chain'].lower()].w3
-            token = mappings.CHAINS[token_instance['chain'].lower()].token
-            contract = w3.eth.contract(
-                address=Web3.to_checksum_address(token_instance['pair']), abi=ca.PAIRS_ABI)
-            token0_address = contract.functions.token0().call()
-            token1_address = contract.functions.token1().call()
-            is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
-            is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
-            eth = ""
-            if is_reserve_token0:
-                eth = contract.functions.getReserves().call()[1]
-            elif is_reserve_token1:
-                eth = contract.functions.getReserves().call()[0]
-            decimals = contract.functions.decimals().call()
-            eth_in_wei = int(eth)
-            liq = api.get_native_price(token) * eth_in_wei * 2
-            formatted_liq = "${:,.2f}".format(liq / (10**decimals))
-            info = dextools.get_token_info(token_instance['ca'], token_instance['chain'].lower())
-            holders = info["holders"]
-            mcap = info["mcap"]
-            price, price_change_raw = dextools.get_price(token_instance['ca'], token_instance['chain'].lower())
-            price_change = (f"{price_change_raw['one_hour']}\n"
-                        f"{price_change_raw['six_hour']}\n"
-                        f"{price_change_raw['one_day']}")
-            volume = dextools.get_volume(token_instance['pair'], token_instance['chain'].lower())
-            im1 = Image.open((random.choice(media.BLACKHOLE)))
-            try:
-                image = token_instance['image_url']
-                img = Image.open(requests.get(image, stream=True).raw)
-                img = img.resize((200, 200), Image.ANTIALIAS)
-                result = img.convert("RGBA")
-                result.save(r"media/tokenlogo.png")
-                im2 = Image.open(r"media/tokenlogo.png")
-            except Exception:
-                if token_instance['chain'].lower() == "eth":
-                    im2 = Image.open(media.ETH_LOGO)
-                if token_instance['chain'].lower() == "bsc":
-                    im2 = Image.open(media.BSC_LOGO)
-                if token_instance['chain'].lower() == "poly":
-                    im2 = Image.open(media.POLY_LOGO)
-                if token_instance['chain'].lower() == "arb":
-                    im2 = Image.open(media.ARB_LOGO)
-                if token_instance['chain'].lower() == "opti":
-                    im2 = Image.open(media.OPTI_LOGO)
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = ca.DEFAULT_CHAIN
+    if chain in mappings.CHAINS:
+        chain_dext = mappings.CHAINS[chain].dext
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
 
-            im1.paste(im2, (720, 20), im2)
-            i1 = ImageDraw.Draw(im1)
-            i1.text(
-                (0, 0),
-                    f"  Xchange Pair Info\n\n💰 {search.upper()}\n\n"
-                    f"💰 Chain: {token_instance['chain'].upper()}\n"
-                    f"💰 Price: {price}\n"
-                    f"💎 Market Cap: {mcap}\n"
-                    f"📊 24 Hour Volume: {volume}\n"
-                    f"💦 Liquidity: {formatted_liq}\n"
-                    f"👪 Holders: {holders}\n\n"
-                    f"{price_change}\n\n\n"
-                    f'  UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-                font = ImageFont.truetype(media.FONT, 24),
-                fill=(255, 255, 255),
-            )
-            img_path = os.path.join("media", "blackhole.png")
-            im1.save(img_path)
-            await message.delete()
-            await update.message.reply_photo(
-                photo=open(r"media/blackhole.png", "rb"),
-                caption=
-                    f"*Xchange Pair Info\n\n{search.upper()}*\n"
-                    f"`{token_instance['ca']}`\n\n"
-                    f"⛓️ Chain: {token_instance['chain'].upper()}\n"
-                    f"💰 Price: {price}\n"
-                    f"💎 Market Cap: {mcap}\n"
-                    f"📊 24 Hour Volume: {volume}\n"
-                    f"💦 Liquidity: {formatted_liq}\n"
-                    f"👪 Holders: {holders}\n\n"
-                    f"{price_change}\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="Chart", url=f"{urls.DEX_TOOLS(dext)}{token_instance['pair']}"
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="Buy",
-                                url=f"{urls.XCHANGE}/#/swap?outputCurrency={token_instance['ca']}",
-                            )
-                        ],
-                    ]
-                ),
-            )
-            return
-        else:
-            if search == "":
-                chain = "eth"
-                chain_dext = mappings.CHAINS[chain].dext
-                x7r_price, x7r_change_raw  = dextools.get_price(ca.X7R, chain)
-                x7r_change = (f"{x7r_change_raw['one_hour']}\n"
-                    f"{x7r_change_raw['six_hour']}\n"
-                    f"{x7r_change_raw['one_day']}")
-                
+    x7r_price, x7r_change_raw  = dextools.get_price(ca.X7R, chain)
+    x7r_change = (f"{x7r_change_raw['one_hour']}\n"
+        f"{x7r_change_raw['six_hour']}\n"
+        f"{x7r_change_raw['one_day']}")
+    
 
-                x7dao_price, x7dao_change_raw  = dextools.get_price(ca.X7DAO, chain)
-                x7dao_change = (f"{x7dao_change_raw['one_hour']}\n"
-                    f"{x7dao_change_raw['six_hour']}\n"
-                    f"{x7dao_change_raw['one_day']}")
+    x7dao_price, x7dao_change_raw  = dextools.get_price(ca.X7DAO, chain)
+    x7dao_change = (f"{x7dao_change_raw['one_hour']}\n"
+        f"{x7dao_change_raw['six_hour']}\n"
+        f"{x7dao_change_raw['one_day']}")
 
-                await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=
-                        f"*X7 Finance Token Price Info ({chain.upper()})*\n"
-                        f"Use `/x7r [chain]` or `/x7dao [chain]` for all other details\n"
-                        f"Use `/constellations` for constellations\n\n"
-                        f'X7R:    {x7r_price}\n'
-                        f"{x7r_change}\n\n"
-                        f'X7DAO:  {x7dao_price}\n'
-                        f"{x7dao_change}\n\n"
-                        f"{api.get_quote()}",
-                    parse_mode="Markdown",
-                    reply_markup=InlineKeyboardMarkup(
-                        [
-                            [
-                                InlineKeyboardButton(
-                                    text="X7R Chart - Rewards Token",
-                                    url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7R}",
-                                )
-                            ],
-                            [
-                                InlineKeyboardButton(
-                                    text="X7DAO Chart - Governance Token",
-                                    url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7DAO}",
-                                )
-                            ],
-                        ]
-                    ),
-                )
-                return
-            else:
-                token = coingecko.search(search)
-                if token['coins'] == []:
-                    await update.message.reply_text(
-                        f"{search.upper()} Not found",
-                        parse_mode="Markdown")
-                    return
-                id = token["coins"][0]["id"]
-                symbol = token["coins"][0]["symbol"]
-                thumb = token["coins"][0]["large"]
-                token_price = coingecko.get_price(id)
-                if "e-" in str(token_price[id]["usd"]):
-                    price = "{:.8f}".format(token_price[id]["usd"])
-                elif token_price[id]["usd"] < 1:
-                    price = "{:.8f}".format(token_price[id]["usd"]) 
-                else:
-                    price = "{:.2f}".format(token_price[id]["usd"])
-                    
-                price_change = token_price[id]["usd_24h_change"]
-                if price_change is None:
-                    price_change = 0
-                else:
-                    price_change = round(token_price[id]["usd_24h_change"], 2)
-                market_cap = token_price[id]["usd_market_cap"]
-                if market_cap is None or market_cap == 0:
-                    market_cap_formatted = " N/A"
-                else:
-                    market_cap_formatted = "${:0,.0f}".format(float(market_cap))
-                img = Image.open(requests.get(thumb, stream=True).raw)
-                result = img.convert("RGBA")
-                result.save(r"media/tokenlogo.png")
-                im1 = Image.open((random.choice(media.BLACKHOLE)))
-                im2 = Image.open(r"media/tokenlogo.png")
-                im1.paste(im2, (680, 20), im2)
-                i1 = ImageDraw.Draw(im1)
-                i1.text(
-                    (28, 36),
-                        f"{id.capitalize()} ({symbol}) price\n\n"
-                        f'Price: ${price}\n'
-                        f"24 Hour Change: {price_change}%\n"
-                        f'Market Cap: {market_cap_formatted}\n\n\n\n\n\n\n\n'
-                        f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
-                    font = ImageFont.truetype(media.FONT, 28),
-                    fill=(255, 255, 255),
-                )
-                im1.save(r"media/blackhole.png", quality=95)
-                await update.message.reply_photo(
-                    photo=open(r"media/blackhole.png", "rb"),
-                    caption=
-                        f"*{id.capitalize()} ({symbol}) price*\n\n"
-                        f'Price: ${price}\n'
-                        f'24 Hour Change: {price_change}%\n'
-                        f'Market Cap: {market_cap_formatted}\n\n'
-                        f"{api.get_quote()}",
-                    parse_mode="Markdown",
-                    reply_markup=InlineKeyboardMarkup(
-                        [
-                            [
-                                InlineKeyboardButton(
-                                    text="Chart",
-                                    url=f"https://www.coingecko.com/en/coins/{id}",
-                                )
-                            ],
-                        ]
-                    ),
-                )
-    except IndexError:
-        await message.delete()
-        await update.message.reply_text(
-            f"{search.upper()} Not found",
-            parse_mode="Markdown",
-        )
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"*X7 Finance Token Price Info ({chain.upper()})*\n"
+            f"Use `/x7r [chain]` or `/x7dao [chain]` for all other details\n"
+            f"Use `/constellations` for constellations\n\n"
+            f"X7R\n"
+            f"💰 Price: {x7r_price}\n"
+            f"{x7r_change}\n\n"
+            f"X7DAO\n"
+            f"💰 Price: {x7r_price}\n"
+            f"{x7dao_change}\n\n"
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="X7R Chart - Rewards Token",
+                        url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7R}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="X7DAO Chart - Governance Token",
+                        url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7DAO}",
+                    )
+                ],
+            ]
+        ),
+    )
 
 
 async def quote(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2927,7 +2804,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
@@ -2973,10 +2850,16 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
-    if chain in mappings.CHAINS:
-        chain_name = mappings.CHAINS[chain].name
-        chain_url = mappings.CHAINS[chain].scan_address
+        chain = ca.DEFAULT_CHAIN
+        if chain == "":
+            chain = ca.DEFAULT_CHAIN
+        if chain in mappings.CHAINS:
+            chain_name = mappings.CHAINS[chain].name
+            chain_url = mappings.CHAINS[chain].scan_address
+        else:
+            await update.message.reply_text(text.CHAIN_ERROR)
+            return
+        
         buttons = [
         [
             InlineKeyboardButton(
@@ -3067,9 +2950,6 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             ),
         ],
     ]
-    else:
-        await update.message.reply_text(text.CHAIN_ERROR)
-        return
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -3140,7 +3020,7 @@ async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         chain = " ".join(context.args).lower()
         if chain == "":
-            chain = "eth"
+            chain = ca.DEFAULT_CHAIN
         
         if chain in mappings.CHAINS:
             chain_name = mappings.CHAINS[chain].name
@@ -3237,18 +3117,24 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
-    if not chain:
-        chain = "eth"
+    if chain == "":
+        chain = ca.DEFAULT_CHAIN
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_pair = mappings.CHAINS[chain].pairs
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
     message = await update.message.reply_text("Getting Supply Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     token_pairs = {
-        "x7r": (ca.X7R_PAIR_ETH, ca.X7R),
-        "x7dao": (ca.X7DAO_PAIR_ETH, ca.X7DAO),
-        "x7101": (ca.X7101_PAIR_ETH, ca.X7101),
-        "x7102": (ca.X7102_PAIR_ETH, ca.X7102),
-        "x7103": (ca.X7103_PAIR_ETH, ca.X7103),
-        "x7104": (ca.X7104_PAIR_ETH, ca.X7104),
-        "x7105": (ca.X7105_PAIR_ETH, ca.X7105),
+        "x7r": (chain_pair[0], ca.X7R),
+        "x7dao": (chain_pair[1], ca.X7DAO),
+        "x7101": (chain_pair[2], ca.X7101),
+        "x7102": (chain_pair[3], ca.X7102),
+        "x7103": (chain_pair[4], ca.X7103),
+        "x7104": (chain_pair[5], ca.X7104),
+        "x7105": (chain_pair[6], ca.X7105),
     }
     supply_info = {}
     for token, (pair, contract) in token_pairs.items():
@@ -3269,7 +3155,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
-            f"*X7 Finance Uniswap Supply*\n\n{caption_text}\n\n"
+            f"*X7 Finance Uniswap Supply {chain_name}*\n\n{caption_text}\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",
     )
@@ -3288,16 +3174,21 @@ async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = ca.DEFAULT_CHAIN
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
     tax_info = tax.GENERATE_INFO(chain)
-    if not chain:
-        chain = "eth"
-        tax_info = tax.GENERATE_INFO(chain)
-    if tax_info:
-        caption = f"{tax_info}"
-    caption = f"{caption}\n\n{api.get_quote()}"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
-        caption=caption,
+        caption=
+            f"*X7 Finance Tax Info {chain_name.upper()}*\n"
+            f"Use `/tax [chain-name]` for other chains\n\n"
+            f"{tax_info}\n"
+            f"{api.get_quote()}",
         parse_mode="Markdown",
     )
 
@@ -3449,7 +3340,7 @@ async def translate_russian(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
@@ -3596,6 +3487,7 @@ async def twitter(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ),
     )
 
+
 async def v1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     native_price = api.get_native_price("eth")
@@ -3733,7 +3625,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown")
         return
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
                 chain_name = mappings.CHAINS[chain].name
                 chain_url = mappings.CHAINS[chain].scan_address
@@ -3925,7 +3817,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7D:
         chain_name, chain_url, chain_native = mappings.X7D[chain]
         native_price = api.get_native_price(chain_native)
@@ -3939,6 +3831,9 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         lpool_reserve_rounded = round(float(lpool_reserve), 2)
         info = dextools.get_token_info(ca.X7D, "eth")
         holders = info["holders"]
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -3968,7 +3863,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7DAO:
         (
             chain_name,
@@ -3979,53 +3874,56 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7DAO[chain]
-        info = dextools.get_token_info(ca.X7DAO, chain)
-        holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7DAO, chain)
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7dao")[1]}'
-            ath_value = coingecko.get_ath("x7dao")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"X7DAO Info {chain_name}\n\n"
-                f"💰 Price: {price}\n"
-                f'💎 Market Cap:  {market_cap}\n'
-                f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {liquidity}\n"
-                f"👪 Holders: {holders}\n"
-                f"🔝 ATH: {ath}\n\n"
-                f"{price_change}\n\n"
-                f"Contract Address:\n`{ca.X7DAO}`\n\n"
-                f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7DAO}")],
-                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7DAO}")],
-            ]
-        ),
-    )
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    
+    info = dextools.get_token_info(ca.X7DAO, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7DAO, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7dao")[1]}'
+        ath_value = coingecko.get_ath("x7dao")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
+    
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"X7DAO Info {chain_name}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n\n"
+            f"{price_change}\n\n"
+            f"Contract Address:\n`{ca.X7DAO}`\n\n"
+            f"{api.get_quote()}",
+    parse_mode="Markdown",
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7DAO}")],
+            [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
+            [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7DAO}")],
+        ]
+    ),
+)
 
 
 async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7R:
         (
             chain_name,
@@ -4036,22 +3934,26 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7R[chain]
-        info = dextools.get_token_info(ca.X7R, chain)
-        holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7R, chain)
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7r")[1]}'
-            ath_value = coingecko.get_ath("x7r")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    
+    info = dextools.get_token_info(ca.X7R, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7R, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7r")[1]}'
+        ath_value = coingecko.get_ath("x7r")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
     
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -4081,7 +3983,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7101:
         (
             chain_name,
@@ -4092,44 +3994,48 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7101[chain]
-        info = dextools.get_token_info(ca.X7101, chain)
-        holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7101, chain)
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7101")[1]}'
-            ath_value = coingecko.get_ath("x7101")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"X7101 Info {chain_name}\n\n"
-                f"💰 Price: {price}\n"
-                f'💎 Market Cap:  {market_cap}\n'
-                f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {liquidity}\n"
-                f"👪 Holders: {holders}\n"
-                f"🔝 ATH: {ath}\n\n"
-                f"{price_change}\n\n"
-                f"Contract Address:\n`{ca.X7101}`\n\n"
-                f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7101}")],
-                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7101}")],
-            ]
-        ),
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    
+    info = dextools.get_token_info(ca.X7101, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7101, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7101")[1]}'
+        ath_value = coingecko.get_ath("x7101")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
+    
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"X7101 Info {chain_name}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n\n"
+            f"{price_change}\n\n"
+            f"Contract Address:\n`{ca.X7101}`\n\n"
+            f"{api.get_quote()}",
+    parse_mode="Markdown",
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7101}")],
+            [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
+            [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7101}")],
+        ]
+    ),
     )
 
 
@@ -4137,7 +4043,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7102:
         (
             chain_name,
@@ -4148,44 +4054,47 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7102[chain]
-        info = dextools.get_token_info(ca.X7102, chain)
-        holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7102, chain)
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7102")[1]}'
-            ath_value = coingecko.get_ath("x7102")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"X7102 Info {chain_name}\n\n"
-                f"💰 Price: {price}\n"
-                f'💎 Market Cap:  {market_cap}\n'
-                f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {liquidity}\n"
-                f"👪 Holders: {holders}\n"
-                f"🔝 ATH: {ath}\n\n"
-                f"{price_change}\n\n"
-                f"Contract Address:\n`{ca.X7102}`\n\n"
-                f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7102}")],
-                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7102}")],
-            ]
-        ),
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    info = dextools.get_token_info(ca.X7102, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7102, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7102")[1]}'
+        ath_value = coingecko.get_ath("x7102")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
+    
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"X7102 Info {chain_name}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n\n"
+            f"{price_change}\n\n"
+            f"Contract Address:\n`{ca.X7102}`\n\n"
+            f"{api.get_quote()}",
+    parse_mode="Markdown",
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7102}")],
+            [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
+            [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7102}")],
+        ]
+    ),
     )
 
 
@@ -4193,7 +4102,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7103:
         (
             chain_name,
@@ -4204,44 +4113,47 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7103[chain]
-        info = dextools.get_token_info(ca.X7103, chain)
-        holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7103, chain)
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7103")[1]}'
-            ath_value = coingecko.get_ath("x7103")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"X7103 Info {chain_name}\n\n"
-                f"💰 Price: {price}\n"
-                f'💎 Market Cap:  {market_cap}\n'
-                f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {liquidity}\n"
-                f"👪 Holders: {holders}\n"
-                f"🔝 ATH: {ath}\n\n"
-                f"{price_change}\n\n"
-                f"Contract Address:\n`{ca.X7103}`\n\n"
-                f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7103}")],
-                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7103}")],
-            ]
-        ),
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    info = dextools.get_token_info(ca.X7103, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7103, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7103")[1]}'
+        ath_value = coingecko.get_ath("x7103")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
+    
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"X7103 Info {chain_name}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n\n"
+            f"{price_change}\n\n"
+            f"Contract Address:\n`{ca.X7103}`\n\n"
+            f"{api.get_quote()}",
+    parse_mode="Markdown",
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7103}")],
+            [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
+            [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7103}")],
+        ]
+    ),
     )
 
 
@@ -4249,7 +4161,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7104:
         (
             chain_name,
@@ -4260,44 +4172,47 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7104[chain]
-        info = dextools.get_token_info(ca.X7104, chain)
-        holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7104, chain)
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7104")[1]}'
-            ath_value = coingecko.get_ath("x7104")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"X7104 Info {chain_name}\n\n"
-                f"💰 Price: {price}\n"
-                f'💎 Market Cap:  {market_cap}\n'
-                f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {liquidity}\n"
-                f"👪 Holders: {holders}\n"
-                f"🔝 ATH: {ath}\n\n"
-                f"{price_change}\n\n"
-                f"Contract Address:\n`{ca.X7104}`\n\n"
-                f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7104}")],
-                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7104}")],
-            ]
-        ),
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    info = dextools.get_token_info(ca.X7104, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7104, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7104")[1]}'
+        ath_value = coingecko.get_ath("x7104")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
+    
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"X7104 Info {chain_name}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n\n"
+            f"{price_change}\n\n"
+            f"Contract Address:\n`{ca.X7104}`\n\n"
+            f"{api.get_quote()}",
+    parse_mode="Markdown",
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7104}")],
+            [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
+            [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7104}")],
+        ]
+    ),
     )
 
 
@@ -4305,7 +4220,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = "eth"
+        chain = ca.DEFAULT_CHAIN
     if chain in mappings.X7105:
         (
             chain_name,
@@ -4316,42 +4231,229 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_scan,
             chain_native,
         ) = mappings.X7105[chain]
-        info = dextools.get_token_info(ca.X7105, chain)
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+    info = dextools.get_token_info(ca.X7105, chain)
+    holders = info["holders"]
+    market_cap = info["mcap"]
+    price, price_change_raw = dextools.get_price(ca.X7105, chain)
+    price_change = (f"{price_change_raw['one_hour']}\n"
+                f"{price_change_raw['six_hour']}\n"
+                f"{price_change_raw['one_day']}")
+    volume = dextools.get_volume(chain_pair, chain)
+    liquidity_data = dextools.get_liquidity(chain_pair, chain)
+    liquidity = liquidity_data["total"]
+    if chain == "eth":
+        ath_change = f'{coingecko.get_ath("x7105")[1]}'
+        ath_value = coingecko.get_ath("x7105")[0]
+        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+    else:
+        ath = "Unavailable"        
+    
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"X7105 Info {chain_name}\n\n"
+            f"💰 Price: {price}\n"
+            f'💎 Market Cap:  {market_cap}\n'
+            f"📊 24 Hour Volume: {volume}\n"
+            f"💦 Liquidity: {liquidity}\n"
+            f"👪 Holders: {holders}\n"
+            f"🔝 ATH: {ath}\n\n"
+            f"{price_change}\n\n"
+            f"Contract Address:\n`{ca.X7105}`\n\n"
+            f"{api.get_quote()}",
+    parse_mode="Markdown",
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7105}")],
+            [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
+            [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7105}")],
+        ]
+    ),
+    )
+
+
+async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if context.args:
+        if len(context.args) > 1:
+            last_word = context.args[-1].lower()
+            if last_word in mappings.CHAINS:
+                chain = last_word
+            else:
+                search = " ".join(context.args).lower()
+                chain = ca.DEFAULT_CHAIN
+        else:
+            search = " ".join(context.args).lower()
+            chain = ca.DEFAULT_CHAIN   
+    else:
+        await update.message.reply_text("Please provide token address to search")   
+        return   
+        
+    token_info = db.token_get(search, chain)
+    for token_instance in token_info:
+        message = await update.message.reply_text("Getting Xchange Pair Price Info, Please wait...")
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        dext = mappings.CHAINS[token_instance['chain'].lower()].dext
+        w3 = mappings.CHAINS[token_instance['chain'].lower()].w3
+        token = mappings.CHAINS[token_instance['chain'].lower()].token
+        contract = w3.eth.contract(
+            address=Web3.to_checksum_address(token_instance['pair']), abi=ca.PAIRS_ABI)
+        token0_address = contract.functions.token0().call()
+        token1_address = contract.functions.token1().call()
+        is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
+        is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
+        eth = ""
+        if is_reserve_token0:
+            eth = contract.functions.getReserves().call()[1]
+        elif is_reserve_token1:
+            eth = contract.functions.getReserves().call()[0]
+        decimals = contract.functions.decimals().call()
+        eth_in_wei = int(eth)
+        liq = api.get_native_price(token) * eth_in_wei * 2
+        formatted_liq = "${:,.2f}".format(liq / (10**decimals))
+        info = dextools.get_token_info(token_instance['ca'], token_instance['chain'].lower())
         holders = info["holders"]
-        market_cap = info["mcap"]
-        price, price_change_raw = dextools.get_price(ca.X7105, chain)
+        mcap = info["mcap"]
+        price, price_change_raw = dextools.get_price(token_instance['ca'], token_instance['chain'].lower())
         price_change = (f"{price_change_raw['one_hour']}\n"
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
-        volume = dextools.get_volume(chain_pair, chain)
-        liquidity_data = dextools.get_liquidity(chain_pair, chain)
-        liquidity = liquidity_data["total"]
-        if chain == "eth":
-            ath_change = f'{coingecko.get_ath("x7105")[1]}'
-            ath_value = coingecko.get_ath("x7105")[0]
-            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
-        else:
-            ath = "Unavailable"        
-        
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"X7105 Info {chain_name}\n\n"
+        volume = dextools.get_volume(token_instance['pair'], token_instance['chain'].lower())
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        try:
+            image = token_instance['image_url']
+            img = Image.open(requests.get(image, stream=True).raw)
+            img = img.resize((200, 200), Image.ANTIALIAS)
+            result = img.convert("RGBA")
+            result.save(r"media/tokenlogo.png")
+            im2 = Image.open(r"media/tokenlogo.png")
+        except Exception:
+            if token_instance['chain'].lower() == "eth":
+                im2 = Image.open(media.ETH_LOGO)
+            if token_instance['chain'].lower() == "bsc":
+                im2 = Image.open(media.BSC_LOGO)
+            if token_instance['chain'].lower() == "poly":
+                im2 = Image.open(media.POLY_LOGO)
+            if token_instance['chain'].lower() == "arb":
+                im2 = Image.open(media.ARB_LOGO)
+            if token_instance['chain'].lower() == "opti":
+                im2 = Image.open(media.OPTI_LOGO)
+
+        im1.paste(im2, (720, 20), im2)
+        i1 = ImageDraw.Draw(im1)
+        i1.text(
+            (0, 0),
+                f"  Xchange Pair Info\n\n💰 {search.upper()}\n\n"
+                f"💰 Chain: {token_instance['chain'].upper()}\n"
                 f"💰 Price: {price}\n"
-                f'💎 Market Cap:  {market_cap}\n'
+                f"💎 Market Cap: {mcap}\n"
                 f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {liquidity}\n"
-                f"👪 Holders: {holders}\n"
-                f"🔝 ATH: {ath}\n\n"
+                f"💦 Liquidity: {formatted_liq}\n"
+                f"👪 Holders: {holders}\n\n"
+                f"{price_change}\n\n\n"
+                f'  UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+            font = ImageFont.truetype(media.FONT, 24),
+            fill=(255, 255, 255),
+        )
+        img_path = os.path.join("media", "blackhole.png")
+        im1.save(img_path)
+        await message.delete()
+        await update.message.reply_photo(
+            photo=open(r"media/blackhole.png", "rb"),
+            caption=
+                f"*Xchange Pair Info\n\n{search.upper()}*\n"
+                f"`{token_instance['ca']}`\n\n"
+                f"⛓️ Chain: {token_instance['chain'].upper()}\n"
+                f"💰 Price: {price}\n"
+                f"💎 Market Cap: {mcap}\n"
+                f"📊 24 Hour Volume: {volume}\n"
+                f"💦 Liquidity: {formatted_liq}\n"
+                f"👪 Holders: {holders}\n\n"
                 f"{price_change}\n\n"
-                f"Contract Address:\n`{ca.X7105}`\n\n"
                 f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text=chain_scan, url=f"{chain_url}{ca.X7105}")],
-                [InlineKeyboardButton(text="Chart", url=f"{urls.DEX_TOOLS(chain_dext)}{chain_pair}")],
-                [InlineKeyboardButton(text="Buy", url=f"{chain_xchange}{ca.X7105}")],
-            ]
-        ),
-    )
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Chart", url=f"{urls.DEX_TOOLS(dext)}{token_instance['pair']}"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="Buy",
+                            url=f"{urls.XCHANGE}/#/swap?outputCurrency={token_instance['ca']}",
+                        )
+                    ],
+                ]
+            ),
+        )
+        return  
+    else:
+        token = coingecko.search(search)
+        if token['coins'] == []:
+            await update.message.reply_text(
+                f"{search.upper()} Not found",
+                parse_mode="Markdown")
+            return
+        id = token["coins"][0]["id"]
+        symbol = token["coins"][0]["symbol"]
+        thumb = token["coins"][0]["large"]
+        token_price = coingecko.get_price(id)
+        if "e-" in str(token_price[id]["usd"]):
+            price = "{:.8f}".format(token_price[id]["usd"])
+        elif token_price[id]["usd"] < 1:
+            price = "{:.8f}".format(token_price[id]["usd"]) 
+        else:
+            price = "{:.2f}".format(token_price[id]["usd"])
+            
+        price_change = token_price[id]["usd_24h_change"]
+        if price_change is None:
+            price_change = 0
+        else:
+            price_change = round(token_price[id]["usd_24h_change"], 2)
+        market_cap = token_price[id]["usd_market_cap"]
+        if market_cap is None or market_cap == 0:
+            market_cap_formatted = " N/A"
+        else:
+            market_cap_formatted = "${:0,.0f}".format(float(market_cap))
+        img = Image.open(requests.get(thumb, stream=True).raw)
+        result = img.convert("RGBA")
+        result.save(r"media/tokenlogo.png")
+        im1 = Image.open((random.choice(media.BLACKHOLE)))
+        im2 = Image.open(r"media/tokenlogo.png")
+        im1.paste(im2, (680, 20), im2)
+        i1 = ImageDraw.Draw(im1)
+        i1.text(
+            (28, 36),
+                f"{id.capitalize()} ({symbol}) price\n\n"
+                f'Price: ${price}\n'
+                f"24 Hour Change: {price_change}%\n"
+                f'Market Cap: {market_cap_formatted}\n\n\n\n\n\n\n\n'
+                f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
+            font = ImageFont.truetype(media.FONT, 28),
+            fill=(255, 255, 255),
+        )
+        im1.save(r"media/blackhole.png", quality=95)
+        await update.message.reply_photo(
+            photo=open(r"media/blackhole.png", "rb"),
+            caption=
+                f"*{id.capitalize()} ({symbol}) price*\n\n"
+                f'Price: ${price}\n'
+                f'24 Hour Change: {price_change}%\n'
+                f'Market Cap: {market_cap_formatted}\n\n'
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Chart",
+                            url=f"https://www.coingecko.com/en/coins/{id}",
+                        )
+                    ],
+                ]
+            ),
+        )
