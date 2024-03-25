@@ -1403,21 +1403,23 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         all_liquidity = []
 
         for contract_address, pair in zip(ca.TOKENS, pair_addresses):
-            liquidity = dextools.get_liquidity(pair, chain)
-            all_liquidity.append(liquidity)
+            liquidity_data = dextools.get_liquidity(pair, chain)
+            all_liquidity.append(liquidity_data)
 
-        def clean_liquidity(liquidity):
-            if liquidity == 'N/A':
-                return 0
-            else:
-                return float(liquidity.replace('$', '').replace(',', ''))
+        x7r_liq = all_liquidity[0]
+        x7dao_liq = all_liquidity[1]
+        x7100_liq = all_liquidity[2:7]
+        x7100_eth_values = [float(pair['eth']) for pair in x7100_liq if isinstance(pair, dict) and 'eth' in pair]
+        x7100_eth = sum(x7100_eth_values)
+        x7100_token_values = [pair['token'].replace(',', '') for pair in x7100_liq if isinstance(pair, dict) and 'token' in pair]
+        x7100_token = sum(int(token) for token in x7100_token_values)
+        x7100_total_values = [pair['total'].replace('$', '').replace(',', '') for pair in x7100_liq if isinstance(pair, dict) and 'total' in pair]
+        x7100_total = sum(int(total) for total in x7100_total_values)
 
-        cleaned_liquidity = [clean_liquidity(liquidity) for liquidity in all_liquidity]
-
-        x7r_liq = cleaned_liquidity[0]
-        x7dao_liq = cleaned_liquidity[1]
-        constellations_liq = sum(cleaned_liquidity[2:7])
-        total_liq = sum(cleaned_liquidity)
+        total_eth_values = [float(pair['eth']) for pair in all_liquidity if isinstance(pair, dict) and 'eth' in pair]
+        total_eth = sum(total_eth_values)
+        total_values = [pair['total'].replace('$', '').replace(',', '') for pair in all_liquidity if isinstance(pair, dict) and 'total' in pair]
+        total = sum(int(total) for total in total_values)
 
         await message.delete()
         await update.message.reply_photo(
@@ -1426,15 +1428,24 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"*X7 Finance Token Liquidity ({chain.upper()})*\n"
                 f"For other chains, Use `/liquidity [chain-name]`\n\n"
                 f"X7R:\n"
-                f"${x7r_liq:,.0f}\n\n"
+                f"{x7r_liq['token']} X7R\n"
+                f"{x7r_liq['eth']} {chain_native.upper()}\n"
+                f"{x7r_liq['total']}\n\n"
                 f"X7DAO:\n"
-                f"${x7dao_liq:,.0f}\n\n"
+                f"{x7dao_liq['token']} X7DAO\n"
+                f"{x7dao_liq['eth']} {chain_native.upper()}\n"
+                f"{x7dao_liq['total']}\n\n"
                 f"X7100:\n"
-                f"${constellations_liq:,.0f}\n\n"
-                f"Total: ${total_liq:,.0f}\n\n"
+                f"{x7100_token:,.0f} X7100\n"
+                f"{x7100_eth:.2f} {chain_native.upper()}\n"
+                f"${x7100_total:,.0f}\n\n"
+                f"Total:\n"
+                f"{total_eth:.2f} {chain_native.upper()}\n"
+                f"${total:,.0f}\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown",
         )
+
     ### REMOVE AFTER MIGRATION
     else:
         x7r_amount = api.get_native_balance(ca.X7R_LIQ_LOCK, chain)
@@ -3978,7 +3989,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7dao")[1]}'
             ath_value = coingecko.get_ath("x7dao")[0]
@@ -4034,7 +4046,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7r")[1]}'
             ath_value = coingecko.get_ath("x7r")[0]
@@ -4089,7 +4102,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7101")[1]}'
             ath_value = coingecko.get_ath("x7101")[0]
@@ -4144,7 +4158,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7102")[1]}'
             ath_value = coingecko.get_ath("x7102")[0]
@@ -4199,7 +4214,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7103")[1]}'
             ath_value = coingecko.get_ath("x7103")[0]
@@ -4254,7 +4270,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7104")[1]}'
             ath_value = coingecko.get_ath("x7104")[0]
@@ -4309,7 +4326,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"{price_change_raw['six_hour']}\n"
                     f"{price_change_raw['one_day']}")
         volume = dextools.get_volume(chain_pair, chain)
-        liquidity = dextools.get_liquidity(chain_pair, chain)
+        liquidity_data = dextools.get_liquidity(chain_pair, chain)
+        liquidity = liquidity_data["total"]
         if chain == "eth":
             ath_change = f'{coingecko.get_ath("x7105")[1]}'
             ath_value = coingecko.get_ath("x7105")[0]

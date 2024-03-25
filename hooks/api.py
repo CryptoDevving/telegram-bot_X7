@@ -156,9 +156,15 @@ class Dextools:
         response = requests.get(self.url + endpoint, headers=self.headers)
 
         if response.status_code == 200:
-            data = response.json()
             try:
-                return f"${'{:,.0f}'.format(data['data']['liquidity'])}"
+                data = response.json()
+                total = data['data']['liquidity']
+                token = data['data']['reserves']['mainToken']
+                eth = data['data']['reserves']['sideToken']
+                return {"total": f"${'{:,.0f}'.format(total)}",
+                        "token": f"{'{:,.0f}'.format(token)}",
+                        "eth": f"{'{:,.2f}'.format(eth)}"}
+
             except Exception:
                 return "N/A"
         else:
