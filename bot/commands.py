@@ -489,50 +489,50 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = "eth"
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    price = coingecko.get_price("x7101, x7102, x7103, x7104, x7105")
-    x7101mc = price["x7101"]["usd"] * ca.SUPPLY
-    x7102mc = price["x7102"]["usd"] * ca.SUPPLY
-    x7103mc = price["x7103"]["usd"] * ca.SUPPLY
-    x7104mc = price["x7104"]["usd"] * ca.SUPPLY
-    x7105mc = price["x7105"]["usd"] * ca.SUPPLY
-    const_mc = x7101mc + x7102mc + x7103mc + x7104mc + x7105mc
-    if price["x7101"]["usd_24h_change"] is None:
-        price["x7101"]["usd_24h_change"] = 0
-    if price["x7102"]["usd_24h_change"] is None:
-        price["x7102"]["usd_24h_change"] = 0
-    if price["x7103"]["usd_24h_change"] is None:
-        price["x7103"]["usd_24h_change"] = 0
-    if price["x7104"]["usd_24h_change"] is None:
-        price["x7104"]["usd_24h_change"] = 0
-    if price["x7105"]["usd_24h_change"] is None:
-        price["x7105"]["usd_24h_change"] = 0
+    x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
+    x7101_change = (f"{x7101_change_raw['one_hour']}\n"
+                    f"{x7101_change_raw['six_hour']}\n"
+                    f"{x7101_change_raw['one_day']}")
+    x7102_price, x7102_change_raw,  = dextools.get_price(ca.X7102, chain)
+    x7102_change = (f"{x7102_change_raw['one_hour']}\n"
+                    f"{x7102_change_raw['six_hour']}\n"
+                    f"{x7102_change_raw['one_day']}")
+    x7103_price, x7103_change_raw, = dextools.get_price(ca.X7103, chain)
+    x7103_change = (f"{x7103_change_raw['one_hour']}\n"
+                    f"{x7103_change_raw['six_hour']}\n"
+                    f"{x7103_change_raw['one_day']}")
+    x7104_price, x7104_change_raw,  = dextools.get_price(ca.X7104, chain)
+    x7104_change = (f"{x7104_change_raw['one_hour']}\n"
+                    f"{x7104_change_raw['six_hour']}\n"
+                    f"{x7104_change_raw['one_day']}")
+    x7105_price, x7105_change_raw,  = dextools.get_price(ca.X7105, chain)
+    x7105_change = (f"{x7105_change_raw['one_hour']}\n"
+                    f"{x7105_change_raw['six_hour']}\n"
+                    f"{x7105_change_raw['one_day']}")
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
             f"*X7 Finance Constellation Token Prices (ETH)*\n\n"
             f"For more info use `/x7token-name`\n\n"
-            f'X7101:      ${price["x7101"]["usd"]}\n'
-            f'24 Hour Change: {round(price["x7101"]["usd_24h_change"], 1)}%\n'
-            f'Market Cap:  ${"{:0,.0f}".format(x7101mc)}\n'
+            f'X7101:      ${x7101_price}\n'
+            f'{x7101_change}\n'
             f"CA: `{ca.X7101}\n\n`"
-            f'X7102:      ${price["x7102"]["usd"]}\n'
-            f'24 Hour Change: {round(price["x7102"]["usd_24h_change"], 1)}%\n'
-            f'Market Cap:  ${"{:0,.0f}".format(x7102mc)}\n'
+            f'X7102:      ${x7102_price}\n'
+            f'{x7102_change}\n'
             f"CA: `{ca.X7102}\n\n`"
-            f'X7103:      ${price["x7103"]["usd"]}\n'
-            f'24 Hour Change: {round(price["x7103"]["usd_24h_change"], 1)}%\n'
-            f'Market Cap:  ${"{:0,.0f}".format(x7103mc)}\n'
+            f'X7103:      ${x7103_price}\n'
+            f'{x7103_change}\n'
             f"CA: `{ca.X7103}\n\n`"
-            f'X7104:      ${price["x7104"]["usd"]}\n'
-            f'24 Hour Change: {round(price["x7104"]["usd_24h_change"], 1)}%\n'
-            f'Market Cap:  ${"{:0,.0f}".format(x7104mc)}\n'
+            f'X7104:      ${x7104_price}\n'
+            f'{x7104_change}\n'
             f"CA: `{ca.X7104}\n\n`"
-            f'X7105:      ${price["x7105"]["usd"]}\n'
-            f'24 Hour Change: {round(price["x7105"]["usd_24h_change"], 1)}%\n'
-            f'Market Cap:  ${"{:0,.0f}".format(x7105mc)}\n'
+            f'X7105:      ${x7105_price}\n'
+            f'{x7105_change}\n'
             f"CA: `{ca.X7105}\n\n`"
-            f'Combined Market Cap: ${"{:0,.0f}".format(const_mc)}\n\n'
             f"{api.get_quote()}",
         parse_mode="Markdown",
     )
@@ -2530,17 +2530,16 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if search == "":
                 chain = "eth"
                 chain_dext = mappings.CHAINS[chain].dext
-                price = coingecko.get_price("x7r, x7dao")
-                x7r_change = price["x7r"]["usd_24h_change"]
-                if x7r_change is None:
-                    x7r_change = 0
-                else:
-                    x7r_change = round(price["x7r"]["usd_24h_change"], 2)
-                x7dao_change = price["x7dao"]["usd_24h_change"]
-                if x7dao_change is None:
-                    x7dao_change = 0
-                else:
-                    x7dao_change = round(price["x7dao"]["usd_24h_change"], 2)
+                x7r_price, x7r_change_raw  = dextools.get_price(ca.X7R, chain)
+                x7r_change = (f"{x7r_change_raw['one_hour']}\n"
+                    f"{x7r_change_raw['six_hour']}\n"
+                    f"{x7r_change_raw['one_day']}")
+                
+
+                x7dao_price, x7dao_change_raw  = dextools.get_price(ca.X7DAO, chain)
+                x7dao_change = (f"{x7dao_change_raw['one_hour']}\n"
+                    f"{x7dao_change_raw['six_hour']}\n"
+                    f"{x7dao_change_raw['one_day']}")
 
                 await update.message.reply_photo(
                     photo=api.get_random_pioneer(),
@@ -2548,10 +2547,10 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         f"*X7 Finance Token Price Info ({chain.upper()})*\n"
                         f"Use `/x7r [chain]` or `/x7dao [chain]` for all other details\n"
                         f"Use `/constellations` for constellations\n\n"
-                        f'X7R:    ${price["x7r"]["usd"]}\n'
-                        f"24 Hour Change: {x7r_change}%\n\n"
-                        f'X7DAO:  ${price["x7dao"]["usd"]}\n'
-                        f"24 Hour Change: {x7dao_change}%\n\n"
+                        f'X7R:    {x7r_price}\n'
+                        f"{x7r_change}\n\n"
+                        f'X7DAO:  {x7dao_price}\n'
+                        f"{x7dao_change}\n\n"
                         f"{api.get_quote()}",
                     parse_mode="Markdown",
                     reply_markup=InlineKeyboardMarkup(
@@ -3237,6 +3236,9 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chain = " ".join(context.args).lower()
+    if not chain:
+        chain = "eth"
     message = await update.message.reply_text("Getting Supply Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     token_pairs = {
@@ -3248,23 +3250,19 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "x7104": (ca.X7104_PAIR_ETH, ca.X7104),
         "x7105": (ca.X7105_PAIR_ETH, ca.X7105),
     }
-    prices = coingecko.get_price("x7r, x7dao, x7101, x7102, x7103, x7104, x7105")
     supply_info = {}
     for token, (pair, contract) in token_pairs.items():
-        balance = api.get_token_balance(pair, contract, "eth")
-        dollar_value = balance * prices[token]["usd"]
+        balance = api.get_token_balance(pair, contract, chain)
         percent = round(balance / ca.SUPPLY * 100, 2)
         supply_info[token] = {
             "balance": balance,
-            "dollar_value": dollar_value,
             "percent": percent,
         }
     caption_lines = []
     for token, info in supply_info.items():
         balance_str = "{:0,.0f}".format(info["balance"])
-        dollar_value_str = "${:0,.0f}".format(info["dollar_value"])
         percent_str = f"{info['percent']}%"
-        line = f"{token.upper()}\n{balance_str} {token.upper()} ({dollar_value_str}) {percent_str}"
+        line = f"{token.upper()}\n{balance_str} {token.upper()}  {percent_str}"
         caption_lines.append(line)
     caption_text = "\n\n".join(caption_lines)
     await message.delete()
