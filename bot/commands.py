@@ -2848,9 +2848,8 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
-    chain = " ".join(context.args).lower()
-    if chain == "":
-        chain = ca.DEFAULT_CHAIN
+    try:
+        chain = " ".join(context.args).lower()
         if chain == "":
             chain = ca.DEFAULT_CHAIN
         if chain in mappings.CHAINS:
@@ -2859,7 +2858,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         else:
             await update.message.reply_text(text.CHAIN_ERROR)
             return
-        
+            
         buttons = [
         [
             InlineKeyboardButton(
@@ -2951,14 +2950,16 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         ],
     ]
 
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"*X7 Finance Smart Contracts {chain_name}*\nUse `/smart [chain-name]` or other chains\n\n"
-            f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(buttons),
-    )
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*X7 Finance Smart Contracts {chain_name.upper()}*\nUse `/smart [chain-name]` or other chains\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
+    except Exception as e:
+        print(e)
 
 
 async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
