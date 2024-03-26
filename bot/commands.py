@@ -714,122 +714,104 @@ async def countdown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        chain = " ".join(context.args).lower()
-        if chain == "":
-            chain = ca.DEFAULT_CHAIN
-        if chain in mappings.CHAINS:
-            await context.bot.send_chat_action(update.effective_chat.id, "typing")
-            chain_name = mappings.CHAINS[chain].name
-        else:
-            await update.message.reply_text(text.CHAIN_ERROR)
-            return
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        buttons = []
-        input_contract = " ".join(context.args).lower()
-        contract_names = list(dao.CONTRACT_MAPPINGS.keys())
-        formatted_contract_names = '\n'.join(contract_names)
-        keyboard = InlineKeyboardMarkup(
-                [[InlineKeyboardButton(text="Vote Here",url=urls.SNAPSHOT,)],
-                [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
-        if not input_contract:
-            x7dao_proposers = api.get_proposers(chain)
-            info = dextools.get_token_info(ca.X7DAO, chain)
-            holders = info["holders"]
-            snapshot = api.get_snapshot()
-            end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
-            duration = end - datetime.utcnow()
-            days, hours, minutes = api.get_duration_days(duration)
-            if snapshot["data"]["proposals"][0]["state"] == "active":
-                end_status = f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
-                header = 'Current Open Proposal'
-                buttons.extend([
-                [InlineKeyboardButton(
-                    text="Vote Here",
-                    url=f"{urls.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
-                ],
-                [InlineKeyboardButton(
-                    text="X7 Finance DAO",
-                    url=f"{urls.TG_DAO}")
-                ],
-                [InlineKeyboardButton(
-                        text="DAO Proposers Chat",
-                        url=f"{urls.TG_DAO}")
-                ]
-                ])
-            else:
-                end_status = f'Vote Closed: {end.strftime("%Y-%m-%d %H:%M:%S")}'
-                header = 'No Current Open Proposal\n\nLast Proposal:'
-                buttons.extend([
-                [InlineKeyboardButton(
-                    text="X7 Finance DAO",
-                    url=f"{urls.SNAPSHOT}")
-                ],
-                [InlineKeyboardButton(
+    buttons = []
+    input_contract = " ".join(context.args).lower()
+    contract_names = list(dao.CONTRACT_MAPPINGS.keys())
+    formatted_contract_names = '\n'.join(contract_names)
+    keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton(text="Vote Here",url=urls.SNAPSHOT,)],
+            [InlineKeyboardButton(text="DAO Proposers Chat",url=urls.TG_DAO,)],])
+    if not input_contract:
+        snapshot = api.get_snapshot()
+        end = datetime.utcfromtimestamp(snapshot["data"]["proposals"][0]["end"])
+        duration = end - datetime.utcnow()
+        days, hours, minutes = api.get_duration_days(duration)
+        if snapshot["data"]["proposals"][0]["state"] == "active":
+            end_status = f'Vote Closing: {end.strftime("%Y-%m-%d %H:%M:%S")} UTC\n{days} days, {hours} hours and {minutes} minutes\n\n'
+            header = 'Current Open Proposal'
+            buttons.extend([
+            [InlineKeyboardButton(
+                text="Vote Here",
+                url=f"{urls.SNAPSHOT}/proposal/{snapshot['data']['proposals'][0]['id']}")
+            ],
+            [InlineKeyboardButton(
+                text="X7 Finance DAO",
+                url=f"{urls.TG_DAO}")
+            ],
+            [InlineKeyboardButton(
                     text="DAO Proposers Chat",
                     url=f"{urls.TG_DAO}")
-                ]
-                ])
-            
+            ]
+            ])
+        else:
+            end_status = f'Vote Closed: {end.strftime("%Y-%m-%d %H:%M:%S")}'
+            header = 'No Current Open Proposal\n\nLast Proposal:'
+            buttons.extend([
+            [InlineKeyboardButton(
+                text="X7 Finance DAO",
+                url=f"{urls.SNAPSHOT}")
+            ],
+            [InlineKeyboardButton(
+                text="DAO Proposers Chat",
+                url=f"{urls.TG_DAO}")
+            ]
+            ])
+        
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f'*X7 Finance DAO*\n'
+                f'use `/dao functions` for a list of call callable contracts\n\n'
+                f'*{header}*\n\n'
+                f'{snapshot["data"]["proposals"][0]["title"]} by - '
+                f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
+                f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
+                f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
+                f'{end_status}',
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
+        return
+    else:
+        if input_contract == "functions":
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=
-                    f'*X7 Finance DAO {chain_name}*\n'
-                    f'use `/dao functions` for a list of call callable contracts\n\n'
-                    f"X7DAO Holders: {holders}\n"
-                    f"X7DAO Proposers: {x7dao_proposers}\n\n"
-                    f'*{header}*\n\n'
-                    f'{snapshot["data"]["proposals"][0]["title"]} by - '
-                    f'{snapshot["data"]["proposals"][0]["author"][-5:]}\n\n'
-                    f'{snapshot["data"]["proposals"][0]["choices"][0]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][0])} Votes\n'
-                    f'{snapshot["data"]["proposals"][0]["choices"][1]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][1])} Votes\n'
-                    f'{snapshot["data"]["proposals"][0]["choices"][2]} - '
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores"][2])} Votes\n\n'
-                    f'{"{:0,.0f}".format(snapshot["data"]["proposals"][0]["scores_total"])} Total Votes\n\n'
-                    f'{end_status}',
+                    f"*X7 Finance DAO*\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
+                    f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
                 parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(buttons)
-            )
-            return
+                reply_markup=keyboard
+                )
         else:
-            if input_contract == "functions":
+            matching_contract = None
+            for contract in dao.CONTRACT_MAPPINGS:
+                if contract.lower() == input_contract:
+                    matching_contract = contract
+                    break
+            if matching_contract:
+                contract_text, contract_ca = dao.CONTRACT_MAPPINGS[contract]
                 await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=
-                        f"*X7 Finance DAO*\n\nUse `/dao [contract-name]` for a list of DAO callable functions\n\n"
-                        f"*Contract Names:*\n\n{formatted_contract_names}\n\n",
-                    parse_mode="Markdown",
-                    reply_markup=keyboard
-                    )
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO Functions* - {contract}\n\n"
+                    f"The following functions can be called on the {contract} contract:\n\n"
+                    f"{contract_text}",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+                )
             else:
-                matching_contract = None
-                for contract in dao.CONTRACT_MAPPINGS:
-                    if contract.lower() == input_contract:
-                        matching_contract = contract
-                        break
-                if matching_contract:
-                    contract_text, contract_ca = dao.CONTRACT_MAPPINGS[contract]
-                    await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=
-                        f"*X7 Finance DAO Functions* - {contract}\n\n"
-                        f"The following functions can be called on the {contract} contract:\n\n"
-                        f"{contract_text}",
-                    parse_mode="Markdown",
-                    reply_markup=keyboard
-                    )
-                else:
-                    await update.message.reply_photo(
-                    photo=api.get_random_pioneer(),
-                    caption=
-                        f"*X7 Finance DAO Functions*\n\n"
-                        f"'{input_contract}' not found - Use `/dao` followed by one of the contract names below:\n\n"
-                        f"{formatted_contract_names}",
-                    parse_mode="Markdown")
-    except Exception as e:
-        print(e)
+                await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance DAO Functions*\n\n"
+                    f"'{input_contract}' not found - Use `/dao` followed by one of the contract names below:\n\n"
+                    f"{formatted_contract_names}",
+                parse_mode="Markdown")
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2848,118 +2830,115 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
-    try:
-        chain = " ".join(context.args).lower()
-        if chain == "":
-            chain = ca.DEFAULT_CHAIN
-        if chain in mappings.CHAINS:
-            chain_name = mappings.CHAINS[chain].name
-            chain_url = mappings.CHAINS[chain].scan_address
-        else:
-            await update.message.reply_text(text.CHAIN_ERROR)
-            return
-            
-        buttons = [
-        [
-            InlineKeyboardButton(
-                text="Contracts Directory",
-                url=f"{urls.CA_DIRECTORY}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7100 Liquidity Hub", url=f"{chain_url}{ca.X7100_LIQ_HUB}"
-            ),
-            InlineKeyboardButton(
-                text="X7R Liquidity Hub", url=f"{chain_url}{ca.X7R_LIQ_HUB}"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7DAO Liquidity Hub", url=f"{chain_url}{ca.X7DAO_LIQ_HUB}"
-            ),
-            InlineKeyboardButton(
-                text="X7 Token Burner", url=f"{chain_url}{ca.BURNER}"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7100 Discount Authority",
-                url=f"{chain_url}{ca.X7100_DISCOUNT}",
-            ),
-            InlineKeyboardButton(
-                text="X7R Discount Authority",
-                url=f"{chain_url}{ca.X7R_DISCOUNT}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7DAO Discount Authority",
-                url=f"{chain_url}{ca.X7DAO_DISCOUNT}",
-            ),
-            InlineKeyboardButton(
-                text="X7 Token Time Lock", url=f"{chain_url}{ca.TIME_LOCK}"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7 Ecosystem Splitter",
-                url=f"{chain_url}{ca.ECO_SPLITTER}",
-            ),
-            InlineKeyboardButton(
-                text="X7 Treasury Splitter",
-                url=f"{chain_url}{ca.TREASURY_SPLITTER}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7 Profit Share Splitter",
-                url=f"{chain_url}{ca.PROFIT_SHARING}",
-            ),
-            InlineKeyboardButton(
-                text="X7 Lending Pool Reserve",
-                url=f"{chain_url}{ca.LPOOL_RESERVE}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7 Xchange Discount Authority",
-                url=f"{chain_url}{ca.XCHANGE_DISCOUNT}",
-            ),
-            InlineKeyboardButton(
-                text="X7 Lending Discount Authority",
-                url=f"{chain_url}{ca.LENDING_DISCOUNT}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7 Xchange Router", url=f"{chain_url}{ca.ROUTER}"
-            ),
-            InlineKeyboardButton(
-                text="X7 Xchange Router with Discounts",
-                url=f"{chain_url}{ca.DISCOUNT_ROUTER}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="X7 Lending Pool Contract", url=f"{chain_url}{ca.LPOOL}"
-            ),
-            InlineKeyboardButton(
-                text="X7 Xchange Factory", url=f"{chain_url}{ca.FACTORY}"
-            ),
-        ],
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = ca.DEFAULT_CHAIN
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR)
+        return
+        
+    buttons = [
+    [
+        InlineKeyboardButton(
+            text="Contracts Directory",
+            url=f"{urls.CA_DIRECTORY}",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7100 Liquidity Hub", url=f"{chain_url}{ca.X7100_LIQ_HUB}"
+        ),
+        InlineKeyboardButton(
+            text="X7R Liquidity Hub", url=f"{chain_url}{ca.X7R_LIQ_HUB}"
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7DAO Liquidity Hub", url=f"{chain_url}{ca.X7DAO_LIQ_HUB}"
+        ),
+        InlineKeyboardButton(
+            text="X7 Token Burner", url=f"{chain_url}{ca.BURNER}"
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7100 Discount Authority",
+            url=f"{chain_url}{ca.X7100_DISCOUNT}",
+        ),
+        InlineKeyboardButton(
+            text="X7R Discount Authority",
+            url=f"{chain_url}{ca.X7R_DISCOUNT}",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7DAO Discount Authority",
+            url=f"{chain_url}{ca.X7DAO_DISCOUNT}",
+        ),
+        InlineKeyboardButton(
+            text="X7 Token Time Lock", url=f"{chain_url}{ca.TIME_LOCK}"
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7 Ecosystem Splitter",
+            url=f"{chain_url}{ca.ECO_SPLITTER}",
+        ),
+        InlineKeyboardButton(
+            text="X7 Treasury Splitter",
+            url=f"{chain_url}{ca.TREASURY_SPLITTER}",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7 Profit Share Splitter",
+            url=f"{chain_url}{ca.PROFIT_SHARING}",
+        ),
+        InlineKeyboardButton(
+            text="X7 Lending Pool Reserve",
+            url=f"{chain_url}{ca.LPOOL_RESERVE}",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7 Xchange Discount Authority",
+            url=f"{chain_url}{ca.XCHANGE_DISCOUNT}",
+        ),
+        InlineKeyboardButton(
+            text="X7 Lending Discount Authority",
+            url=f"{chain_url}{ca.LENDING_DISCOUNT}",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7 Xchange Router", url=f"{chain_url}{ca.ROUTER}"
+        ),
+        InlineKeyboardButton(
+            text="X7 Xchange Router with Discounts",
+            url=f"{chain_url}{ca.DISCOUNT_ROUTER}",
+        ),
+    ],
+    [
+        InlineKeyboardButton(
+            text="X7 Lending Pool Contract", url=f"{chain_url}{ca.LPOOL}"
+        ),
+        InlineKeyboardButton(
+            text="X7 Xchange Factory", url=f"{chain_url}{ca.FACTORY}"
+        ),
+    ],
     ]
 
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance Smart Contracts {chain_name.upper()}*\nUse `/smart [chain-name]` or other chains\n\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(buttons),
-        )
-    except Exception as e:
-        print(e)
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"*X7 Finance Smart Contracts {chain_name.upper()}*\nUse `/smart [chain-name]` or other chains\n\n"
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(buttons),
+    )
 
 
 async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
