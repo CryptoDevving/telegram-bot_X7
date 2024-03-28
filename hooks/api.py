@@ -43,11 +43,9 @@ class Dextools:
         endpoint = f'token/{chain_info.dext}/{token}/price'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
-
         if response.status_code == 200:
-            
             data = response.json()
-            if 'data' in data and 'price' in data['data']:
+            if data.get('data') is not None and 'price' in data['data']:
                 price = data['data']['price']
                 if "e-" in str(price):
                     price = "{:.8f}".format(price)
@@ -55,28 +53,32 @@ class Dextools:
                     price = "{:.8f}".format(price) 
                 else:
                     price = "{:.2f}".format(price)
-            else:
-                price = "N/A"
 
-            one_hour_change = data['data']['variation1h']
-            six_hour_change = data['data']['variation6h']
-            one_day_change = data['data']['variation24h']
+                one_hour_change = data['data']['variation1h']
+                six_hour_change = data['data']['variation6h']
+                one_day_change = data['data']['variation24h']
 
-            emoji_up = "📈"
-            emoji_down = "📉"
-            one_hour = f"{emoji_up if one_hour_change is not None and one_hour_change > 0 else emoji_down} 1H Change: {round(one_hour_change, 2)}%" if one_hour_change is not None else f'{emoji_down} 1H Change: N/A'
-            six_hour = f"{emoji_up if six_hour_change is not None and six_hour_change > 0 else emoji_down} 6H Change: {round(six_hour_change, 2)}%" if six_hour_change is not None else f'{emoji_down} 6H Change: N/A'
-            one_day = f"{emoji_up if one_day_change is not None and one_day_change > 0 else emoji_down} 24H Change: {round(one_day_change, 2)}%" if one_day_change is not None else f'{emoji_down} 24H Change: N/A'
-    
-            result = {
-                "price": price,
-                "change": {
+                emoji_up = "📈"
+                emoji_down = "📉"
+                one_hour = f"{emoji_up if one_hour_change is not None and one_hour_change > 0 else emoji_down} 1H Change: {round(one_hour_change, 2)}%" if one_hour_change is not None else f'{emoji_down} 1H Change: N/A'
+                six_hour = f"{emoji_up if six_hour_change is not None and six_hour_change > 0 else emoji_down} 6H Change: {round(six_hour_change, 2)}%" if six_hour_change is not None else f'{emoji_down} 6H Change: N/A'
+                one_day = f"{emoji_up if one_day_change is not None and one_day_change > 0 else emoji_down} 24H Change: {round(one_day_change, 2)}%" if one_day_change is not None else f'{emoji_down} 24H Change: N/A'
+
+                change = {
                     "one_hour": one_hour,
                     "six_hour": six_hour,
                     "one_day": one_day
+                    }
+
+            else:
+                price = "N/A"
+                change = {
+                    "one_hour": "📉 1H Change: N/A",
+                    "six_hour": "📉 6H Change:N/A",
+                    "one_day": "📉 2H Change: N/A",
                 }
-            }
-            return price, result["change"]
+
+            return price, change
         else:
             return 0, "N/A"
         
@@ -158,6 +160,7 @@ class Dextools:
         if response.status_code == 200:
             try:
                 data = response.json()
+
                 total = data['data']['liquidity']
                 token = data['data']['reserves']['mainToken']
                 eth = data['data']['reserves']['sideToken']
@@ -166,9 +169,15 @@ class Dextools:
                         "eth": f"{'{:,.2f}'.format(eth)}"}
 
             except Exception:
-                return "N/A"
+                return {"total": "N/A",
+                        "token": "N/A",
+                        "eth:": "N/A"
+                }
         else:
-            return "N/A"
+            return {"total": "N/A",
+                    "token": "N/A",
+                    "eth:": "N/A"
+            }
         
 
     def get_volume(self, pair, chain):
@@ -780,7 +789,6 @@ def get_nft_data(nft, chain):
                     if floor_price is not None:
                         info["floor_price"] = floor_price
                         break
-                        
         return info
 
     except Exception:

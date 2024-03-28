@@ -1282,12 +1282,15 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    x7dao_proposers = api.get_proposers(chain)
-    x7dao_info = dextools.get_token_info(ca.X7DAO, "eth")
+    if chain == "eth": 
+        x7dao_proposers = api.get_proposers(chain)
+    else:
+        x7dao_proposers = "N/A"
+    x7dao_info = dextools.get_token_info(ca.X7DAO, chain)
     x7dao_holders = x7dao_info["holders"]
-    x7r_info = dextools.get_token_info(ca.X7D, "eth")
+    x7r_info = dextools.get_token_info(ca.X7D, chain)
     x7r_holders = x7r_info["holders"]
-    x7d_info = dextools.get_token_info(ca.X7D, "eth")
+    x7d_info = dextools.get_token_info(ca.X7D, chain)
     x7d_holders = x7d_info["holders"]
     
     await update.message.reply_photo(
@@ -1835,9 +1838,12 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     data = api.get_nft_data(ca.MAGISTER, chain)
     holders = data["holder_count"]
-    response = api.get_nft_holder_list(ca.MAGISTER, chain)
-    magisters = [holder["owner_of"] for holder in response["result"]]
-    address = "\n\n".join(map(lambda x: f"`{x}`", magisters))
+    try:
+        response = api.get_nft_holder_list(ca.MAGISTER, chain)
+        magisters = [holder["owner_of"] for holder in response["result"]]
+        address = "\n\n".join(map(lambda x: f"`{x}`", magisters))
+    except Exception:
+        address = ""
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -2799,13 +2805,18 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(text.CHAIN_ERROR())
         return
-    
-    dev_response = api.get_signers(dev_wallet)
-    com_response = api.get_signers(com_wallet)
-    dev_list = dev_response["owners"]
-    dev_address = "\n\n".join(map(lambda x: f"`{x}`", dev_list))
-    com_list = com_response["owners"]
-    com_address = "\n\n".join(map(lambda x: f"`{x}`", com_list))
+    try:
+        dev_response = api.get_signers(dev_wallet)
+        dev_list = dev_response["owners"]
+        dev_address = "\n\n".join(map(lambda x: f"`{x}`", dev_list))
+    except Exception:
+        dev_address = "N/A"
+    try:
+        com_response = api.get_signers(com_wallet)
+        com_list = com_response["owners"]
+        com_address = "\n\n".join(map(lambda x: f"`{x}`", com_list))
+    except Exception:
+        com_address = "N/A"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
