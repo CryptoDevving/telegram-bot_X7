@@ -9,18 +9,20 @@ import random
 
 class TokensInfo:
     def __init__(
-        self, name: str, ca: str, pair: str, chain: str, logo: str = ""
+        self, name: str, scan_token: str, dext: str, pair: str, xchange: str, scan_name: str, native: str
     ):
         self.name = name
-        self.ca = ca
+        self.scan_token = scan_token
+        self.dext = dext
         self.pair = pair
-        self.chain = chain
-        self.logo = logo
+        self.xchange = xchange
+        self.native = native
 
 
 class ChainInfo:
-    def __init__(self, name: str, id: str,  token: str, logo: str, xchange: str, scan_token: str, scan_address: str, scan_tx: str, gas: str, dext: str, opensea: str, blockspan: str, w3: str, api: str, key: str, com_multi: str, dev_multi: str, pairs: list):
+    def __init__(self, name: str, scan_name: str, id: str,  token: str, logo: str, xchange: str, scan_token: str, scan_address: str, scan_tx: str, gas: str, dext: str, opensea: str, blockspan: str, w3: str, api: str, key: str, com_multi: str, dev_multi: str, pairs: list):
         self.name = name
+        self.scan_name = scan_name
         self.id = id
         self.token = token
         self.logo = logo
@@ -54,6 +56,7 @@ MORALIS_CHAINS = {
 CHAINS = {
     "eth": ChainInfo(
         "(ETH)",
+        "Etherscan",
         "1",
         "eth",
         media.ETH_LOGO,
@@ -80,6 +83,7 @@ CHAINS = {
     ),
     "bsc": ChainInfo(
         "(BSC)",
+        "BSCscan",
         "56",
         "bnb",
         media.BSC_LOGO,
@@ -106,6 +110,7 @@ CHAINS = {
     ),
     "arb": ChainInfo(
         "(Arbitrum)",
+        "Arbiscan",
         "42161",
         "eth",
         media.ARB_LOGO,
@@ -133,6 +138,7 @@ CHAINS = {
     ),
     "opti": ChainInfo(
         "(Optimism)",
+        "Optimisticscan",
         "10",
         "eth",
         media.OPTI_LOGO,
@@ -159,6 +165,7 @@ CHAINS = {
     ),
     "poly": ChainInfo(
         "(Polygon)",
+        "Polygonscan",
         "137",
         "matic",
         media.POLY_LOGO,
@@ -185,6 +192,7 @@ CHAINS = {
     ),
     "base": ChainInfo(
         "(Base)",
+        "Basescan",
         "8453",
         "eth",
         media.BASE_LOGO,
@@ -247,7 +255,7 @@ X7D = {
 
 
 X7DAO = {
-        "eth": (
+        "eth": TokensInfo(
             "(ETH)",
             urls.ETHER_TOKEN,
             "ether",
@@ -256,7 +264,7 @@ X7DAO = {
             "Etherscan",
             "eth",
         ),
-        "arb": (
+        "arb": TokensInfo(
             "(ARB)",
             urls.ARB_TOKEN,
             "arbitrum",
@@ -265,7 +273,7 @@ X7DAO = {
             "Arbscan",
             "eth",
         ),
-        "poly": (
+        "poly": TokensInfo(
             "(POLYGON)",
             urls.POLY_TOKEN,
             "polygon",
@@ -274,7 +282,7 @@ X7DAO = {
             "Polygonscan",
             "matic",
         ),
-        "bsc": (
+        "bsc": TokensInfo(
             "(BSC)",
             urls.BSC_TOKEN,
             "bsc",
@@ -283,7 +291,7 @@ X7DAO = {
             "BSCscan",
             "bnb",
         ),
-        "opti": (
+        "opti": TokensInfo(
             "(OP)",
             urls.OPTI_TOKEN,
             "optimism",
@@ -292,7 +300,7 @@ X7DAO = {
             "Optimismscan",
             "eth",
         ),
-        "base": (
+        "base": TokensInfo(
             "(BASE)",
             urls.BASE_TOKEN,
             "base",
@@ -305,7 +313,7 @@ X7DAO = {
 
 
 X7R = {
-        "eth": (
+        "eth": TokensInfo(
             "(ETH)",
             urls.ETHER_TOKEN,
             "ether",
@@ -314,7 +322,7 @@ X7R = {
             "Etherscan",
             "eth",
         ),
-        "arb": (
+        "arb": TokensInfo(
             "(ARB)",
             urls.ARB_TOKEN,
             "arbitrum",
@@ -323,7 +331,7 @@ X7R = {
             "Arbscan",
             "eth",
         ),
-        "poly": (
+        "poly": TokensInfo(
             "(POLYGON)",
             urls.POLY_TOKEN,
             "polygon",
@@ -332,7 +340,7 @@ X7R = {
             "Polygonscan",
             "matic",
         ),
-        "bsc": (
+        "bsc": TokensInfo(
             "(BSC)",
             urls.BSC_TOKEN,
             "bsc",
@@ -341,7 +349,7 @@ X7R = {
             "BSCscan",
             "bnb",
         ),
-        "opti": (
+        "opti": TokensInfo(
             "(OP)",
             urls.OPTI_TOKEN,
             "optimism",
@@ -350,7 +358,7 @@ X7R = {
             "Optimismscan",
             "eth",
         ),
-        "base": (
+        "base": TokensInfo(
             "(BASE)",
             urls.BASE_TOKEN,
             "base",
@@ -363,7 +371,7 @@ X7R = {
 
 
 X7101 = {
-    "eth": (
+    "eth": TokensInfo(
         "(ETH)",
         urls.ETHER_TOKEN,
         "ether",
@@ -372,7 +380,7 @@ X7101 = {
         "Etherscan",
         "eth",
     ),
-    "arb": (
+    "arb": TokensInfo(
         "(ARB)",
         urls.ARB_TOKEN,
         "arbitrum",
@@ -381,7 +389,7 @@ X7101 = {
         "Arbscan",
         "eth",
     ),
-    "poly": (
+    "poly": TokensInfo(
         "(POLYGON)",
         urls.POLY_TOKEN,
         "polygon",
@@ -390,7 +398,7 @@ X7101 = {
         "Polygonscan",
         "matic",
     ),
-    "bsc": (
+    "bsc": TokensInfo(
         "(BSC)",
         urls.BSC_TOKEN,
         "bsc",
@@ -399,7 +407,7 @@ X7101 = {
         "BSCscan",
         "bnb",
     ),
-    "opti": (
+    "opti": TokensInfo(
         "(OP)",
         urls.OPTI_TOKEN,
         "optimism",
@@ -408,7 +416,7 @@ X7101 = {
         "Optimismscan",
         "eth",
     ),
-    "base": (
+    "base": TokensInfo(
         "(BASE)",
         urls.BASE_TOKEN,
         "base",
@@ -421,7 +429,7 @@ X7101 = {
 
 
 X7102 = {
-        "eth": (
+        "eth": TokensInfo(
             "(ETH)",
             urls.ETHER_TOKEN,
             "ether",
@@ -430,7 +438,7 @@ X7102 = {
             "Etherscan",
             "eth",
         ),
-        "arb": (
+        "arb": TokensInfo(
             "(ARB)",
             urls.ARB_TOKEN,
             "arbitrum",
@@ -439,7 +447,7 @@ X7102 = {
             "Arbscan",
             "eth",
         ),
-        "poly": (
+        "poly": TokensInfo(
             "(POLYGON)",
             urls.POLY_TOKEN,
             "polygon",
@@ -448,7 +456,7 @@ X7102 = {
             "Polygonscan",
             "matic",
         ),
-        "bsc": (
+        "bsc": TokensInfo(
             "(BSC)",
             urls.BSC_TOKEN,
             "bsc",
@@ -457,7 +465,7 @@ X7102 = {
             "BSCscan",
             "bnb",
         ),
-        "opti": (
+        "opti": TokensInfo(
             "(OP)",
             urls.OPTI_TOKEN,
             "optimsim",
@@ -466,7 +474,7 @@ X7102 = {
             "Optimismscan",
             "eth",
         ),
-        "base": (
+        "base": TokensInfo(
             "(BASE)",
             urls.BASE_TOKEN,
             "base",
@@ -479,7 +487,7 @@ X7102 = {
 
 
 X7103 = {
-        "eth": (
+        "eth": TokensInfo(
             "(ETH)",
             urls.ETHER_TOKEN,
             "ether",
@@ -488,7 +496,7 @@ X7103 = {
             "Etherscan",
             "eth",
         ),
-        "arb": (
+        "arb": TokensInfo(
             "(ARB)",
             urls.ARB_TOKEN,
             "arbitrum",
@@ -497,7 +505,7 @@ X7103 = {
             "Arbscan",
             "eth",
         ),
-        "poly": (
+        "poly": TokensInfo(
             "(POLYGON)",
             urls.POLY_TOKEN,
             "polygon",
@@ -506,7 +514,7 @@ X7103 = {
             "Polygonscan",
             "matic",
         ),
-        "bsc": (
+        "bsc": TokensInfo(
             "(BSC)",
             urls.BSC_TOKEN,
             "bsc",
@@ -515,7 +523,7 @@ X7103 = {
             "BSCscan",
             "bnb",
         ),
-        "opti": (
+        "opti": TokensInfo(
             "(OP)",
             urls.OPTI_TOKEN,
             "optimism",
@@ -524,7 +532,7 @@ X7103 = {
             "Optimismscan",
             "eth",
         ),
-        "base": (
+        "base": TokensInfo(
             "(BASE)",
             urls.BASE_TOKEN,
             "base",
@@ -537,7 +545,7 @@ X7103 = {
 
 
 X7104 = {
-        "eth": (
+        "eth": TokensInfo(
             "(ETH)",
             urls.ETHER_TOKEN,
             "ether",
@@ -546,7 +554,7 @@ X7104 = {
             "Etherscan",
             "eth",
         ),
-        "arb": (
+        "arb": TokensInfo(
             "(ARB)",
             urls.ARB_TOKEN,
             "arbitrum",
@@ -555,7 +563,7 @@ X7104 = {
             "Arbscan",
             "eth",
         ),
-        "poly": (
+        "poly": TokensInfo(
             "(POLYGON)",
             urls.POLY_TOKEN,
             "polygon",
@@ -564,7 +572,7 @@ X7104 = {
             "Polygonscan",
             "matic",
         ),
-        "bsc": (
+        "bsc": TokensInfo(
             "(BSC)",
             urls.BSC_TOKEN,
             "bsc",
@@ -573,7 +581,7 @@ X7104 = {
             "BSCscan",
             "bnb",
         ),
-        "opti": (
+        "opti": TokensInfo(
             "(OP)",
             urls.OPTI_TOKEN,
             "optimsim",
@@ -582,7 +590,7 @@ X7104 = {
             "Optimismscan",
             "eth",
         ),
-        "base": (
+        "base": TokensInfo(
             "(BASE)",
             urls.BASE_TOKEN,
             "base",
@@ -595,7 +603,7 @@ X7104 = {
 
 
 X7105 = {
-        "eth": (
+        "eth": TokensInfo(
             "(ETH)",
             urls.ETHER_TOKEN,
             "ether",
@@ -604,7 +612,7 @@ X7105 = {
             "Etherscan",
             "eth",
         ),
-        "arb": (
+        "arb": TokensInfo(
             "(ARB)",
             urls.ARB_TOKEN,
             "arbitrum",
@@ -613,7 +621,7 @@ X7105 = {
             "Arbscan",
             "eth",
         ),
-        "poly": (
+        "poly": TokensInfo(
             "(POLYGON)",
             urls.POLY_TOKEN,
             "polygon",
@@ -622,7 +630,7 @@ X7105 = {
             "Polygonscan",
             "matic",
         ),
-        "bsc": (
+        "bsc": TokensInfo(
             "(BSC)",
             urls.BSC_TOKEN,
             "bsc",
@@ -631,7 +639,7 @@ X7105 = {
             "BSCscan",
             "bnb",
         ),
-        "opti": (
+        "opti": TokensInfo(
             "(OP)",
             urls.OPTI_TOKEN,
             "optimism",
@@ -640,7 +648,7 @@ X7105 = {
             "Optimismscan",
             "eth",
         ),
-        "base": (
+        "base": TokensInfo(
             "(BASE)",
             urls.BASE_TOKEN,
             "base",

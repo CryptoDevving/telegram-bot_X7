@@ -242,16 +242,10 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7R:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7R[chain]
+    if chain in mappings.CHAINS:
+        chain_native = mappings.CHAINS[chain].token
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_token
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -264,7 +258,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
-            f"\n\nX7R {chain_name} Tokens Burned:\nUse `/burn [chain-name]` for other chains\n\n"
+            f"\n\nX7R Tokens Burned {chain_name}\nUse `/burn [chain-name]` for other chains\n\n"
             f'{"{:0,.0f}".format(float(burn))} / {native} (${"{:0,.0f}".format(float(burn_dollar))})\n'
             f"{percent}% of Supply\n\n"
             f"{api.get_quote()}",
@@ -489,93 +483,92 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chain = " ".join(context.args).lower()
-    if chain == "":
-        chain = ca.DEFAULT_CHAIN
-    if chain in mappings.CHAINS:
-        chain_dext = mappings.CHAINS[chain].dext
-    else:
-        await update.message.reply_text(text.CHAIN_ERROR)
-        return
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
-    x7101_change = (f"{x7101_change_raw['one_hour']}\n"
-                    f"{x7101_change_raw['six_hour']}\n"
-                    f"{x7101_change_raw['one_day']}")
-    x7102_price, x7102_change_raw,  = dextools.get_price(ca.X7102, chain)
-    x7102_change = (f"{x7102_change_raw['one_hour']}\n"
-                    f"{x7102_change_raw['six_hour']}\n"
-                    f"{x7102_change_raw['one_day']}")
-    x7103_price, x7103_change_raw, = dextools.get_price(ca.X7103, chain)
-    x7103_change = (f"{x7103_change_raw['one_hour']}\n"
-                    f"{x7103_change_raw['six_hour']}\n"
-                    f"{x7103_change_raw['one_day']}")
-    x7104_price, x7104_change_raw,  = dextools.get_price(ca.X7104, chain)
-    x7104_change = (f"{x7104_change_raw['one_hour']}\n"
-                    f"{x7104_change_raw['six_hour']}\n"
-                    f"{x7104_change_raw['one_day']}")
-    x7105_price, x7105_change_raw,  = dextools.get_price(ca.X7105, chain)
-    x7105_change = (f"{x7105_change_raw['one_hour']}\n"
-                    f"{x7105_change_raw['six_hour']}\n"
-                    f"{x7105_change_raw['one_day']}")
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f'*X7 Finance Constellation Token Prices {chain.upper()}*\n\n'
-            f'For more info use `/x7token-name`\n\n'
-            f'X7101\n'
-            f'💰 Price: ${x7101_price}\n'
-            f'{x7101_change}\n\n'
-            f'X7102:\n'
-            f'💰 Price: ${x7102_price}\n'
-            f'{x7102_change}\n\n'
-            f'X7103\n'
-            f'💰 Price: ${x7103_price}\n'
-            f'{x7103_change}\n\n'
-            f'X7104\n'
-            f'💰 Price: ${x7104_price}\n'
-            f'{x7104_change}\n\n'
-            f'X7105\n'
-            f'💰 Price: ${x7105_price}\n'
-            f'{x7105_change}\n\n'
-            f'{api.get_quote()}',
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7101 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7101}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7102 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7102}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7103 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7103}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7104 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7104}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7105 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{ca.X7105}",
-                        )
-                    ],
+    try:
+        chain = " ".join(context.args).lower()
+        if chain == "":
+            chain = ca.DEFAULT_CHAIN
+        if chain in mappings.CHAINS:
+            chain_dext = mappings.CHAINS[chain].dext
+            x7101_pair = mappings.X7101[chain].pair
+            x7102_pair = mappings.X7102[chain].pair
+            x7103_pair = mappings.X7103[chain].pair
+            x7104_pair = mappings.X7104[chain].pair
+            x7105_pair = mappings.X7105[chain].pair
 
-                ]
-            ),
-        )
+        else:
+            await update.message.reply_text(text.CHAIN_ERROR)
+            return
+        await context.bot.send_chat_action(update.effective_chat.id, "typing")
+        x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
+        x7101_change = f"{x7101_change_raw['one_day']}"
+        x7102_price, x7102_change_raw,  = dextools.get_price(ca.X7102, chain)
+        x7102_change = f"{x7102_change_raw['one_day']}"
+        x7103_price, x7103_change_raw, = dextools.get_price(ca.X7103, chain)
+        x7103_change = f"{x7103_change_raw['one_day']}"
+        x7104_price, x7104_change_raw,  = dextools.get_price(ca.X7104, chain)
+        x7104_change = f"{x7104_change_raw['one_day']}"
+        x7105_price, x7105_change_raw,  = dextools.get_price(ca.X7105, chain)
+        x7105_change = f"{x7105_change_raw['one_day']}"
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f'*X7 Finance Constellation Token Prices {chain.upper()}*\n\n'
+                f'For more info use `/x7token-name`\n\n'
+                f'X7101\n'
+                f'💰 Price: ${x7101_price}\n'
+                f'{x7101_change}\n\n'
+                f'X7102:\n'
+                f'💰 Price: ${x7102_price}\n'
+                f'{x7102_change}\n\n'
+                f'X7103\n'
+                f'💰 Price: ${x7103_price}\n'
+                f'{x7103_change}\n\n'
+                f'X7104\n'
+                f'💰 Price: ${x7104_price}\n'
+                f'{x7104_change}\n\n'
+                f'X7105\n'
+                f'💰 Price: ${x7105_price}\n'
+                f'{x7105_change}\n\n'
+                f'{api.get_quote()}',
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                text="X7101 Chart",
+                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7101_pair}",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="X7102 Chart",
+                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7102_pair}",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="X7103 Chart",
+                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7103_pair}",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="X7104 Chart",
+                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7104_pair}",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="X7105 Chart",
+                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7105_pair}",
+                            )
+                        ],
+
+                    ]
+                ),
+            )
+    except Exception as e:
+        print(e)
 
 
 async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -3598,9 +3591,9 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain == "":
         chain = ca.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
-                chain_name = mappings.CHAINS[chain].name
-                chain_url = mappings.CHAINS[chain].scan_address
-                chain_native = mappings.CHAINS[chain].token
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        chain_native = mappings.CHAINS[chain].token
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -3789,22 +3782,24 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7D:
-        chain_name, chain_url, chain_native = mappings.X7D[chain]
-        native_price = api.get_native_price(chain_native)
-        lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
-        lpool_reserve_dollar = (float(lpool_reserve) * float(native_price))
-        lpool = api.get_native_balance(ca.LPOOL, chain)
-        lpool_dollar = (float(lpool) * float(native_price))
-        dollar = lpool_reserve_dollar + lpool_dollar
-        supply = round(float(lpool_reserve) + float(lpool), 2)
-        lpool_rounded = round(float(lpool), 2)
-        lpool_reserve_rounded = round(float(lpool_reserve), 2)
-        info = dextools.get_token_info(ca.X7D, "eth")
-        holders = info["holders"]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_native = mappings.CHAINS[chain].token
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
+
+    native_price = api.get_native_price(chain_native)
+    lpool_reserve = api.get_native_balance(ca.LPOOL_RESERVE, chain)
+    lpool_reserve_dollar = (float(lpool_reserve) * float(native_price))
+    lpool = api.get_native_balance(ca.LPOOL, chain)
+    lpool_dollar = (float(lpool) * float(native_price))
+    dollar = lpool_reserve_dollar + lpool_dollar
+    supply = round(float(lpool_reserve) + float(lpool), 2)
+    lpool_rounded = round(float(lpool), 2)
+    lpool_reserve_rounded = round(float(lpool_reserve), 2)
+    info = dextools.get_token_info(ca.X7D, chain)
+    holders = info["holders"]
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -3835,16 +3830,13 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7DAO:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7DAO[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7DAO[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -3895,16 +3887,13 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7R:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7R[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7R[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -3955,16 +3944,13 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7101:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7101[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7101[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -4015,16 +4001,13 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7102:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7102[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7102[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -4074,16 +4057,13 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7103:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7103[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7103[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -4133,16 +4113,13 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7104:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7104[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7104[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -4192,16 +4169,13 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = ca.DEFAULT_CHAIN
-    if chain in mappings.X7105:
-        (
-            chain_name,
-            chain_url,
-            chain_dext,
-            chain_pair,
-            chain_xchange,
-            chain_scan,
-            chain_native,
-        ) = mappings.X7105[chain]
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_dext = mappings.CHAINS[chain].dext
+        chain_scan = mappings.CHAINS[chain].scan_name
+        chain_url = mappings.CHAINS[chain].scan_token
+        chain_xchange = mappings.CHAINS[chain].xchange
+        chain_pair = mappings.X7105[chain].pair
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
