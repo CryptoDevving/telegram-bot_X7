@@ -483,92 +483,89 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        chain = " ".join(context.args).lower()
-        if chain == "":
-            chain = mappings.DEFAULT_CHAIN
-        if chain in mappings.CHAINS:
-            chain_dext = mappings.CHAINS[chain].dext
-            x7101_pair = mappings.X7101[chain].pair
-            x7102_pair = mappings.X7102[chain].pair
-            x7103_pair = mappings.X7103[chain].pair
-            x7104_pair = mappings.X7104[chain].pair
-            x7105_pair = mappings.X7105[chain].pair
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = mappings.DEFAULT_CHAIN
+    if chain in mappings.CHAINS:
+        chain_dext = mappings.CHAINS[chain].dext
+        x7101_pair = mappings.X7101[chain].pair
+        x7102_pair = mappings.X7102[chain].pair
+        x7103_pair = mappings.X7103[chain].pair
+        x7104_pair = mappings.X7104[chain].pair
+        x7105_pair = mappings.X7105[chain].pair
 
-        else:
-            await update.message.reply_text(text.CHAIN_ERROR())
-            return
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
-        x7101_change = f"{x7101_change_raw['one_day']}"
-        x7102_price, x7102_change_raw,  = dextools.get_price(ca.X7102, chain)
-        x7102_change = f"{x7102_change_raw['one_day']}"
-        x7103_price, x7103_change_raw, = dextools.get_price(ca.X7103, chain)
-        x7103_change = f"{x7103_change_raw['one_day']}"
-        x7104_price, x7104_change_raw,  = dextools.get_price(ca.X7104, chain)
-        x7104_change = f"{x7104_change_raw['one_day']}"
-        x7105_price, x7105_change_raw,  = dextools.get_price(ca.X7105, chain)
-        x7105_change = f"{x7105_change_raw['one_day']}"
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f'*X7 Finance Constellation Token Prices {chain.upper()}*\n\n'
-                f'For more info use `/x7token-name`\n\n'
-                f'X7101\n'
-                f'💰 Price: ${x7101_price}\n'
-                f'{x7101_change}\n\n'
-                f'X7102:\n'
-                f'💰 Price: ${x7102_price}\n'
-                f'{x7102_change}\n\n'
-                f'X7103\n'
-                f'💰 Price: ${x7103_price}\n'
-                f'{x7103_change}\n\n'
-                f'X7104\n'
-                f'💰 Price: ${x7104_price}\n'
-                f'{x7104_change}\n\n'
-                f'X7105\n'
-                f'💰 Price: ${x7105_price}\n'
-                f'{x7105_change}\n\n'
-                f'{api.get_quote()}',
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR())
+        return
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
+    x7101_change = f"{x7101_change_raw['one_day']}"
+    x7102_price, x7102_change_raw,  = dextools.get_price(ca.X7102, chain)
+    x7102_change = f"{x7102_change_raw['one_day']}"
+    x7103_price, x7103_change_raw, = dextools.get_price(ca.X7103, chain)
+    x7103_change = f"{x7103_change_raw['one_day']}"
+    x7104_price, x7104_change_raw,  = dextools.get_price(ca.X7104, chain)
+    x7104_change = f"{x7104_change_raw['one_day']}"
+    x7105_price, x7105_change_raw,  = dextools.get_price(ca.X7105, chain)
+    x7105_change = f"{x7105_change_raw['one_day']}"
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f'*X7 Finance Constellation Token Prices {chain.upper()}*\n\n'
+            f'For more info use `/x7token-name`\n\n'
+            f'X7101\n'
+            f'💰 Price: ${x7101_price}\n'
+            f'{x7101_change}\n\n'
+            f'X7102:\n'
+            f'💰 Price: ${x7102_price}\n'
+            f'{x7102_change}\n\n'
+            f'X7103\n'
+            f'💰 Price: ${x7103_price}\n'
+            f'{x7103_change}\n\n'
+            f'X7104\n'
+            f'💰 Price: ${x7104_price}\n'
+            f'{x7104_change}\n\n'
+            f'X7105\n'
+            f'💰 Price: ${x7105_price}\n'
+            f'{x7105_change}\n\n'
+            f'{api.get_quote()}',
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+                [
                     [
-                        [
-                            InlineKeyboardButton(
-                                text="X7101 Chart",
-                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7101_pair}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="X7102 Chart",
-                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7102_pair}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="X7103 Chart",
-                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7103_pair}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="X7104 Chart",
-                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7104_pair}",
-                            )
-                        ],
-                        [
-                            InlineKeyboardButton(
-                                text="X7105 Chart",
-                                url=f"{urls.DEX_TOOLS(chain_dext)}{x7105_pair}",
-                            )
-                        ],
+                        InlineKeyboardButton(
+                            text="X7101 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7101_pair}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7102 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7102_pair}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7103 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7103_pair}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7104 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7104_pair}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text="X7105 Chart",
+                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7105_pair}",
+                        )
+                    ],
 
-                    ]
-                ),
-            )
-    except Exception as e:
-        print(e)
+                ]
+            ),
+        )
 
 
 async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -4241,23 +4238,9 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
         message = await update.message.reply_text("Getting Xchange Pair Price Info, Please wait...")
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         dext = mappings.CHAINS[token_instance['chain'].lower()].dext
-        w3 = mappings.CHAINS[token_instance['chain'].lower()].w3
-        token = mappings.CHAINS[token_instance['chain'].lower()].token
-        contract = w3.eth.contract(
-            address=Web3.to_checksum_address(token_instance['pair']), abi=ca.PAIRS_ABI)
-        token0_address = contract.functions.token0().call()
-        token1_address = contract.functions.token1().call()
-        is_reserve_token0 = token_instance['ca'].lower() == token0_address.lower()
-        is_reserve_token1 = token_instance['ca'].lower() == token1_address.lower()
-        eth = ""
-        if is_reserve_token0:
-            eth = contract.functions.getReserves().call()[1]
-        elif is_reserve_token1:
-            eth = contract.functions.getReserves().call()[0]
-        decimals = contract.functions.decimals().call()
-        eth_in_wei = int(eth)
-        liq = api.get_native_price(token) * eth_in_wei * 2
-        formatted_liq = "${:,.2f}".format(liq / (10**decimals))
+        
+        liq_data = dextools.get_liquidity(token_instance['pair'], token_instance['chain'].lower())
+        liq = liq_data["total"]
         info = dextools.get_token_info(token_instance['ca'], token_instance['chain'].lower())
         holders = info["holders"]
         mcap = info["mcap"]
@@ -4285,7 +4268,8 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 im2 = Image.open(media.ARB_LOGO)
             if token_instance['chain'].lower() == "opti":
                 im2 = Image.open(media.OPTI_LOGO)
-
+            if token_instance['chain'].lower() == "base":
+                im2 = Image.open(media.BASE_LOGO)
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
         i1.text(
@@ -4295,7 +4279,7 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"💰 Price: {price}\n"
                 f"💎 Market Cap: {mcap}\n"
                 f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {formatted_liq}\n"
+                f"💦 Liquidity: {liq}\n"
                 f"👪 Holders: {holders}\n\n"
                 f"{price_change}\n\n\n"
                 f'  UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
@@ -4314,7 +4298,7 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"💰 Price: {price}\n"
                 f"💎 Market Cap: {mcap}\n"
                 f"📊 24 Hour Volume: {volume}\n"
-                f"💦 Liquidity: {formatted_liq}\n"
+                f"💦 Liquidity: {liq}\n"
                 f"👪 Holders: {holders}\n\n"
                 f"{price_change}\n\n"
                 f"{api.get_quote()}",
