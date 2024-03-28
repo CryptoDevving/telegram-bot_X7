@@ -4,7 +4,7 @@ from telegram.ext import *
 import os
 from typing import Optional, Tuple
 
-from constants import urls
+from constants import text, urls
 from hooks import api
 import media
 
@@ -103,14 +103,7 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 video=open(media.WELCOMEVIDEO, 'rb'),
                 caption=(
                     f"Welcome {api.escape_markdown(new_member_username)} to X7 Finance\n\n"
-                    f"Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"
-                    f"• Ethereum\n"
-                    f"• Binance Smart Chain\n"
-                    f"• Arbitrum\n"
-                    f"• Optimism\n"
-                    f"• Polygon\n"
-                    f"• Base Chain\n\n"
-                    f"Verify as human and check out the links to get started!"
+                    f"{text.WELCOME}",
                 ),
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(

@@ -13,7 +13,7 @@ ABOUT = (
     "• X7 Finance has a novel DAO governance structure + IPFS website, that ensures complete decentralization "
     "and censorship-resistance.\n\n"
     "Our Telegram network and X are community-run, in the spirit of decentralization.\n\n"
-    f"• First target - Capturing 1% of the $100b daily trading volume on the Ethereum network.\n\n"
+    f"• First target - Capturing 1% of the $100b daily trading volume on the EVM networks.\n\n"
     '`"X7’s founding team believes that capital should be available to those with great ideas and that the '
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
     "downside risk.`\n\n#LongLiveDefi"
@@ -41,7 +41,6 @@ ALUMNI = (
     "@WoxieX - Creator of the OG dashboard -  x7community.space"
 )
 
-BURN_INCREMENT = 100
 
 def CHAIN_ERROR():
     chains = "\n".join(mappings.CHAINS)
@@ -189,7 +188,7 @@ ECOSYSTEM = (
     "• *X7Deposit*\nWith insurance of the investor at heart - individuals and "
     "institutions will hold these tokens "
     "just as they would underwrite treasury bills and other stable assets. Holders of X7D will be able to "
-    "mint a time-based interest-bearing NFT. X7D is always exchangeable with Ethereum at a 1-to-1 ratio.\n"
+    "mint a time-based interest-bearing NFT. X7D is always exchangeable with the chain native token at a 1-to-1 ratio.\n"
     "The X7 Finance protocol will only permit minting of new X7 Deposit tokens when on-chain reserves permit."
 )
 
@@ -216,13 +215,25 @@ VOLUME = (
     f"Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!\n\nhttps://beta.x7.finance/#/add/v2/ETH'"
 )
 
+WELCOME = (
+    "Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"
+    "• Ethereum\n"
+    "• Base\n"
+    "• Binance Smart Chain\n"
+    "• Arbitrum\n"
+    "• Optimism\n"
+    "• Polygon\n\n"
+    "Verify as human and check out the links to get started!"
+)
+
+
 QUOTES = [
     "Ethos\n\nX7’s founding team believes that capital should be available to those with great ideas and that the "
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
     "downside risk.",
     "Executive Summary\n\nX7 is an ecosystem of innovative smart contracts that provide those with visionary ideas "
     "access to leveraged seed capital without lenders incurring the risk of losing the principal.",
-    "Total Addressable Market\n\nEthereum and ERC20 tokens have 24hr trading volume in the 100s of billions. We will "
+    "Total Addressable Market\n\nERC20 tokens have 24hr trading volume in the 100s of billions. We will "
     f"consider X7 a success if 1% of all trading volume takes place on Xchange.",
     "Customers And Use Cases\n\nUnderstanding who our customers are, and what their needs and use cases are, is "
     "fundamental to finding product-market fit. We have identified 4 primary user personas that have distinct needs and"
@@ -269,10 +280,10 @@ QUOTES = [
     "X7 System Design Philosophy\n\nDecentralized Governance - Designing management processes to be handled by a group"
     " is also a difficult task, but X7’s governance strategy is optimized to aggregate large groups’ opinions into "
     "smaller decisions to vote on.",
-    "Borrow 10-1000 times the Ethereum in your wallet\n\nThrough our innovative Leveraged Initial Liquidity DEX we can "
+    "Borrow 10-1000 times the chain native token in your wallet\n\nThrough our innovative Leveraged Initial Liquidity DEX we can "
     "provide massive initial seed capital to visionary entrepreneurs, organizations, and businesses.",
-    "Lend your crypto, without downside risk\n\nPut your Ethereum to work earning a share of loan proceeds collected by"
-    " holding our X7Deposit tokens. Exchangeable with Ethereum at a 1-to-1 ratio. The X7 protocol only permits minting "
+    "Lend your crypto, without downside risk\n\nPut your chain native tokens to work earning a share of loan proceeds collected by"
+    " holding our X7Deposit tokens. Exchangeable with the chain native token at a 1-to-1 ratio. The X7 protocol only permits minting "
     "of new X7Deposit tokens when ON CHAIN reserves permit it.",
     "Trade like a whale\n\nAll of the trading functionality and utility you have come to expect in a DEX and more. "
     "Swapping is simple, mobile optimized and offers lower fees than the other exchanges. A truly decentralized and "
@@ -292,7 +303,7 @@ QUOTES = [
     "establishment of committees and other foundational efforts off chain.",
     "X7Deposit\n\nWith insurance of the investor at heart - individuals and institutions will hold these tokens just as"
     " they would underwrite treasury bills and other stable assets. Holders of X7D will be able to mint a time-based "
-    "interest-bearing NFT. X7D is always exchangeable with Ethereum at a 1-to-1 ratio. The X7 Finance protocol will "
+    "interest-bearing NFT. X7D is always exchangeable with the chain native token at a 1-to-1 ratio. The X7 Finance protocol will "
     "only permit minting of new X7 Deposit tokens when on-chain reserves permit.",
     "X7R\n\nX7's original launched token. Hodl as a percentage of all transaction fees are used to buy and burn tokens,"
     " reducing total supply of available tokens.",
@@ -318,12 +329,12 @@ QUOTES = [
     "even greater. X7 solves all of these difficult problems by implementing a stop to liquidity events through the "
     "Xchange and Lending Pool architecture. This paper will explain the product functionality and architecture that "
     "enables X7 to operate.",
-    "Multi-chain Rollout\n\nThe initial release of X7 Finance’s innovative token ecosystem and Xchange will be focused "
-    "on the Ethereum blockchain. Our architecture and contracts will be able to run on all Ethereum Virtual "
+    "Multi-chain Rollout\n\nThe initial release of X7 Finance’s innovative token ecosystem and Xchange was focused "
+    "on the Ethereum and Base blockchains. Our architecture and contracts is able to run on all Ethereum Virtual "
     "Machine-compliant blockchains such as Binance Smart Chain (BSC), and Polygon, but to deliver a refined and "
     "polished experience we are taking a sequential blockchain release approach.",
     "Xchange\n\n● Permission-less, trust-less peer-to-peer AMM platform for swapping of ERC-20 tokens, seamless "
-    "integration with Ethereum for swapping of ERC20-to-ERC20 and ETH-to-ERC20.\n● Add Initial Liquidity to any "
+    "integration with EVM Chains for swapping of ERC20-to-ERC20 and ETH-to-ERC20.\n● Add Initial Liquidity to any "
     "ETH-based pair with our permission-less, trust-less Initial Liquidity Loan (ILL) functionality, increasing "
     "liquidity and market capitalization.\n● First among peers, X7’s DEX’s front-end dApp will connect and function "
     "with all top Uniswap Interface-compliant DEX’s.",
