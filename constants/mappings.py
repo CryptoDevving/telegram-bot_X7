@@ -7,16 +7,15 @@ from web3 import Web3
 import random
 
 
+DEFAULT_CHAIN = "eth"
+
+
 class TokensInfo:
     def __init__(
-        self, name: str, scan_token: str, dext: str, pair: str, xchange: str, scan_name: str, native: str
+        self, ca: str, pair: str
     ):
-        self.name = name
-        self.scan_token = scan_token
-        self.dext = dext
+        self.ca = ca
         self.pair = pair
-        self.xchange = xchange
-        self.native = native
 
 
 class ChainInfo:
@@ -220,442 +219,198 @@ CHAINS = {
 }
 
 
-X7D = {
-        "eth": (
-            "(ETH)",
-            urls.ETHER_ADDRESS,
-            "eth",    
-        ),
-        "arb": (
-            "(ARB)",
-            urls.ARB_ADDRESS,
-            "eth",
-        ),
-        "poly": (
-            "(POLYGON)",
-            urls.POLY_ADDRESS,
-            "matic",
-        ),
-        "bsc": (
-            "(BSC)",
-            urls.BSC_ADDRESS,
-            "bnb",
-        ),
-        "opti": (
-            "(OPTI)",
-            urls.OPTI_ADDRESS,
-            "eth",
-        ),
-        "base": (
-            "(BASE)",
-            urls.BASE_ADDRESS,
-            "eth",
-        ),
-    }
-
-
 X7DAO = {
         "eth": TokensInfo(
-            "(ETH)",
-            urls.ETHER_TOKEN,
-            "ether",
+            ca.X7DAO,
             ca.X7DAO_PAIR_ETH,
-            urls.XCHANGE_BUY_ETH,
-            "Etherscan",
-            "eth",
         ),
         "arb": TokensInfo(
-            "(ARB)",
-            urls.ARB_TOKEN,
-            "arbitrum",
+            ca.X7DAO,
             ca.X7DAO_PAIR_ARB,
-            urls.XCHANGE_BUY_ARB,
-            "Arbscan",
-            "eth",
         ),
         "poly": TokensInfo(
-            "(POLYGON)",
-            urls.POLY_TOKEN,
-            "polygon",
+            ca.X7DAO,
             ca.X7DAO_PAIR_POLY,
-            urls.XCHANGE_BUY_POLY,
-            "Polygonscan",
-            "matic",
         ),
         "bsc": TokensInfo(
-            "(BSC)",
-            urls.BSC_TOKEN,
-            "bsc",
+            ca.X7DAO,
             ca.X7DAO_PAIR_BSC,
-            urls.XCHANGE_BUY_BSC,
-            "BSCscan",
-            "bnb",
         ),
         "opti": TokensInfo(
-            "(OP)",
-            urls.OPTI_TOKEN,
-            "optimism",
+            ca.X7DAO,
             ca.X7DAO_PAIR_OPTI,
-            urls.XCHANGE_BUY_OPTI,
-            "Optimismscan",
-            "eth",
         ),
         "base": TokensInfo(
-            "(BASE)",
-            urls.BASE_TOKEN,
-            "base",
+            ca.X7DAO,
             ca.X7DAO_PAIR_BASE,
-            urls.XCHANGE_BUY_BASE,
-            "Basescan",
-            "eth",
         ),
     }
 
 
 X7R = {
         "eth": TokensInfo(
-            "(ETH)",
-            urls.ETHER_TOKEN,
-            "ether",
+            ca.X7R,
             ca.X7R_PAIR_ETH,
-            urls.XCHANGE_BUY_ETH,
-            "Etherscan",
-            "eth",
         ),
         "arb": TokensInfo(
-            "(ARB)",
-            urls.ARB_TOKEN,
-            "arbitrum",
+            ca.X7R,
             ca.X7R_PAIR_ARB,
-            urls.XCHANGE_BUY_ARB,
-            "Arbscan",
-            "eth",
         ),
         "poly": TokensInfo(
-            "(POLYGON)",
-            urls.POLY_TOKEN,
-            "polygon",
+            ca.X7R,
             ca.X7R_PAIR_POLY,
-            urls.XCHANGE_BUY_POLY,
-            "Polygonscan",
-            "matic",
         ),
         "bsc": TokensInfo(
-            "(BSC)",
             urls.BSC_TOKEN,
-            "bsc",
             ca.X7R_PAIR_BSC,
-            urls.XCHANGE_BUY_BSC,
-            "BSCscan",
-            "bnb",
         ),
         "opti": TokensInfo(
-            "(OP)",
-            urls.OPTI_TOKEN,
-            "optimism",
+            ca.X7R,
             ca.X7R_PAIR_OPTI,
-            urls.XCHANGE_BUY_OPTI,
-            "Optimismscan",
-            "eth",
         ),
         "base": TokensInfo(
-            "(BASE)",
-            urls.BASE_TOKEN,
-            "base",
+            ca.X7R,
             ca.X7R_PAIR_BASE,
-            urls.XCHANGE_BUY_BASE,
-            "Basescan",
-            "eth",
         ),
     }
 
 
 X7101 = {
     "eth": TokensInfo(
-        "(ETH)",
-        urls.ETHER_TOKEN,
-        "ether",
+        ca.X7101,
         ca.X7101_PAIR_ETH,
-        urls.XCHANGE_BUY_ETH,
-        "Etherscan",
-        "eth",
     ),
     "arb": TokensInfo(
-        "(ARB)",
-        urls.ARB_TOKEN,
-        "arbitrum",
+        ca.X7101,
         ca.X7101_PAIR_ARB,
-        urls.XCHANGE_BUY_ARB,
-        "Arbscan",
-        "eth",
     ),
     "poly": TokensInfo(
-        "(POLYGON)",
-        urls.POLY_TOKEN,
-        "polygon",
+        ca.X7101,
         ca.X7101_PAIR_POLY,
-        urls.XCHANGE_BUY_POLY,
-        "Polygonscan",
-        "matic",
     ),
     "bsc": TokensInfo(
-        "(BSC)",
-        urls.BSC_TOKEN,
-        "bsc",
+        ca.X7101,
         ca.X7101_PAIR_BSC,
-        urls.XCHANGE_BUY_BSC,
-        "BSCscan",
-        "bnb",
     ),
     "opti": TokensInfo(
-        "(OP)",
-        urls.OPTI_TOKEN,
-        "optimism",
+        ca.X7101,
         ca.X7101_PAIR_OPTI,
-        urls.XCHANGE_BUY_OPTI,
-        "Optimismscan",
-        "eth",
     ),
     "base": TokensInfo(
-        "(BASE)",
-        urls.BASE_TOKEN,
-        "base",
+        ca.X7101,
         ca.X7101_PAIR_BASE,
-        urls.XCHANGE_BUY_BASE,
-        "Basescan",
-        "eth",
     ),
 }
 
 
 X7102 = {
-        "eth": TokensInfo(
-            "(ETH)",
-            urls.ETHER_TOKEN,
-            "ether",
-            ca.X7102_PAIR_ETH,
-            urls.XCHANGE_BUY_ETH,
-            "Etherscan",
-            "eth",
-        ),
-        "arb": TokensInfo(
-            "(ARB)",
-            urls.ARB_TOKEN,
-            "arbitrum",
-            ca.X7102_PAIR_ARB,
-            urls.XCHANGE_BUY_ARB,
-            "Arbscan",
-            "eth",
-        ),
-        "poly": TokensInfo(
-            "(POLYGON)",
-            urls.POLY_TOKEN,
-            "polygon",
-            ca.X7102_PAIR_POLY,
-            urls.XCHANGE_BUY_POLY,
-            "Polygonscan",
-            "matic",
-        ),
-        "bsc": TokensInfo(
-            "(BSC)",
-            urls.BSC_TOKEN,
-            "bsc",
-            ca.X7102_PAIR_BSC,
-            urls.XCHANGE_BUY_BSC,
-            "BSCscan",
-            "bnb",
-        ),
-        "opti": TokensInfo(
-            "(OP)",
-            urls.OPTI_TOKEN,
-            "optimsim",
-            ca.X7102_PAIR_OPTI,
-            urls.XCHANGE_BUY_OPTI,
-            "Optimismscan",
-            "eth",
-        ),
-        "base": TokensInfo(
-            "(BASE)",
-            urls.BASE_TOKEN,
-            "base",
-            ca.X7102_PAIR_BASE,
-            urls.XCHANGE_BUY_BASE,
-            "Basescan",
-            "eth",
-        ),
-    }
+    "eth": TokensInfo(
+        ca.X7102,
+        ca.X7102_PAIR_ETH,
+    ),
+    "arb": TokensInfo(
+        ca.X7102,
+        ca.X7102_PAIR_ARB,
+    ),
+    "poly": TokensInfo(
+        ca.X7102,
+        ca.X7102_PAIR_POLY,
+    ),
+    "bsc": TokensInfo(
+        ca.X7102,
+        ca.X7102_PAIR_BSC,
+    ),
+    "opti": TokensInfo(
+        ca.X7102,
+        ca.X7102_PAIR_OPTI,
+    ),
+    "base": TokensInfo(
+        ca.X7102,
+        ca.X7102_PAIR_BASE,
+    ),
+}
 
 
 X7103 = {
         "eth": TokensInfo(
-            "(ETH)",
-            urls.ETHER_TOKEN,
-            "ether",
+            ca.X7103,
             ca.X7103_PAIR_ETH,
-            urls.XCHANGE_BUY_ETH,
-            "Etherscan",
-            "eth",
         ),
         "arb": TokensInfo(
-            "(ARB)",
-            urls.ARB_TOKEN,
-            "arbitrum",
+            ca.X7103,
             ca.X7103_PAIR_ARB,
-            urls.XCHANGE_BUY_ARB,
-            "Arbscan",
-            "eth",
         ),
         "poly": TokensInfo(
-            "(POLYGON)",
-            urls.POLY_TOKEN,
-            "polygon",
+            ca.X7103,
             ca.X7103_PAIR_POLY,
-            urls.XCHANGE_BUY_POLY,
-            "Polygonscan",
-            "matic",
         ),
         "bsc": TokensInfo(
-            "(BSC)",
-            urls.BSC_TOKEN,
-            "bsc",
+            ca.X7103,
             ca.X7103_PAIR_BSC,
-            urls.XCHANGE_BUY_BSC,
-            "BSCscan",
-            "bnb",
         ),
         "opti": TokensInfo(
-            "(OP)",
-            urls.OPTI_TOKEN,
-            "optimism",
+            ca.X7103,
             ca.X7103_PAIR_OPTI,
-            urls.XCHANGE_BUY_OPTI,
-            "Optimismscan",
-            "eth",
         ),
         "base": TokensInfo(
-            "(BASE)",
-            urls.BASE_TOKEN,
-            "base",
+            ca.X7103,
             ca.X7103_PAIR_BASE,
-            urls.XCHANGE_BUY_BASE,
-            "Basescan",
-            "eth",
         ),
     }
 
 
 X7104 = {
         "eth": TokensInfo(
-            "(ETH)",
-            urls.ETHER_TOKEN,
-            "ether",
+            ca.X7104,
             ca.X7104_PAIR_ETH,
-            urls.XCHANGE_BUY_ETH,
-            "Etherscan",
-            "eth",
         ),
         "arb": TokensInfo(
-            "(ARB)",
-            urls.ARB_TOKEN,
-            "arbitrum",
+            ca.X7104,
             ca.X7104_PAIR_ARB,
-            urls.XCHANGE_BUY_ARB,
-            "Arbscan",
-            "eth",
         ),
         "poly": TokensInfo(
-            "(POLYGON)",
-            urls.POLY_TOKEN,
-            "polygon",
+            ca.X7104,
             ca.X7104_PAIR_POLY,
-            urls.XCHANGE_BUY_POLY,
-            "Polygonscan",
-            "matic",
         ),
         "bsc": TokensInfo(
-            "(BSC)",
-            urls.BSC_TOKEN,
-            "bsc",
+            ca.X7104,
             ca.X7104_PAIR_BSC,
-            urls.XCHANGE_BUY_BSC,
-            "BSCscan",
-            "bnb",
         ),
         "opti": TokensInfo(
-            "(OP)",
-            urls.OPTI_TOKEN,
-            "optimsim",
+            ca.X7104,
             ca.X7104_PAIR_OPTI,
-            urls.XCHANGE_BUY_OPTI,
-            "Optimismscan",
-            "eth",
         ),
         "base": TokensInfo(
-            "(BASE)",
-            urls.BASE_TOKEN,
-            "base",
+            ca.X7104,
             ca.X7104_PAIR_BASE,
-            urls.XCHANGE_BUY_BASE,
-            "Basescan",
-            "eth",
         ),
     }
 
 
 X7105 = {
         "eth": TokensInfo(
-            "(ETH)",
-            urls.ETHER_TOKEN,
-            "ether",
+            ca.X7105,
             ca.X7105_PAIR_ETH,
-            urls.XCHANGE_BUY_ETH,
-            "Etherscan",
-            "eth",
         ),
         "arb": TokensInfo(
-            "(ARB)",
-            urls.ARB_TOKEN,
-            "arbitrum",
+            ca.X7105,
             ca.X7105_PAIR_ARB,
-            urls.XCHANGE_BUY_ARB,
-            "Arbscan",
-            "eth",
         ),
         "poly": TokensInfo(
-            "(POLYGON)",
-            urls.POLY_TOKEN,
-            "polygon",
+            ca.X7105,
             ca.X7105_PAIR_POLY,
-            urls.XCHANGE_BUY_POLY,
-            "Polygonscan",
-            "matic",
         ),
         "bsc": TokensInfo(
-            "(BSC)",
-            urls.BSC_TOKEN,
-            "bsc",
+            ca.X7105,
             ca.X7105_PAIR_BSC,
-            urls.XCHANGE_BUY_BSC,
-            "BSCscan",
-            "bnb",
         ),
         "opti": TokensInfo(
-            "(OP)",
-            urls.OPTI_TOKEN,
-            "optimism",
+            ca.X7105,
             ca.X7105_PAIR_OPTI,
-            urls.XCHANGE_BUY_OPTI,
-            "Optimismscan",
-            "eth",
         ),
         "base": TokensInfo(
-            "(BASE)",
-            urls.BASE_TOKEN,
-            "base",
+            ca.X7105,
             ca.X7105_PAIR_BASE,
-            urls.XCHANGE_BUY_BASE,
-            "Basescan",
-            "eth",
         ),
     }
 

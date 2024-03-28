@@ -8,6 +8,7 @@ from constants import text
 from hooks import  db, api
 from variables import times
 
+defined = api.Defined()
 
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -17,7 +18,7 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
             pair = context.args[1]
             ca = context.args[2]
             chain = context.args[3]
-            image_url = api.get_token_image(ca, chain)
+            image_url = defined.get_token_image(ca, chain)
             if image_url:
                 image_url = image_url
             else:

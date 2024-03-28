@@ -200,7 +200,7 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_web3 = mappings.CHAINS[chain].w3
         chain_native =  mappings.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Loan Rates Info, Please wait...")
 
@@ -241,13 +241,13 @@ async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_native = mappings.CHAINS[chain].token
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     burn = api.get_token_balance(ca.DEAD, ca.X7R, chain)
@@ -279,12 +279,12 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].xchange
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     await update.message.reply_photo(
@@ -342,12 +342,12 @@ async def channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         dext = mappings.CHAINS[chain].dext
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     await update.message.reply_photo(
@@ -486,7 +486,7 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         chain = " ".join(context.args).lower()
         if chain == "":
-            chain = ca.DEFAULT_CHAIN
+            chain = mappings.DEFAULT_CHAIN
         if chain in mappings.CHAINS:
             chain_dext = mappings.CHAINS[chain].dext
             x7101_pair = mappings.X7101[chain].pair
@@ -496,7 +496,7 @@ async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
             x7105_pair = mappings.X7105[chain].pair
 
         else:
-            await update.message.reply_text(text.CHAIN_ERROR)
+            await update.message.reply_text(text.CHAIN_ERROR())
             return
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
@@ -617,13 +617,13 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         web3 = mappings.CHAINS[chain].w3
         native = mappings.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     gas_price = web3.eth.gas_price / 10**9
@@ -918,13 +918,13 @@ async def docs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         chain_native = mappings.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Buy Back Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -1114,14 +1114,14 @@ async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         chain_native = mappings.CHAINS[chain].token
         chain_tx = mappings.CHAINS[chain].scan_tx
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     now = datetime.utcnow()
@@ -1200,14 +1200,14 @@ async def fg(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].gas
         chain_logo = mappings.CHAINS[chain].logo
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
 
     gas_data = api.get_gas(chain)
@@ -1254,12 +1254,12 @@ async def giveaway_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_logo = mappings.CHAINS[chain].logo
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     x7dao_proposers = api.get_proposers(chain)
@@ -1415,14 +1415,14 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         chain_native = mappings.CHAINS[chain].token
         pair_addresses = mappings.CHAINS[chain].pairs
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Liquidity Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -1522,13 +1522,13 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         chain_web3 = mappings.CHAINS[chain].w3
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Liquidation Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -1581,7 +1581,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_address_url = mappings.CHAINS[chain].scan_address
@@ -1589,7 +1589,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_native = mappings.CHAINS[chain].token
         chain_web3 = mappings.CHAINS[chain].w3
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = api.get_native_price(chain_native)
@@ -1733,7 +1733,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
 
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
@@ -1742,7 +1742,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_pair = mappings.CHAINS[chain].pairs[0]
         x7dao_pair = mappings.CHAINS[chain].pairs[1]
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def calculate_remaining_time(web3, contract, token_pair, now):
@@ -1805,12 +1805,12 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
 
     data = api.get_nft_data(ca.MAGISTER, chain)
@@ -1843,11 +1843,11 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     caps_info = {}
@@ -1972,13 +1972,13 @@ async def media_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_os = mappings.CHAINS[chain].opensea
         chain_native = mappings.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting NFT Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -2379,7 +2379,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_logo = mappings.CHAINS[chain].logo
             web3_url = mappings.CHAINS[chain].w3
         else:
-            await update.message.reply_text(text.CHAIN_ERROR)
+            await update.message.reply_text(text.CHAIN_ERROR())
             return
         if chain == "eth":
             pool_address = ca.LPOOL
@@ -2437,11 +2437,11 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_dext = mappings.CHAINS[chain].dext
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
 
     x7r_price, x7r_change_raw  = dextools.get_price(ca.X7R, chain)
@@ -2550,7 +2550,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if chain is not None and chain not in mappings.CHAINS:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     message = await update.message.reply_text("Scanning, Please wait...")
@@ -2770,14 +2770,14 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         com_wallet = mappings.CHAINS[chain].com_multi
         dev_wallet = mappings.CHAINS[chain].dev_multi
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     dev_response = api.get_signers(dev_wallet)
@@ -2816,12 +2816,12 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
         
     buttons = [
@@ -2942,7 +2942,7 @@ async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_url = mappings.CHAINS[chain].scan_address
             chain_native = mappings.CHAINS[chain].token
         else:
-            await update.message.reply_text(text.CHAIN_ERROR)
+            await update.message.reply_text(text.CHAIN_ERROR())
             return
         distribution = splitters.GENERATE_INFO(chain, eth_value)
         splitter_text = f"*X7 Finance Ecosystem Splitters {chain_name}* \n\n{eth_value} {chain_native.upper()}\n\n"
@@ -2984,14 +2984,14 @@ async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         chain = " ".join(context.args).lower()
         if chain == "":
-            chain = ca.DEFAULT_CHAIN
+            chain = mappings.DEFAULT_CHAIN
         
         if chain in mappings.CHAINS:
             chain_name = mappings.CHAINS[chain].name
             chain_url = mappings.CHAINS[chain].scan_address
             chain_native = mappings.CHAINS[chain].token
         else:
-            await update.message.reply_text(text.CHAIN_ERROR)
+            await update.message.reply_text(text.CHAIN_ERROR())
             return
         
         treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
@@ -3082,12 +3082,12 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_pair = mappings.CHAINS[chain].pairs
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Supply Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -3139,11 +3139,11 @@ async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     tax_info = tax.GENERATE_INFO(chain)
     await update.message.reply_photo(
@@ -3304,14 +3304,14 @@ async def translate_russian(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         chain_native = mappings.CHAINS[chain].token
         chain_com_multi = mappings.CHAINS[chain].com_multi
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Treasury Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -3589,13 +3589,13 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown")
         return
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_url = mappings.CHAINS[chain].scan_address
         chain_native = mappings.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     message = await update.message.reply_text("Getting Wallet Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -3781,12 +3781,12 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_native = mappings.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
 
     native_price = api.get_native_price(chain_native)
@@ -3829,7 +3829,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -3838,7 +3838,7 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7DAO[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     info = dextools.get_token_info(ca.X7DAO, chain)
@@ -3886,7 +3886,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -3895,7 +3895,7 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7R[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     info = dextools.get_token_info(ca.X7R, chain)
@@ -3943,7 +3943,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -3952,7 +3952,7 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7101[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     
     info = dextools.get_token_info(ca.X7101, chain)
@@ -4000,7 +4000,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -4009,7 +4009,7 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7102[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     info = dextools.get_token_info(ca.X7102, chain)
     holders = info["holders"]
@@ -4056,7 +4056,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -4065,7 +4065,7 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7103[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     info = dextools.get_token_info(ca.X7103, chain)
     holders = info["holders"]
@@ -4112,7 +4112,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -4121,7 +4121,7 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7104[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     info = dextools.get_token_info(ca.X7104, chain)
     holders = info["holders"]
@@ -4168,7 +4168,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     chain = " ".join(context.args).lower()
     if chain == "":
-        chain = ca.DEFAULT_CHAIN
+        chain = mappings.DEFAULT_CHAIN
     if chain in mappings.CHAINS:
         chain_name = mappings.CHAINS[chain].name
         chain_dext = mappings.CHAINS[chain].dext
@@ -4177,7 +4177,7 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_xchange = mappings.CHAINS[chain].xchange
         chain_pair = mappings.X7105[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text(text.CHAIN_ERROR())
         return
     info = dextools.get_token_info(ca.X7105, chain)
     holders = info["holders"]
@@ -4228,10 +4228,10 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chain = last_word
             else:
                 search = " ".join(context.args).lower()
-                chain = ca.DEFAULT_CHAIN
+                chain = mappings.DEFAULT_CHAIN
         else:
             search = " ".join(context.args).lower()
-            chain = ca.DEFAULT_CHAIN   
+            chain = mappings.DEFAULT_CHAIN   
     else:
         await update.message.reply_text("Please provide token address to search")   
         return   
