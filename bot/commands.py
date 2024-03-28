@@ -1857,15 +1857,6 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    token_names = {
-        ca.X7R: "X7R",
-        ca.X7DAO: "X7DAO",
-        ca.X7101: "X7101",
-        ca.X7102: "X7102",
-        ca.X7103: "X7103",
-        ca.X7104: "X7104",
-        ca.X7105: "X7105",
-    }
     caps_info = {}
     caps = {}
     for token in ca.TOKENS:
@@ -2481,7 +2472,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"💰 Price: {x7r_price}\n"
             f"{x7r_change}\n\n"
             f"X7DAO\n"
-            f"💰 Price: {x7r_price}\n"
+            f"💰 Price: {x7dao_price}\n"
             f"{x7dao_change}\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",
