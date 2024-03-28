@@ -209,13 +209,38 @@ class CoinGecko:
 
     def get_price(self, token):
         coingecko = CoinGeckoAPI()
-        return coingecko.get_price(
+        data = coingecko.get_price(
             ids=token,
             vs_currencies="usd",
             include_24hr_change="true",
             include_24hr_vol="true",
-            include_market_cap="true",
-        )
+            include_market_cap="true")
+        if "e-" in str(data[token]["usd"]):
+            price = "{:.8f}".format(data[token]["usd"])
+        elif data[token]["usd"] < 1:
+            price = "{:.8f}".format(data[token]["usd"]) 
+        else:
+            price = "{:,.0f}".format(data[token]["usd"])
+
+        if "e-" in str(data[token]["usd_24h_vol"]):
+            volume = "${:.8f}".format(data[token]["usd_24h_vol"])
+        elif data[token]["usd_24h_vol"] < 1:
+            volume = "${:.8f}".format(data[token]["usd_24h_vol"]) 
+        else:
+            volume = "${:,.0f}".format(data[token]["usd_24h_vol"])
+            
+        price_change = data[token]["usd_24h_change"]
+        if price_change is None:
+            price_change = 0
+        else:
+            price_change = round(data[token]["usd_24h_change"], 2)
+        market_cap = data[token]["usd_market_cap"]
+        if market_cap is None or market_cap == 0:
+            market_cap_formatted = " N/A"
+        else:
+            market_cap_formatted = "${:0,.0f}".format(float(market_cap))
+
+        return {"price": price, "change": price_change, "mcap": market_cap_formatted, "volume": volume}
 
 
     def search(self, token):

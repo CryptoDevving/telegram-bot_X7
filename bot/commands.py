@@ -582,33 +582,56 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if len(context.args) == 2:
+    if len(context.args) >= 2:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         amount = context.args[0]
-        search = context.args[1]
-        token = coingecko.search(search.lower())
-        if token and "coins" in token and len(token["coins"]) > 0:
-            token_id = token["coins"][0]["api_symbol"]
-            thumb = token["coins"][0]["large"]
-            cg = coingecko.get_price(token_id)
-            price = cg[token_id]["usd"]
-            output = float(amount) * float(price)
-            caption_text = f"{amount} {token_id.upper()} is currently worth:\n${'{:0,.0f}'.format(output)}"
-            if amount == "500000" and search == "x7dao":
-                proposers = api.get_proposers("eth")
-                caption_text +=f"\n\nDAO Proposers: {proposers}"
-                
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=
-                    f"*X7 Finance Price Conversion*\n\n"
-                    f"{caption_text}\n\n"
-                    f"{api.get_quote()}",
-                parse_mode="Markdown")
-        else:
-            await update.message.reply_text(f"{search.upper()} Not Found")
+        token = context.args[1]
+        chain = mappings.DEFAULT_CHAIN if len(context.args) < 3 else context.args[2]
+
+        if not amount.isdigit():
+            await context.bot.send_message(update.effective_chat.id, "Please provide a valid amount")
+            return
     else:
-        await update.message.reply_text("Please follow command with amount and token name you wish to convert")
+        await context.bot.send_message(update.effective_chat.id, "Please provide the amount, X7 token and optional chain")
+        return
+
+    if chain in mappings.CHAINS:
+        if token.upper() in ["X7R", "X7DAO", "X7101", "X7102", "X7103", "X7104", "X7105"]:
+            if hasattr(mappings, token.upper()):
+                token_info_dict = getattr(mappings, token.upper())
+                token_info = token_info_dict[chain]
+                address = token_info.ca
+                price,_ = dextools.get_price(address, chain)
+                
+                
+        elif token.upper() == "X7D":
+            token_info = mappings.CHAINS[chain]
+            address = token_info.token
+            price = api.get_native_price(address)
+        else:
+            await update.message.reply_text("Token not found, please use X7 tokens only")
+            return
+
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR())
+        return
+    
+    value = float(price) * float(amount)
+    output = '{:0,.0f}'.format(value)
+    
+    amount_str = float(amount)
+
+    caption = (f"*X7 Finance Price Conversion*\n\n"
+            f"{amount_str:,.0f} {token.upper()} ({chain.upper()}) is currently worth:\n\n${output}\n\n")
+    
+    if amount == "500000" and token.upper() == "X7DAO":
+        caption+= "Holding 500,000 X7DAO tokens earns you the right to make X7DAO proposals\n\n"
+        
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=f"{caption}"
+            f"{api.get_quote()}",
+        parse_mode="Markdown")
 
 
 async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -4331,23 +4354,6 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
         symbol = token["coins"][0]["symbol"]
         thumb = token["coins"][0]["large"]
         token_price = coingecko.get_price(id)
-        if "e-" in str(token_price[id]["usd"]):
-            price = "{:.8f}".format(token_price[id]["usd"])
-        elif token_price[id]["usd"] < 1:
-            price = "{:.8f}".format(token_price[id]["usd"]) 
-        else:
-            price = "{:.2f}".format(token_price[id]["usd"])
-            
-        price_change = token_price[id]["usd_24h_change"]
-        if price_change is None:
-            price_change = 0
-        else:
-            price_change = round(token_price[id]["usd_24h_change"], 2)
-        market_cap = token_price[id]["usd_market_cap"]
-        if market_cap is None or market_cap == 0:
-            market_cap_formatted = " N/A"
-        else:
-            market_cap_formatted = "${:0,.0f}".format(float(market_cap))
         img = Image.open(requests.get(thumb, stream=True).raw)
         result = img.convert("RGBA")
         result.save(r"media/tokenlogo.png")
@@ -4358,9 +4364,10 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
         i1.text(
             (28, 36),
                 f"{id.capitalize()} ({symbol}) price\n\n"
-                f'Price: ${price}\n'
-                f"24 Hour Change: {price_change}%\n"
-                f'Market Cap: {market_cap_formatted}\n\n\n\n\n\n\n\n'
+                f'Price: ${token_price["price"]}\n'
+                f'24 Hour Change: {token_price["change"]}%\n'
+                f'Market Cap: {token_price["mcap"]}\n'
+                f'24hr Volume: {token_price["volume"]}\n\n\n\n\n\n\n'
                 f'UTC: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}',
             font = ImageFont.truetype(media.FONT, 28),
             fill=(255, 255, 255),
@@ -4370,9 +4377,10 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
             photo=open(r"media/blackhole.png", "rb"),
             caption=
                 f"*{id.capitalize()} ({symbol}) price*\n\n"
-                f'Price: ${price}\n'
-                f'24 Hour Change: {price_change}%\n'
-                f'Market Cap: {market_cap_formatted}\n\n'
+                f'Price: ${token_price["price"]}\n'
+                f'24 Hour Change: {token_price["change"]}%\n'
+                f'Market Cap: {token_price["mcap"]}\n'
+                f'Volume: {token_price["volume"]}\n\n'
                 f"{api.get_quote()}",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
