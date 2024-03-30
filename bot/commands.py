@@ -3417,7 +3417,7 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     last_24hr_amt = item.get("last_24hr_amt")
                     if pair is not None and last_24hr_amt is not None:
                         trending_text += f'{idx}. {pair}\n24 Hour Volume: ${"{:0,.0f}".format(last_24hr_amt)}\n\n'
-
+            await message.delete()
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
                 caption=f'{trending_text}{api.get_quote()}',
