@@ -6,7 +6,7 @@ from datetime import datetime
 
 # AUTO TIMES SECONDS
 def RANDOM_BUTTON_TIME():
-    time = random.randint(3600, 21600)
+    time = random.randint(3600, 172800)
     return time
 
 FIRST_BUTTON_TIME = RANDOM_BUTTON_TIME()
