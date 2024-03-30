@@ -3402,12 +3402,21 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             rows = response_data["result"]["rows"]
             rows = [row for row in rows if row["pair"] != "TOTAL"]
-            sorted_rows = sorted(rows, key=lambda x: x['last_24hr_amt'], reverse=True)
+            valid_rows = [row for row in rows if isinstance(row.get('last_24hr_amt'), (int, float))]
+
+            sorted_rows = sorted(valid_rows, key=lambda x: x.get('last_24hr_amt', 0), reverse=True)
             top_3_last_24hr_amt = sorted_rows[:3]
             trending_text = "*Xchange Trending Pairs*\n\n"
 
-            for idx, item in enumerate(top_3_last_24hr_amt, start=1):
-                trending_text += f'{idx}. {item["pair"]}\n24 Hour Volume: ${"{:0,.0f}".format(item["last_24hr_amt"])}\n\n'
+            if not any(item.get("pair") for item in top_3_last_24hr_amt):
+                trending_text += "No trending pair information available. Please use the link below"
+
+            else:
+                for idx, item in enumerate(top_3_last_24hr_amt, start=1):
+                    pair = item.get("pair")
+                    last_24hr_amt = item.get("last_24hr_amt")
+                    if pair is not None and last_24hr_amt is not None:
+                        trending_text += f'{idx}. {pair}\n24 Hour Volume: ${"{:0,.0f}".format(last_24hr_amt)}\n\n'
 
             await update.message.reply_photo(
                 photo=api.get_random_pioneer(),
@@ -3419,6 +3428,12 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             InlineKeyboardButton(
                                 text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                             )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="Trend a token on Xchange Alerts",
+                                url=f"https://t.me/smarttrendbuybot?start",
+                            ),
                         ],
                     ]
                 ),
@@ -3441,6 +3456,12 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                             text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                         )
                     ],
+                    [
+                        InlineKeyboardButton(
+                            text="Trend a token on Xchange Alerts",
+                            url=f"https://t.me/smarttrendbuybot?start",
+                        ),
+                    ],
                 ]
             ),
             )
@@ -3450,7 +3471,7 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=api.get_random_pioneer(),
         caption=
             f'*Xchange Trending*\n\n'
-            f'Unable to refresh Dune data, please use the link below\n\n'
+            f'No trending pair information available. please use the link below\n\n'
             f'{api.get_quote()}',
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -3459,6 +3480,12 @@ async def trending(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     InlineKeyboardButton(
                         text="X7 Dune Dashboard", url=f"{urls.DUNE}"
                     )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="Trend a token on Xchange Alerts",
+                        url=f"https://t.me/smarttrendbuybot?start",
+                    ),
                 ],
             ]
         ),
