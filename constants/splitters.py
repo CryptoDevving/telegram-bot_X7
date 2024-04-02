@@ -49,39 +49,45 @@ ECO_SPLIT = {
 TREASURY_SPLIT = {
     "eth": {
         "profit_percentage": 0.49,
-        "pioneer_reward_pool_percentage": 0.06,
+        "reward_pool_percentage": 0.06,
         "community_multisig_percentage": 0.32,
         "developers_multisig_percentage": 0.13,
+
     },
     "opti": {
         "profit_percentage": 0.49,
-        "pioneer_reward_pool_percentage": 0.06,
-        "community_multisig_percentage": 0.32,
-        "developers_multisig_percentage": 0.13,
+        "reward_pool_percentage": 0.06,
+        "developers_multisig_percentage": 0.15,
+        "community_multisig_percentage": 0.30,
+
     },
     "poly": {
         "profit_percentage": 0.49,
-        "pioneer_reward_pool_percentage": 0.06,
-        "community_multisig_percentage": 0.32,
-        "developers_multisig_percentage": 0.13,
+        "reward_pool_percentage": 0.06,
+        "developers_multisig_percentage": 0.15,
+        "community_multisig_percentage": 0.30,
+
     },
     "arb": {
         "profit_percentage": 0.49,
-        "pioneer_reward_pool_percentage": 0.06,
-        "community_multisig_percentage": 0.32,
-        "developers_multisig_percentage": 0.13,
+        "reward_pool_percentage": 0.06,
+        "developers_multisig_percentage": 0.15,
+        "community_multisig_percentage": 0.30,
+
     },
     "bsc": {
         "profit_percentage": 0.49,
-        "pioneer_reward_pool_percentage": 0.06,
-        "community_multisig_percentage": 0.32,
-        "developers_multisig_percentage": 0.13,
+        "reward_pool_percentage": 0.06,
+        "developers_multisig_percentage": 0.15,
+        "community_multisig_percentage": 0.30,
+
     },
     "base": {
         "profit_percentage": 0.49,
-        "pioneer_reward_pool_percentage": 0.06,
-        "community_multisig_percentage": 0.32,
-        "developers_multisig_percentage": 0.13,
+        "reward_pool_percentage": 0.06,
+        "developers_multisig_percentage": 0.15,
+        "community_multisig_percentage": 0.30,
+
     },
 }
 
@@ -113,18 +119,26 @@ def GENERATE_TREASURY_SPLIT(chain, eth_value):
     chain_info = TREASURY_SPLIT.get(chain)
     if chain_info:
         profit_percentage = chain_info["profit_percentage"]
-        pioneer_reward_pool_percentage = chain_info["pioneer_reward_pool_percentage"]
         community_multisig_percentage = chain_info["community_multisig_percentage"]
         developers_multisig_percentage = chain_info["developers_multisig_percentage"]
 
         profit_share = eth_value * profit_percentage
-        pioneer_reward_pool_share = eth_value * pioneer_reward_pool_percentage
         community_multisig_share = eth_value * community_multisig_percentage
         developers_multisig_share = eth_value * developers_multisig_percentage
 
-        return {
-            "> Profit Sharing Splitter": profit_share,
-            "> Pioneer Reward Pool": pioneer_reward_pool_share,
-            "> Community Multi Sig": community_multisig_share,
-            "> Developers Multi Sig": developers_multisig_share,
-        }
+        if chain == "eth":
+            reward_pool_percentage = chain_info["reward_pool_percentage"]
+            reward_pool_share = eth_value * reward_pool_percentage
+            return {
+                "> Profit Sharing Splitter": profit_share,
+                "> Pioneer Reward Pool": reward_pool_share,
+                "> Operations Multi Sig": developers_multisig_share,
+                "> Community Multi Sig": community_multisig_share,
+            }
+        else:
+            return {
+                "> Profit Sharing Splitter": profit_share,
+                "> Operations Multi Sig": developers_multisig_share,
+                "> Community Multi Sig": community_multisig_share,
+
+            }
