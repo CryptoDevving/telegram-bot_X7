@@ -193,7 +193,7 @@ def clicks_reset():
         cursor.execute("DELETE FROM leaderboard")
         db_connection.commit()
         close_db_connection(db_connection, cursor)
-        return "Leaderboard cleared successfully"
+        return "Clicks Leaderboard Reset!"
     except mysql.connector.Error:
         return "Error clearing leaderboard"
 

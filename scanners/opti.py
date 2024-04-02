@@ -23,13 +23,11 @@ web3 = Web3(Web3.HTTPProvider(opti_url))
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
 ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, chain))
-ill002 = web3.eth.contract(address=ca.ILL002, abi=api.get_abi(ca.ILL002, chain))
 ill003 = web3.eth.contract(address=ca.ILL003, abi=api.get_abi(ca.ILL003, chain))
 
 
 pair_filter = factory.events.PairCreated.create_filter(fromBlock="latest")
 ill001_filter = ill001.events.LoanOriginated.create_filter(fromBlock="latest")
-ill002_filter = ill002.events.LoanOriginated.create_filter(fromBlock="latest")
 ill003_filter = ill003.events.LoanOriginated.create_filter(fromBlock="latest")
 
 
@@ -260,7 +258,7 @@ async def new_loan(event):
 
 
 async def log_loop(
-    pair_filter, ill001_filter, ill002_filter, ill003_filter, poll_interval
+    pair_filter, ill001_filter, ill003_filter, poll_interval
 ):
     while True:
         try:
@@ -269,10 +267,6 @@ async def log_loop(
 
             await asyncio.sleep(poll_interval)
             for LoanOriginated in ill001_filter.get_new_entries():
-                await new_loan(LoanOriginated)
-
-            await asyncio.sleep(poll_interval)
-            for LoanOriginated in ill002_filter.get_new_entries():
                 await new_loan(LoanOriginated)
 
             await asyncio.sleep(poll_interval)
@@ -289,7 +283,7 @@ async def main():
     while True:
         try:
             tasks = [
-                log_loop(pair_filter, ill001_filter, ill002_filter, ill003_filter, 2)
+                log_loop(pair_filter, ill001_filter, ill003_filter, 2)
             ]
             await asyncio.gather(*tasks)
 
