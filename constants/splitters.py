@@ -93,12 +93,12 @@ def GENERATE_INFO(chain, eth_value):
         lending_pool_share = eth_value * lending_pool_percentage
 
         return {
-            "X7R": x7r_share,
-            "X7DAO": x7dao_share,
-            "X7 Constellations": x7_constellations_share,
+            "X7R Liquidity": x7r_share,
+            "X7DAO Liquidity": x7dao_share,
+            "X7 Constellation Liquidity": x7_constellations_share,
             "Lending Pool": lending_pool_share,
             "Treasury": treasury_share,
-            "Profit Sharing Total": profit_share,
+            "Profit Sharing Splitter": profit_share,
             "Pioneer Reward Pool": pioneer_reward_pool_share,
             "Community Multi Sig": community_multisig_share,
             "Developers Multi Sig": developers_multisig_share,

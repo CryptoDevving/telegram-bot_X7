@@ -169,14 +169,14 @@ class Dextools:
                         "eth": f"{'{:,.2f}'.format(eth)}"}
 
             except Exception:
-                return {"total": 0,
-                        "token": 0,
-                        "eth:": 0
+                return {"total": "0",
+                        "token": "0",
+                        "eth:": "0"
                 }
         else:
-            return {"total": 0,
-                    "token": 0,
-                    "eth:": 0
+            return {"total": "0",
+                    "token": "0",
+                    "eth:": "0"
             }
         
 
