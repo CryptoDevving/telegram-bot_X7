@@ -107,9 +107,9 @@ def GENERATE_ECO_SPLIT(chain, eth_value):
         lending_pool_share = eth_value * lending_pool_percentage
 
         return {
-            "> X7R Liquidity": x7r_share,
-            "> X7DAO Liquidity": x7dao_share,
-            "> X7 Constellation Liquidity": x7_constellations_share,
+            "> X7R Liquidity Hub": x7r_share,
+            "> X7DAO Liquidity Hub": x7dao_share,
+            "> X7100 Liquidity Hub": x7_constellations_share,
             "> Lending Pool": lending_pool_share,
             "> Treasury Splitter": treasury_share,
         }
