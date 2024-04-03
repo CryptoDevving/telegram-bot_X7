@@ -64,23 +64,16 @@ class Dextools:
                 six_hour = f"{emoji_up if six_hour_change is not None and six_hour_change > 0 else emoji_down} 6H Change: {round(six_hour_change, 2)}%" if six_hour_change is not None else f'{emoji_down} 6H Change: N/A'
                 one_day = f"{emoji_up if one_day_change is not None and one_day_change > 0 else emoji_down} 24H Change: {round(one_day_change, 2)}%" if one_day_change is not None else f'{emoji_down} 24H Change: N/A'
 
-                change = {
-                    "one_hour": one_hour,
-                    "six_hour": six_hour,
-                    "one_day": one_day
-                    }
+                change = f"{one_hour}\n{six_hour}\n{one_day}"
 
             else:
                 price = "N/A"
-                change = {
-                    "one_hour": "📉 1H Change: N/A",
-                    "six_hour": "📉 6H Change:N/A",
-                    "one_day": "📉 2H Change: N/A",
-                }
+                change = f"📉 1HR Change: N/A\n📉 6HR Change: N/A\n 📉 24HR Change: N/A"
 
             return price, change
         else:
-            return 0, "N/A"
+            change = f"📉 1HR Change: N/A\n📉 6HR Change: N/A\n 📉 24HR Change: N/A"
+            return 0, change
         
 
     def get_token_info(self, pair, chain):
@@ -207,15 +200,18 @@ class CoinGecko:
             "true&community_data=false&developer_data=false&sparkline=false"
         )
         response = requests.get(self.url + endpoint)
-        data = response.json()
-        value = data["market_data"]
-        return (
-            value["ath"]["usd"],
-            value["ath_change_percentage"]["usd"],
-            value["ath_date"]["usd"],
-        )
+        if response.status_code == 200:
+            data = response.json()
+            value = data["market_data"]
+            return (
+                value["ath"]["usd"],
+                value["ath_change_percentage"]["usd"],
+                value["ath_date"]["usd"],
+            )
+        else:
+            return None
 
-
+    
     def get_price(self, token):
         coingecko = CoinGeckoAPI()
         data = coingecko.get_price(

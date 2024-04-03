@@ -2891,74 +2891,71 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 
 
 async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        chain = " ".join(context.args).lower()
-        if chain == "":
-            chain = mappings.DEFAULT_CHAIN
-        
-        if chain in mappings.CHAINS:
-            chain_name = mappings.CHAINS[chain].name
-            chain_url = mappings.CHAINS[chain].scan_address
-            chain_native = mappings.CHAINS[chain].token
-        else:
-            await update.message.reply_text(text.CHAIN_ERROR())
-            return
-        
-        treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
-        eco_eth_raw = api.get_native_balance(ca.ECO_SPLITTER, chain)
-        treasury_eth = round(float(treasury_eth_raw), 2)
-        eco_eth = round(float(eco_eth_raw), 2)
-        native_price = api.get_native_price(chain_native)
-        eco_dollar = float(eco_eth) * float(native_price)
-        treasury_dollar = float(treasury_eth) * float(native_price)
-        treasury_from_eco = 0
+    await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = mappings.DEFAULT_CHAIN
+    
+    if chain in mappings.CHAINS:
+        chain_name = mappings.CHAINS[chain].name
+        chain_url = mappings.CHAINS[chain].scan_address
+        chain_native = mappings.CHAINS[chain].token
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR())
+        return
+    
+    treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
+    eco_eth_raw = api.get_native_balance(ca.ECO_SPLITTER, chain)
+    treasury_eth = round(float(treasury_eth_raw), 2)
+    eco_eth = round(float(eco_eth_raw), 2)
+    native_price = api.get_native_price(chain_native)
+    eco_dollar = float(eco_eth) * float(native_price)
+    treasury_dollar = float(treasury_eth) * float(native_price)
+    treasury_from_eco = 0
 
-        eco_splitter_text = "Distribution:\n"
-        eco_distribution = splitters.GENERATE_ECO_SPLIT(chain, eco_eth)
-        for location, share in eco_distribution.items():
-            if location == "> Treasury Splitter":
-                treasury_from_eco += share
-            eco_splitter_text += f"{location}: {share:.2f} {chain_native.upper()}\n"
+    eco_splitter_text = "Distribution:\n"
+    eco_distribution = splitters.GENERATE_ECO_SPLIT(chain, eco_eth)
+    for location, share in eco_distribution.items():
+        if location == "> Treasury Splitter":
+            treasury_from_eco += share
+        eco_splitter_text += f"{location}: {share:.2f} {chain_native.upper()}\n"
 
-        treasury_splitter_text = "Distribution:\n"
-        treasury_distribution = splitters.GENERATE_TREASURY_SPLIT(chain, treasury_eth + treasury_from_eco)
-        for location, share in treasury_distribution.items():
-            treasury_splitter_text += f"{location}: {share:.2f} {chain_native.upper()}\n"
-        
-        total_treasury_dollar = (float(treasury_eth) + float(treasury_from_eco)) * float(native_price)
-        await update.message.reply_photo(
-            photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance Ecosystem Splitters {chain_name}*\n"
-                f"Use `/splitters [chain-name]` for other chains\n\n"
-                f"Ecosystem Splitter\n{eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
-                f"{eco_splitter_text}\n"
-                f"Treasury Splitter\n{treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n"
-                f"+ {treasury_from_eco} {chain_native.upper()} from Ecosystem Splitter\n"
-                f"= {treasury_from_eco + treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(total_treasury_dollar)})\n"
-                f"{treasury_splitter_text}\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-            reply_markup=InlineKeyboardMarkup(
+    treasury_splitter_text = "Distribution:\n"
+    treasury_distribution = splitters.GENERATE_TREASURY_SPLIT(chain, treasury_eth + treasury_from_eco)
+    for location, share in treasury_distribution.items():
+        treasury_splitter_text += f"{location}: {share:.2f} {chain_native.upper()}\n"
+    
+    total_treasury_dollar = (float(treasury_eth) + float(treasury_from_eco)) * float(native_price)
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"*X7 Finance Ecosystem Splitters {chain_name}*\n"
+            f"Use `/splitters [chain-name]` for other chains\n\n"
+            f"Ecosystem Splitter\n{eco_eth} {chain_native.upper()} (${'{:0,.0f}'.format(eco_dollar)})\n"
+            f"{eco_splitter_text}\n"
+            f"Treasury Splitter\n{treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(treasury_dollar)})\n"
+            f"+ {treasury_from_eco} {chain_native.upper()} from Ecosystem Splitter\n"
+            f"= {treasury_from_eco + treasury_eth} {chain_native.upper()} (${'{:0,.0f}'.format(total_treasury_dollar)})\n"
+            f"{treasury_splitter_text}\n"
+            f"{api.get_quote()}",
+        parse_mode="Markdown",
+        reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton(
-                            text="Ecosystem Splitter",
-                            url=f"{chain_url}{ca.ECO_SPLITTER}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="Treasury Splitter",
-                            url=f"{chain_url}{ca.TREASURY_SPLITTER}",
-                        )
-                    ],
-                ]
-            ),
-        )
-    except Exception as e:
-        print(e)
+                    InlineKeyboardButton(
+                        text="Ecosystem Splitter",
+                        url=f"{chain_url}{ca.ECO_SPLITTER}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="Treasury Splitter",
+                        url=f"{chain_url}{ca.TREASURY_SPLITTER}",
+                    )
+                ],
+            ]
+        ),
+    )
 
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -3793,19 +3790,20 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7DAO, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7DAO, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7DAO, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7dao")[1]}'
-        ath_value = coingecko.get_ath("x7dao")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7dao")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"    
     else:
-        ath = "Unavailable"        
+        ath = "Unavailable"    
     
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -3850,17 +3848,18 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7R, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7R, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7R, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7r")[1]}'
-        ath_value = coingecko.get_ath("x7r")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7r")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * api.get_x7r_supply(chain))}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"    
     else:
         ath = "Unavailable"        
     
@@ -3907,17 +3906,18 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7101, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7101, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7101, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7101")[1]}'
-        ath_value = coingecko.get_ath("x7101")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7101")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"      
     else:
         ath = "Unavailable"        
     
@@ -3963,17 +3963,18 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7102, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7102, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7102, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7102")[1]}'
-        ath_value = coingecko.get_ath("x7102")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7102")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"     
     else:
         ath = "Unavailable"        
     
@@ -4019,17 +4020,18 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7103, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7103, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7103, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7103")[1]}'
-        ath_value = coingecko.get_ath("x7103")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7103")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"   
     else:
         ath = "Unavailable"        
     
@@ -4075,17 +4077,18 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7104, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7104, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7104, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7104")[1]}'
-        ath_value = coingecko.get_ath("x7104")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7104")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"   
     else:
         ath = "Unavailable"        
     
@@ -4131,19 +4134,20 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     info = dextools.get_token_info(ca.X7105, chain)
     holders = info["holders"]
     market_cap = info["mcap"]
-    price, price_change_raw = dextools.get_price(ca.X7105, chain)
-    price_change = (f"{price_change_raw['one_hour']}\n"
-                f"{price_change_raw['six_hour']}\n"
-                f"{price_change_raw['one_day']}")
+    price, price_change = dextools.get_price(ca.X7105, chain)
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
     if chain == "eth":
-        ath_change = f'{coingecko.get_ath("x7105")[1]}'
-        ath_value = coingecko.get_ath("x7105")[0]
-        ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        ath_data = coingecko.get_ath("x7105")
+        if ath_data:
+            ath_change = f'{ath_data[1]}'
+            ath_value = ath_data[0]
+            ath = f'${ath_value} (${"{:0,.0f}".format(ath_value * ca.SUPPLY)}) {ath_change[:3]}%'
+        else:
+            ath = "Unavailable"   
     else:
-        ath = "Unavailable"        
+        ath = "Unavailable"          
     
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
@@ -4196,10 +4200,7 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
         info = dextools.get_token_info(token_instance['ca'], token_instance['chain'].lower())
         holders = info["holders"]
         mcap = info["mcap"]
-        price, price_change_raw = dextools.get_price(token_instance['ca'], token_instance['chain'].lower())
-        price_change = (f"{price_change_raw['one_hour']}\n"
-                    f"{price_change_raw['six_hour']}\n"
-                    f"{price_change_raw['one_day']}")
+        price, price_change = dextools.get_price(token_instance['ca'], token_instance['chain'].lower())
         volume = dextools.get_volume(token_instance['pair'], token_instance['chain'].lower())
         im1 = Image.open((random.choice(media.BLACKHOLE)))
         try:
