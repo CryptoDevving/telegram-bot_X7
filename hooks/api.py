@@ -68,11 +68,11 @@ class Dextools:
 
             else:
                 price = "N/A"
-                change = f"📉 1HR Change: N/A\n📉 6HR Change: N/A\n 📉 24HR Change: N/A"
+                change = f"📉 1HR Change: N/A\n📉 6HR Change: N/A\n📉 24HR Change: N/A"
 
             return price, change
         else:
-            change = f"📉 1HR Change: N/A\n📉 6HR Change: N/A\n 📉 24HR Change: N/A"
+            change = f"📉 1HR Change: N/A\n📉 6HR Change: N/A\n📉 24HR Change: N/A"
             return 0, change
         
 
