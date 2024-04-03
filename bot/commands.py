@@ -518,6 +518,7 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) >= 2:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         amount = context.args[0]
+        amount = amount.replace(',', '')
         token = context.args[1]
         chain = mappings.DEFAULT_CHAIN if len(context.args) < 3 else context.args[2]
 
