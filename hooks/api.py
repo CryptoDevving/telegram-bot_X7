@@ -21,7 +21,7 @@ class Dextools:
     def get_dex(self, pair, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f'pool/{chain_info.dext}/{pair}'
+        endpoint = f'pool/{chain_info.dext}/{pair.lower()}'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
         data = response.json()
@@ -40,7 +40,7 @@ class Dextools:
     def get_price(self, token, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f'token/{chain_info.dext}/{token}/price'
+        endpoint = f'token/{chain_info.dext}/{token.lower()}/price'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
         if response.status_code == 200:
@@ -86,7 +86,7 @@ class Dextools:
     def get_token_info(self, pair, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f"token/{chain_info.dext}/{pair}/info"
+        endpoint = f"token/{chain_info.dext}/{pair.lower()}/info"
         response = requests.get(self.url + endpoint, headers=self.headers)
 
         if response.status_code == 200:
@@ -126,7 +126,7 @@ class Dextools:
     def get_token_name(self, address, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f"token/{chain_info.dext}/{address}"
+        endpoint = f"token/{chain_info.dext}/{address.lower()}"
         response = requests.get(self.url + endpoint, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
@@ -153,7 +153,7 @@ class Dextools:
     def get_liquidity(self, pair, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f'pool/{chain_info.dext}/{pair}/liquidity'
+        endpoint = f'pool/{chain_info.dext}/{pair.lower()}/liquidity'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
 
@@ -183,7 +183,7 @@ class Dextools:
     def get_volume(self, pair, chain):
         if chain in mappings.CHAINS:
             chain_info = mappings.CHAINS[chain]
-        endpoint = f"pool/{chain_info.dext}/{pair}/price"
+        endpoint = f"pool/{chain_info.dext}/{pair.lower()}/price"
 
         response = requests.get(self.url + endpoint, headers=self.headers)
         if response.status_code == 200:
