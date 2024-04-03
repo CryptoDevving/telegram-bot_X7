@@ -256,7 +256,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("joke", commands.joke))
     application.add_handler(CommandHandler("launch", commands.launch))
     application.add_handler(CommandHandler("leaderboard", commands.leaderboard))
-    application.add_handler(CommandHandler(["links", "socials", "dune", "github", "reddit"], commands.links))
+    application.add_handler(CommandHandler(["links", "socials", "dune", "github", "reddit", "warpcast"], commands.links))
     application.add_handler(CommandHandler("liquidate", commands.liquidate))
     application.add_handler(CommandHandler("liquidity", commands.liquidity))
     application.add_handler(CommandHandler("loan", commands.loan))
@@ -323,13 +323,6 @@ if __name__ == "__main__":
     ## AUTO ##
     application.add_handler(CallbackQueryHandler(button_function))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), auto.replies))
-
-#    job_queue.run_repeating(
-#        auto.messages,
-#        times.AUTO_MESSAGE_TIME,
-#        chat_id=os.getenv("MAIN_TELEGRAM_CHANNEL_ID"),
-#        first=times.AUTO_MESSAGE_TIME,
-#        name="Auto Message")
 
     job_queue.run_once(
         button_send,

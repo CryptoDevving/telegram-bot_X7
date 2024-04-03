@@ -483,89 +483,22 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def constellations(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chain = " ".join(context.args).lower()
-    if chain == "":
-        chain = mappings.DEFAULT_CHAIN
-    if chain in mappings.CHAINS:
-        chain_dext = mappings.CHAINS[chain].dext
-        x7101_pair = mappings.X7101[chain].pair
-        x7102_pair = mappings.X7102[chain].pair
-        x7103_pair = mappings.X7103[chain].pair
-        x7104_pair = mappings.X7104[chain].pair
-        x7105_pair = mappings.X7105[chain].pair
-
-    else:
-        await update.message.reply_text(text.CHAIN_ERROR())
-        return
-    await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    x7101_price, x7101_change_raw,  = dextools.get_price(ca.X7101, chain)
-    x7101_change = f"{x7101_change_raw['one_day']}"
-    x7102_price, x7102_change_raw,  = dextools.get_price(ca.X7102, chain)
-    x7102_change = f"{x7102_change_raw['one_day']}"
-    x7103_price, x7103_change_raw, = dextools.get_price(ca.X7103, chain)
-    x7103_change = f"{x7103_change_raw['one_day']}"
-    x7104_price, x7104_change_raw,  = dextools.get_price(ca.X7104, chain)
-    x7104_change = f"{x7104_change_raw['one_day']}"
-    x7105_price, x7105_change_raw,  = dextools.get_price(ca.X7105, chain)
-    x7105_change = f"{x7105_change_raw['one_day']}"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
-            f'*X7 Finance Constellation Token Prices {chain.upper()}*\n\n'
-            f'For more info use `/x7token-name`\n\n'
+            f'*X7 Finance Constellation Addresses*\n\n'
             f'X7101\n'
-            f'💰 Price: ${x7101_price}\n'
-            f'{x7101_change}\n\n'
+            f'`{ca.X7101}`\n\n'
             f'X7102:\n'
-            f'💰 Price: ${x7102_price}\n'
-            f'{x7102_change}\n\n'
+            f'`{ca.X7101}`\n\n'
             f'X7103\n'
-            f'💰 Price: ${x7103_price}\n'
-            f'{x7103_change}\n\n'
+            f'`{ca.X7103}`\n\n'
             f'X7104\n'
-            f'💰 Price: ${x7104_price}\n'
-            f'{x7104_change}\n\n'
+            f'`{ca.X7104}`\n\n'
             f'X7105\n'
-            f'💰 Price: ${x7105_price}\n'
-            f'{x7105_change}\n\n'
+            f'`{ca.X7105}`\n\n'
             f'{api.get_quote()}',
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text="X7101 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7101_pair}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7102 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7102_pair}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7103 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7103_pair}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7104 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7104_pair}",
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            text="X7105 Chart",
-                            url=f"{urls.DEX_TOOLS(chain_dext)}{x7105_pair}",
-                        )
-                    ],
-
-                ]
-            ),
-        )
+        parse_mode="Markdown")
 
 
 async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1419,7 +1352,7 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
         [
             InlineKeyboardButton(text="Reddit", url=f"{urls.REDDIT}"),
-            InlineKeyboardButton(text="Youtube", url=f"{urls.YOUTUBE}"),
+            InlineKeyboardButton(text="Warpcast", url=f"{urls.WARPCAST}"),
         ],
         [
             InlineKeyboardButton(text="Github", url=f"{urls.GITHUB}"),

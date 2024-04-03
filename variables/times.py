@@ -6,14 +6,12 @@ from datetime import datetime
 
 # AUTO TIMES SECONDS
 def RANDOM_BUTTON_TIME():
-    time = random.randint(3600, 172800)
+    time = random.randint(3600, 86400)
     return time
 
 FIRST_BUTTON_TIME = RANDOM_BUTTON_TIME()
 RESTART_TIME = datetime.now().timestamp()
 BUTTON_TIME = None
-
-AUTO_MESSAGE_TIME = 14400
 
 # COUNTDOWN
 COUNTDOWN_TIME = datetime(2023, 9, 7, 12, 00, 00)
