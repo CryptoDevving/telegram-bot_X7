@@ -1621,7 +1621,6 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             loans_text += f"`{chain_name}:`     {amount}\n"
             total += amount
 
-
         await message.delete()
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
@@ -1635,6 +1634,7 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
         return
+    
     if loan_type == "info":
         await update.message.reply_text(
             f"{loans.OVERVIEW}\n\n{api.get_quote()}",
@@ -1672,8 +1672,6 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(buttons),
         )
         
-
-
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
@@ -2089,37 +2087,26 @@ async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def pair(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = await update.message.reply_text("Getting Pair Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    url = "https://lb.drpc.org/ogrpc?network="
-    networks = {
-        "ETH": f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}",
-        "ARB": f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}",
-        "BSC": "https://bsc-dataseed.binance.org/",
-        "POLY": f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}",
-        "OPTI": f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}",
-        "BASE": "https://mainnet.base.org"
-    }
-
-    contract_instances = {}
-    for network, web3_url in networks.items():
-        web3 = Web3(Web3.HTTPProvider(web3_url))
+    pair_text = ""
+    total = 0
+    for chain in chains.CHAINS:
+        chain_web3 = chains.CHAINS[chain].w3
+        chain_name = chains.CHAINS[chain].name
+        web3 = Web3(Web3.HTTPProvider(chain_web3))
         contract = web3.eth.contract(
             address=to_checksum_address(ca.FACTORY),
-            abi=api.get_abi(ca.FACTORY, network.lower()),
+            abi=api.get_abi(ca.FACTORY, chain),
         )
         amount = contract.functions.allPairsLength().call()
-        contract_instances[network] = amount
+        pair_text += f"`{chain_name}:`   {amount}\n"
+        total += amount
     await message.delete()
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
             f"*X7 Finance Pair Count*\n\n"
-            f'`ETH:`       {contract_instances["ETH"]}\n'
-            f'`BSC:`       {contract_instances["BSC"]}\n'
-            f'`ARB:`       {contract_instances["ARB"]}\n'
-            f'`POLY:`     {contract_instances["POLY"]}\n'
-            f'`OPTI:`     {contract_instances["OPTI"]}\n'
-            f'`BASE:`     {contract_instances["BASE"]}\n'
-            f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
+            f"{pair_text}\n"
+            f"`TOTAL:`  {total}\n\n"
             f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
@@ -4136,6 +4123,10 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
         holders = info["holders"]
         mcap = info["mcap"]
         price, price_change = dextools.get_price(token_instance['ca'], token_instance['chain'].lower())
+        if price:
+            price = f"${price}"
+        else:
+            price = "N/A"
         volume = dextools.get_volume(token_instance['pair'], token_instance['chain'].lower())
         im1 = Image.open((random.choice(media.BLACKHOLE)))
         try:
@@ -4146,18 +4137,8 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
             result.save(r"media/tokenlogo.png")
             im2 = Image.open(r"media/tokenlogo.png")
         except Exception:
-            if token_instance['chain'].lower() == "eth":
-                im2 = Image.open(media.ETH_LOGO)
-            if token_instance['chain'].lower() == "bsc":
-                im2 = Image.open(media.BSC_LOGO)
-            if token_instance['chain'].lower() == "poly":
-                im2 = Image.open(media.POLY_LOGO)
-            if token_instance['chain'].lower() == "arb":
-                im2 = Image.open(media.ARB_LOGO)
-            if token_instance['chain'].lower() == "opti":
-                im2 = Image.open(media.OPTI_LOGO)
-            if token_instance['chain'].lower() == "base":
-                im2 = Image.open(media.BASE_LOGO)
+            if token_instance['chain'].lower() in chains.CHAINS:
+                im2 = Image.open(chains.CHAINS[token_instance['chain'].lower()].logo)
         im1.paste(im2, (720, 20), im2)
         i1 = ImageDraw.Draw(im1)
         i1.text(
