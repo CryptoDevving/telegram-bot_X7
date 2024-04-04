@@ -141,7 +141,7 @@ async def blocks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     time = round(t.time())
     blocks = {chain: api.get_block(chain, time) for chain in chains.CHAINS}
-    blocks_text = "\n".join([f"{block_type.upper()}: {block}" for block_type, block in blocks.items()])
+    blocks_text = "\n".join([f"{block_type.upper()}: `{block}`" for block_type, block in blocks.items()])
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1602,24 +1602,26 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if loan_type == "":
         message = await update.message.reply_text("Getting Loan Info, Please wait...")
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        url = "https://lb.drpc.org/ogrpc?network="
-        networks = {
-            "ETH": (f"{url}ethereum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL),
-            "ARB": (f"{url}arbitrum&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
-            "BSC": ("https://bsc-dataseed.binance.org/", ca.LPOOL_V1),
-            "POLY": (f"{url}polygon&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
-            "OPTI": (f"{url}optimism&dkey={os.getenv('DRPC_API_KEY')}", ca.LPOOL_V1),
-            "BASE": ("https://mainnet.base.org", ca.LPOOL_V1),
-        }
-        contract_instances = {}
-        for network, (web3_url, pool_contract) in networks.items():
-            web3 = Web3(Web3.HTTPProvider(web3_url))
+        loans_text = ""
+        total = 0
+        for chain in chains.CHAINS:
+            chain_web3 = chains.CHAINS[chain].w3
+            chain_name = chains.CHAINS[chain].name
+            if chain == "eth":
+                pool_contract = ca.LPOOL
+            else:
+                pool_contract = ca.LPOOL_V1
+            web3 = Web3(Web3.HTTPProvider(chain_web3))
             contract = web3.eth.contract(
                 address=to_checksum_address(pool_contract),
-                abi=api.get_abi(pool_contract, network.lower()),
-            )
+                abi=api.get_abi(pool_contract, chain),
+                )
+        
             amount = contract.functions.nextLoanID().call() - 1
-            contract_instances[network] = amount
+            loans_text += f"`{chain_name}:`     {amount}\n"
+            total += amount
+
+
         await message.delete()
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
@@ -1627,13 +1629,8 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"*X7 Finance Loan Count*\n"
                 f"Use `/loans info` for ILL info\n"
                 f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
-                f'`ETH:`       {contract_instances["ETH"]}\n'
-                f'`BSC:`       {contract_instances["BSC"]}\n'
-                f'`ARB:`       {contract_instances["ARB"]}\n'
-                f'`POLY:`     {contract_instances["POLY"]}\n'
-                f'`OPTI:`     {contract_instances["OPTI"]}\n'
-                f'`BASE:`     {contract_instances["BASE"]}\n\n'
-                f"`TOTAL:`   {sum(contract_instances.values())}\n\n"
+                f"{loans_text}\n"
+                f"`Total:`   {total}\n\n"
                 f"{api.get_quote()}",
             parse_mode="Markdown",
         )
@@ -1654,29 +1651,28 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     else:
-        if loan_type in loans.LOANS:
-            loan_terms = loans.LOANS[loan_type]
-            buttons = [
-                [
-                    InlineKeyboardButton(text="Ethereum", url=f"{urls.ETHER_ADDRESS}{loan_terms.ca}"),
-                    InlineKeyboardButton(text="BSC", url=f"{urls.BSC_ADDRESS}{loan_terms.ca}"),
-                ],
-                [
-                    InlineKeyboardButton(text="Polygon", url=f"{urls.POLY_ADDRESS}{loan_terms.ca}"),
-                    InlineKeyboardButton(text="Arbitrum", url=f"{urls.ARB_ADDRESS}{loan_terms.ca}"),
-                ],
-                [
-                    InlineKeyboardButton(text="Optimism", url=f"{urls.OPTI_ADDRESS}{loan_terms.ca}"),
-                    InlineKeyboardButton(text="Base", url=f"{urls.BASE_ADDRESS}{loan_terms.ca}"),
-                ],
-            ]
+        buttons = []
+        for chain in chains.CHAINS:
+            buttons_row = []
+            name = chains.CHAINS[chain].name
+            address = chains.CHAINS[chain].scan_address
+            if loan_type in loans.LOANS:
+                loan_terms = loans.LOANS[loan_type]
+            buttons_row.append(
+                    InlineKeyboardButton(
+                        text=name,
+                        url=f"{address}{loan_terms.ca}"
+                    )
+                )
+            buttons.append(buttons_row)
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=f"{loan_terms.name}\n{loan_terms.generate_terms()}\n\n",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
+        
 
-            await update.message.reply_photo(
-                photo=api.get_random_pioneer(),
-                caption=f"{loan_terms.name}\n{loan_terms.generate_terms()}\n\n",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup(buttons),
-            )
 
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
