@@ -51,15 +51,6 @@ async def admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def airdrop(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_sticker(sticker=media.CHAINS)
-    await update.message.reply_text(
-        f"{text.AIRDROP}\n\n"
-        f"{api.get_quote()}",
-        parse_mode="Markdown",
-    )
-
-
 async def alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),

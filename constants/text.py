@@ -10,7 +10,7 @@ ABOUT = (
     "the amount of capital in their wallet to launch projects on Xchange.\n\n"
     "• The network effect of project launches will result in billions of dollars in trading volume on Xchange, "
     "a percentage of this volume will flow back into the ecosystem into our native X7 tokens.\n\n"
-    "• X7 Finance has a novel DAO governance structure + IPFS website, that ensures complete decentralization "
+    "• X7 Finance has a novel DAO governance structure that ensures complete decentralization "
     "and censorship-resistance.\n\n"
     "Our Telegram network and X are community-run, in the spirit of decentralization.\n\n"
     f"• First target - Capturing 1% of the $100b daily trading volume on the EVM networks.\n\n"
@@ -18,7 +18,6 @@ ABOUT = (
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
     "downside risk.`\n\n#LongLiveDefi"
 )
-
 
 AIRDROP = (
     "*X7 Finance Airdrop Information*\n\nThe rollout of the Ecosystem Contracts on BNB Smart Chain, Polygon "
@@ -41,15 +40,13 @@ ALUMNI = (
     "@WoxieX - Creator of the OG dashboard -  x7community.space"
 )
 
-
 def CHAIN_ERROR():
     chains_list = "\n".join(chains.CHAINS)
-    return  f'Chain not recognised, please follow command with one of the following abbreviations:\n\n{chains_list.upper()}'
+    return  f'Chain not recognised, please follow command with one of the following abbreviations:\n\n{chains_list.lower()}'
 
 COMMANDS = (
     "/about - About X7 Finance\n"
     "/alerts - Xchange Alerts Channel\n"
-    "/airdrop - Airdrop Info\n"
     "/alumni - X7 Finance Alumni\n"
     "/announcements - Announcements Channel\n"
     "/ath - All Time High Info\n"
@@ -72,7 +69,6 @@ COMMANDS = (
     "/dao - DAO Function Info\n"
     "/deployer - Deployer Info\n"
     "/docs - X7 Finance Docs\n"
-    "/dune - X7  Finance Dune Analytics Dashboard\n"
     "/ecosystem - The X7 Finance Ecosystem\n"
     "/fact - Daily Fact\n"
     "/factory - X7 Finance Factory Contracts\n"
@@ -96,14 +92,13 @@ COMMANDS = (
     "/magisters - Magister Holder Info\n"
     "/mcap - X7 Finance Market Cap Info\n"
     "/media - X7 Finance Media Links\n"
-    "/mods - X7 Finance Mod roles\n"
     "/nft - NFT details\n"
     "/onchain - Last On Chain Message\n"
     "/pairs - Xchange Pairs Info\n"
     "/pfp - Create a Profile picture\n"
     "/pioneer - Pioneer NFT Info\n"
     "/pool - X7 Finance Lending Pool Info\n"
-    "/price - [followed by token] Token Price Info\n"
+    "/price - X7 Token Prices\n"
     "/quote - Daily Quote\n"
     "/router - X7 Finance Router Info\n"
     "/say - Text to Speech\n"
@@ -119,6 +114,7 @@ COMMANDS = (
     "/timestamp - Timestamp Conversion\n"
     "/today - On This Day\n"
     "/treasury - X7 Finance Treasury Info\n"
+    "/trending - Xchange Trending Pairs\n"
     "/twitter - X7 Finance Twitter/X\n"
     "/volume - Xchange Volume Info\n"
     "/wei - WEI Conversion\n"
@@ -135,6 +131,7 @@ COMMANDS = (
     "/x7104 - X7104 Info\n"
     "/x7105 - X7105 Info\n"
     "/xchange - Xchange Links\n"
+    "/x [followed by token] - Xchange Pair Price Info"
 )
 
 DELAY = (
