@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from moralis import evm_api
 from pycoingecko import CoinGeckoAPI
 from web3 import Web3
-from constants import ca, mappings, urls
+from constants import ca, chains, tokens, urls
 
 
 class Dextools:
@@ -19,8 +19,8 @@ class Dextools:
 
 
     def get_dex(self, pair, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         endpoint = f'pool/{chain_info.dext}/{pair.lower()}'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
@@ -38,8 +38,8 @@ class Dextools:
     
 
     def get_price(self, token, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         endpoint = f'token/{chain_info.dext}/{token.lower()}/price'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
@@ -77,8 +77,8 @@ class Dextools:
         
 
     def get_token_info(self, pair, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         endpoint = f"token/{chain_info.dext}/{pair.lower()}/info"
         response = requests.get(self.url + endpoint, headers=self.headers)
 
@@ -117,8 +117,8 @@ class Dextools:
             }
         
     def get_token_name(self, address, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         endpoint = f"token/{chain_info.dext}/{address.lower()}"
         response = requests.get(self.url + endpoint, headers=self.headers)
         if response.status_code == 200:
@@ -144,8 +144,8 @@ class Dextools:
 
 
     def get_liquidity(self, pair, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         endpoint = f'pool/{chain_info.dext}/{pair.lower()}/liquidity'
 
         response = requests.get(self.url + endpoint, headers=self.headers)
@@ -174,8 +174,8 @@ class Dextools:
         
 
     def get_volume(self, pair, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         endpoint = f"pool/{chain_info.dext}/{pair.lower()}/price"
 
         response = requests.get(self.url + endpoint, headers=self.headers)
@@ -271,8 +271,8 @@ class Defined:
 
 
     def get_price_change(self, address, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
 
         current_timestamp = int(datetime.now().timestamp()) - 300
         one_hour_ago_timestamp = int((datetime.now() - timedelta(hours=1)).timestamp())
@@ -339,8 +339,8 @@ class Defined:
 
 
     def get_token_image(self, token, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
 
         image = f'''
             query {{
@@ -365,8 +365,8 @@ class Defined:
 
 
     def get_pair(self, address, chain):
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
         
         pair_query = f"""query {{
             listPairsWithMetadataForToken (tokenAddress: "{address}" networkId: {chain_info.id}) {{
@@ -390,8 +390,8 @@ class Defined:
 
     def get_volume(self, pair, chain):
         try:
-            if chain in mappings.CHAINS:
-                chain_info = mappings.CHAINS[chain]
+            if chain in chains.CHAINS:
+                chain_info = chains.CHAINS[chain]
 
             volume = f'''
                 query {{
@@ -443,9 +443,9 @@ class Opensea:
 
 
 def get_abi(contract: str, chain: str) -> str:
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
     response = requests.get(url)
     data = response.json()
@@ -453,9 +453,9 @@ def get_abi(contract: str, chain: str) -> str:
 
 
 def get_block(chain: str, time: "int") -> str:
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=block&action=getblocknobytime&timestamp={time}&closest=before{chain_info.key}"
     response = requests.get(url)
     data = response.json()
@@ -463,9 +463,9 @@ def get_block(chain: str, time: "int") -> str:
 
 
 def get_daily_tx_count(contract: str, chain: str, ) -> int:
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     yesterday = int(t.time()) - 86400
     block_yesterday = get_block(chain, yesterday)
     block_now = get_block(chain, int(t.time()))
@@ -482,18 +482,18 @@ def get_daily_tx_count(contract: str, chain: str, ) -> int:
 
 
 def get_gas(chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=gastracker&action=gasoracle{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
 
 def get_native_balance(wallet, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=account&action=balancemulti&address={wallet}&tag=latest{chain_info.key}"
     response = requests.get(url)
     data = response.json()
@@ -528,9 +528,9 @@ def get_native_price(token):
 
 
 def get_pool_liq_balance(wallet, token, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
     response = requests.Session().get(url)
     data = response.json()
@@ -539,10 +539,10 @@ def get_pool_liq_balance(wallet, token, chain):
 
 def get_stables_balance(wallet, token, chain):
     try:
-        if chain not in mappings.CHAINS:
+        if chain not in chains.CHAINS:
             raise ValueError(f"Invalid chain: {chain}")
 
-        chain_info = mappings.CHAINS[chain]
+        chain_info = chains.CHAINS[chain]
         url = f"{chain_info.api}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
         response = requests.get(url)
         data = response.json()
@@ -552,9 +552,9 @@ def get_stables_balance(wallet, token, chain):
 
 
 def get_supply(token, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=stats&action=tokensupply&contractaddress={token}{chain_info.key}"
     response = requests.get(url)
     data = response.json()
@@ -563,9 +563,9 @@ def get_supply(token, chain):
 
 def get_token_balance(wallet, token, chain):
     try:
-        if chain not in mappings.CHAINS:
+        if chain not in chains.CHAINS:
             raise ValueError(f"Invalid chain: {chain}")
-        chain_info = mappings.CHAINS[chain]
+        chain_info = chains.CHAINS[chain]
         url = f"{chain_info.api}?module=account&action=tokenbalance&contractaddress={token}&address={wallet}&tag=latest{chain_info.key}"
         response = requests.get(url)
         data = response.json()
@@ -575,36 +575,36 @@ def get_token_balance(wallet, token, chain):
 
 
 def get_tx_from_hash(tx, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=proxy&action=eth_getTransactionByHash&txhash={tx}{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
 
 def get_tx(address, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=account&action=txlist&sort=desc&address={address}{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
 
 def get_internal_tx(address, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=account&action=txlistinternal&sort=desc&address={address}{chain_info.key}"
     response = requests.get(url)
     return response.json()
 
 
 def get_verified(contract, chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=contract&action=getsourcecode&address={contract}{chain_info.key}"
     response = requests.get(url)
     data = response.json()
@@ -612,9 +612,9 @@ def get_verified(contract, chain):
 
 
 def get_x7r_supply(chain):
-    if chain not in mappings.CHAINS:
+    if chain not in chains.CHAINS:
         raise ValueError(f"Invalid chain: {chain}")
-    chain_info = mappings.CHAINS[chain]
+    chain_info = chains.CHAINS[chain]
     url = f"{chain_info.api}?module=account&action=tokenbalance&contractaddress={ca.X7R}&address={ca.DEAD}&tag=latest{chain_info.key}"
     response = requests.get(url)
     data = response.json()
@@ -757,8 +757,8 @@ def get_fact():
 
 def get_nft_data(nft, chain):
     try:
-        if chain in mappings.CHAINS:
-            chain_info = mappings.CHAINS[chain]
+        if chain in chains.CHAINS:
+            chain_info = chains.CHAINS[chain]
 
         url = f"https://api.blockspan.com/v1/collections/contract/{nft}?chain={chain_info.blockspan}"
         response = requests.get(
@@ -792,8 +792,8 @@ def get_nft_data(nft, chain):
 
 
 def get_nft_holder_list(nft, chain):
-    if chain in mappings.MORALIS_CHAINS:
-        chain = mappings.MORALIS_CHAINS[chain]
+    if chain in chains.MORALIS_CHAINS:
+        chain = chains.MORALIS_CHAINS[chain]
     return evm_api.nft.get_nft_owners(
         api_key=os.getenv("MORALIS_API_KEY"),
         params={"chain": chain, "format": "decimal", "address": nft},
@@ -855,8 +855,8 @@ def get_random_pioneer():
 
 
 def get_scan(token: str, chain: str) -> dict:
-    if chain in mappings.CHAINS:
-        chain_info = mappings.CHAINS[chain]
+    if chain in chains.CHAINS:
+        chain_info = chains.CHAINS[chain]
     url = f"https://api.gopluslabs.io/api/v1/token_security/{chain_info.id}?contract_addresses={token}"
     response = requests.get(url)
     return response.json()["result"]

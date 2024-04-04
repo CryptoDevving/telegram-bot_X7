@@ -17,9 +17,7 @@ defined = api.Defined()
 dextools = api.Dextools()
 chain = "poly"
 chain_native = "matic"
-poly_url = f"https://lb.drpc.org/ogrpc?network=polygon&dkey={os.getenv('DRPC_API_KEY')}"
-web3 = Web3(Web3.HTTPProvider(poly_url))
-
+web3 = Web3(Web3.HTTPProvider(urls.POLY_RPC))
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
 ill001 = web3.eth.contract(address=ca.ILL001, abi=api.get_abi(ca.ILL001, chain))

@@ -1,5 +1,5 @@
 # TEXT
-from constants import mappings
+from constants import chains
 
 
 ABOUT = (
@@ -43,8 +43,8 @@ ALUMNI = (
 
 
 def CHAIN_ERROR():
-    chains = "\n".join(mappings.CHAINS)
-    return  f'Chain not recognised, please follow command with one of the following abbreviations:\n\n{chains.upper()}'
+    chains_list = "\n".join(chains.CHAINS)
+    return  f'Chain not recognised, please follow command with one of the following abbreviations:\n\n{chains_list.upper()}'
 
 COMMANDS = (
     "/about - About X7 Finance\n"

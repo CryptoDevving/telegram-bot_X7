@@ -17,8 +17,7 @@ defined = api.Defined()
 dextools = api.Dextools()
 chain = "base"
 chain_native = "eth"
-base_url = f"https://lb.drpc.org/ogrpc?network=base&dkey={os.getenv('DRPC_API_KEY')}"
-web3 = Web3(Web3.HTTPProvider(base_url))
+web3 = Web3(Web3.HTTPProvider(urls.BASE_RPC))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))

@@ -22,7 +22,6 @@ FIRST_USER_CLICKED = False
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return
 
-
 sentry_sdk.init(
     dsn = os.getenv("SENTRY_DSN"),
     traces_sample_rate=1.0
@@ -40,6 +39,7 @@ async def error(update: Update, context: CallbackContext):
             await update.message.reply_text(
                 "Error while loading data, please try again"
             )
+            print({context.error})
             sentry_sdk.capture_exception(
                 Exception(f"{message.text} caused error: {context.error}")
                 )
@@ -332,5 +332,5 @@ if __name__ == "__main__":
     )
 
     ## RUN ##
-    scanners()
+    #scanners()
     application.run_polling(allowed_updates=Update.ALL_TYPES)

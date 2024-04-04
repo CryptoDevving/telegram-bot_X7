@@ -17,8 +17,7 @@ defined = api.Defined()
 dextools = api.Dextools()
 chain = "bsc"
 chain_native = "bnb"
-bsc_url = f"https://lb.drpc.org/ogrpc?network=bsc&dkey={os.getenv('DRPC_API_KEY')}"
-web3 = Web3(Web3.HTTPProvider(bsc_url))
+web3 = Web3(Web3.HTTPProvider(urls.BSC_RPC))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))

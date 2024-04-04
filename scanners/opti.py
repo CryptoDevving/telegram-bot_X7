@@ -17,8 +17,7 @@ defined = api.Defined()
 dextools = api.Dextools()
 chain = "opti"
 chain_native = "eth"
-opti_url = f"https://lb.drpc.org/ogrpc?network=optimism&dkey={os.getenv('DRPC_API_KEY')}"
-web3 = Web3(Web3.HTTPProvider(opti_url))
+web3 = Web3(Web3.HTTPProvider(urls.OPTI_RPC))
 
 
 factory = web3.eth.contract(address=ca.FACTORY, abi=api.get_abi(ca.FACTORY, chain))
