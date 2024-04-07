@@ -2809,6 +2809,14 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
             text="X7 Xchange Factory", url=f"{chain_url}{ca.FACTORY}"
         ),
     ],
+    [
+        InlineKeyboardButton(
+            text="X7 Xchange Fee Handler", url=f"{chain_url}{ca.FEE_TO}"
+        ),
+        InlineKeyboardButton(
+            text="X7 Default Token List", url=f"{chain_url}{ca.DEFAULT_TOKEN_LIST}"
+        ),
+    ],
     ]
 
     await update.message.reply_photo(
