@@ -759,6 +759,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain = chains.DEFAULT_CHAIN
     if chain in chains.CHAINS:
         chain_name = chains.CHAINS[chain].name
+        chain_tx = chains.CHAINS[chain].scan_tx
     else:
         await update.message.reply_text(text.CHAIN_ERROR())
         return
@@ -782,7 +783,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{urls.ETHER_TX}{tx["result"][0]["hash"]}',
+                            url=f'{chain_tx}{tx["result"][0]["hash"]}',
                         )
                     ],
                     [
@@ -813,7 +814,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     [
                         InlineKeyboardButton(
                             text="View on chain",
-                            url=f'{urls.ETHER_TX}{tx["result"][0]["hash"]}',
+                            url=f'{chain_tx}{tx["result"][0]["hash"]}',
                         )
                     ],
                     [
