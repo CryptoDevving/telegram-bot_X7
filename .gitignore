@@ -2,6 +2,6 @@
 _pycache_/
 __pycache__/
 .vscode/
-pyvenv.cfg
 .venv/
 .env
+pyvenv.cfg

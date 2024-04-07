@@ -863,6 +863,55 @@ def get_nft_data(nft, chain):
         return {"holder_count": 0, "floor_price": "N/A"}
 
 
+<<<<<<< HEAD
+=======
+def get_nft_holder_list(nft, chain):
+    if chain in chains.MORALIS_CHAINS:
+        chain = chains.MORALIS_CHAINS[chain]
+    return evm_api.nft.get_nft_owners(
+        api_key=os.getenv("MORALIS_API_KEY"),
+        params={"chain": chain, "format": "decimal", "address": nft},
+    )
+
+
+def get_proposers(chain):
+    today = datetime.now().strftime("%Y-%m-%d")
+    url_graphql = "https://streaming.bitquery.io/graphql"
+    headers_graphql = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {os.getenv("BITQUERY_API_KEY")}'
+    }
+
+    graphql_query = f'''
+    {{
+      EVM(dataset: archive, network: {chain}) {{
+        TokenHolders(
+          date: "{today}"
+          tokenSmartContract: "{ca.X7DAO}"
+          where: {{ Balance: {{ Amount: {{ ge: "500000" }} }} }}
+        ) {{
+          uniq(of: Holder_Address)
+        }}
+      }}
+    }}
+    '''
+    payload_graphql = json.dumps({'query': graphql_query})
+
+    try:
+        response_graphql = requests.post(url_graphql, headers=headers_graphql, data=payload_graphql)
+
+        if response_graphql.status_code == 200:
+            result = response_graphql.json()
+            number_of_holders = result.get('data', {}).get('EVM', {}).get('TokenHolders', [])[0].get('uniq', '0')
+            return int(number_of_holders)
+        else:
+            return "N/A"
+
+    except requests.RequestException as e:
+        return "N/A"
+
+
+>>>>>>> 5501d5d0b08f82c5a7de3f4d8238398b709e9386
 def get_quote():
     response = requests.get("https://type.fit/api/quotes")
     data = response.json()
