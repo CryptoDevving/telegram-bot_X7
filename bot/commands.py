@@ -2338,16 +2338,8 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(text.CHAIN_ERROR)
         return
 
-    x7r_price, x7r_change_raw  = dextools.get_price(ca.X7R, chain)
-    x7r_change = (f"{x7r_change_raw['one_hour']}\n"
-        f"{x7r_change_raw['six_hour']}\n"
-        f"{x7r_change_raw['one_day']}")
-    
-
-    x7dao_price, x7dao_change_raw  = dextools.get_price(ca.X7DAO, chain)
-    x7dao_change = (f"{x7dao_change_raw['one_hour']}\n"
-        f"{x7dao_change_raw['six_hour']}\n"
-        f"{x7dao_change_raw['one_day']}")
+    x7r_price, x7r_change  = dextools.get_price(ca.X7R, chain)
+    x7dao_price, x7dao_change  = dextools.get_price(ca.X7DAO, chain)
 
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
