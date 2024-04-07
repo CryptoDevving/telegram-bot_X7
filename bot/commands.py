@@ -404,7 +404,7 @@ async def compare(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-                f"*X7 Finance Market Cap Comparison*\n\n"
+                f"*X7 Finance Market Cap (ETH) Comparison*\n\n"
                 f"Please enter X7 token first followed by token to compare\n\n"
                 f"ie. `/compare x7r uni`\n\n"
                 f"{api.get_quote()}",
@@ -754,8 +754,16 @@ async def dao_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chain = " ".join(context.args).lower()
+    if chain == "":
+        chain = chains.DEFAULT_CHAIN
+    if chain in chains.CHAINS:
+        chain_name = chains.CHAINS[chain].name
+    else:
+        await update.message.reply_text(text.CHAIN_ERROR())
+        return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
-    tx = api.get_tx(ca.DEPLOYER, "eth")
+    tx = api.get_tx(ca.DEPLOYER, chain)
     time = datetime.utcfromtimestamp(int(tx["result"][0]["timeStamp"]))
     duration = datetime.utcnow() - time
     days, hours, minutes = api.get_duration_days(duration)
@@ -793,7 +801,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
             caption=
-                f"*Deployer Wallet last TX*\n\n{time} UTC\n"
+                f"*Deployer Wallet last TX ({chain_name})*\n\n{time} UTC\n"
                 f"{days} days, {hours} hours and {minutes} minutes ago:\n\n"
                 f"`{name}`\n\n"
                 f"This command will pull last TX on the X7 Finance deployer wallet."
@@ -2019,6 +2027,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def on_chain(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
+    
     tx= api.get_tx(ca.DEPLOYER, "eth")
     tx_filter = [d for d in tx["result"] if d["to"] in f"{ca.DEAD}".lower()]
     recent_tx = max(tx_filter, key=lambda tx: int(tx["timeStamp"]), default=None)
