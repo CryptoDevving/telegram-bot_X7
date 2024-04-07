@@ -10,7 +10,7 @@ from translate import Translator
 from PIL import Image, ImageDraw, ImageFont
 from web3 import Web3
 
-from constants import ca, chains, dao, loans, nfts, splitters, tax, text, urls  
+from constants import ca, chains, dao, loans, nfts, splitters, tax, text, tokens, urls  
 from hooks import api, db, dune 
 import media
 from variables import times, giveaway
@@ -190,7 +190,7 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_web3 = chains.CHAINS[chain].w3
         chain_native =  chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Loan Rates Info, Please wait...")
 
@@ -238,7 +238,7 @@ async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_url = chains.CHAINS[chain].scan_token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     burn = api.get_token_balance(ca.DEAD, ca.X7R, chain)
@@ -275,7 +275,7 @@ async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_url = chains.CHAINS[chain].xchange
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     await update.message.reply_photo(
@@ -338,7 +338,7 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         chain_name = chains.CHAINS[chain].name
         dext = chains.CHAINS[chain].dext
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     await update.message.reply_photo(
@@ -538,7 +538,7 @@ async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     value = float(price) * float(amount)
@@ -568,7 +568,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_web3 = chains.CHAINS[chain].w3
         native = chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     web3 = Web3(Web3.HTTPProvider(chain_web3))
@@ -761,7 +761,7 @@ async def deployer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_tx = chains.CHAINS[chain].scan_tx
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     tx = api.get_tx(ca.DEPLOYER, chain)
@@ -879,7 +879,7 @@ async def ebb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_url = chains.CHAINS[chain].scan_address
         chain_native = chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Buy Back Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -1074,7 +1074,7 @@ async def fees(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_native = chains.CHAINS[chain].token
         chain_tx = chains.CHAINS[chain].scan_tx
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     now = datetime.utcnow()
@@ -1159,7 +1159,7 @@ async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_url = chains.CHAINS[chain].gas
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     gas_data = api.get_gas(chain)
@@ -1210,7 +1210,7 @@ async def holders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chains.CHAINS:
         chain_name = chains.CHAINS[chain].name
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     if chain == "eth": 
@@ -1376,7 +1376,7 @@ async def liquidity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_native = chains.CHAINS[chain].token
         pair_addresses = chains.CHAINS[chain].pairs
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Liquidity Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -1483,7 +1483,7 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_url = chains.CHAINS[chain].scan_address
         chain_web3 = chains.CHAINS[chain].w3
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Liquidation Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -1546,7 +1546,7 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_native = chains.CHAINS[chain].token
         chain_web3 = chains.CHAINS[chain].w3
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = api.get_native_price(chain_native)
@@ -1694,7 +1694,7 @@ async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         x7r_pair = chains.CHAINS[chain].pairs[0]
         x7dao_pair = chains.CHAINS[chain].pairs[1]
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     def calculate_remaining_time(web3, contract, token_pair, now):
@@ -1763,7 +1763,7 @@ async def magisters(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_url = chains.CHAINS[chain].scan_token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     data = api.get_nft_data(ca.MAGISTER, chain)
@@ -1802,7 +1802,7 @@ async def mcap(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chains.CHAINS:
         chain_name = chains.CHAINS[chain].name
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     caps_info = {}
@@ -1933,7 +1933,7 @@ async def nft(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_os = chains.CHAINS[chain].opensea
         chain_native = chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting NFT Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -2272,7 +2272,7 @@ async def pool(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chain_native = chains.CHAINS[chain].token
             chain_web3 = chains.CHAINS[chain].w3
         else:
-            await update.message.reply_text(text.CHAIN_ERROR())
+            await update.message.reply_text(text.CHAIN_ERROR)
             return
         if chain == "eth":
             pool_address = ca.LPOOL
@@ -2335,7 +2335,7 @@ async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chains.CHAINS:
         chain_dext = chains.CHAINS[chain].dext
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     x7r_price, x7r_change_raw  = dextools.get_price(ca.X7R, chain)
@@ -2441,7 +2441,7 @@ async def scan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if chain is not None and chain not in chains.CHAINS:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     message = await update.message.reply_text("Scanning, Please wait...")
@@ -2668,7 +2668,7 @@ async def signers(update: Update, context: ContextTypes.DEFAULT_TYPE):
         com_wallet = chains.CHAINS[chain].com_multi
         dev_wallet = chains.CHAINS[chain].dev_multi
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     try:
         dev_response = api.get_signers(dev_wallet)
@@ -2717,7 +2717,7 @@ async def smart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
         chain_name = chains.CHAINS[chain].name
         chain_url = chains.CHAINS[chain].scan_address
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
         
     buttons = [
@@ -2832,7 +2832,7 @@ async def splitters_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_url = chains.CHAINS[chain].scan_address
         chain_native = chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     treasury_eth_raw = api.get_native_balance(ca.TREASURY_SPLITTER, chain)
@@ -2937,7 +2937,7 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_pair = chains.CHAINS[chain].pairs
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Supply Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -2993,7 +2993,7 @@ async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chains.CHAINS:
         chain_name = chains.CHAINS[chain].name
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     tax_info = tax.GENERATE_INFO(chain)
     await update.message.reply_photo(
@@ -3161,7 +3161,7 @@ async def treasury(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_native = chains.CHAINS[chain].token
         chain_com_multi = chains.CHAINS[chain].com_multi
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Treasury Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -3472,7 +3472,7 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_url = chains.CHAINS[chain].scan_address
         chain_native = chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     message = await update.message.reply_text("Getting Wallet Info, Please wait...")
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
@@ -3595,25 +3595,6 @@ async def wei(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-async def wen(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id == int(os.getenv("OWNER_TELEGRAM_CHANNEL_ID")):
-        if times.BUTTON_TIME is not None:
-            time = times.BUTTON_TIME
-        else:    
-            time = times.FIRST_BUTTON_TIME
-        target_timestamp = times.RESTART_TIME + time
-        time_difference_seconds = target_timestamp - datetime.now().timestamp()
-        time_difference = timedelta(seconds=time_difference_seconds)
-        hours, remainder = divmod(time_difference.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-
-        await update.message.reply_text(f"Next Click Me:\n\n{hours} hours, {minutes} minutes, {seconds} seconds\n\n"
-        )
-    else:
-        await update.message.reply_text(f"{text.MODS_ONLY}")
-
-
 async def word(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         word = " ".join(context.args).lower()
@@ -3663,7 +3644,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_name = chains.CHAINS[chain].name
         chain_native = chains.CHAINS[chain].token
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
 
     native_price = api.get_native_price(chain_native)
@@ -3713,9 +3694,9 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7DAO[chain].pair
+        chain_pair = tokens.X7DAO[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     info = dextools.get_token_info(ca.X7DAO, chain)
@@ -3771,9 +3752,9 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7R[chain].pair
+        chain_pair = tokens.X7R[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     info = dextools.get_token_info(ca.X7R, chain)
@@ -3829,9 +3810,9 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7101[chain].pair
+        chain_pair = tokens.X7101[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     
     info = dextools.get_token_info(ca.X7101, chain)
@@ -3887,9 +3868,9 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7102[chain].pair
+        chain_pair = tokens.X7102[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     info = dextools.get_token_info(ca.X7102, chain)
     holders = info["holders"]
@@ -3944,9 +3925,9 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7103[chain].pair
+        chain_pair = tokens.X7103[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     info = dextools.get_token_info(ca.X7103, chain)
     holders = info["holders"]
@@ -4001,9 +3982,9 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7104[chain].pair
+        chain_pair = tokens.X7104[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     info = dextools.get_token_info(ca.X7104, chain)
     holders = info["holders"]
@@ -4058,9 +4039,9 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan = chains.CHAINS[chain].scan_name
         chain_url = chains.CHAINS[chain].scan_token
         chain_xchange = chains.CHAINS[chain].xchange
-        chain_pair = chains.X7105[chain].pair
+        chain_pair = tokens.X7105[chain].pair
     else:
-        await update.message.reply_text(text.CHAIN_ERROR())
+        await update.message.reply_text(text.CHAIN_ERROR)
         return
     info = dextools.get_token_info(ca.X7105, chain)
     holders = info["holders"]

@@ -1,10 +1,12 @@
 # TEXT
+
+from hooks import api
 from constants import chains
 
 
 ABOUT = (
     "*X7 Finance - Home of Xchange*\n\n"
-    "X7 Finance is an ecosystem of innovative smart contracts, and the centre of the ecosystem is the X7 Finance"
+    f"X7 Finance is an ecosystem of innovative smart contracts on:\n\n{chains.SUPPORTED}\n\nAt the centre of the ecosystem is the X7 Finance"
     ' Lending Pool, a pool that provides those with visionary ideas access to Initial Liquidity Loans "ILL".\n\n'
     "At its core, Initial Liquidity Loans will provide anyone with a good idea the ability to raise 10-1000X "
     "the amount of capital in their wallet to launch projects on Xchange.\n\n"
@@ -18,6 +20,7 @@ ABOUT = (
     "unflinching reliability of code and distributed consensus can provide capital while eliminating significant "
     "downside risk.`\n\n#LongLiveDefi"
 )
+
 
 AIRDROP = (
     "*X7 Finance Airdrop Information*\n\nThe rollout of the Ecosystem Contracts on BNB Smart Chain, Polygon "
@@ -33,6 +36,7 @@ AIRDROP = (
     "are released on other chains.\n\nThese airdrop snapshots will occur just prior to the token launch"
 )
 
+
 ALUMNI = (
     "@Callmelandlord - The Godfather of the X7 Finance community, the OG, the creator - OG Community Signer\n\n"
     "@Zaratustra  - Defi extraordinaire and protocol prophet - OG Community Signer\n\n"
@@ -40,9 +44,10 @@ ALUMNI = (
     "@WoxieX - Creator of the OG dashboard -  x7community.space"
 )
 
-def CHAIN_ERROR():
-    chains_list = "\n".join(chains.CHAINS)
-    return  f'Chain not recognised, please follow command with one of the following abbreviations:\n\n{chains_list.lower()}'
+
+CHAIN_ERROR = (
+    f'Chain not recognised, X7 Finance is avaliable on:\n\n{chains.SUPPORTED}\n\n')
+
 
 COMMANDS = (
     "/about - About X7 Finance\n"
@@ -134,6 +139,7 @@ COMMANDS = (
     "/x [followed by token] - Xchange Pair Price Info"
 )
 
+
 DELAY = (
     "To ensure our code is trusted and that the release is flawless, X7's "
     "Leveraged DEX trading will not begin until we have published third party "
@@ -144,6 +150,7 @@ DELAY = (
     "`A delayed game is eventually good, a bad game is bad forever.\n\n"
     "- Shigeru Miyamoto`"
 )
+
 
 DISCOUNT = (
     "20 Lucrative X7 Borrowing Incentive NFTs have been minted, granting;\n\n"
@@ -169,6 +176,7 @@ DISCOUNT = (
     "The amount based discount is recognizing that a loan origination now is more valuable than a possible loan "
     "origination later.\n\nThese sliding scales can be modified to ensure they have optimal market fit."
 )
+
 
 ECOSYSTEM = (
     "*X7 Finance Ecosystem*\n\n• *X7R*\nX7's original launched token. Hodl as a percentage of all "
@@ -199,9 +207,6 @@ ENDORSE = (
 )
 
 
-MODS_ONLY = "You do not have permission to do this. #TrustNoOne"
-
-
 VOLUME = (
     "*Driving XChange Volume*\n\nOur focus is crystal clear: we're all about boosting trading volume on Xchange. Why? Because trading drives growth and growth drives rewards.\n\n"
     "*0.1% Back to the Ecosystem*\n\n"
@@ -212,16 +217,10 @@ VOLUME = (
     f"Did you know? You can achieve trading volume with as little as $500 in ETH and $500 in the paired token. Your contribution matters!\n\nhttps://beta.x7.finance/#/add/v2/ETH'"
 )
 
-WELCOME = (
-    "Home of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"
-    "• Ethereum\n"
-    "• Base\n"
-    "• Binance Smart Chain\n"
-    "• Arbitrum\n"
-    "• Optimism\n"
-    "• Polygon\n\n"
-    "Verify as human and check out the links to get started!"
-)
+def WELCOME(user):
+    return (f"Welcome {api.escape_markdown(user)} to X7 Finance\n\nHome of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"
+    f"{chains.SUPPORTED}\n\n"
+    "Verify as human and check out the links to get started!")
 
 
 QUOTES = [

@@ -102,8 +102,7 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             welcome_message = await update.effective_chat.send_video(
                 video=open(media.WELCOMEVIDEO, 'rb'),
                 caption=
-                    f"Welcome {api.escape_markdown(new_member_username)} to X7 Finance\n\n"
-                    f"{text.WELCOME}",
+                    f"{text.WELCOME(new_member_username)}",
                 parse_mode="Markdown",
                 reply_markup=InlineKeyboardMarkup(
                     [

@@ -22,6 +22,7 @@ FIRST_USER_CLICKED = False
 async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return
 
+
 sentry_sdk.init(
     dsn = os.getenv("SENTRY_DSN"),
     traces_sample_rate=1.0

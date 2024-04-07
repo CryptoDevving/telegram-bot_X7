@@ -1,13 +1,15 @@
-# MAPPINGS
+# CHAINS
 
 import os
 from constants import ca, urls
 import media
-from web3 import Web3
-import random
 
 
 DEFAULT_CHAIN = "eth"
+
+
+SUPPORTED = (
+    "Base\nEthereum\nArbitrum\nBSC\nOptimism\nPolygon")
 
 
 class ChainInfo:
@@ -198,3 +200,10 @@ CHAINS = {
         ca.X7105_PAIR_POLY]
     )
 }
+
+CHAINS["polygon"] = CHAINS["poly"]
+CHAINS["bnb"] = CHAINS["bsc"]
+CHAINS["binance"] = CHAINS["bsc"]
+CHAINS["optimism"] = CHAINS["opti"]
+CHAINS["op"] = CHAINS["opti"]
+CHAINS["arbitrum"] = CHAINS["arb"]
