@@ -1,14 +1,14 @@
 from telegram import *
 from telegram.ext import *
 
-import os, asyncio
+import os
 from datetime import datetime, timedelta
 
-from constants import text
 from hooks import  db, api
 from variables import times
 
 defined = api.Defined()
+
 
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id

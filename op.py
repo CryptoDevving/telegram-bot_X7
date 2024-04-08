@@ -15,7 +15,7 @@ import media
 sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 defined = api.Defined()
 dextools = api.Dextools()
-chain = "opti"
+chain = "op"
 chain_native = "eth"
 web3 = Web3(Web3.HTTPProvider(urls.OPTI_RPC))
 

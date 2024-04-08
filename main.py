@@ -6,8 +6,8 @@ from datetime import datetime
 
 from bot import admin, auto, commands, welcome
 from hooks import api, db
-import scanners
 from variables import times
+from constants import chains
 
 
 application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
@@ -52,20 +52,16 @@ async def error(update: Update, context: CallbackContext):
 
 
 def scanners():
-    chains = [
-        "scanners/bsc.py",
-        "scanners/eth.py",
-        "scanners/arb.py",
-        "scanners/poly.py",
-        "scanners/opti.py",
-##        "scanner/base.py",
-    ]
     python_executable = sys.executable
     processes = []
-    for chain in chains:
-        command = [python_executable, chain]
-        process = subprocess.Popen(command)
-        processes.append(process)
+    for chain_name, chain_info in chains.CHAINS.items():
+        script_filename = chain_name + ".py"
+        script_path = os.path.join(os.path.dirname(__file__), script_filename)
+        if os.path.exists(script_path):
+            command = [python_executable, script_path]
+            process = subprocess.Popen(command)
+            processes.append(process)
+
 
 
 async def button_send(context: ContextTypes.DEFAULT_TYPE):
