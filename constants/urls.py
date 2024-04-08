@@ -11,7 +11,7 @@ XCHANGE_BUY_POLY = "https://app.x7.finance/#/swap?outputCurrency="
 XCHANGE_BUY_ARB = "https://app.x7.finance/#/swap?outputCurrency="
 XCHANGE_BUY_OPTI = "https://app.x7.finance/#/swap?outputCurrency="
 XCHANGE_BUY_BASE = "https://app.x7.finance/#/swap?outputCurrency="
-XCHANGE_FUND = "https://app.x7.finance/#/fund"
+XCHANGE_FUND = "https://www.x7finance.org/fund"
 
 
 # TG

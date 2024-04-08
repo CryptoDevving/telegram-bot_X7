@@ -1341,8 +1341,7 @@ async def leaderboard(update: Update, context: CallbackContext):
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}"),
-            InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}"),
+            InlineKeyboardButton(text="Xchange", url=f"{urls.WEBSITE}"),
         ],
         [
             InlineKeyboardButton(text="Snapshot", url=f"{urls.SNAPSHOT}"),
@@ -3643,6 +3642,7 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if chain in chains.CHAINS:
         chain_name = chains.CHAINS[chain].name
         chain_native = chains.CHAINS[chain].token
+        chain_scan = chains.CHAINS[chain].scan_token
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
@@ -3676,6 +3676,12 @@ async def x7d(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     InlineKeyboardButton(
                         text="X7D Funding Dashboard",
                         url=f"{urls.XCHANGE_FUND}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="X7D Contract",
+                        url=f"{chain_scan + ca.X7D}",
                     )
                 ],
             ]
