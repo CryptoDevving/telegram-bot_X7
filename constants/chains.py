@@ -8,10 +8,6 @@ import media
 DEFAULT_CHAIN = "eth"
 
 
-SUPPORTED = (
-    "Base\nEthereum\nArbitrum\nBSC\nOptimism\nPolygon")
-
-
 class ChainInfo:
     def __init__(self, name: str, scan_name: str, id: str,  token: str, logo: str, xchange: str, scan_token: str, scan_address: str, scan_tx: str, gas: str, dext: str, opensea: str, blockspan: str, w3: str, api: str, key: str, com_multi: str, dev_multi: str, pairs: list):
         self.name = name
@@ -145,7 +141,7 @@ CHAINS = {
         ca.X7105_PAIR_ARB,]
         
     ),
-    "opti": ChainInfo(
+    "op": ChainInfo(
         "Optimism",
         "Optimisticscan",
         "10",
@@ -201,9 +197,12 @@ CHAINS = {
     )
 }
 
-CHAINS["polygon"] = CHAINS["poly"]
-CHAINS["bnb"] = CHAINS["bsc"]
-CHAINS["binance"] = CHAINS["bsc"]
-CHAINS["optimism"] = CHAINS["opti"]
-CHAINS["op"] = CHAINS["opti"]
-CHAINS["arbitrum"] = CHAINS["arb"]
+
+def FULL_NAMES():
+    chain_names = [chain.name for chain in CHAINS.values()]
+    return "\n".join(chain_names)
+
+
+def SHORT_NAMES():
+    chain_list = list(CHAINS.keys())
+    return "\n".join(chain_list)

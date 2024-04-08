@@ -6,7 +6,7 @@ from constants import chains
 
 ABOUT = (
     "*X7 Finance - Home of Xchange*\n\n"
-    f"X7 Finance is an ecosystem of innovative smart contracts on:\n\n{chains.SUPPORTED}\n\nAt the centre of the ecosystem is the X7 Finance"
+    f"X7 Finance is an ecosystem of innovative smart contracts on:\n\n{chains.FULL_NAMES()}\n\nAt the centre of the ecosystem is the X7 Finance"
     ' Lending Pool, a pool that provides those with visionary ideas access to Initial Liquidity Loans "ILL".\n\n'
     "At its core, Initial Liquidity Loans will provide anyone with a good idea the ability to raise 10-1000X "
     "the amount of capital in their wallet to launch projects on Xchange.\n\n"
@@ -46,7 +46,7 @@ ALUMNI = (
 
 
 CHAIN_ERROR = (
-    f'Chain not recognised, X7 Finance is avaliable on:\n\n{chains.SUPPORTED}\n\n')
+    f'Chain not recognised, Please use on of the following abbreviations:\n\n{chains.SHORT_NAMES()}\n\n')
 
 
 COMMANDS = (
@@ -219,7 +219,7 @@ VOLUME = (
 
 def WELCOME(user):
     return (f"Welcome {api.escape_markdown(user)} to X7 Finance\n\nHome of Xchange - A censorship resistant DEX offering initial loaned liquidity across;\n\n"
-    f"{chains.SUPPORTED}\n\n"
+    f"{chains.FULL_NAMES()}\n\n"
     "Verify as human and check out the links to get started!")
 
 
