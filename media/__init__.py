@@ -21,6 +21,7 @@ OPTI_LOGO = os.path.join("media", "optimism.png")
 BASE_LOGO = os.path.join("media", "base.png")
 RAFFLE_LOGO = os.path.join("media", "raffle.jpg")
 PIONEER_LOGO = os.path.join("media", "pioneer.png")
+WEBSITE_LOGO = os.path.join("media", "website.png")
 
 WELCOMEVIDEO = os.path.join("media", "welcomevideo.mp4")
 

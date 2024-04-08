@@ -28,8 +28,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}")],
-                [InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}")],
+                [InlineKeyboardButton(text="X7Finance.org", url=f"{urls.WEBSITE}")],
             ]
         ),
     )
@@ -964,8 +963,7 @@ async def ecosystem(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange App", url=f"{urls.XCHANGE}")],
-                [InlineKeyboardButton(text="Website", url=f"{urls.WEBSITE}")],
+                [InlineKeyboardButton(text="X7Finance.org", url=f"{urls.WEBSITE}")],
             ]
         ),
     )
@@ -1341,7 +1339,7 @@ async def leaderboard(update: Update, context: CallbackContext):
 async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [
-            InlineKeyboardButton(text="Xchange", url=f"{urls.WEBSITE}"),
+            InlineKeyboardButton(text="X7Finance.org", url=f"{urls.WEBSITE}"),
         ],
         [
             InlineKeyboardButton(text="Snapshot", url=f"{urls.SNAPSHOT}"),
@@ -1358,7 +1356,7 @@ async def links(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
+        photo=media.WEBSITE_LOGO,
         caption=f"\n",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -2974,17 +2972,6 @@ async def supply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def swap(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_sticker(
-        sticker=media.SWAP,
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(text="Xchange", url=f"{urls.XCHANGE}")],
-            ]
-        ),
-    )
-
-
 async def tax_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
@@ -3560,18 +3547,11 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def website(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
+        photo=media.WEBSITE_LOGO,
         caption=f"\n",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton(text="Xchange", url=f"{urls.XCHANGE}")],
-                [
-                    InlineKeyboardButton(
-                        text="X7.Finance",
-                        url=f"{urls.WEBSITE_DEV}",
-                    )
-                ],
                 [
                     InlineKeyboardButton(
                         text="X7Finance.org",
