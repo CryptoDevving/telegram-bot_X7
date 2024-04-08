@@ -1,7 +1,7 @@
 from telegram import *
 from telegram.ext import *
 
-import os, sentry_sdk,random, time as t
+import os, sys, sentry_sdk, subprocess, random, time as t
 from datetime import datetime
 
 from bot import admin, auto, commands, welcome
@@ -52,13 +52,15 @@ async def error(update: Update, context: CallbackContext):
 
 
 def scanners():
+    python_executable = sys.executable
+    processes = []
     for chain_name, chain_info in chains.CHAINS.items():
         script_filename = chain_name + ".py"
         script_path = os.path.join(os.path.dirname(__file__), script_filename)
         if os.path.exists(script_path):
-            with open(script_path, 'r') as file:
-                script_code = file.read()
-            exec(script_code)
+            command = [python_executable, script_path]
+            process = subprocess.Popen(command)
+            processes.append(process)
 
 
 

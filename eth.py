@@ -1,7 +1,7 @@
 from telegram import *
 from telegram.ext import *
 
-import asyncio, os, requests, random, sentry_sdk
+import asyncio, os, requests, random, sentry_sdk, sys
 
 from web3 import Web3
 from eth_utils import to_checksum_address
@@ -37,10 +37,9 @@ class FilterNotFoundError(Exception):
 
 
 async def restart_script():
+    python = sys.executable
     script = os.path.abspath(__file__)
-    with open(script, 'rb') as f:
-        script_code = f.read()
-    exec(script_code)
+    os.execl(python, python, script)
 
 
 async def new_pair(event):
