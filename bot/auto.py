@@ -19,6 +19,10 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "text": random.choice(text.X_REPLIES),
             "mode": None,
         },
+        "need developer?": {
+            "text": text.CONTRIBUTE,
+            "mode": None,
+        },
         "gm": {"sticker": media.GM},
         "gm!": {"sticker": media.GM},
         "new on chain message": {"sticker": media.ONCHAIN},
@@ -48,7 +52,7 @@ async def replies(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ):
                 if "text" in response:
                     await update.message.reply_text(
-                        text=response["text"], parse_mode=response["mode"]
+                        text=response["text"], parse_mode=response["mode"], disable_web_page_preview=True
                     )
                 elif "sticker" in response:
                     await update.message.reply_sticker(sticker=response["sticker"])

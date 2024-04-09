@@ -504,6 +504,16 @@ async def contracts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def contribute(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_photo(
+        photo=api.get_random_pioneer(),
+        caption=
+            f"{text.CONTRIBUTE}\n\n"
+            f"{api.get_quote()}",
+        parse_mode="Markdown"  
+    )
+
+
 async def convert(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) >= 2:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")

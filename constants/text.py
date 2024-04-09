@@ -140,6 +140,21 @@ COMMANDS = (
 )
 
 
+CONTRIBUTE = (
+    "Hey there, potential X7 contributor!\n\n"
+    "We're excited you're interested in joining forces with X7 Finance to build groundbreaking DeFi solutions. Our motto is simple: 'Trust No One, Trust Code, Long Live DeFi'.\n\n"
+    "To make sure our coding philosophies align, send over:\n\n"
+    "- Open source projects you've engineered\n"
+    "- GitHub link to check out your commit history\n"
+    "- What drives your passion for X7's vision\n\n"
+    "We're all about partnering with devs who believe in the transformative potential of elegantly architected, robust code. If you've got serious technical chops and a shared conviction in engineering the future of DeFi, we definitely want to connect.\n\n"
+    "Shoot over those details by DM or Email and let's push the boundaries of what's possible in DeFi together.\n\n"
+    "tech@x7finance.org\n"
+    "https://t.me/Cryptod0c\n"
+    "https://t.me/MikeMurpher"  
+)
+
+
 DELAY = (
     "To ensure our code is trusted and that the release is flawless, X7's "
     "Leveraged DEX trading will not begin until we have published third party "
