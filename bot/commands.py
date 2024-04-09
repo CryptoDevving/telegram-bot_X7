@@ -224,10 +224,6 @@ async def borrow(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"{text.COMMANDS}")
-
-
 async def burn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
