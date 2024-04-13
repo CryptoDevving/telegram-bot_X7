@@ -1531,12 +1531,55 @@ async def liquidate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) == 1:
+        loan_id = context.args[0]
+        if loan_id == "count":
+            message = await update.message.reply_text("Getting Loan Info, Please wait...")
+            await context.bot.send_chat_action(update.effective_chat.id, "typing")
+            loans_text = ""
+            total = 0
+            for chain in chains.CHAINS:
+                chain_web3 = chains.CHAINS[chain].w3
+                chain_name = chains.CHAINS[chain].name
+                if chain == "eth":
+                    temp_pool_version = ca.LPOOL
+                else:
+                    temp_pool_version = ca.LPOOL_V1
+                web3 = Web3(Web3.HTTPProvider(chain_web3))
+                contract = web3.eth.contract(
+                    address=to_checksum_address(temp_pool_version),
+                    abi=api.get_abi(temp_pool_version, chain),
+                    )
+            
+                amount = contract.functions.nextLoanID().call() - 1
+                loans_text += f"{chain_name}: {amount}\n"
+                total += amount
+
+            await message.delete()
+            await update.message.reply_photo(
+                photo=api.get_random_pioneer(),
+                caption=
+                    f"*X7 Finance Loan Count*\n"
+                    f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
+                    f"{loans_text}\n"
+                    f"`Total:`   {total}\n\n"
+                    f"{api.get_quote()}",
+                parse_mode="Markdown",
+            )
+            return
+        else:
+            await update.message.reply_text(
+            f"Use `/loan [ID] [chain]` for loan ID details\nUse `/loan count` for all loans",
+            parse_mode="Markdown",
+        )
+        return
+    
     if len(context.args) >= 2:
         loan_id = context.args[0]
         chain = context.args[1].lower()
     else:
         await update.message.reply_text(
-            f"Please use `/loan [ID] [chain]` to see details",
+            f"Use `/loan [ID] [chain]` for loan ID details\nUse `/loan count` for all loans",
             parse_mode="Markdown",
         )
         return
@@ -1548,14 +1591,31 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chain_scan_url = chains.CHAINS[chain].scan_token
         chain_native = chains.CHAINS[chain].token
         chain_web3 = chains.CHAINS[chain].w3
+        if chain == "eth":
+            if int(loan_id) <= 20:
+                pool_version = ca.LPOOL_V1
+            else:
+                pool_version = ca.LPOOL
+        elif chain == "arb":
+            if int(loan_id) <= 3:
+                pool_version = ca.LPOOL_V1
+            else:
+                pool_version = ca.LPOOL
+        elif chain == "poly":
+            if int(loan_id) == 1:
+                pool_version = ca.LPOOL_V1
+            else:
+                pool_version = ca.LPOOL
+        else:
+            pool_version = ca.LPOOL_V1
     else:
         await update.message.reply_text(text.CHAIN_ERROR)
         return
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     price = api.get_native_price(chain_native)
-    address = to_checksum_address(ca.LPOOL)
+    address = to_checksum_address(pool_version)
     web3 = Web3(Web3.HTTPProvider(chain_web3))
-    contract = web3.eth.contract(address=address, abi=api.get_abi(ca.LPOOL, chain))
+    contract = web3.eth.contract(address=address, abi=api.get_abi(pool_version, chain))
     liquidation_status = ""
     try:
         liquidation = contract.functions.canLiquidate(int(loan_id)).call()
@@ -1567,89 +1627,58 @@ async def loan(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f'(${"{:0,.0f}".format(price * liquidation / 10 ** 18)})\n'
                 f'Reward: {reward} {chain_native} (${"{:0,.0f}".format(price * reward)})'
             )
-    except (Exception, TimeoutError, ValueError, StopAsyncIteration):
+    except Exception:
         pass
-    liability = contract.functions.getRemainingLiability(int(loan_id)).call() / 10**18
-    remaining = f'Remaining Liability:\n{liability} {chain_native.upper()} (${"{:0,.0f}".format(price * liability)})'
-    schedule1 = contract.functions.getPremiumPaymentSchedule(int(loan_id)).call()
-    schedule2 = contract.functions.getPrincipalPaymentSchedule(int(loan_id)).call()
-    schedule_str = api.format_schedule(schedule1, schedule2, chain_native.upper())
+    try:
+        liability = contract.functions.getRemainingLiability(int(loan_id)).call() / 10**18
+        remaining = f'Remaining Liability:\n{liability} {chain_native.upper()} (${"{:0,.0f}".format(price * liability)})'
+        schedule1 = contract.functions.getPremiumPaymentSchedule(int(loan_id)).call()
+        schedule2 = contract.functions.getPrincipalPaymentSchedule(int(loan_id)).call()
+        schedule_str = api.format_schedule(schedule1, schedule2, chain_native.upper())
 
-    await update.message.reply_photo(
-        photo=api.get_random_pioneer(),
-        caption=
-            f"*X7 Finance Initial Liquidity Loan - {loan_id} ({chain_name})*\n\n"
-            f"Payment Schedule UTC:\n{schedule_str}\n\n"
-            f"{remaining}"
-            f"{liquidation_status}\n\n"
-            f"{api.get_quote()}",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(
-            [
+        await update.message.reply_photo(
+            photo=api.get_random_pioneer(),
+            caption=
+                f"*X7 Finance Initial Liquidity Loan - {loan_id} ({chain_name})*\n\n"
+                f"Payment Schedule UTC:\n{schedule_str}\n\n"
+                f"{remaining}"
+                f"{liquidation_status}\n\n"
+                f"{api.get_quote()}",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(
                 [
-                    InlineKeyboardButton(
-                        text=f"Token Contract",
-                        url=f"{chain_scan_url}{contract.functions.loanToken(int(loan_id)).call()}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text=f"Borrower",
-                        url=f"{chain_address_url}{contract.functions.loanBorrower(int(loan_id)).call()}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text=f"X7 Lending Pool Contract",
-                        url=f"{chain_address_url}{ca.LPOOL}#code",
-                    )
-                ],
-            ]
-        ),
-    )
+                    [
+                        InlineKeyboardButton(
+                            text=f"Token Contract",
+                            url=f"{chain_scan_url}{contract.functions.loanToken(int(loan_id)).call()}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text=f"Borrower",
+                            url=f"{chain_address_url}{contract.functions.loanBorrower(int(loan_id)).call()}",
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text=f"X7 Lending Pool Contract",
+                            url=f"{chain_address_url}{ca.LPOOL}#code",
+                        )
+                    ],
+                ]
+            ),
+        )
+    except Exception:
+        await update.message.reply_text(f"Loan ID {loan_id} on {chain_name} not found")
 
 
 async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     loan_type = " ".join(context.args).lower()
     if loan_type == "":
-        message = await update.message.reply_text("Getting Loan Info, Please wait...")
-        await context.bot.send_chat_action(update.effective_chat.id, "typing")
-        loans_text = ""
-        total = 0
-        for chain in chains.CHAINS:
-            chain_web3 = chains.CHAINS[chain].w3
-            chain_name = chains.CHAINS[chain].name
-            if chain == "eth":
-                pool_contract = ca.LPOOL
-            else:
-                pool_contract = ca.LPOOL_V1
-            web3 = Web3(Web3.HTTPProvider(chain_web3))
-            contract = web3.eth.contract(
-                address=to_checksum_address(pool_contract),
-                abi=api.get_abi(pool_contract, chain),
-                )
-        
-            amount = contract.functions.nextLoanID().call() - 1
-            loans_text += f"`{chain_name}:`     {amount}\n"
-            total += amount
-
-        await message.delete()
         await update.message.reply_photo(
             photo=api.get_random_pioneer(),
-            caption=
-                f"*X7 Finance Loan Count*\n"
-                f"Use `/loans info` for ILL info\n"
-                f"Use `/loan [ID] [chain]` for Individual loan details\n\n"
-                f"{loans_text}\n"
-                f"`Total:`   {total}\n\n"
-                f"{api.get_quote()}",
-            parse_mode="Markdown",
-        )
-        return
-    
-    if loan_type == "info":
-        await update.message.reply_text(
-            f"{loans.OVERVIEW}\n\n{api.get_quote()}",
+            caption= 
+                f"{loans.OVERVIEW}\n\n{api.get_quote()}",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -1662,7 +1691,8 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ),
         )
         return
-    else:
+
+    if loan_type in loans.LOANS:
         buttons = []
         for chain in chains.CHAINS:
             buttons_row = []
@@ -1683,6 +1713,9 @@ async def loans_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(buttons),
         )
+    else:
+        await update.message.reply_text(f"Loan term not found, please follow command with:\n{loans.loans_list()}")
+
         
 
 async def locks(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -3525,15 +3558,15 @@ async def wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption=
             f"*X7 Finance Wallet Info ({chain_name})*\nUse `/wallet [wallet_address] [chain-name]` for other chains\n\n"
             f"`{wallet}`\n\n"
-            f"{eth[:6]} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
-            f"{x7r_balance} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
-            f"{x7dao_balance} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
-            f"{x7101_balance} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
-            f"{x7102_balance} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
-            f"{x7103_balance} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
-            f"{x7104_balance} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
-            f"{x7105_balance} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
-            f"{x7d_balance} X7D (${'{:0,.0f}'.format(x7d_price)})\n\n"
+            f"{float(eth):.3f} {chain_native.upper()} (${'{:0,.0f}'.format(dollar)})\n\n"
+            f"{x7r_balance:,.0f} X7R {x7r_percent}% (${'{:0,.0f}'.format(x7r_price)})\n"
+            f"{x7dao_balance:,.0f} X7DAO {percentages[0]}% (${'{:0,.0f}'.format(x7dao_price)})\n"
+            f"{x7101_balance:,.0f} X7101 {percentages[1]}% (${'{:0,.0f}'.format(x7101_price)})\n"
+            f"{x7102_balance:,.0f} X7102 {percentages[2]}% (${'{:0,.0f}'.format(x7102_price)})\n"
+            f"{x7103_balance:,.0f} X7103 {percentages[3]}% (${'{:0,.0f}'.format(x7103_price)})\n"
+            f"{x7104_balance:,.0f} X7104 {percentages[4]}% (${'{:0,.0f}'.format(x7104_price)})\n"
+            f"{x7105_balance:,.0f} X7105 {percentages[5]}% (${'{:0,.0f}'.format(x7105_price)})\n"
+            f"{x7d_balance:.3f} X7D (${'{:0,.0f}'.format(x7d_price)})\n\n"
             f"{txs} tx's in the last 24 hours\n\n"
             f"Total X7 Finance token value ${'{:0,.0f}'.format(total)}\n\n"
             f"{api.get_quote()}",

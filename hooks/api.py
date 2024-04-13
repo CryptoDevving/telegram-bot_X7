@@ -782,7 +782,7 @@ def format_schedule(schedule1, schedule2, native_token):
 
         formatted_date = format_date(date)
         formatted_value = total_value / 10**18
-        sch = f"{formatted_date} - {formatted_value} {native_token}"
+        sch = f"{formatted_date} - {formatted_value:.3f} {native_token}"
         schedule_list.append(sch)
 
         if datetime.fromtimestamp(date) > current_datetime:
