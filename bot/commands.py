@@ -582,7 +582,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     swap_cost_in_eth = gas_price * tax.SWAP_GAS
     swap_cost_in_dollars = (swap_cost_in_eth / 10**9)* eth_price
-    swap_text = f"Swap: {swap_cost_in_eth / 10**9:.2f} {native.upper()} (${swap_cost_in_dollars:.2f})"
+    swap_text = f"Swap: {swap_cost_in_eth / 10**9:.4f} {native.upper()} (${swap_cost_in_dollars:.2f})"
     
     try:
         pair_data = "0xc9c65396" + ca.WETH[2:].lower().rjust(64, '0') + ca.DEAD[2:].lower().rjust(64, '0')
@@ -596,28 +596,16 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         pair_text = "Create Pair: N/A"
 
-    split_data = "0x11ec9d34"
     try:
-        eco_split_gas = web3.eth.estimate_gas({
-            'from': web3.to_checksum_address(ca.DEPLOYER),
-            'to': web3.to_checksum_address(ca.ECO_SPLITTER),
-            'data': split_data,})
-        eco_split_eth = gas_price * eco_split_gas
-        eco_split_dollars = (eco_split_eth / 10**9)* eth_price
-        eco_split_text = f"Ecosystem Splitter Push: {eco_split_eth / 10**9:.3f} {native.upper()} (${eco_split_dollars:.2f})"
-    except Exception:
-        eco_split_text = "Ecosystem Splitter Push: N/A"
-
-    try:
-        treasury_split_gas = web3.eth.estimate_gas({
+        split_gas = web3.eth.estimate_gas({
             'from': web3.to_checksum_address(ca.DEPLOYER),
             'to': web3.to_checksum_address(ca.TREASURY_SPLITTER),
-            'data': split_data,})
-        treasury_split_eth = gas_price * treasury_split_gas
-        treasury_split_dollars = (treasury_split_eth / 10**9)* eth_price
-        treasury_split_text = f"Treasury Splitter Push: {treasury_split_eth / 10**9:.3f} {native.upper()} (${treasury_split_dollars:.2f})"
+            'data': "0x11ec9d34"})
+        split_eth = gas_price * split_gas
+        split_dollars = (split_eth / 10**9)* eth_price
+        split_text = f"Splitter Push: {split_eth / 10**9:.4f} {native.upper()} (${split_dollars:.2f})"
     except Exception:
-        treasury_split_text = "Treasury Splitter Push: N/A"
+        split_text = "Splitter Push: N/A"
 
     try:
         deposit_data = "0xf6326fb3"
@@ -627,18 +615,17 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
             'data': deposit_data,})
         deposit_eth = gas_price * deposit_gas
         deposit_dollars = (deposit_eth / 10**9)* eth_price
-        deposit_text = f"Mint X7D: {deposit_eth / 10**9:.3f} {native.upper()} (${deposit_dollars:.2f})"
+        deposit_text = f"Mint X7D: {deposit_eth / 10**9:.4f} {native.upper()} (${deposit_dollars:.2f})"
     except Exception:
         deposit_text = "Mint X7D: N/A"
-        
+
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
             f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
             f"{swap_text}\n"
             f"{pair_text}\n"
-            f"{eco_split_text}\n"
-            f"{treasury_split_text}\n"
+            f"{split_text}\n"
             f"{deposit_text}\n\n"
             f"{api.get_quote()}",
         parse_mode = "markdown")
