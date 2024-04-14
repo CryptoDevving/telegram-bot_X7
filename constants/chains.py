@@ -198,6 +198,9 @@ CHAINS = {
 }
 
 
+GAS_CHAINS = ["eth", "poly", "bsc"]
+
+
 def FULL_NAMES():
     chain_names = [chain.name for chain in CHAINS.values()]
     return "\n".join(chain_names)

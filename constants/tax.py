@@ -1,5 +1,7 @@
 # TAX
 
+SWAP_GAS = 356190
+
 INFO = {
     "eth": {
         "x7r": 3,

@@ -580,6 +580,10 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     gas_price = web3.eth.gas_price / 10**9
     eth_price = api.get_native_price(native)
 
+    swap_cost_in_eth = gas_price * tax.SWAP_GAS
+    swap_cost_in_dollars = (swap_cost_in_eth / 10**9)* eth_price
+    swap_text = f"Swap: {swap_cost_in_eth / 10**9:.2f} {native.upper()} (${swap_cost_in_dollars:.2f})"
+    
     try:
         pair_data = "0xc9c65396" + ca.WETH[2:].lower().rjust(64, '0') + ca.DEAD[2:].lower().rjust(64, '0')
         pair_gas_estimate = web3.eth.estimate_gas({
@@ -591,6 +595,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         pair_text = f"Create Pair: {pair_cost_in_eth / 10**9:.2f} {native.upper()} (${pair_cost_in_dollars:.2f})"
     except Exception:
         pair_text = "Create Pair: N/A"
+
     split_data = "0x11ec9d34"
     try:
         eco_split_gas = web3.eth.estimate_gas({
@@ -602,6 +607,7 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         eco_split_text = f"Ecosystem Splitter Push: {eco_split_eth / 10**9:.3f} {native.upper()} (${eco_split_dollars:.2f})"
     except Exception:
         eco_split_text = "Ecosystem Splitter Push: N/A"
+
     try:
         treasury_split_gas = web3.eth.estimate_gas({
             'from': web3.to_checksum_address(ca.DEPLOYER),
@@ -624,10 +630,12 @@ async def costs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         deposit_text = f"Mint X7D: {deposit_eth / 10**9:.3f} {native.upper()} (${deposit_dollars:.2f})"
     except Exception:
         deposit_text = "Mint X7D: N/A"
+        
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
             f"*Live Xchange Costs ({chain.upper()})*\nUse `/costs [chain-name]` for other chains\n\n"
+            f"{swap_text}\n"
             f"{pair_text}\n"
             f"{eco_split_text}\n"
             f"{treasury_split_text}\n"
@@ -1158,15 +1166,21 @@ async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chain = " ".join(context.args).lower()
     if chain == "":
         chain = chains.DEFAULT_CHAIN
-    if chain in chains.CHAINS:
+    if chain in chains.GAS_CHAINS:
         await context.bot.send_chat_action(update.effective_chat.id, "typing")
         chain_name = chains.CHAINS[chain].name
         chain_url = chains.CHAINS[chain].gas
+        chain_native = chains.CHAINS[chain].token
+        chain_native_price = api.get_native_price(chain_native.lower())
+        gas_data = api.get_gas(chain)
     else:
-        await update.message.reply_text(text.CHAIN_ERROR)
+        await update.message.reply_text("Gas command supports:\nEthereum, Binance, Polygon")
         return
 
-    gas_data = api.get_gas(chain)
+    swap_cost_in_eth = float(gas_data["result"]["ProposeGasPrice"]) * float(tax.SWAP_GAS)
+    swap_cost_in_dollars = (swap_cost_in_eth / 10**9)* chain_native_price
+    swap_text = f"Estimated Average Swap Cost:\n{swap_cost_in_eth / 10**9:.5f} {chain_native.upper()} (${swap_cost_in_dollars:.2f})"
+    
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
@@ -1175,6 +1189,7 @@ async def gas(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'Low: {gas_data["result"]["SafeGasPrice"]} Gwei\n'
             f'Average: {gas_data["result"]["ProposeGasPrice"]} Gwei\n'
             f'High: {gas_data["result"]["FastGasPrice"]} Gwei\n\n'
+            f'{swap_text}\n\n'
             f"{api.get_quote()}",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(
