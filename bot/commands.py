@@ -3733,6 +3733,8 @@ async def x7dao(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7dao")
         if ath_data:
@@ -3791,6 +3793,8 @@ async def x7r(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7r")
         if ath_data:
@@ -3849,6 +3853,8 @@ async def x7101(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7101")
         if ath_data:
@@ -3906,6 +3912,8 @@ async def x7102(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7102")
         if ath_data:
@@ -3963,6 +3971,8 @@ async def x7103(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7103")
         if ath_data:
@@ -4020,6 +4030,8 @@ async def x7104(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7104")
         if ath_data:
@@ -4077,6 +4089,8 @@ async def x7105(update: Update, context: ContextTypes.DEFAULT_TYPE):
     volume = dextools.get_volume(chain_pair, chain)
     liquidity_data = dextools.get_liquidity(chain_pair, chain)
     liquidity = liquidity_data["total"]
+    if liquidity == 0:
+        liquidity = "N/A"
     if chain == "eth":
         ath_data = coingecko.get_ath("x7105")
         if ath_data:
@@ -4136,6 +4150,8 @@ async def x(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         liq_data = dextools.get_liquidity(token_instance['pair'], token_instance['chain'].lower())
         liq = liq_data["total"]
+        if liq == 0:
+            liq = "N/A"
         info = dextools.get_token_info(token_instance['ca'], token_instance['chain'].lower())
         holders = info["holders"]
         mcap = info["mcap"]
