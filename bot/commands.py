@@ -364,13 +364,10 @@ async def chart(update: Update, context: ContextTypes.DEFAULT_TYPE = None):
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     first = context.args[0]
     second = context.args[1]
-    differences = [(i, j) for i, j in zip(first, second) if i != j]
-
-    if not differences:
+    if first == second:
         reply = "✅ Both inputs match"
     else:
-        mismatch_details = "\n".join([f"'{char1}' vs '{char2}'" for i, (char1, char2) in enumerate(differences)])
-        reply = f"❌ Inputs do not match\n\nDifferences:\n{mismatch_details}"
+        reply = f"❌ Inputs do not match"
     await update.message.reply_photo(
         photo=api.get_random_pioneer(),
         caption=
